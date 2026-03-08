@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Shield, Users as UsersIcon, FileText, BadgeCheck, Info, LogOut, ChevronRight, HelpCircle, BookOpen } from "lucide-react";
+import { ArrowLeft, Shield, Users as UsersIcon, FileText, BadgeCheck, Info, LogOut, ChevronRight, HelpCircle, BookOpen, CreditCard } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import NewBadge from "@/components/NewBadge";
 
 const settingsItems = [
   { icon: Shield, label: "Security", path: "/security", isNew: true },
+  { icon: CreditCard, label: "Virtual Cards", path: "/virtual-cards", isNew: true },
   { icon: BookOpen, label: "Manage Beneficiaries", path: "/bank-accounts", isNew: true },
   { icon: FileText, label: "Generate Statement", path: "/generate-statement", isNew: true },
   { icon: BadgeCheck, label: "KYC Verification", path: "/kyc", badge: true, badgeText: "Verified", isNew: true },
