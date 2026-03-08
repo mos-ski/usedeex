@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Shield, Copy, Check, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ChevronDown, Shield, Copy, Check, AlertTriangle, Lock } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
 import CryptoIcon from "@/components/CryptoIcon";
@@ -13,7 +13,7 @@ const assets = [
   { symbol: "SOL", name: "Solana", balance: "12.50", fee: "0.01", networks: ["Solana"] },
 ];
 
-type View = "select" | "form" | "confirm" | "success";
+type View = "select" | "form" | "confirm" | "pin" | "success";
 
 const WithdrawCrypto = () => {
   const navigate = useNavigate();
@@ -23,6 +23,8 @@ const WithdrawCrypto = () => {
   const [address, setAddress] = useState("");
   const [amount, setAmount] = useState("");
   const [showNetwork, setShowNetwork] = useState(false);
+  const [pin, setPin] = useState("");
+  const [pinError, setPinError] = useState(false);
 
   if (view === "success") {
     return (
@@ -33,6 +35,60 @@ const WithdrawCrypto = () => {
           <p className="text-muted-foreground text-center mb-2">{amount} {asset.symbol}</p>
           <p className="text-xs text-muted-foreground text-center mb-6 break-all">To: {address}</p>
           <button onClick={() => navigate("/wallet")} className="w-full h-14 bg-primary rounded-xl text-primary-foreground font-semibold">Back to Wallet</button>
+        </div>
+      </PageTransition></MobileLayout>
+    );
+  }
+
+  // PIN ENTRY
+  if (view === "pin") {
+    const correctPin = "1234";
+    const handlePinDigit = (digit: string) => {
+      if (pin.length >= 4) return;
+      const newPin = pin + digit;
+      setPin(newPin);
+      setPinError(false);
+      if (newPin.length === 4) {
+        if (newPin === correctPin) {
+          setTimeout(() => setView("success"), 300);
+        } else {
+          setPinError(true);
+          setTimeout(() => { setPin(""); setPinError(false); }, 800);
+        }
+      }
+    };
+    const handleDelete = () => { setPin(pin.slice(0, -1)); setPinError(false); };
+
+    return (
+      <MobileLayout hideNav><PageTransition>
+        <div className="min-h-screen flex flex-col items-center justify-center px-6">
+          <div className="w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center mb-6">
+            <Lock className="w-8 h-8 text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-foreground mb-2">Enter PIN</h2>
+          <p className="text-sm text-muted-foreground mb-8">Confirm withdrawal of {amount} {asset.symbol}</p>
+
+          <div className="flex gap-4 mb-8">
+            {[0, 1, 2, 3].map(i => (
+              <div key={i} className={`w-4 h-4 rounded-full transition-colors ${
+                pinError ? "bg-destructive" : i < pin.length ? "bg-primary" : "bg-muted"
+              }`} />
+            ))}
+          </div>
+
+          {pinError && <p className="text-xs text-destructive mb-4">Incorrect PIN, try again</p>}
+
+          <div className="grid grid-cols-3 gap-4 w-64">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, null, 0, "del"].map((key, i) => (
+              <button key={i}
+                onClick={() => { if (key === "del") handleDelete(); else if (key !== null) handlePinDigit(String(key)); }}
+                className={`h-14 rounded-xl text-lg font-semibold ${key === null ? "invisible" : key === "del" ? "text-muted-foreground text-sm" : "bg-secondary text-foreground active:bg-muted"}`}>
+                {key === "del" ? "⌫" : key !== null ? key : ""}
+              </button>
+            ))}
+          </div>
+
+          <button onClick={() => setView("confirm")} className="mt-6 text-sm text-muted-foreground">Cancel</button>
         </div>
       </PageTransition></MobileLayout>
     );
@@ -61,7 +117,7 @@ const WithdrawCrypto = () => {
             <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
             <p className="text-xs text-muted-foreground">Please verify the address and network. Wrong transfers cannot be reversed.</p>
           </div>
-          <button onClick={() => setView("success")} className="w-full h-14 bg-primary rounded-xl text-primary-foreground font-semibold">Confirm Withdrawal</button>
+          <button onClick={() => { setPin(""); setView("pin"); }} className="w-full h-14 bg-primary rounded-xl text-primary-foreground font-semibold">Confirm Withdrawal</button>
         </div>
       </PageTransition></MobileLayout>
     );
@@ -76,14 +132,12 @@ const WithdrawCrypto = () => {
             <h2 className="text-lg font-bold text-foreground">Withdraw {asset.symbol}</h2>
             <NewBadge />
           </div>
-
           <div className="space-y-4">
             <div>
               <label className="text-sm text-muted-foreground mb-2 block">Wallet Address</label>
               <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Enter recipient address"
                 className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary font-mono text-sm" />
             </div>
-
             <div>
               <label className="text-sm text-muted-foreground mb-2 block">Network</label>
               <div className="relative">
@@ -99,7 +153,6 @@ const WithdrawCrypto = () => {
                 )}
               </div>
             </div>
-
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-sm text-muted-foreground">Amount</label>
@@ -108,12 +161,10 @@ const WithdrawCrypto = () => {
               <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="0.00" type="number"
                 className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary" />
             </div>
-
             <div className="bg-secondary rounded-xl p-3 flex justify-between text-xs text-muted-foreground">
               <span>Network Fee</span><span>{asset.fee} {asset.symbol}</span>
             </div>
           </div>
-
           <button onClick={() => address && amount && setView("confirm")}
             className={`w-full h-14 rounded-xl font-semibold mt-6 ${address && amount ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
             Preview Withdrawal
