@@ -226,6 +226,9 @@ const AdminPanel = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [quickActionOpen, setQuickActionOpen] = useState(false);
   const [reportDetail, setReportDetail] = useState<string | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<typeof customersList[0] | null>(null);
+  const [tablePage, setTablePage] = useState(1);
+  const perPage = 5;
 
   const isKycTab = activeTab === "kyc" || activeTab === "kyc-compliance" || activeTab === "kyc-rules";
 
@@ -263,6 +266,7 @@ const AdminPanel = () => {
                   <div className="flex items-center gap-3">
                     <item.icon className="w-[18px] h-[18px]" />
                     <span>{item.label}</span>
+                    {item.isNew && <NewBadge />}
                   </div>
                   {item.children && (
                     <ChevronDown className={`w-4 h-4 transition-transform ${kycExpanded ? "rotate-180" : ""}`} />
