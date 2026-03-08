@@ -64,23 +64,39 @@ const userTransactions = [
 ];
 
 const userActivities = [
-  { type: "Login", desc: "User logged in to their account", time: "Today 8:12 PM" },
-  { type: "Login", desc: "User logged in to their account", time: "Today 7:25 PM" },
-  { type: "Login", desc: "User logged in to their account", time: "Today 7:24 PM" },
-  { type: "Login", desc: "User logged in to their account", time: "Today 6:49 PM" },
-  { type: "Login", desc: "User logged in to their account", time: "Today 5:15 PM" },
-  { type: "Deposit", desc: "User deposited 0.041 ETH", time: "Today 9:28 PM" },
-  { type: "Swap", desc: "User swapped BTC → USDT", time: "Today 7:28 PM" },
+  { type: "Login", desc: "Logged in from iOS device (iPhone 15 Pro)", time: "Today 8:12 PM", ip: "102.89.47.12", category: "auth" },
+  { type: "Deposit", desc: "Deposited 0.041 ETH to wallet", time: "Today 9:28 PM", ip: "102.89.47.12", category: "wallet" },
+  { type: "Swap", desc: "Swapped 0.000824 BTC → 79.29 USDT", time: "Today 7:28 PM", ip: "102.89.47.12", category: "trade" },
+  { type: "Deposit", desc: "Deposited 200.00 USDT to wallet", time: "Today 8:10 PM", ip: "102.89.47.12", category: "wallet" },
+  { type: "KYC", desc: "Submitted KYC Level 3 documents for review", time: "Feb 25th, 2026 | 3:14 PM", ip: "102.89.47.12", category: "kyc" },
+  { type: "Security", desc: "Changed account password", time: "Feb 20th, 2026 | 1:02 PM", ip: "102.89.47.12", category: "security" },
+  { type: "Bank", desc: "Linked bank account: Access Bank - 0800538398", time: "Jul 3rd, 2024 | 10:22 AM", ip: "41.190.2.45", category: "settings" },
+  { type: "Login", desc: "Logged in from Android device (Samsung S24)", time: "Today 7:25 PM", ip: "41.190.2.45", category: "auth" },
+  { type: "Withdrawal", desc: "Withdrew ₦150,000 to Access Bank - 0800538398", time: "Mar 5th, 2026 | 2:45 PM", ip: "102.89.47.12", category: "wallet" },
+  { type: "Referral", desc: "Referred user ozegbeandrew@gmail.com — earned 300 pts", time: "Aug 13th, 2025 | 5:18 PM", ip: "102.89.47.12", category: "referral" },
+  { type: "Profile", desc: "Updated DeeX tag to @ogbankomi", time: "Jul 1st, 2024 | 4:00 AM", ip: "41.190.2.45", category: "settings" },
+  { type: "Reward", desc: "Redeemed 500 DeeXpoints for ₦5,000", time: "Mar 6th, 2026 | 11:30 AM", ip: "102.89.47.12", category: "reward" },
 ];
 
+const activityCategoryColors: Record<string, string> = {
+  auth: "bg-[hsl(var(--deex-blue))]/20 text-[hsl(var(--deex-blue))]",
+  wallet: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
+  trade: "bg-[hsl(var(--deex-orange))]/20 text-[hsl(var(--deex-orange))]",
+  kyc: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
+  security: "bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))]",
+  settings: "bg-muted text-muted-foreground",
+  referral: "bg-[hsl(var(--deex-teal))]/20 text-[hsl(var(--deex-teal))]",
+  reward: "bg-[hsl(var(--primary))]/20 text-[hsl(var(--primary))]",
+};
+
 const userRewards = [
-  { date: "Aug 13th, 2025 | 2:07 AM", activity: "Points awarded", description: "", amount: 300 },
-  { date: "Aug 29th, 2025 | 6:26 AM", activity: "Points awarded", description: "", amount: 300 },
-  { date: "Sep 2nd, 2025 | 11:14 AM", activity: "Points awarded", description: "", amount: 300 },
-  { date: "Sep 14th, 2025 | 11:13 AM", activity: "Points awarded", description: "", amount: 300 },
-  { date: "Sep 22nd, 2025 | 2:29 PM", activity: "Points awarded", description: "", amount: 300 },
-  { date: "Sep 24th, 2025 | 3:51 PM", activity: "Points awarded", description: "", amount: 300 },
-  { date: "Oct 2nd, 2025 | 12:22 AM", activity: "Points awarded", description: "", amount: 300 },
+  { date: "Aug 13th, 2025 | 2:07 AM", activity: "Points awarded", description: "Referral bonus — ozegbeandrew@gmail.com signed up", amount: 300 },
+  { date: "Aug 29th, 2025 | 6:26 AM", activity: "Points awarded", description: "Referral bonus — abm65858@gmail.com signed up", amount: 300 },
+  { date: "Sep 2nd, 2025 | 11:14 AM", activity: "Points awarded", description: "Trade streak reward — 7-day consecutive trading", amount: 300 },
+  { date: "Sep 14th, 2025 | 11:13 AM", activity: "Points awarded", description: "Weekly cashback — ₦10,000 target met", amount: 300 },
+  { date: "Sep 22nd, 2025 | 2:29 PM", activity: "Points awarded", description: "First deposit bonus — deposited 500 USDT", amount: 300 },
+  { date: "Sep 24th, 2025 | 3:51 PM", activity: "Points awarded", description: "KYC Level 3 completion bonus", amount: 300 },
+  { date: "Oct 2nd, 2025 | 12:22 AM", activity: "Points awarded", description: "Referral trade bonus — markkmnn2@gmail.com completed first trade", amount: 300 },
 ];
 
 const userTasks = [
@@ -92,13 +108,13 @@ const userTasks = [
 ];
 
 const userReferrals = [
-  { date: "Jul 1st, 2024 | 3:56 AM", email: "paursgenius@gmail.com" },
-  { date: "Jun 19th, 2024 | 11:55 PM", email: "benjaminchibuike002@mail.com" },
-  { date: "Jun 20th, 2024 | 10:24 PM", email: "sundaykenzo@gmail.com" },
-  { date: "Jul 2nd, 2024 | 6:39 PM", email: "markkmnn2@gmail.com" },
-  { date: "Jul 5th, 2024 | 9:00 PM", email: "generalpaul954@gmail.com" },
-  { date: "Aug 13th, 2025 | 5:18 PM", email: "ozegbeandrew@gmail.com" },
-  { date: "Aug 20th, 2025 | 7:18 PM", email: "abm65858@gmail.com" },
+  { date: "Jul 1st, 2024 | 3:56 AM", email: "paursgenius@gmail.com", pointsEarned: 300, status: "Active" },
+  { date: "Jun 19th, 2024 | 11:55 PM", email: "benjaminchibuike002@mail.com", pointsEarned: 300, status: "Active" },
+  { date: "Jun 20th, 2024 | 10:24 PM", email: "sundaykenzo@gmail.com", pointsEarned: 0, status: "Signed up" },
+  { date: "Jul 2nd, 2024 | 6:39 PM", email: "markkmnn2@gmail.com", pointsEarned: 600, status: "Active" },
+  { date: "Jul 5th, 2024 | 9:00 PM", email: "generalpaul954@gmail.com", pointsEarned: 0, status: "Inactive" },
+  { date: "Aug 13th, 2025 | 5:18 PM", email: "ozegbeandrew@gmail.com", pointsEarned: 300, status: "Active" },
+  { date: "Aug 20th, 2025 | 7:18 PM", email: "abm65858@gmail.com", pointsEarned: 300, status: "Active" },
 ];
 
 const kycLevel1 = {
@@ -172,6 +188,9 @@ const AdminUserDetail = () => {
   const [autoWithdrawal, setAutoWithdrawal] = useState(mockUser.autoWithdrawal);
   const [copied, setCopied] = useState(false);
   const [kycExpanded, setKycExpanded] = useState(false);
+  const [nudgedTasks, setNudgedTasks] = useState<Record<number, boolean>>({});
+  const [confirmAction, setConfirmAction] = useState<{ label: string; description: string; onConfirm: () => void; destructive?: boolean } | null>(null);
+  const [activityFilter, setActivityFilter] = useState<string>("all");
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -446,19 +465,48 @@ const AdminUserDetail = () => {
                 </div>
               )}
 
-              {/* ===== ACTIVITIES TAB ===== */}
+              {/* ===== ACTIVITIES TAB (Audit Log) ===== */}
               {activeTab === "activities" && (
-                <div className="space-y-0">
-                  {userActivities.map((a, i) => (
-                    <div key={i} className="py-5 border-b border-border">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="w-2 h-2 rounded-full bg-deex-orange" />
-                        <p className="text-sm font-semibold text-foreground">{a.type}</p>
-                      </div>
-                      <p className="text-sm text-muted-foreground ml-4">{a.desc}</p>
-                      <p className="text-xs text-muted-foreground ml-4 mt-1">{a.time}</p>
-                    </div>
-                  ))}
+                <div>
+                  <div className="flex items-center gap-2 mb-4 flex-wrap">
+                    {["all", "auth", "wallet", "trade", "kyc", "security", "settings", "referral", "reward"].map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setActivityFilter(cat)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${activityFilter === cat ? "bg-[hsl(var(--deex-blue))] text-background" : "bg-secondary text-muted-foreground hover:text-foreground"}`}
+                      >
+                        {cat === "all" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-border">
+                          {["Time", "Category", "Event", "Details", "IP Address"].map(h => (
+                            <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {userActivities
+                          .filter(a => activityFilter === "all" || a.category === activityFilter)
+                          .map((a, i) => (
+                          <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                            <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{a.time}</td>
+                            <td className="px-4 py-3">
+                              <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider ${activityCategoryColors[a.category] || "bg-muted text-muted-foreground"}`}>
+                                {a.category.toUpperCase()}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-sm font-medium text-foreground">{a.type}</td>
+                            <td className="px-4 py-3 text-sm text-muted-foreground">{a.desc}</td>
+                            <td className="px-4 py-3 text-xs text-muted-foreground font-mono">{a.ip}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
 
@@ -478,7 +526,7 @@ const AdminUserDetail = () => {
                         <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
                           <td className="px-4 py-3 text-sm text-muted-foreground">{r.date}</td>
                           <td className="px-4 py-3 text-sm text-foreground">{r.activity}</td>
-                          <td className="px-4 py-3 text-sm text-muted-foreground">{r.description || "—"}</td>
+                          <td className="px-4 py-3 text-sm text-muted-foreground">{r.description}</td>
                           <td className="px-4 py-3 text-sm text-foreground text-right">{r.amount}</td>
                         </tr>
                       ))}
@@ -493,8 +541,8 @@ const AdminUserDetail = () => {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-border">
-                        {["Task", "Status", "Date Completed"].map(h => (
-                          <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                        {["Task", "Status", "Date Completed", "Action"].map(h => (
+                          <th key={h} className={`text-xs text-muted-foreground font-medium px-4 py-3 ${h === "Action" ? "text-right" : "text-left"}`}>{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -504,6 +552,29 @@ const AdminUserDetail = () => {
                           <td className="px-4 py-3 text-sm text-foreground">{t.task}</td>
                           <td className="px-4 py-3">{statusBadge(t.status === "Completed" ? "COMPLETED" : "PENDING")}</td>
                           <td className="px-4 py-3 text-xs text-muted-foreground">{t.date}</td>
+                          <td className="px-4 py-3 text-right">
+                            {t.status === "Pending" ? (
+                              nudgedTasks[i] ? (
+                                <span className="text-xs text-[hsl(var(--success))]">✓ Nudged</span>
+                              ) : (
+                                <button
+                                  onClick={() => setConfirmAction({
+                                    label: "Nudge User",
+                                    description: `Send a push notification to ${mockUser.name} to complete "${t.task}"?`,
+                                    onConfirm: () => {
+                                      setNudgedTasks(prev => ({ ...prev, [i]: true }));
+                                      setConfirmAction(null);
+                                    }
+                                  })}
+                                  className="text-xs px-3 py-1.5 rounded-lg bg-[hsl(var(--deex-blue))]/10 text-[hsl(var(--deex-blue))] hover:bg-[hsl(var(--deex-blue))]/20 font-medium transition-colors"
+                                >
+                                  Nudge
+                                </button>
+                              )
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -513,24 +584,48 @@ const AdminUserDetail = () => {
 
               {/* ===== REFERRALS TAB ===== */}
               {activeTab === "referrals" && (
-                <div className="bg-card border border-border rounded-xl overflow-hidden">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border">
-                        {["Date", "Email"].map(h => (
-                          <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {userReferrals.map((r, i) => (
-                        <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
-                          <td className="px-4 py-3 text-sm text-muted-foreground">{r.date}</td>
-                          <td className="px-4 py-3 text-sm text-foreground">{r.email}</td>
+                <div>
+                  <div className="grid grid-cols-3 gap-4 mb-4">
+                    <div className="bg-card border border-border rounded-xl p-4">
+                      <p className="text-sm text-muted-foreground mb-1">Total Referrals</p>
+                      <p className="text-xl font-bold text-foreground">{userReferrals.length}</p>
+                    </div>
+                    <div className="bg-card border border-border rounded-xl p-4">
+                      <p className="text-sm text-muted-foreground mb-1">Total Points Earned</p>
+                      <p className="text-xl font-bold text-primary">{userReferrals.reduce((sum, r) => sum + r.pointsEarned, 0).toLocaleString()}</p>
+                    </div>
+                    <div className="bg-card border border-border rounded-xl p-4">
+                      <p className="text-sm text-muted-foreground mb-1">Active Referrals</p>
+                      <p className="text-xl font-bold text-[hsl(var(--success))]">{userReferrals.filter(r => r.status === "Active").length}</p>
+                    </div>
+                  </div>
+                  <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-border">
+                          {["Date", "Email", "Status", "Points Earned"].map(h => (
+                            <th key={h} className={`text-xs text-muted-foreground font-medium px-4 py-3 ${h === "Points Earned" ? "text-right" : "text-left"}`}>{h}</th>
+                          ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {userReferrals.map((r, i) => (
+                          <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                            <td className="px-4 py-3 text-sm text-muted-foreground">{r.date}</td>
+                            <td className="px-4 py-3 text-sm text-foreground">{r.email}</td>
+                            <td className="px-4 py-3">
+                              <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold ${
+                                r.status === "Active" ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" :
+                                r.status === "Signed up" ? "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]" :
+                                "bg-muted text-muted-foreground"
+                              }`}>{r.status}</span>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-foreground text-right">{r.pointsEarned > 0 ? `+${r.pointsEarned} pts` : "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
 
@@ -687,6 +782,20 @@ const AdminUserDetail = () => {
           )}
         </main>
       </div>
+
+      {/* Confirmation Modal */}
+      {confirmAction && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center" onClick={() => setConfirmAction(null)}>
+          <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md shadow-lg" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-foreground mb-2">{confirmAction.label}</h3>
+            <p className="text-sm text-muted-foreground mb-6">{confirmAction.description}</p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setConfirmAction(null)} className="px-4 py-2 rounded-lg text-sm font-medium bg-secondary text-foreground hover:bg-secondary/80 transition-colors">Cancel</button>
+              <button onClick={confirmAction.onConfirm} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${confirmAction.destructive ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "bg-[hsl(var(--deex-blue))] text-background hover:bg-[hsl(var(--deex-blue))]/90"}`}>Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
