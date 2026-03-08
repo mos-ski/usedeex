@@ -64,23 +64,39 @@ const userTransactions = [
 ];
 
 const userActivities = [
-  { type: "Login", desc: "User logged in to their account", time: "Today 8:12 PM" },
-  { type: "Login", desc: "User logged in to their account", time: "Today 7:25 PM" },
-  { type: "Login", desc: "User logged in to their account", time: "Today 7:24 PM" },
-  { type: "Login", desc: "User logged in to their account", time: "Today 6:49 PM" },
-  { type: "Login", desc: "User logged in to their account", time: "Today 5:15 PM" },
-  { type: "Deposit", desc: "User deposited 0.041 ETH", time: "Today 9:28 PM" },
-  { type: "Swap", desc: "User swapped BTC → USDT", time: "Today 7:28 PM" },
+  { type: "Login", desc: "Logged in from iOS device (iPhone 15 Pro)", time: "Today 8:12 PM", ip: "102.89.47.12", category: "auth" },
+  { type: "Deposit", desc: "Deposited 0.041 ETH to wallet", time: "Today 9:28 PM", ip: "102.89.47.12", category: "wallet" },
+  { type: "Swap", desc: "Swapped 0.000824 BTC → 79.29 USDT", time: "Today 7:28 PM", ip: "102.89.47.12", category: "trade" },
+  { type: "Deposit", desc: "Deposited 200.00 USDT to wallet", time: "Today 8:10 PM", ip: "102.89.47.12", category: "wallet" },
+  { type: "KYC", desc: "Submitted KYC Level 3 documents for review", time: "Feb 25th, 2026 | 3:14 PM", ip: "102.89.47.12", category: "kyc" },
+  { type: "Security", desc: "Changed account password", time: "Feb 20th, 2026 | 1:02 PM", ip: "102.89.47.12", category: "security" },
+  { type: "Bank", desc: "Linked bank account: Access Bank - 0800538398", time: "Jul 3rd, 2024 | 10:22 AM", ip: "41.190.2.45", category: "settings" },
+  { type: "Login", desc: "Logged in from Android device (Samsung S24)", time: "Today 7:25 PM", ip: "41.190.2.45", category: "auth" },
+  { type: "Withdrawal", desc: "Withdrew ₦150,000 to Access Bank - 0800538398", time: "Mar 5th, 2026 | 2:45 PM", ip: "102.89.47.12", category: "wallet" },
+  { type: "Referral", desc: "Referred user ozegbeandrew@gmail.com — earned 300 pts", time: "Aug 13th, 2025 | 5:18 PM", ip: "102.89.47.12", category: "referral" },
+  { type: "Profile", desc: "Updated DeeX tag to @ogbankomi", time: "Jul 1st, 2024 | 4:00 AM", ip: "41.190.2.45", category: "settings" },
+  { type: "Reward", desc: "Redeemed 500 DeeXpoints for ₦5,000", time: "Mar 6th, 2026 | 11:30 AM", ip: "102.89.47.12", category: "reward" },
 ];
 
+const activityCategoryColors: Record<string, string> = {
+  auth: "bg-[hsl(var(--deex-blue))]/20 text-[hsl(var(--deex-blue))]",
+  wallet: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
+  trade: "bg-[hsl(var(--deex-orange))]/20 text-[hsl(var(--deex-orange))]",
+  kyc: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
+  security: "bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))]",
+  settings: "bg-muted text-muted-foreground",
+  referral: "bg-[hsl(var(--deex-teal))]/20 text-[hsl(var(--deex-teal))]",
+  reward: "bg-[hsl(var(--primary))]/20 text-[hsl(var(--primary))]",
+};
+
 const userRewards = [
-  { date: "Aug 13th, 2025 | 2:07 AM", activity: "Points awarded", description: "", amount: 300 },
-  { date: "Aug 29th, 2025 | 6:26 AM", activity: "Points awarded", description: "", amount: 300 },
-  { date: "Sep 2nd, 2025 | 11:14 AM", activity: "Points awarded", description: "", amount: 300 },
-  { date: "Sep 14th, 2025 | 11:13 AM", activity: "Points awarded", description: "", amount: 300 },
-  { date: "Sep 22nd, 2025 | 2:29 PM", activity: "Points awarded", description: "", amount: 300 },
-  { date: "Sep 24th, 2025 | 3:51 PM", activity: "Points awarded", description: "", amount: 300 },
-  { date: "Oct 2nd, 2025 | 12:22 AM", activity: "Points awarded", description: "", amount: 300 },
+  { date: "Aug 13th, 2025 | 2:07 AM", activity: "Points awarded", description: "Referral bonus — ozegbeandrew@gmail.com signed up", amount: 300 },
+  { date: "Aug 29th, 2025 | 6:26 AM", activity: "Points awarded", description: "Referral bonus — abm65858@gmail.com signed up", amount: 300 },
+  { date: "Sep 2nd, 2025 | 11:14 AM", activity: "Points awarded", description: "Trade streak reward — 7-day consecutive trading", amount: 300 },
+  { date: "Sep 14th, 2025 | 11:13 AM", activity: "Points awarded", description: "Weekly cashback — ₦10,000 target met", amount: 300 },
+  { date: "Sep 22nd, 2025 | 2:29 PM", activity: "Points awarded", description: "First deposit bonus — deposited 500 USDT", amount: 300 },
+  { date: "Sep 24th, 2025 | 3:51 PM", activity: "Points awarded", description: "KYC Level 3 completion bonus", amount: 300 },
+  { date: "Oct 2nd, 2025 | 12:22 AM", activity: "Points awarded", description: "Referral trade bonus — markkmnn2@gmail.com completed first trade", amount: 300 },
 ];
 
 const userTasks = [
@@ -92,13 +108,13 @@ const userTasks = [
 ];
 
 const userReferrals = [
-  { date: "Jul 1st, 2024 | 3:56 AM", email: "paursgenius@gmail.com" },
-  { date: "Jun 19th, 2024 | 11:55 PM", email: "benjaminchibuike002@mail.com" },
-  { date: "Jun 20th, 2024 | 10:24 PM", email: "sundaykenzo@gmail.com" },
-  { date: "Jul 2nd, 2024 | 6:39 PM", email: "markkmnn2@gmail.com" },
-  { date: "Jul 5th, 2024 | 9:00 PM", email: "generalpaul954@gmail.com" },
-  { date: "Aug 13th, 2025 | 5:18 PM", email: "ozegbeandrew@gmail.com" },
-  { date: "Aug 20th, 2025 | 7:18 PM", email: "abm65858@gmail.com" },
+  { date: "Jul 1st, 2024 | 3:56 AM", email: "paursgenius@gmail.com", pointsEarned: 300, status: "Active" },
+  { date: "Jun 19th, 2024 | 11:55 PM", email: "benjaminchibuike002@mail.com", pointsEarned: 300, status: "Active" },
+  { date: "Jun 20th, 2024 | 10:24 PM", email: "sundaykenzo@gmail.com", pointsEarned: 0, status: "Signed up" },
+  { date: "Jul 2nd, 2024 | 6:39 PM", email: "markkmnn2@gmail.com", pointsEarned: 600, status: "Active" },
+  { date: "Jul 5th, 2024 | 9:00 PM", email: "generalpaul954@gmail.com", pointsEarned: 0, status: "Inactive" },
+  { date: "Aug 13th, 2025 | 5:18 PM", email: "ozegbeandrew@gmail.com", pointsEarned: 300, status: "Active" },
+  { date: "Aug 20th, 2025 | 7:18 PM", email: "abm65858@gmail.com", pointsEarned: 300, status: "Active" },
 ];
 
 const kycLevel1 = {
