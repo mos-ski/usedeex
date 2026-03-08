@@ -1042,6 +1042,122 @@ const AdminPanel = () => {
               )}
             </div>
           )}
+
+          {/* ===== AUDIT LOG ===== */}
+          {activeTab === "audit-log" && (
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-1">Audit Log <NewBadge /></h2>
+              <p className="text-sm text-muted-foreground mb-4">Every admin action is recorded here for compliance.</p>
+              <div className="bg-card border border-border rounded-xl overflow-hidden">
+                <table className="w-full">
+                  <thead><tr className="border-b border-border">
+                    {["Admin", "Action", "Target", "Details", "Date"].map(h => (
+                      <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                    ))}
+                  </tr></thead>
+                  <tbody>
+                    {[
+                      { admin: "Adedamola A.", action: "Approved KYC", target: "Chibueze Umeh", details: "Level 3 verification", date: "Mar 8, 2026, 8:03 AM" },
+                      { admin: "Adedamola A.", action: "Changed Rate", target: "BTC/NGN", details: "₦97,200,000 → ₦97,450,000", date: "Mar 8, 2026, 7:45 AM" },
+                      { admin: "Dawood K.", action: "Triggered Payout", target: "Divine Omajuwa", details: "500.05 USDT → ₦767,576.75", date: "Mar 8, 2026, 5:23 PM" },
+                      { admin: "Dawood K.", action: "Rejected KYC", target: "Idris Abdullahi", details: "Inconsistent documents", date: "Feb 20, 2026, 12:20 PM" },
+                      { admin: "System", action: "Auto Swap", target: "Platform", details: "0.000744 BTC → USDT", date: "Mar 8, 2026, 4:17 PM" },
+                      { admin: "Adedamola A.", action: "Updated Fee", target: "Withdrawal Fee", details: "₦25 → ₦50", date: "Mar 7, 2026, 9:30 AM" },
+                      { admin: "System", action: "Failed Payout", target: "Victor Odigili", details: "Insufficient balance", date: "Mar 6, 2026, 3:12 PM" },
+                      { admin: "Dawood K.", action: "Added Staff", target: "Payroll", details: "Ikegbulam Ugochukwu - Backend Developer", date: "Jan 23, 2026, 11:45 AM" },
+                    ].map((log, i) => (
+                      <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                        <td className="px-4 py-3 text-sm text-foreground">{log.admin}</td>
+                        <td className="px-4 py-3"><span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold ${
+                          log.action.includes("Approved") || log.action.includes("Auto") ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" :
+                          log.action.includes("Rejected") || log.action.includes("Failed") ? "bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))]" :
+                          "bg-[hsl(var(--deex-blue))]/20 text-[hsl(var(--deex-blue))]"
+                        }`}>{log.action}</span></td>
+                        <td className="px-4 py-3 text-sm text-foreground">{log.target}</td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground">{log.details}</td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground">{log.date}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ===== CUSTOMER DETAIL ===== */}
+          {activeTab === "customer-detail" && selectedCustomer && (
+            <div>
+              <button onClick={() => { setActiveTab("users"); setSelectedCustomer(null); }} className="text-sm text-deex-blue mb-4 hover:underline flex items-center gap-1"><ChevronLeft className="w-4 h-4" /> Back to Users</button>
+              <div className="flex gap-6">
+                <div className="flex-1">
+                  <div className="bg-card border border-border rounded-xl p-6 mb-4">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-14 h-14 rounded-full bg-deex-blue/20 flex items-center justify-center text-lg font-bold text-deex-blue">
+                        {selectedCustomer.name.split(" ").map(n => n[0]).join("").substring(0, 2)}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-foreground">{selectedCustomer.name} <NewBadge /></h3>
+                        <p className="text-sm text-muted-foreground">{selectedCustomer.email}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      {[
+                        { label: "Phone", value: selectedCustomer.phone },
+                        { label: "KYC Level", value: selectedCustomer.kyc },
+                        { label: "Created", value: selectedCustomer.created },
+                        { label: "Last Login", value: selectedCustomer.lastLogin },
+                      ].map(d => (
+                        <div key={d.label} className="bg-secondary rounded-lg p-3">
+                          <p className="text-xs text-muted-foreground mb-1">{d.label}</p>
+                          <p className="text-sm font-medium text-foreground">{d.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <h3 className="text-sm font-semibold text-foreground mb-3">Transaction History</h3>
+                  <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <table className="w-full">
+                      <thead><tr className="border-b border-border">
+                        {["Type", "Amount", "Status", "Date"].map(h => (
+                          <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                        ))}
+                      </tr></thead>
+                      <tbody>
+                        {[
+                          { type: "Sold BTC", amount: "₦450,000", status: "COMPLETED", date: "Mar 8, 2026" },
+                          { type: "Deposit USDT", amount: "$500.05", status: "COMPLETED", date: "Mar 8, 2026" },
+                          { type: "Airtime MTN", amount: "₦2,000", status: "COMPLETED", date: "Mar 7, 2026" },
+                        ].map((tx, i) => (
+                          <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30">
+                            <td className="px-4 py-3 text-sm text-foreground">{tx.type}</td>
+                            <td className="px-4 py-3 text-sm text-foreground">{tx.amount}</td>
+                            <td className="px-4 py-3">{statusBadge(tx.status)}</td>
+                            <td className="px-4 py-3 text-xs text-muted-foreground">{tx.date}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div className="w-72 shrink-0 space-y-4">
+                  <div className="bg-card border border-border rounded-xl p-5">
+                    <h4 className="text-sm font-semibold text-foreground mb-3">Actions</h4>
+                    <div className="space-y-2">
+                      <button className="w-full h-9 bg-deex-blue text-primary-foreground rounded-lg text-sm font-medium">Send Notification</button>
+                      <button className="w-full h-9 bg-secondary text-foreground rounded-lg text-sm font-medium">Reset Password</button>
+                      <button className="w-full h-9 bg-destructive/10 text-destructive rounded-lg text-sm font-medium border border-destructive/20">Ban User</button>
+                    </div>
+                  </div>
+                  <div className="bg-card border border-border rounded-xl p-5">
+                    <h4 className="text-sm font-semibold text-foreground mb-3">Notes</h4>
+                    <textarea placeholder="Add internal notes..." className="w-full h-24 bg-secondary rounded-lg p-3 text-sm text-foreground placeholder:text-muted-foreground outline-none resize-none" />
+                    <button className="mt-2 text-xs text-deex-blue font-medium">Save Note</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>
