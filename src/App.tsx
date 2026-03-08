@@ -36,6 +36,7 @@ import QuickAction from "./pages/QuickAction";
 import AdminPanel from "./pages/AdminPanel";
 import VirtualCards from "./pages/VirtualCards";
 import TradeStreak from "./pages/TradeStreak";
+import AdminUserDetail from "./pages/AdminUserDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -80,6 +81,8 @@ const App = () => (
           <Route path="/quick-action" element={<QuickAction />} />
           <Route path="/virtual-cards" element={<VirtualCards />} />
           <Route path="/trade-streak" element={<TradeStreak />} />
+          <Route path="/admin/users/:id" element={<AdminUserDetail />} />
+          <Route path="/admin" element={<AdminPanel />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
