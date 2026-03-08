@@ -20,6 +20,7 @@ import Rewards from "./pages/Rewards";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
 import QuickAction from "./pages/QuickAction";
+import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/quick-action" element={<QuickAction />} />
+          <Route path="/admin" element={<AdminPanel />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
