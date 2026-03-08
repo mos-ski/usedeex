@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, Eye, EyeOff, ArrowDownLeft, CreditCard, Send, Smartphone, Wifi, Zap, Gamepad2, TrendingUp, ArrowLeftRight, Phone } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
-import EmptyState from "@/components/EmptyState";
 
 const cryptoRates = [
-  { name: "Bitcoin", symbol: "BTC", rate: "₦97,450,000", change: "+2.4%", up: true },
-  { name: "Ethereum", symbol: "ETH", rate: "₦5,830,000", change: "+1.8%", up: true },
+  { name: "Bitcoin", symbol: "BTC", rate: "₦97,450,000", change: "+2.4%" },
+  { name: "Ethereum", symbol: "ETH", rate: "₦5,830,000", change: "+1.8%" },
+  { name: "USDT", symbol: "USDT", rate: "₦1,535", change: "+0.1%" },
+  { name: "USDC", symbol: "USDC", rate: "₦1,530", change: "+0.05%" },
+  { name: "Solana", symbol: "SOL", rate: "₦231,000", change: "+5.2%" },
+  { name: "BNB", symbol: "BNB", rate: "₦920,000", change: "-0.3%" },
+  { name: "Tron", symbol: "TRX", rate: "₦215", change: "+1.1%" },
 ];
 
 const recentTxns = [
@@ -23,6 +27,42 @@ const giftCardTxns = [
   { id: 2, brand: "GOOGLE PLAY", amount: "$100.00", date: "Sep 5th, 2023", status: "Pending" },
   { id: 3, brand: "GOOGLE PLAY", amount: "$100.00", date: "Sep 5th, 2023", status: "Pending" },
 ];
+
+const RatesTicker = () => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    let animFrame: number;
+    let pos = 0;
+    const speed = 0.5;
+    const animate = () => {
+      pos += speed;
+      if (pos >= el.scrollWidth / 2) pos = 0;
+      el.scrollLeft = pos;
+      animFrame = requestAnimationFrame(animate);
+    };
+    animFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animFrame);
+  }, []);
+
+  const duplicated = [...cryptoRates, ...cryptoRates];
+
+  return (
+    <div ref={scrollRef} className="overflow-hidden whitespace-nowrap mb-6">
+      <div className="inline-flex gap-4">
+        {duplicated.map((c, i) => (
+          <div key={`${c.symbol}-${i}`} className="inline-flex items-center gap-2 bg-secondary rounded-full px-3 py-1.5 shrink-0">
+            <span className="text-xs font-semibold text-foreground">{c.symbol}</span>
+            <span className="text-xs text-muted-foreground">{c.rate}</span>
+            <span className={`text-xs font-medium ${c.change.startsWith("+") ? "text-success" : "text-destructive"}`}>{c.change}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -88,22 +128,13 @@ const Dashboard = () => {
 
           {activeTab === "crypto" ? (
             <>
-              <div className="mb-6">
+              {/* Scrolling Rates Ticker */}
+              <div className="mb-1">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold text-foreground">Today's Rates</h3>
                   <TrendingUp className="w-4 h-4 text-muted-foreground" />
                 </div>
-                <div className="space-y-2">
-                  {cryptoRates.map((c) => (
-                    <div key={c.symbol} className="flex items-center justify-between bg-secondary rounded-xl px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-warning/20 flex items-center justify-center text-xs font-bold text-warning">{c.symbol.charAt(0)}</div>
-                        <div><p className="text-sm font-medium text-foreground">{c.name}</p><p className="text-xs text-muted-foreground">{c.symbol}</p></div>
-                      </div>
-                      <div className="text-right"><p className="text-sm font-medium text-foreground">{c.rate}</p><p className={`text-xs ${c.up ? "text-success" : "text-destructive"}`}>{c.change}</p></div>
-                    </div>
-                  ))}
-                </div>
+                <RatesTicker />
               </div>
 
               <div className="mb-6">
@@ -129,7 +160,7 @@ const Dashboard = () => {
                 </div>
                 <div className="space-y-2">
                   {recentTxns.map((tx) => (
-                    <button key={tx.id} onClick={() => navigate("/receipt")} className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3">
+                    <button key={tx.id} onClick={() => navigate("/receipt", { state: { type: "sell", data: tx } })} className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3">
                       <div className="text-left"><p className="text-sm font-medium text-foreground">{tx.type}</p><p className="text-xs text-muted-foreground">{tx.date}</p></div>
                       <div className="text-right"><p className="text-sm font-semibold text-foreground">{tx.amount}</p><p className={`text-xs ${tx.status === "Completed" ? "text-success" : "text-warning"}`}>{tx.status}</p></div>
                     </button>
@@ -146,7 +177,7 @@ const Dashboard = () => {
               <div className="bg-card border border-border rounded-2xl overflow-hidden">
                 {giftCardTxns.map((tx, i) => (
                   <div key={tx.id}>
-                    <button onClick={() => navigate("/receipt")} className="w-full flex items-center justify-between px-4 py-3.5">
+                    <button onClick={() => navigate("/receipt", { state: { type: "giftcard", data: tx } })} className="w-full flex items-center justify-between px-4 py-3.5">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center"><Phone className="w-5 h-5 text-warning" /></div>
                         <div className="text-left"><p className="text-sm font-semibold text-foreground">{tx.brand}</p><p className="text-xs text-muted-foreground">{tx.date} • <span className="text-warning">{tx.status}</span></p></div>
