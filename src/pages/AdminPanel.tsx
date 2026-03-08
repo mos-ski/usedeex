@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Wallet, ShoppingCart, Users, Shield, ListChecks, BarChart3,
   Settings, LogOut, Bell, Search, ChevronDown, ChevronRight, Eye, EyeOff,
-  ExternalLink, Plus, Upload, Info, AlertCircle, Trash2
+  ExternalLink, Plus, Upload, Info, AlertCircle, Trash2, FileText, ArrowLeft,
+  ChevronLeft
 } from "lucide-react";
 import CryptoIcon from "@/components/CryptoIcon";
 import {
@@ -11,8 +12,12 @@ import {
   ResponsiveContainer, PieChart, Pie, Cell, Legend
 } from "recharts";
 
+const NewBadge = () => (
+  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider bg-[hsl(var(--warning))] text-background uppercase animate-pulse ml-1">NEW</span>
+);
+
 // ===== TYPES =====
-type AdminTab = "dashboard" | "wallets" | "orders" | "users" | "kyc" | "kyc-compliance" | "kyc-rules" | "reports" | "settings";
+type AdminTab = "dashboard" | "wallets" | "orders" | "users" | "kyc" | "kyc-compliance" | "kyc-rules" | "reports" | "settings" | "audit-log" | "customer-detail";
 
 // ===== MOCK DATA =====
 const dashboardMetrics = [
