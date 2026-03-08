@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ChevronRight } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
+import PageTransition from "@/components/PageTransition";
 
 const assets = [
   { symbol: "BTC", name: "Bitcoin", balance: "0.0234", value: "$2,280.12", color: "bg-warning/20 text-warning" },
@@ -17,88 +18,103 @@ const assets = [
 const Wallet = () => {
   const navigate = useNavigate();
   const [showBalance, setShowBalance] = useState(true);
-  const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
+  const [cardIndex, setCardIndex] = useState(0);
+  const touchStartX = useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      setCardIndex(diff > 0 ? 1 : 0);
+    }
+  };
 
   return (
     <MobileLayout>
-      <div className="px-4 pt-6">
-        <h2 className="text-lg font-bold text-foreground mb-4">Wallet</h2>
+      <PageTransition>
+        <div className="px-4 pt-6">
+          <h2 className="text-lg font-bold text-foreground mb-4">Wallet</h2>
 
-        {/* Holdings Card */}
-        <div className="bg-gradient-to-br from-primary/20 to-accent/10 rounded-2xl p-5 mb-6 border border-border">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm text-muted-foreground">Holdings</span>
-            <button onClick={() => setShowBalance(!showBalance)}>
-              {showBalance ? <Eye className="w-4 h-4 text-muted-foreground" /> : <EyeOff className="w-4 h-4 text-muted-foreground" />}
-            </button>
-          </div>
-          <p className="text-3xl font-bold text-foreground">
-            {showBalance ? "$12,450.80" : "••••••"}
-          </p>
-          <div className="flex gap-1 mt-3 justify-center">
-            <div className="w-2 h-2 rounded-full bg-primary" />
-            <div className="w-2 h-2 rounded-full bg-muted" />
-            <div className="w-2 h-2 rounded-full bg-muted" />
-          </div>
-        </div>
+          {/* Swipeable Holdings / Rewards Card */}
+          <div
+            className="bg-gradient-to-br from-primary/20 to-accent/10 rounded-2xl p-5 mb-6 border border-border overflow-hidden"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-sm text-muted-foreground">
+                {cardIndex === 0 ? "Holdings" : "Rewards Earned"}
+              </span>
+              <button onClick={() => setShowBalance(!showBalance)}>
+                {showBalance ? <Eye className="w-4 h-4 text-muted-foreground" /> : <EyeOff className="w-4 h-4 text-muted-foreground" />}
+              </button>
+            </div>
 
-        {/* Assets */}
-        <h3 className="text-sm font-semibold text-foreground mb-3">Assets</h3>
-        <div className="space-y-2">
-          {assets.map((asset) => (
-            <button
-              key={asset.symbol}
-              onClick={() => navigate(`/asset/${asset.symbol.toLowerCase()}`)}
-              className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3"
-            >
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full ${asset.color} flex items-center justify-center text-xs font-bold`}>
-                  {asset.symbol.substring(0, 2)}
-                </div>
-                <div className="text-left">
-                  <p className="text-sm font-medium text-foreground">{asset.name}</p>
-                  <p className="text-xs text-muted-foreground">{asset.symbol}</p>
-                </div>
-              </div>
-              <div className="text-right flex items-center gap-2">
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{showBalance ? asset.balance : "••••"}</p>
-                  <p className="text-xs text-muted-foreground">{showBalance ? asset.value : "••••"}</p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              </div>
-            </button>
-          ))}
-        </div>
+            {cardIndex === 0 ? (
+              <>
+                <p className="text-3xl font-bold text-foreground">
+                  {showBalance ? "$12,450.80" : "••••••"}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {showBalance ? "≈ NGN 19,121,228" : "••••••"}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-3xl font-bold text-primary">
+                  {showBalance ? "2,450 pts" : "••••••"}
+                </p>
+                <p className="text-sm text-success mt-1">
+                  {showBalance ? "≈ ₦24,500" : "••••••"}
+                </p>
+                <button
+                  onClick={() => navigate("/rewards")}
+                  className="mt-3 px-4 py-1.5 bg-primary/15 rounded-full text-xs text-primary font-medium"
+                >
+                  Redeem Points →
+                </button>
+              </>
+            )}
 
-        {/* Bottom Sheet */}
-        {selectedAsset && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center" onClick={() => setSelectedAsset(null)}>
-            <div className="w-full max-w-[430px] bg-card rounded-t-3xl p-6 animate-slide-up" onClick={(e) => e.stopPropagation()}>
-              <div className="w-12 h-1 bg-muted rounded-full mx-auto mb-6" />
-              <h3 className="text-lg font-bold text-foreground mb-4">{selectedAsset} Actions</h3>
-              <div className="space-y-2">
-                {[
-                  { label: "Sell Gift Cards", action: () => navigate("/giftcards") },
-                  { label: "See Rates", action: () => {} },
-                  { label: "Trade Crypto", action: () => navigate("/sell-crypto") },
-                  { label: "Generate Statement", action: () => {} },
-                  { label: "Open Reward", action: () => navigate("/rewards") },
-                ].map((item) => (
-                  <button
-                    key={item.label}
-                    onClick={item.action}
-                    className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3.5"
-                  >
-                    <span className="text-sm font-medium text-foreground">{item.label}</span>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                  </button>
-                ))}
-              </div>
+            <div className="flex gap-1 mt-3 justify-center">
+              <div className={`w-2 h-2 rounded-full transition-colors ${cardIndex === 0 ? "bg-primary" : "bg-muted"}`} />
+              <div className={`w-2 h-2 rounded-full transition-colors ${cardIndex === 1 ? "bg-primary" : "bg-muted"}`} />
             </div>
           </div>
-        )}
-      </div>
+
+          {/* Assets */}
+          <h3 className="text-sm font-semibold text-foreground mb-3">Assets</h3>
+          <div className="space-y-2">
+            {assets.map((asset) => (
+              <button
+                key={asset.symbol}
+                onClick={() => navigate(`/asset/${asset.symbol.toLowerCase()}`)}
+                className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-full ${asset.color} flex items-center justify-center text-xs font-bold`}>
+                    {asset.symbol.substring(0, 2)}
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-medium text-foreground">{asset.name}</p>
+                    <p className="text-xs text-muted-foreground">{asset.symbol}</p>
+                  </div>
+                </div>
+                <div className="text-right flex items-center gap-2">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{showBalance ? asset.balance : "••••"}</p>
+                    <p className="text-xs text-muted-foreground">{showBalance ? asset.value : "••••"}</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </PageTransition>
       <BottomNav />
     </MobileLayout>
   );
