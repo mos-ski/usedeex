@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Eye, EyeOff, ArrowDownLeft, CreditCard, Send, Smartphone, Wifi, Zap, Gamepad2, ChevronRight, TrendingUp } from "lucide-react";
+import { Bell, Eye, EyeOff, ArrowDownLeft, CreditCard, Send, Smartphone, Wifi, Zap, Gamepad2, TrendingUp, ArrowLeftRight, Phone } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
 
@@ -17,9 +17,9 @@ const recentTxns = [
 ];
 
 const giftCardTxns = [
-  { id: 1, type: "Apple Gift Card", amount: "₦75,000", date: "Today, 1:00 PM", status: "Completed" },
-  { id: 2, type: "Google Play Card", amount: "₦25,000", date: "Yesterday", status: "Pending" },
-  { id: 3, type: "Amazon Gift Card", amount: "₦120,000", date: "Mar 4", status: "Completed" },
+  { id: 1, brand: "APPLE", amount: "$4,020.00", date: "Jul 12th, 2024", status: "Pending" },
+  { id: 2, brand: "GOOGLE PLAY", amount: "$100.00", date: "Sep 5th, 2023", status: "Pending" },
+  { id: 3, brand: "GOOGLE PLAY", amount: "$100.00", date: "Sep 5th, 2023", status: "Pending" },
 ];
 
 const Dashboard = () => {
@@ -38,43 +38,41 @@ const Dashboard = () => {
           <div className="flex bg-secondary rounded-full p-1">
             <button
               onClick={() => setActiveTab("crypto")}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${activeTab === "crypto" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === "crypto" ? "bg-muted text-foreground" : "text-muted-foreground"}`}
             >
               Crypto
             </button>
             <button
               onClick={() => setActiveTab("giftcards")}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${activeTab === "giftcards" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === "giftcards" ? "bg-muted text-foreground" : "text-muted-foreground"}`}
             >
-              Gift Cards
+              Gift cards
             </button>
           </div>
           <button onClick={() => navigate("/notifications")} className="relative w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-            <Bell className="w-5 h-5 text-muted-foreground" />
-            <div className="absolute top-1 right-1 w-3 h-3 bg-deex-red rounded-full border-2 border-background" />
+            <Bell className="w-5 h-5 text-primary" />
+            <div className="absolute top-1 right-1 w-3 h-3 bg-warning rounded-full border-2 border-background" />
           </button>
         </div>
 
         {/* Balance Card */}
-        <div className="bg-gradient-to-br from-primary/20 to-accent/10 rounded-2xl p-5 mb-6 border border-border">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm text-muted-foreground">Total Balance</span>
+        <div className="bg-card rounded-2xl p-5 mb-6 border border-border">
+          <p className="text-xs text-muted-foreground tracking-widest text-center mb-2">TOTAL BALANCE</p>
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <p className="text-3xl font-bold text-foreground">
+              {showBalance ? "$12,450.80" : "••••••"}
+            </p>
             <button onClick={() => setShowBalance(!showBalance)}>
-              {showBalance ? <Eye className="w-4 h-4 text-muted-foreground" /> : <EyeOff className="w-4 h-4 text-muted-foreground" />}
+              {showBalance ? <EyeOff className="w-5 h-5 text-muted-foreground" /> : <Eye className="w-5 h-5 text-muted-foreground" />}
             </button>
           </div>
-          <p className="text-3xl font-bold text-foreground mb-1">
-            {showBalance ? "$12,450.80" : "••••••"}
+          <p className="text-sm text-warning text-center">
+            {showBalance ? "NGN 19,121,228.00" : "••••••"}
           </p>
-          <p className="text-sm text-muted-foreground">
-            {showBalance ? "≈ ₦19,121,228.00" : "••••••"}
-          </p>
-        </div>
+          <div className="h-px bg-border my-4" />
 
-        {activeTab === "crypto" ? (
-          <>
-            {/* Action Buttons */}
-            <div className="flex gap-3 mb-6">
+          {activeTab === "crypto" ? (
+            <div className="flex gap-3">
               <button onClick={() => navigate("/deposit")} className="flex-1 bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
                 <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center">
                   <ArrowDownLeft className="w-5 h-5 text-primary" />
@@ -94,7 +92,16 @@ const Dashboard = () => {
                 <span className="text-xs text-foreground font-medium">Sell Crypto</span>
               </button>
             </div>
+          ) : (
+            <button onClick={() => navigate("/giftcards")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold flex items-center justify-center gap-2">
+              <ArrowLeftRight className="w-5 h-5" />
+              Sell Giftcards
+            </button>
+          )}
+        </div>
 
+        {activeTab === "crypto" ? (
+          <>
             {/* Exchange Rates */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
@@ -148,8 +155,8 @@ const Dashboard = () => {
               </div>
               <div className="space-y-2">
                 {recentTxns.map((tx) => (
-                  <div key={tx.id} className="flex items-center justify-between bg-secondary rounded-xl px-4 py-3">
-                    <div>
+                  <button key={tx.id} onClick={() => navigate("/receipt")} className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3">
+                    <div className="text-left">
                       <p className="text-sm font-medium text-foreground">{tx.type}</p>
                       <p className="text-xs text-muted-foreground">{tx.date}</p>
                     </div>
@@ -157,31 +164,35 @@ const Dashboard = () => {
                       <p className="text-sm font-semibold text-foreground">{tx.amount}</p>
                       <p className={`text-xs ${tx.status === "Completed" ? "text-success" : "text-warning"}`}>{tx.status}</p>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
           </>
         ) : (
           <>
-            {/* Gift Cards Tab */}
-            <button onClick={() => navigate("/giftcards")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold mb-6">
-              Sell Gift Cards
-            </button>
-
+            {/* Gift Cards Recent */}
             <div className="mb-4">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Recent Gift Card Trades</h3>
-              <div className="space-y-2">
-                {giftCardTxns.map((tx) => (
-                  <div key={tx.id} className="flex items-center justify-between bg-secondary rounded-xl px-4 py-3">
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{tx.type}</p>
-                      <p className="text-xs text-muted-foreground">{tx.date}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-foreground">{tx.amount}</p>
-                      <p className={`text-xs ${tx.status === "Completed" ? "text-success" : "text-warning"}`}>{tx.status}</p>
-                    </div>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-foreground">Recent transactions</h3>
+                <button onClick={() => navigate("/activity")} className="text-xs text-primary">See all</button>
+              </div>
+              <div className="bg-card border border-border rounded-2xl overflow-hidden">
+                {giftCardTxns.map((tx, i) => (
+                  <div key={tx.id}>
+                    <button onClick={() => navigate("/receipt")} className="w-full flex items-center justify-between px-4 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center">
+                          <Phone className="w-5 h-5 text-warning" />
+                        </div>
+                        <div className="text-left">
+                          <p className="text-sm font-semibold text-foreground">{tx.brand}</p>
+                          <p className="text-xs text-muted-foreground">{tx.date} • <span className="text-warning">{tx.status}</span></p>
+                        </div>
+                      </div>
+                      <p className="text-sm font-medium text-foreground">{tx.amount}</p>
+                    </button>
+                    {i < giftCardTxns.length - 1 && <div className="mx-4 h-px bg-border" />}
                   </div>
                 ))}
               </div>
