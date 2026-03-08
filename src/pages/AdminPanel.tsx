@@ -514,7 +514,7 @@ const AdminPanel = () => {
           <div className="flex items-center gap-2 text-foreground">
             <span className="text-muted-foreground">—</span>
             <h1 className="text-base font-semibold">
-              {activeTab === "dashboard" ? "Dashboard" : activeTab === "wallets" ? "Wallets" : activeTab === "orders" ? "Transactions" : activeTab === "users" ? "Users" : isKycTab ? "" : activeTab === "reports" ? "Reports" : "Settings"}
+              {activeTab === "dashboard" ? "Dashboard" : activeTab === "wallets" ? "Wallets" : activeTab === "orders" ? "Transactions" : activeTab === "users" ? "Users" : isKycTab ? "" : isComplianceTab ? "Compliance" : activeTab === "reports" ? "Reports" : activeTab === "audit-log" ? "Audit Log" : activeTab === "virtual-cards" ? "Virtual Cards" : "Settings"}
             </h1>
           </div>
           <div className="flex items-center gap-3">
