@@ -34,29 +34,34 @@ const EditProfile = () => {
           </div>
 
           <div className="space-y-4">
+            {/* Editable: First Name */}
             <div>
               <label className="text-sm text-muted-foreground mb-2 block">First Name</label>
               <input value={firstName} onChange={e => setFirstName(e.target.value)} className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary" />
             </div>
+            {/* Editable: Last Name */}
             <div>
               <label className="text-sm text-muted-foreground mb-2 block">Last Name</label>
               <input value={lastName} onChange={e => setLastName(e.target.value)} className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary" />
             </div>
+            {/* Editable: Email */}
             <div>
               <label className="text-sm text-muted-foreground mb-2 block">Email</label>
               <input value={email} onChange={e => setEmail(e.target.value)} className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary" />
             </div>
+            {/* Editable: Date of Birth */}
             <div>
               <label className="text-sm text-muted-foreground mb-2 block">Date of Birth</label>
               <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary" />
             </div>
 
-            {/* Non-editable fields */}
+            {/* Non-editable: Username */}
             <div>
               <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-1.5">Username <Lock className="w-3 h-3" /></label>
               <div className="w-full h-12 bg-muted rounded-xl px-4 flex items-center text-muted-foreground">@johndoe</div>
               <p className="text-[10px] text-muted-foreground mt-1">Contact support to change username</p>
             </div>
+            {/* Non-editable: Phone Number */}
             <div>
               <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-1.5">Phone Number <Lock className="w-3 h-3" /></label>
               <div className="w-full h-12 bg-muted rounded-xl px-4 flex items-center text-muted-foreground">+234 810 367 4006</div>
@@ -64,7 +69,7 @@ const EditProfile = () => {
             </div>
           </div>
 
-          <button onClick={handleSave} className="w-full h-14 bg-primary rounded-xl text-primary-foreground font-semibold mt-8">Save Changes</button>
+          <button onClick={handleSave} className="w-full h-14 bg-primary rounded-xl text-primary-foreground font-semibold mt-8 mb-8">Save Changes</button>
         </div>
       </PageTransition>
     </MobileLayout>
