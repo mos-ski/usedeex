@@ -9,6 +9,9 @@ import Dashboard from "./pages/Dashboard";
 import Wallet from "./pages/Wallet";
 import Deposit from "./pages/Deposit";
 import SellCrypto from "./pages/SellCrypto";
+import SendMoney from "./pages/SendMoney";
+import AssetDetail from "./pages/AssetDetail";
+import Receipt from "./pages/Receipt";
 import DeexPay from "./pages/DeexPay";
 import GiftCards from "./pages/GiftCards";
 import BillPayment from "./pages/BillPayment";
@@ -35,6 +38,9 @@ const App = () => (
           <Route path="/wallet" element={<Wallet />} />
           <Route path="/deposit" element={<Deposit />} />
           <Route path="/sell-crypto" element={<SellCrypto />} />
+          <Route path="/send-money" element={<SendMoney />} />
+          <Route path="/asset/:symbol" element={<AssetDetail />} />
+          <Route path="/receipt" element={<Receipt />} />
           <Route path="/deex-pay" element={<DeexPay />} />
           <Route path="/giftcards" element={<GiftCards />} />
           <Route path="/bills/:type" element={<BillPayment />} />
