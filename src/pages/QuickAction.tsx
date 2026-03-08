@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Gift, TrendingUp, ArrowDownLeft, Send, Banknote, FileText, X, ArrowDownUp, Upload } from "lucide-react";
+import { Gift, TrendingUp, ArrowDownLeft, Send, Banknote, FileText, X, CreditCard } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
 import NewBadge from "@/components/NewBadge";
@@ -12,10 +12,9 @@ const QuickAction = () => {
     { icon: TrendingUp, label: "See Rates", path: "/dashboard", color: "bg-accent/15 text-accent" },
     { icon: ArrowDownLeft, label: "Deposit Crypto", path: "/deposit", color: "bg-primary/15 text-primary" },
     { icon: Send, label: "Sell Crypto", path: "/sell-crypto", color: "bg-success/15 text-success" },
-    { icon: ArrowDownUp, label: "Swap Crypto", path: "/swap-crypto", color: "bg-accent/15 text-accent", isNew: true },
-    { icon: Upload, label: "Withdraw", path: "/withdraw", color: "bg-deex-purple/15 text-deex-purple", isNew: true },
+    { icon: CreditCard, label: "DeeX Pay", path: "/deex-pay", color: "bg-accent/15 text-accent", isNew: true },
     { icon: Banknote, label: "Send Money", path: "/send-money", color: "bg-deex-purple/15 text-deex-purple" },
-    { icon: FileText, label: "Generate Statement", path: "/profile", color: "bg-deex-orange/15 text-deex-orange" },
+    { icon: FileText, label: "Generate Statement", path: "/generate-statement", color: "bg-deex-orange/15 text-deex-orange", isNew: true },
   ];
 
   return (

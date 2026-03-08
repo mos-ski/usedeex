@@ -1,10 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Info, Plus, ArrowUpRight, ArrowLeftRight, X } from "lucide-react";
+import { ArrowLeft, Info, Plus, ArrowUpRight, ArrowLeftRight, X, User, Clock } from "lucide-react";
 import { LineChart, Line, XAxis, ResponsiveContainer } from "recharts";
 import { useState } from "react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
 import CryptoIcon from "@/components/CryptoIcon";
+import NewBadge from "@/components/NewBadge";
 
 const chartDataByAsset: Record<string, number[]> = {
   BTC: [67800, 67200, 66800, 67100, 66500, 66900, 66200, 66600, 65800, 66100, 66800, 67400, 67100, 67500, 67378],
@@ -31,12 +32,24 @@ const recentTxns = [
   { type: "USDT to BTC", date: "Apr 20th, 2024", status: "Completed", amount: "1.00 USDT", value: "$1.00" },
 ];
 
+const pastAddresses = [
+  { label: "Main Wallet", address: "0x742d35Cc...f2bD68", full: "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD68" },
+  { label: "Trading Wallet", address: "bc1qxy2kg...0wlh", full: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" },
+];
+
+const pastUsernames = [
+  { label: "@adebayo", name: "Adebayo Ogunlesi" },
+  { label: "@chioma_d", name: "Chioma Daniels" },
+];
+
 const timeframes = ["1D", "1W", "1M", "1Y", "All"];
 const tourSteps = [
   { title: "Deposit", description: "Tap the Deposit button to receive crypto into your wallet. Select the network carefully." },
-  { title: "Withdraw", description: "Send crypto from your wallet to an external address. Double-check the address and network." },
+  { title: "Withdraw", description: "Send crypto to a DeeX user by username, or to an external wallet address. Past beneficiaries are saved." },
   { title: "Swap", description: "Instantly convert one crypto to another. Rates update in real time." },
 ];
+
+type WithdrawView = "none" | "choose" | "username" | "address";
 
 const AssetDetail = () => {
   const navigate = useNavigate();
@@ -44,12 +57,111 @@ const AssetDetail = () => {
   const [activeTimeframe, setActiveTimeframe] = useState("1D");
   const [showTour, setShowTour] = useState(false);
   const [tourStep, setTourStep] = useState(0);
+  const [withdrawView, setWithdrawView] = useState<WithdrawView>("none");
+  const [withdrawAddress, setWithdrawAddress] = useState("");
+  const [withdrawUsername, setWithdrawUsername] = useState("");
+  const [withdrawAmount, setWithdrawAmount] = useState("");
 
   const key = symbol?.toUpperCase() || "BTC";
   const asset = assetData[key] || assetData.BTC;
   const isNegative = asset.change.startsWith("-");
   const rawData = chartDataByAsset[key] || chartDataByAsset.BTC;
   const chartData = rawData.map((v, i) => ({ t: String(i + 1), v }));
+
+  // Withdraw modal
+  const WithdrawSheet = () => {
+    if (withdrawView === "none") return null;
+
+    if (withdrawView === "choose") {
+      return (
+        <div className="fixed inset-0 bg-background/80 z-50 flex items-end justify-center" onClick={() => setWithdrawView("none")}>
+          <div className="w-full max-w-[430px] bg-card rounded-t-2xl p-4 pb-8 border-t border-border" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-foreground">Withdraw {key}</h3>
+              <button onClick={() => setWithdrawView("none")} className="text-muted-foreground text-sm">Close</button>
+            </div>
+            <div className="space-y-2">
+              <button onClick={() => setWithdrawView("username")} className="w-full flex items-center gap-3 bg-secondary rounded-xl px-4 py-3.5">
+                <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center"><User className="w-5 h-5 text-primary" /></div>
+                <div className="text-left"><p className="text-sm font-medium text-foreground">To DeeX Username</p><p className="text-xs text-muted-foreground">Send to a DeeX user instantly</p></div>
+              </button>
+              <button onClick={() => setWithdrawView("address")} className="w-full flex items-center gap-3 bg-secondary rounded-xl px-4 py-3.5">
+                <div className="w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center"><ArrowUpRight className="w-5 h-5 text-accent" /></div>
+                <div className="text-left"><p className="text-sm font-medium text-foreground">To Wallet Address</p><p className="text-xs text-muted-foreground">Send to an external crypto wallet</p></div>
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (withdrawView === "username") {
+      return (
+        <div className="fixed inset-0 bg-background/80 z-50 flex items-end justify-center" onClick={() => setWithdrawView("none")}>
+          <div className="w-full max-w-[430px] bg-card rounded-t-2xl p-4 pb-8 border-t border-border" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-4">
+              <button onClick={() => setWithdrawView("choose")} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-4 h-4 text-foreground" /></button>
+              <h3 className="text-sm font-semibold text-foreground">Send to Username</h3>
+            </div>
+            {pastUsernames.length > 0 && (
+              <div className="mb-4">
+                <p className="text-xs text-muted-foreground mb-2">Recent</p>
+                <div className="flex gap-2">
+                  {pastUsernames.map(u => (
+                    <button key={u.label} onClick={() => setWithdrawUsername(u.label)} className={`bg-secondary rounded-xl px-3 py-2 ${withdrawUsername === u.label ? "border border-primary" : "border border-transparent"}`}>
+                      <p className="text-xs font-medium text-foreground">{u.label}</p>
+                      <p className="text-[10px] text-muted-foreground">{u.name}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            <input value={withdrawUsername} onChange={e => setWithdrawUsername(e.target.value)} placeholder="@username"
+              className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary mb-3 text-sm" />
+            <input value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)} placeholder="Amount" type="number"
+              className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary mb-4 text-sm" />
+            <button onClick={() => { if (withdrawUsername && withdrawAmount) { setWithdrawView("none"); navigate("/receipt", { state: { type: "sell", data: { type: `Sent ${key}`, amount: `${withdrawAmount} ${key}`, destination: withdrawUsername, status: "Completed" } } }); } }}
+              className={`w-full h-12 rounded-xl font-semibold ${withdrawUsername && withdrawAmount ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+              Send {key}
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // address view
+    return (
+      <div className="fixed inset-0 bg-background/80 z-50 flex items-end justify-center" onClick={() => setWithdrawView("none")}>
+        <div className="w-full max-w-[430px] bg-card rounded-t-2xl p-4 pb-8 border-t border-border" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center gap-3 mb-4">
+            <button onClick={() => setWithdrawView("choose")} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-4 h-4 text-foreground" /></button>
+            <h3 className="text-sm font-semibold text-foreground">Send to Address</h3>
+          </div>
+          {pastAddresses.length > 0 && (
+            <div className="mb-4">
+              <p className="text-xs text-muted-foreground mb-2">Past Addresses</p>
+              <div className="space-y-1.5">
+                {pastAddresses.map(a => (
+                  <button key={a.full} onClick={() => setWithdrawAddress(a.full)} className={`w-full bg-secondary rounded-xl px-3 py-2 text-left ${withdrawAddress === a.full ? "border border-primary" : "border border-transparent"}`}>
+                    <p className="text-xs font-medium text-foreground">{a.label}</p>
+                    <p className="text-[10px] text-muted-foreground font-mono">{a.address}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          <input value={withdrawAddress} onChange={e => setWithdrawAddress(e.target.value)} placeholder="Paste wallet address"
+            className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary mb-3 text-sm font-mono" />
+          <input value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)} placeholder="Amount" type="number"
+            className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary mb-4 text-sm" />
+          <button onClick={() => { if (withdrawAddress && withdrawAmount) { setWithdrawView("none"); navigate("/receipt", { state: { type: "sell", data: { type: `Withdrew ${key}`, amount: `${withdrawAmount} ${key}`, destination: withdrawAddress.slice(0, 20) + "...", status: "Processing" } } }); } }}
+            className={`w-full h-12 rounded-xl font-semibold ${withdrawAddress && withdrawAmount ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+            Withdraw {key}
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <MobileLayout hideNav>
@@ -95,10 +207,11 @@ const AssetDetail = () => {
               <button onClick={() => navigate("/deposit")} className="flex-1 bg-primary/10 border border-primary/20 rounded-xl py-3 flex items-center justify-center gap-2">
                 <Plus className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-medium">Deposit</span>
               </button>
-              <button className="flex-1 bg-primary/10 border border-primary/20 rounded-xl py-3 flex items-center justify-center gap-2">
+              <button onClick={() => setWithdrawView("choose")} className="flex-1 bg-primary/10 border border-primary/20 rounded-xl py-3 flex items-center justify-center gap-2 relative">
                 <ArrowUpRight className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-medium">Withdraw</span>
+                <NewBadge className="absolute -top-1 -right-1" />
               </button>
-              <button className="flex-1 bg-primary/10 border border-primary/20 rounded-xl py-3 flex items-center justify-center gap-2">
+              <button onClick={() => navigate("/swap-crypto")} className="flex-1 bg-primary/10 border border-primary/20 rounded-xl py-3 flex items-center justify-center gap-2">
                 <ArrowLeftRight className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-medium">Swap</span>
               </button>
             </div>
@@ -131,6 +244,8 @@ const AssetDetail = () => {
             </div>
           </div>
         </div>
+
+        <WithdrawSheet />
 
         {showTour && (
           <div className="fixed inset-0 bg-background/80 z-50 flex items-center justify-center px-6" onClick={() => setShowTour(false)}>

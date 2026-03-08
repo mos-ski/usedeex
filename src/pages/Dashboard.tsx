@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Eye, EyeOff, ArrowDownLeft, CreditCard, Send, TrendingUp, ArrowLeftRight, ArrowDownUp, Upload, AlertCircle } from "lucide-react";
+import { Bell, Eye, EyeOff, ArrowDownLeft, Send, TrendingUp, ArrowLeftRight, CreditCard, Phone, Wifi, Zap, Gamepad2 } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
@@ -91,14 +91,7 @@ const Dashboard = () => {
           </div>
 
           {/* Greeting */}
-          <p className="text-sm text-muted-foreground mb-1">{getGreeting()}, <span className="text-foreground font-medium">John</span> 👋</p>
-
-          {/* Pending Actions Banner */}
-          <button onClick={() => navigate("/activity")} className="w-full bg-warning/10 border border-warning/20 rounded-xl px-4 py-2.5 flex items-center gap-2 mb-4">
-            <AlertCircle className="w-4 h-4 text-warning shrink-0" />
-            <p className="text-xs text-foreground">You have <span className="font-bold text-warning">2 pending</span> transactions</p>
-            <NewBadge className="ml-auto" />
-          </button>
+          <p className="text-sm text-muted-foreground mb-4">{getGreeting()}, <span className="text-foreground font-medium">John</span> 👋</p>
 
           {/* Balance Card */}
           <div className="bg-card rounded-2xl p-5 mb-6 border border-border">
@@ -113,7 +106,7 @@ const Dashboard = () => {
             <div className="h-px bg-border my-4" />
 
             {activeTab === "crypto" ? (
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <button onClick={() => navigate("/deposit")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
                   <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center"><ArrowDownLeft className="w-4 h-4 text-primary" /></div>
                   <span className="text-[10px] text-foreground font-medium">Deposit</span>
@@ -122,14 +115,9 @@ const Dashboard = () => {
                   <div className="w-9 h-9 rounded-full bg-success/15 flex items-center justify-center"><Send className="w-4 h-4 text-success" /></div>
                   <span className="text-[10px] text-foreground font-medium">Sell</span>
                 </button>
-                <button onClick={() => navigate("/swap-crypto")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5 relative">
-                  <div className="w-9 h-9 rounded-full bg-accent/15 flex items-center justify-center"><ArrowDownUp className="w-4 h-4 text-accent" /></div>
-                  <span className="text-[10px] text-foreground font-medium">Swap</span>
-                  <NewBadge className="absolute -top-1 -right-1" />
-                </button>
-                <button onClick={() => navigate("/withdraw")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5 relative">
-                  <div className="w-9 h-9 rounded-full bg-deex-purple/15 flex items-center justify-center"><Upload className="w-4 h-4 text-deex-purple" /></div>
-                  <span className="text-[10px] text-foreground font-medium">Withdraw</span>
+                <button onClick={() => navigate("/deex-pay")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5 relative">
+                  <div className="w-9 h-9 rounded-full bg-accent/15 flex items-center justify-center"><CreditCard className="w-4 h-4 text-accent" /></div>
+                  <span className="text-[10px] text-foreground font-medium">DeeX Pay</span>
                   <NewBadge className="absolute -top-1 -right-1" />
                 </button>
               </div>
@@ -154,13 +142,15 @@ const Dashboard = () => {
                 <h3 className="text-sm font-semibold text-foreground mb-3">Bill Payment</h3>
                 <div className="flex gap-3">
                   {[
-                    { label: "Airtime", path: "/bills/airtime", provider: "MTN" },
-                    { label: "Data", path: "/bills/data", provider: "Glo" },
-                    { label: "Electricity", path: "/bills/electricity", provider: "IKEDC" },
-                    { label: "Betting", path: "/bills/betting", provider: "Bet9ja" },
+                    { label: "Airtime", path: "/bills/airtime", icon: Phone },
+                    { label: "Data", path: "/bills/data", icon: Wifi },
+                    { label: "Electricity", path: "/bills/electricity", icon: Zap },
+                    { label: "Betting", path: "/bills/betting", icon: Gamepad2 },
                   ].map((b) => (
                     <button key={b.label} onClick={() => navigate(b.path)} className="flex-1 bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
-                      <ProviderIcon name={b.provider} size="sm" />
+                      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+                        <b.icon className="w-4 h-4 text-primary" />
+                      </div>
                       <span className="text-[10px] text-muted-foreground">{b.label}</span>
                     </button>
                   ))}

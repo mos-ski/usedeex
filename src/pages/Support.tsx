@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, MessageCircle, ChevronDown, ChevronRight, Send, HelpCircle } from "lucide-react";
+import { ArrowLeft, MessageCircle, ChevronDown, ChevronRight, Send, HelpCircle, Mail, Phone } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
 import NewBadge from "@/components/NewBadge";
@@ -76,14 +76,36 @@ const Support = () => {
             <NewBadge />
           </div>
 
-          <button onClick={() => setView("chat")} className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center gap-3 mb-6">
-            <MessageCircle className="w-8 h-8 text-primary" />
-            <div className="text-left flex-1">
-              <p className="text-sm font-semibold text-foreground">Chat with Support</p>
-              <p className="text-xs text-muted-foreground">Get help from our team in real-time</p>
-            </div>
-            <ChevronRight className="w-5 h-5 text-primary" />
-          </button>
+          {/* Support channels */}
+          <h3 className="text-sm font-semibold text-foreground mb-3">Contact Us</h3>
+          <div className="space-y-2 mb-6">
+            <button onClick={() => setView("chat")} className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center gap-3">
+              <MessageCircle className="w-8 h-8 text-primary" />
+              <div className="text-left flex-1">
+                <p className="text-sm font-semibold text-foreground">Live Chat</p>
+                <p className="text-xs text-muted-foreground">Chat with our team in real-time</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-primary" />
+            </button>
+
+            <a href="mailto:support@deex.app" className="w-full bg-secondary rounded-xl p-4 flex items-center gap-3">
+              <Mail className="w-8 h-8 text-accent" />
+              <div className="text-left flex-1">
+                <p className="text-sm font-semibold text-foreground flex items-center gap-2">Email Support <NewBadge /></p>
+                <p className="text-xs text-muted-foreground">support@deex.app</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            </a>
+
+            <a href="https://wa.me/2348103674006" target="_blank" rel="noopener noreferrer" className="w-full bg-secondary rounded-xl p-4 flex items-center gap-3">
+              <Phone className="w-8 h-8 text-success" />
+              <div className="text-left flex-1">
+                <p className="text-sm font-semibold text-foreground flex items-center gap-2">WhatsApp <NewBadge /></p>
+                <p className="text-xs text-muted-foreground">+234 810 367 4006</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            </a>
+          </div>
 
           <h3 className="text-sm font-semibold text-foreground mb-3">Frequently Asked Questions</h3>
           <div className="space-y-2">
