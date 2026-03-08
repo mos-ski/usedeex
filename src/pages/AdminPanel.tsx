@@ -1546,22 +1546,22 @@ const AdminPanel = () => {
                   <div className="bg-card border border-border rounded-xl p-5">
                     <h4 className="text-sm font-semibold text-foreground mb-3">Admin Actions</h4>
                     <div className="space-y-2">
-                      <button onClick={() => { import("sonner").then(m => m.toast.success("Alert approved — flag cleared")); }} className="w-full h-9 bg-[hsl(var(--success))]/20 text-[hsl(var(--success))] rounded-lg text-sm font-medium border border-[hsl(var(--success))]/20 hover:bg-[hsl(var(--success))]/30 transition-colors">
+                      <button onClick={() => toast.success("Alert approved — flag cleared")} className="w-full h-9 bg-[hsl(var(--success))]/20 text-[hsl(var(--success))] rounded-lg text-sm font-medium border border-[hsl(var(--success))]/20 hover:bg-[hsl(var(--success))]/30 transition-colors">
                         ✓ Approve / Clear Flag
                       </button>
-                      <button onClick={() => { import("sonner").then(m => m.toast("Alert dismissed")); }} className="w-full h-9 bg-secondary text-foreground rounded-lg text-sm font-medium hover:bg-secondary/80 transition-colors">
+                      <button onClick={() => toast("Alert dismissed")} className="w-full h-9 bg-secondary text-foreground rounded-lg text-sm font-medium hover:bg-secondary/80 transition-colors">
                         Dismiss Alert
                       </button>
-                      <button onClick={() => { import("sonner").then(m => m.toast.warning("User account suspended")); }} className="w-full h-9 bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))] rounded-lg text-sm font-medium border border-[hsl(var(--destructive))]/20 hover:bg-[hsl(var(--destructive))]/20 transition-colors flex items-center justify-center gap-1.5">
+                      <button onClick={() => toast.warning("User account suspended")} className="w-full h-9 bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))] rounded-lg text-sm font-medium border border-[hsl(var(--destructive))]/20 hover:bg-[hsl(var(--destructive))]/20 transition-colors flex items-center justify-center gap-1.5">
                         <Ban className="w-3.5 h-3.5" /> Suspend User
                       </button>
-                      <button onClick={() => { import("sonner").then(m => m.toast.warning("Wallet frozen for this user")); }} className="w-full h-9 bg-[hsl(var(--deex-blue))]/10 text-[hsl(var(--deex-blue))] rounded-lg text-sm font-medium border border-[hsl(var(--deex-blue))]/20 hover:bg-[hsl(var(--deex-blue))]/20 transition-colors flex items-center justify-center gap-1.5">
+                      <button onClick={() => toast.warning("Wallet frozen for this user")} className="w-full h-9 bg-[hsl(var(--deex-blue))]/10 text-[hsl(var(--deex-blue))] rounded-lg text-sm font-medium border border-[hsl(var(--deex-blue))]/20 hover:bg-[hsl(var(--deex-blue))]/20 transition-colors flex items-center justify-center gap-1.5">
                         <Lock className="w-3.5 h-3.5" /> Freeze Wallet
                       </button>
-                      <button onClick={() => { import("sonner").then(m => m.toast("KYC re-verification requested")); }} className="w-full h-9 bg-[hsl(var(--deex-orange))]/10 text-[hsl(var(--deex-orange))] rounded-lg text-sm font-medium border border-[hsl(var(--deex-orange))]/20 hover:bg-[hsl(var(--deex-orange))]/20 transition-colors flex items-center justify-center gap-1.5">
+                      <button onClick={() => toast("KYC re-verification requested")} className="w-full h-9 bg-[hsl(var(--deex-orange))]/10 text-[hsl(var(--deex-orange))] rounded-lg text-sm font-medium border border-[hsl(var(--deex-orange))]/20 hover:bg-[hsl(var(--deex-orange))]/20 transition-colors flex items-center justify-center gap-1.5">
                         <ShieldAlert className="w-3.5 h-3.5" /> Request Additional KYC
                       </button>
-                      <button onClick={() => { import("sonner").then(m => m.toast("Escalated to senior admin")); }} className="w-full h-9 bg-[hsl(var(--deex-purple))]/10 text-[hsl(var(--deex-purple))] rounded-lg text-sm font-medium border border-[hsl(var(--deex-purple))]/20 hover:bg-[hsl(var(--deex-purple))]/20 transition-colors flex items-center justify-center gap-1.5">
+                      <button onClick={() => toast("Escalated to senior admin")} className="w-full h-9 bg-[hsl(var(--deex-purple))]/10 text-[hsl(var(--deex-purple))] rounded-lg text-sm font-medium border border-[hsl(var(--deex-purple))]/20 hover:bg-[hsl(var(--deex-purple))]/20 transition-colors flex items-center justify-center gap-1.5">
                         <ArrowUpRight className="w-3.5 h-3.5" /> Escalate to Senior Admin
                       </button>
                     </div>
@@ -1576,7 +1576,7 @@ const AdminPanel = () => {
                       className="w-full h-24 bg-secondary rounded-lg p-3 text-sm text-foreground placeholder:text-muted-foreground outline-none resize-none"
                     />
                     <button
-                      onClick={() => { import("sonner").then(m => m.toast.success("Note saved")); setComplianceNote(""); }}
+                      onClick={() => { toast.success("Note saved"); setComplianceNote(""); }}
                       className="mt-2 text-xs text-[hsl(var(--deex-blue))] font-medium hover:underline"
                     >Save Note</button>
                   </div>
@@ -1655,7 +1655,7 @@ const AdminPanel = () => {
                         <span className="text-muted-foreground">Times triggered: </span>
                         <span className="text-foreground font-medium">{rule.triggeredCount}</span>
                       </div>
-                      <button className="ml-auto text-[hsl(var(--deex-blue))] hover:underline text-xs font-medium">Edit threshold</button>
+                      <button onClick={() => toast("Threshold editor coming soon")} className="ml-auto text-[hsl(var(--deex-blue))] hover:underline text-xs font-medium">Edit threshold</button>
                     </div>
                   </div>
                 ))}
@@ -1721,15 +1721,15 @@ const AdminPanel = () => {
                   <div className="bg-card border border-border rounded-xl p-5">
                     <h4 className="text-sm font-semibold text-foreground mb-3">Actions</h4>
                     <div className="space-y-2">
-                      <button className="w-full h-9 bg-deex-blue text-primary-foreground rounded-lg text-sm font-medium">Send Notification</button>
-                      <button className="w-full h-9 bg-secondary text-foreground rounded-lg text-sm font-medium">Reset Password</button>
-                      <button className="w-full h-9 bg-destructive/10 text-destructive rounded-lg text-sm font-medium border border-destructive/20">Ban User</button>
+                      <button onClick={() => toast.success("Notification sent")} className="w-full h-9 bg-deex-blue text-primary-foreground rounded-lg text-sm font-medium">Send Notification</button>
+                      <button onClick={() => toast("Password reset link sent")} className="w-full h-9 bg-secondary text-foreground rounded-lg text-sm font-medium">Reset Password</button>
+                      <button onClick={() => toast.warning("User banned")} className="w-full h-9 bg-destructive/10 text-destructive rounded-lg text-sm font-medium border border-destructive/20">Ban User</button>
                     </div>
                   </div>
                   <div className="bg-card border border-border rounded-xl p-5">
                     <h4 className="text-sm font-semibold text-foreground mb-3">Notes</h4>
                     <textarea placeholder="Add internal notes..." className="w-full h-24 bg-secondary rounded-lg p-3 text-sm text-foreground placeholder:text-muted-foreground outline-none resize-none" />
-                    <button className="mt-2 text-xs text-deex-blue font-medium">Save Note</button>
+                    <button onClick={() => toast.success("Note saved")} className="mt-2 text-xs text-deex-blue font-medium hover:underline">Save Note</button>
                   </div>
                 </div>
               </div>
