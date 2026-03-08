@@ -782,8 +782,23 @@ const AdminUserDetail = () => {
           )}
         </main>
       </div>
+
+      {/* Confirmation Modal */}
+      {confirmAction && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center" onClick={() => setConfirmAction(null)}>
+          <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md shadow-lg" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-foreground mb-2">{confirmAction.label}</h3>
+            <p className="text-sm text-muted-foreground mb-6">{confirmAction.description}</p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setConfirmAction(null)} className="px-4 py-2 rounded-lg text-sm font-medium bg-secondary text-foreground hover:bg-secondary/80 transition-colors">Cancel</button>
+              <button onClick={confirmAction.onConfirm} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${confirmAction.destructive ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "bg-[hsl(var(--deex-blue))] text-background hover:bg-[hsl(var(--deex-blue))]/90"}`}>Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
+};
 };
 
 export default AdminUserDetail;
