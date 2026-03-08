@@ -1743,6 +1743,33 @@ const AdminPanel = () => {
           )}
         </main>
       </div>
+
+      {/* Confirmation Dialog */}
+      {confirmAction && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setConfirmAction(null)} />
+          <div className="relative bg-card border border-border rounded-xl p-6 w-full max-w-md shadow-2xl z-10">
+            <h3 className="text-lg font-semibold text-foreground mb-2">{confirmAction.label}</h3>
+            <p className="text-sm text-muted-foreground mb-6">{confirmAction.description}</p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setConfirmAction(null)}
+                className="h-9 px-4 bg-secondary text-foreground rounded-lg text-sm font-medium hover:bg-secondary/80 transition-colors"
+              >Cancel</button>
+              <button
+                onClick={confirmAction.onConfirm}
+                className={`h-9 px-4 rounded-lg text-sm font-medium transition-colors ${
+                  confirmAction.label.includes("Suspend") || confirmAction.label.includes("Ban")
+                    ? "bg-[hsl(var(--destructive))] text-destructive-foreground hover:bg-[hsl(var(--destructive))]/90"
+                    : confirmAction.label.includes("Freeze")
+                    ? "bg-[hsl(var(--deex-blue))] text-primary-foreground hover:bg-[hsl(var(--deex-blue))]/90"
+                    : "bg-[hsl(var(--success))] text-background hover:bg-[hsl(var(--success))]/90"
+                }`}
+              >Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
