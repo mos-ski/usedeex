@@ -1,35 +1,37 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, CheckCircle } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 
 const assets = [
-  { symbol: "BTC", name: "Bitcoin", rate: "₦97,450,000/BTC" },
-  { symbol: "ETH", name: "Ethereum", rate: "₦5,830,000/ETH" },
-  { symbol: "USDT", name: "Tether", rate: "₦1,535/USDT" },
-  { symbol: "USDC", name: "USD Coin", rate: "₦1,530/USDC" },
+  { symbol: "BTC", name: "Bitcoin", network: "BEP-20", rate: "₦97,450,000/BTC" },
+  { symbol: "ETH", name: "Ethereum", network: "ERC-20", rate: "₦5,830,000/ETH" },
+  { symbol: "USDT", name: "Tether USD", network: "BEP-20", rate: "₦1,535/USDT" },
+  { symbol: "USDC", name: "USD Coin", network: "ERC-20", rate: "₦1,530/USDC" },
 ];
 
-type Step = "type" | "asset" | "amount" | "address" | "review" | "success";
+const banks = [
+  { name: "PalmPay", account: "8103674006" },
+  { name: "Opay", account: "9012345678" },
+  { name: "GTBank", account: "0123456789" },
+];
+
+const networks = ["BEP-20", "ERC-20", "TRC-20"];
+
+type Step = "form" | "review" | "success";
 
 const SellCrypto = () => {
   const navigate = useNavigate();
-  const [sellType, setSellType] = useState<"internal" | "external">("internal");
-  const [step, setStep] = useState<Step>("type");
-  const [selectedAsset, setSelectedAsset] = useState(assets[0]);
+  const [step, setStep] = useState<Step>("form");
+  const [selectedAsset, setSelectedAsset] = useState(assets[2]); // USDT default
+  const [selectedBank, setSelectedBank] = useState(banks[0]);
+  const [selectedNetwork, setSelectedNetwork] = useState(networks[0]);
   const [amount, setAmount] = useState("");
-  const [walletAddress, setWalletAddress] = useState("");
+  const [showAssetDropdown, setShowAssetDropdown] = useState(false);
+  const [showBankDropdown, setShowBankDropdown] = useState(false);
+  const [showNetworkDropdown, setShowNetworkDropdown] = useState(false);
 
   const ngnAmount = amount ? (parseFloat(amount) * 1535).toLocaleString() : "0";
-
-  const goBack = () => {
-    const flow: Step[] = sellType === "internal"
-      ? ["type", "asset", "amount", "review", "success"]
-      : ["type", "asset", "address", "amount", "review", "success"];
-    const idx = flow.indexOf(step);
-    if (idx <= 0) navigate(-1);
-    else setStep(flow[idx - 1]);
-  };
 
   if (step === "success") {
     return (
@@ -49,95 +51,150 @@ const SellCrypto = () => {
     );
   }
 
+  if (step === "review") {
+    return (
+      <MobileLayout hideNav>
+        <div className="px-4 pt-4">
+          <div className="flex items-center mb-6">
+            <button onClick={() => setStep("form")} className="absolute">
+              <ArrowLeft className="w-6 h-6 text-foreground" />
+            </button>
+            <h2 className="text-lg font-bold text-foreground w-full text-center">Confirm Trade</h2>
+          </div>
+          <div className="bg-card border border-border rounded-xl p-5 space-y-4 mb-6">
+            <div className="flex justify-between"><span className="text-sm text-muted-foreground">Asset</span><span className="text-sm text-foreground">{selectedAsset.name}</span></div>
+            <div className="h-px bg-border" />
+            <div className="flex justify-between"><span className="text-sm text-muted-foreground">Network</span><span className="text-sm text-foreground">{selectedNetwork}</span></div>
+            <div className="h-px bg-border" />
+            <div className="flex justify-between"><span className="text-sm text-muted-foreground">Amount</span><span className="text-sm text-foreground">{amount} {selectedAsset.symbol}</span></div>
+            <div className="h-px bg-border" />
+            <div className="flex justify-between"><span className="text-sm text-muted-foreground">Destination</span><span className="text-sm text-foreground">{selectedBank.account} - {selectedBank.name}</span></div>
+            <div className="h-px bg-border" />
+            <div className="flex justify-between"><span className="text-sm text-muted-foreground">Rate</span><span className="text-sm text-foreground">{selectedAsset.rate}</span></div>
+            <div className="h-px bg-border" />
+            <div className="flex justify-between"><span className="text-sm text-muted-foreground">You'll receive</span><span className="text-sm font-bold text-success">₦{ngnAmount}</span></div>
+          </div>
+          <button onClick={() => setStep("success")} className="w-full h-14 bg-primary rounded-xl text-primary-foreground font-semibold flex items-center justify-center gap-2">
+            Confirm Trade <ArrowRight className="w-5 h-5" />
+          </button>
+        </div>
+      </MobileLayout>
+    );
+  }
+
   return (
     <MobileLayout hideNav>
       <div className="px-4 pt-4">
-        <div className="flex items-center gap-3 mb-6">
-          <button onClick={goBack} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-            <ArrowLeft className="w-5 h-5 text-foreground" />
+        <div className="flex items-center mb-8">
+          <button onClick={() => navigate(-1)} className="absolute">
+            <ArrowLeft className="w-6 h-6 text-foreground" />
           </button>
-          <h2 className="text-lg font-bold text-foreground">Sell Crypto</h2>
+          <h2 className="text-lg font-bold text-foreground w-full text-center">Sell Crypto</h2>
         </div>
 
-        {step === "type" && (
-          <div className="space-y-3">
-            <p className="text-sm text-muted-foreground mb-4">Choose how you want to sell</p>
-            <button onClick={() => { setSellType("internal"); setStep("asset"); }} className="w-full bg-secondary rounded-xl p-4 text-left">
-              <p className="text-sm font-semibold text-foreground">Internal OTC</p>
-              <p className="text-xs text-muted-foreground mt-1">Sell from your DeeX wallet directly</p>
+        {/* Asset selector */}
+        <div className="mb-6">
+          <label className="text-sm text-foreground mb-2 block">I want to sell</label>
+          <div className="relative">
+            <button
+              onClick={() => setShowAssetDropdown(!showAssetDropdown)}
+              className="w-full bg-secondary border border-border rounded-xl px-4 py-4 flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center text-xs font-bold text-success">
+                  {selectedAsset.symbol.substring(0, 2)}
+                </div>
+                <div className="text-left">
+                  <p className="text-sm font-medium text-foreground">{selectedAsset.name}</p>
+                  <p className="text-xs text-muted-foreground">{selectedAsset.network}</p>
+                </div>
+              </div>
+              <ChevronDown className="w-5 h-5 text-muted-foreground" />
             </button>
-            <button onClick={() => { setSellType("external"); setStep("asset"); }} className="w-full bg-secondary rounded-xl p-4 text-left">
-              <p className="text-sm font-semibold text-foreground">External OTC</p>
-              <p className="text-xs text-muted-foreground mt-1">Send from an external wallet to sell</p>
-            </button>
+            {showAssetDropdown && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl overflow-hidden z-10">
+                {assets.map((a) => (
+                  <button key={a.symbol} onClick={() => { setSelectedAsset(a); setShowAssetDropdown(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-secondary transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center text-xs font-bold text-success">{a.symbol.substring(0, 2)}</div>
+                    <p className="text-sm text-foreground">{a.name}</p>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
-        {step === "asset" && (
-          <div>
-            <p className="text-sm text-muted-foreground mb-4">Select asset to sell</p>
-            <div className="space-y-2">
-              {assets.map((a) => (
-                <button key={a.symbol} onClick={() => { setSelectedAsset(a); setStep(sellType === "external" ? "address" : "amount"); }} className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3.5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center text-xs font-bold text-warning">{a.symbol.substring(0, 2)}</div>
-                    <p className="text-sm font-medium text-foreground">{a.name}</p>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{a.rate}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {step === "address" && (
-          <div>
-            <p className="text-sm text-muted-foreground mb-4">Enter the wallet address you're sending from</p>
-            <input
-              value={walletAddress}
-              onChange={(e) => setWalletAddress(e.target.value)}
-              placeholder="Paste wallet address"
-              className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary mb-4"
-            />
-            <button onClick={() => setStep("amount")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">
-              Continue
+        {/* Destination */}
+        <div className="mb-6">
+          <label className="text-sm text-foreground mb-2 block">Destination</label>
+          <div className="relative">
+            <button
+              onClick={() => setShowBankDropdown(!showBankDropdown)}
+              className="w-full bg-card border border-border rounded-xl px-4 py-4 flex items-center justify-between"
+            >
+              <p className="text-sm text-foreground">{selectedBank.account} - {selectedBank.name}</p>
+              <ChevronDown className="w-5 h-5 text-muted-foreground" />
             </button>
+            {showBankDropdown && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl overflow-hidden z-10">
+                {banks.map((b) => (
+                  <button key={b.name} onClick={() => { setSelectedBank(b); setShowBankDropdown(false); }}
+                    className="w-full px-4 py-3 text-left hover:bg-secondary transition-colors">
+                    <p className="text-sm text-foreground">{b.account} - {b.name}</p>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
-        {step === "amount" && (
-          <div>
-            <p className="text-sm text-muted-foreground mb-4">Enter amount of {selectedAsset.symbol} to sell</p>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00"
-              className="w-full h-14 bg-secondary rounded-xl px-4 text-2xl text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary text-center mb-2"
-            />
-            <p className="text-center text-sm text-muted-foreground mb-6">≈ ₦{ngnAmount}</p>
-            <button onClick={() => setStep("review")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">
-              Continue
+        {/* Network */}
+        <div className="mb-6">
+          <label className="text-sm text-foreground mb-2 block">Select network</label>
+          <div className="relative">
+            <button
+              onClick={() => setShowNetworkDropdown(!showNetworkDropdown)}
+              className="w-full bg-card border border-border rounded-xl px-4 py-4 flex items-center justify-between"
+            >
+              <p className="text-sm text-foreground">{selectedNetwork}</p>
+              <ChevronDown className="w-5 h-5 text-muted-foreground" />
             </button>
+            {showNetworkDropdown && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl overflow-hidden z-10">
+                {networks.map((n) => (
+                  <button key={n} onClick={() => { setSelectedNetwork(n); setShowNetworkDropdown(false); }}
+                    className="w-full px-4 py-3 text-left hover:bg-secondary transition-colors">
+                    <p className="text-sm text-foreground">{n}</p>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
-        {step === "review" && (
-          <div>
-            <p className="text-sm text-muted-foreground mb-4">Review your trade</p>
-            <div className="bg-secondary rounded-xl p-4 space-y-3 mb-6">
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Type</span><span className="text-sm text-foreground capitalize">{sellType} OTC</span></div>
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Asset</span><span className="text-sm text-foreground">{selectedAsset.symbol}</span></div>
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Amount</span><span className="text-sm text-foreground">{amount} {selectedAsset.symbol}</span></div>
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Rate</span><span className="text-sm text-foreground">{selectedAsset.rate}</span></div>
-              <div className="h-px bg-border" />
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">You'll receive</span><span className="text-sm font-bold text-success">₦{ngnAmount}</span></div>
-            </div>
-            <button onClick={() => setStep("success")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">
-              Confirm Trade
-            </button>
-          </div>
-        )}
+        {/* Rate hint */}
+        <p className="text-center text-sm text-warning mb-8">$1 ~ $1395 NGN</p>
+
+        {/* Amount input (hidden until proceed is tapped - but we show it for simplicity) */}
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="Enter amount"
+          className="w-full h-14 bg-card border border-border rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary mb-4 text-center"
+        />
+        {amount && <p className="text-center text-sm text-muted-foreground mb-6">≈ ₦{ngnAmount}</p>}
+
+        {/* Spacer to push button down */}
+        <div className="mt-auto pt-8">
+          <button
+            onClick={() => amount && setStep("review")}
+            className={`w-full h-14 rounded-xl font-semibold flex items-center justify-center gap-2 ${amount ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+          >
+            Proceed <ArrowRight className="w-5 h-5" />
+          </button>
+        </div>
       </div>
     </MobileLayout>
   );

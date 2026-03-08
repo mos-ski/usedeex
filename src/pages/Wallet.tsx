@@ -48,7 +48,7 @@ const Wallet = () => {
           {assets.map((asset) => (
             <button
               key={asset.symbol}
-              onClick={() => setSelectedAsset(selectedAsset === asset.symbol ? null : asset.symbol)}
+              onClick={() => navigate(`/asset/${asset.symbol.toLowerCase()}`)}
               className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3"
             >
               <div className="flex items-center gap-3">
