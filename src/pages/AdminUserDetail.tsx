@@ -799,6 +799,5 @@ const AdminUserDetail = () => {
     </div>
   );
 };
-};
 
 export default AdminUserDetail;
