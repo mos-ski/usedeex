@@ -182,6 +182,164 @@ const reportCards = [
   { title: "Survey", desc: "Collect feedback and data for market research, product development, and more.", color: "text-deex-purple" },
 ];
 
+// ===== COMPLIANCE MOCK DATA =====
+type ComplianceAlert = {
+  id: string;
+  userName: string;
+  email: string;
+  severity: "critical" | "high" | "medium" | "low";
+  trigger: string;
+  triggerType: "high-frequency" | "multi-device" | "large-withdrawal" | "failed-kyc" | "wash-trading";
+  description: string;
+  date: string;
+  status: "pending" | "reviewing" | "resolved" | "dismissed";
+  autoSuspended: boolean;
+  details: { label: string; value: string }[];
+  timeline: { action: string; time: string; actor: string }[];
+};
+
+const complianceAlerts: ComplianceAlert[] = [
+  {
+    id: "CA-001", userName: "Victor Odigili", email: "victor.odigili@gmail.com", severity: "critical",
+    trigger: "High-Frequency Trading", triggerType: "high-frequency",
+    description: "23 trades executed within 4 minutes. Threshold: 10 trades / 5 min.",
+    date: "Mar 8, 2026, 4:12 PM", status: "pending", autoSuspended: true,
+    details: [
+      { label: "Trades in window", value: "23 trades / 4 min" },
+      { label: "Total volume", value: "$12,450.00" },
+      { label: "Avg trade size", value: "$541.30" },
+      { label: "IP Address", value: "102.89.46.211" },
+      { label: "Device", value: "iPhone 15 Pro — Safari" },
+      { label: "Location", value: "Lagos, Nigeria" },
+    ],
+    timeline: [
+      { action: "System auto-suspended account", time: "4:12 PM", actor: "System" },
+      { action: "23rd trade detected — threshold breached", time: "4:12 PM", actor: "System" },
+      { action: "10th trade in 3 min — monitoring started", time: "4:10 PM", actor: "System" },
+      { action: "First trade in burst", time: "4:08 PM", actor: "Victor Odigili" },
+    ],
+  },
+  {
+    id: "CA-002", userName: "Chidinma Obi", email: "chidinma.obi@yahoo.com", severity: "high",
+    trigger: "Multiple Device Logins", triggerType: "multi-device",
+    description: "Logged in from 4 different devices across 3 countries within 2 hours.",
+    date: "Mar 8, 2026, 2:30 PM", status: "reviewing", autoSuspended: false,
+    details: [
+      { label: "Devices", value: "4 unique devices" },
+      { label: "Countries", value: "Nigeria, Ghana, UK" },
+      { label: "Time span", value: "2 hours" },
+      { label: "Current IP", value: "185.32.109.44" },
+      { label: "Device", value: "Samsung Galaxy S24 — Chrome" },
+      { label: "Location", value: "London, UK" },
+    ],
+    timeline: [
+      { action: "Login from London, UK (new device)", time: "2:30 PM", actor: "Chidinma Obi" },
+      { action: "Login from Accra, Ghana (new device)", time: "1:45 PM", actor: "Chidinma Obi" },
+      { action: "Login from Lagos, NG (new device)", time: "1:02 PM", actor: "Chidinma Obi" },
+      { action: "Login from Lagos, NG (known device)", time: "12:30 PM", actor: "Chidinma Obi" },
+    ],
+  },
+  {
+    id: "CA-003", userName: "Ibrahim Abubakar", email: "ibrahim.abu@gmail.com", severity: "high",
+    trigger: "Large Withdrawal Spike", triggerType: "large-withdrawal",
+    description: "Withdrew $8,500 in a single transaction — 340% above user's average.",
+    date: "Mar 8, 2026, 11:15 AM", status: "pending", autoSuspended: false,
+    details: [
+      { label: "Withdrawal amount", value: "$8,500.00" },
+      { label: "User avg withdrawal", value: "$1,930.00" },
+      { label: "Deviation", value: "340% above average" },
+      { label: "Destination", value: "External wallet — 0x3f...a9c2" },
+      { label: "Device", value: "MacBook Pro — Chrome" },
+      { label: "Location", value: "Abuja, Nigeria" },
+    ],
+    timeline: [
+      { action: "Withdrawal of $8,500 initiated", time: "11:15 AM", actor: "Ibrahim Abubakar" },
+      { action: "Large amount flag triggered", time: "11:15 AM", actor: "System" },
+      { action: "Previous withdrawal: $1,200", time: "Mar 6, 3:00 PM", actor: "Ibrahim Abubakar" },
+    ],
+  },
+  {
+    id: "CA-004", userName: "Lucky Holland", email: "hollandlucky09@gmail.com", severity: "medium",
+    trigger: "Failed KYC Attempts", triggerType: "failed-kyc",
+    description: "5 failed KYC Level 2 verification attempts in 24 hours with different documents.",
+    date: "Mar 7, 2026, 8:20 PM", status: "pending", autoSuspended: false,
+    details: [
+      { label: "Failed attempts", value: "5 in 24 hours" },
+      { label: "Documents used", value: "3 different IDs" },
+      { label: "Current KYC", value: "Level 1" },
+      { label: "IP Address", value: "197.210.55.12" },
+      { label: "Device", value: "Tecno Spark 10 — Chrome" },
+      { label: "Location", value: "Port Harcourt, Nigeria" },
+    ],
+    timeline: [
+      { action: "5th KYC attempt failed — flag raised", time: "8:20 PM", actor: "System" },
+      { action: "4th attempt — different NIN submitted", time: "7:55 PM", actor: "Lucky Holland" },
+      { action: "3rd attempt — new document uploaded", time: "6:30 PM", actor: "Lucky Holland" },
+      { action: "1st KYC attempt failed", time: "2:15 PM", actor: "Lucky Holland" },
+    ],
+  },
+  {
+    id: "CA-005", userName: "Efeme Jeremiah", email: "ejaifeefemegreat@gmail.com", severity: "critical",
+    trigger: "Rapid Deposit-Withdraw Cycle", triggerType: "wash-trading",
+    description: "6 deposit-withdraw cycles in 30 minutes totaling $15,200. Possible wash trading.",
+    date: "Mar 7, 2026, 3:45 PM", status: "resolved", autoSuspended: true,
+    details: [
+      { label: "Cycles detected", value: "6 in 30 min" },
+      { label: "Total volume", value: "$15,200.00" },
+      { label: "Net movement", value: "$23.50 (negligible)" },
+      { label: "Assets involved", value: "USDT, BTC" },
+      { label: "Device", value: "Desktop — Firefox" },
+      { label: "Location", value: "Benin City, Nigeria" },
+    ],
+    timeline: [
+      { action: "Account suspended — wash trading confirmed", time: "4:00 PM", actor: "Adedamola A." },
+      { action: "6th cycle completed — auto-suspension triggered", time: "3:45 PM", actor: "System" },
+      { action: "Pattern detected: deposit-withdraw loop", time: "3:30 PM", actor: "System" },
+      { action: "First deposit in cycle", time: "3:15 PM", actor: "Efeme Jeremiah" },
+    ],
+  },
+  {
+    id: "CA-006", userName: "Fortune Chigor", email: "chigorfortune25@gmail.com", severity: "low",
+    trigger: "Multiple Device Logins", triggerType: "multi-device",
+    description: "Logged in from 2 new devices in Lagos within 1 hour. Likely personal devices.",
+    date: "Mar 6, 2026, 9:00 AM", status: "dismissed", autoSuspended: false,
+    details: [
+      { label: "Devices", value: "2 new devices" },
+      { label: "Location", value: "Lagos, Nigeria (same city)" },
+      { label: "Time span", value: "1 hour" },
+      { label: "IP Address", value: "102.89.33.78" },
+      { label: "Device", value: "iPhone 14 — Safari" },
+      { label: "Previous devices", value: "1 registered" },
+    ],
+    timeline: [
+      { action: "Dismissed — same-city devices", time: "10:00 AM", actor: "Dawood K." },
+      { action: "Login from new iPhone", time: "9:45 AM", actor: "Fortune Chigor" },
+      { action: "Login from new iPad", time: "9:00 AM", actor: "Fortune Chigor" },
+    ],
+  },
+];
+
+type ComplianceRule = {
+  id: string;
+  name: string;
+  trigger: string;
+  threshold: string;
+  action: string;
+  enabled: boolean;
+  lastTriggered: string;
+  triggeredCount: number;
+};
+
+const defaultComplianceRules: ComplianceRule[] = [
+  { id: "R1", name: "High-Frequency Trading", trigger: "Trades exceeding threshold in time window", threshold: "10 trades / 5 minutes", action: "Auto-suspend + Alert", enabled: true, lastTriggered: "Mar 8, 2026", triggeredCount: 3 },
+  { id: "R2", name: "Multi-Device Login", trigger: "Logins from multiple devices/locations", threshold: "3+ devices / 2 hours", action: "Alert only", enabled: true, lastTriggered: "Mar 8, 2026", triggeredCount: 7 },
+  { id: "R3", name: "Large Withdrawal Spike", trigger: "Withdrawal exceeds % above user average", threshold: "200% above average", action: "Hold + Alert", enabled: true, lastTriggered: "Mar 8, 2026", triggeredCount: 2 },
+  { id: "R4", name: "Failed KYC Attempts", trigger: "Multiple failed verifications in time window", threshold: "3 failures / 24 hours", action: "Alert only", enabled: true, lastTriggered: "Mar 7, 2026", triggeredCount: 4 },
+  { id: "R5", name: "Wash Trading Detection", trigger: "Rapid deposit-withdraw cycles with negligible net", threshold: "3 cycles / 1 hour", action: "Auto-suspend + Alert", enabled: true, lastTriggered: "Mar 7, 2026", triggeredCount: 1 },
+  { id: "R6", name: "Geo-Velocity Check", trigger: "Login from impossible travel distance", threshold: ">500km / 1 hour", action: "Auto-suspend + Alert", enabled: false, lastTriggered: "Never", triggeredCount: 0 },
+  { id: "R7", name: "Dormant Account Activity", trigger: "Large transaction on inactive account", threshold: "90+ days inactive, >$500 tx", action: "Alert only", enabled: false, lastTriggered: "Never", triggeredCount: 0 },
+];
+
 // ===== STATUS BADGE =====
 const statusBadge = (status: string) => {
   const s = status.toUpperCase();
@@ -194,6 +352,38 @@ const statusBadge = (status: string) => {
   return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider ${styles[s] || "bg-muted text-muted-foreground"}`}>{s}</span>;
 };
 
+const severityBadge = (severity: string) => {
+  const styles: Record<string, string> = {
+    critical: "bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))]",
+    high: "bg-[hsl(var(--deex-orange))]/20 text-[hsl(var(--deex-orange))]",
+    medium: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
+    low: "bg-muted text-muted-foreground",
+  };
+  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${styles[severity] || "bg-muted text-muted-foreground"}`}>{severity}</span>;
+};
+
+const alertStatusBadge = (status: string) => {
+  const styles: Record<string, string> = {
+    pending: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
+    reviewing: "bg-[hsl(var(--deex-blue))]/20 text-[hsl(var(--deex-blue))]",
+    resolved: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
+    dismissed: "bg-muted text-muted-foreground",
+  };
+  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${styles[status] || "bg-muted text-muted-foreground"}`}>{status}</span>;
+};
+
+const triggerIcon = (type: string) => {
+  const icons: Record<string, typeof AlertTriangle> = {
+    "high-frequency": Zap,
+    "multi-device": Monitor,
+    "large-withdrawal": ArrowUpRight,
+    "failed-kyc": ShieldAlert,
+    "wash-trading": AlertTriangle,
+  };
+  const Icon = icons[type] || AlertCircle;
+  return <Icon className="w-4 h-4" />;
+};
+
 // ===== NAV ITEMS =====
 const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; isNew?: boolean; children?: { label: string; tab: AdminTab; isNew?: boolean }[] }[] = [
   { icon: LayoutDashboard, label: "Dashboard", tab: "dashboard" },
@@ -204,6 +394,10 @@ const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; is
   { icon: Shield, label: "Kyc logs", tab: "kyc", children: [
     { label: "Compliance", tab: "kyc-compliance" },
     { label: "Rules Manager", tab: "kyc-rules" },
+  ]},
+  { icon: AlertTriangle, label: "Compliance", tab: "compliance", isNew: true, children: [
+    { label: "Alerts", tab: "compliance-alerts" },
+    { label: "Rules Engine", tab: "compliance-rules" },
   ]},
   { icon: FileText, label: "Audit Log", tab: "audit-log", isNew: true },
   { icon: BarChart3, label: "Reports", tab: "reports" },
