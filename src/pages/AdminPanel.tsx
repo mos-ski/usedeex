@@ -4,7 +4,8 @@ import {
   LayoutDashboard, Wallet, ShoppingCart, Users, Shield, ListChecks, BarChart3,
   Settings, LogOut, Bell, Search, ChevronDown, ChevronRight, Eye, EyeOff,
   ExternalLink, Plus, Upload, Info, AlertCircle, Trash2, FileText, ArrowLeft,
-  ChevronLeft, CreditCard, Snowflake
+  ChevronLeft, CreditCard, Snowflake, AlertTriangle, ShieldAlert, Zap,
+  Monitor, MapPin, Ban, Lock, MessageSquare, ArrowUpRight, Clock, Filter
 } from "lucide-react";
 import CryptoIcon from "@/components/CryptoIcon";
 import {
