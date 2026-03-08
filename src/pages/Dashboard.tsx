@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Eye, EyeOff, ArrowDownLeft, CreditCard, Send, TrendingUp, ArrowLeftRight } from "lucide-react";
+import { Bell, Eye, EyeOff, ArrowDownLeft, CreditCard, Send, TrendingUp, ArrowLeftRight, ArrowDownUp, Upload, AlertCircle } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
 import CryptoIcon from "@/components/CryptoIcon";
 import ProviderIcon from "@/components/ProviderIcon";
+import NewBadge from "@/components/NewBadge";
 
 const cryptoRates = [
   { name: "Bitcoin", symbol: "BTC", rate: "₦97,450,000", change: "+2.4%" },
@@ -30,29 +31,27 @@ const giftCardTxns = [
   { id: 3, brand: "GOOGLE PLAY", amount: "$100.00", date: "Sep 5th, 2023", status: "Pending" },
 ];
 
-const giftBrandMap: Record<string, string> = { "APPLE": "Apple", "GOOGLE PLAY": "Google Play", "AMAZON": "Amazon", "STEAM": "Steam" };
+const giftBrandMap: Record<string, string> = { "APPLE": "Apple", "GOOGLE PLAY": "Google Play" };
+
+const getGreeting = () => {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+};
 
 const RatesTicker = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
     let animFrame: number;
     let pos = 0;
-    const speed = 0.5;
-    const animate = () => {
-      pos += speed;
-      if (pos >= el.scrollWidth / 2) pos = 0;
-      el.scrollLeft = pos;
-      animFrame = requestAnimationFrame(animate);
-    };
+    const animate = () => { pos += 0.5; if (pos >= el.scrollWidth / 2) pos = 0; el.scrollLeft = pos; animFrame = requestAnimationFrame(animate); };
     animFrame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animFrame);
   }, []);
-
   const duplicated = [...cryptoRates, ...cryptoRates];
-
   return (
     <div ref={scrollRef} className="overflow-hidden whitespace-nowrap mb-6">
       <div className="inline-flex gap-3">
@@ -79,23 +78,27 @@ const Dashboard = () => {
       <PageTransition>
         <div className="px-4 pt-4">
           {/* Top Bar */}
-          <div className="flex items-center justify-between mb-6">
-            <button onClick={() => navigate("/profile")} className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-              JD
-            </button>
+          <div className="flex items-center justify-between mb-4">
+            <button onClick={() => navigate("/profile")} className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">JD</button>
             <div className="flex bg-secondary rounded-full p-1">
-              <button onClick={() => setActiveTab("crypto")} className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === "crypto" ? "bg-muted text-foreground" : "text-muted-foreground"}`}>
-                Crypto
-              </button>
-              <button onClick={() => setActiveTab("giftcards")} className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === "giftcards" ? "bg-muted text-foreground" : "text-muted-foreground"}`}>
-                Gift cards
-              </button>
+              <button onClick={() => setActiveTab("crypto")} className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === "crypto" ? "bg-muted text-foreground" : "text-muted-foreground"}`}>Crypto</button>
+              <button onClick={() => setActiveTab("giftcards")} className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === "giftcards" ? "bg-muted text-foreground" : "text-muted-foreground"}`}>Gift cards</button>
             </div>
             <button onClick={() => navigate("/notifications")} className="relative w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
               <Bell className="w-5 h-5 text-primary" />
               <div className="absolute top-1 right-1 w-3 h-3 bg-warning rounded-full border-2 border-background" />
             </button>
           </div>
+
+          {/* Greeting */}
+          <p className="text-sm text-muted-foreground mb-1">{getGreeting()}, <span className="text-foreground font-medium">John</span> 👋</p>
+
+          {/* Pending Actions Banner */}
+          <button onClick={() => navigate("/activity")} className="w-full bg-warning/10 border border-warning/20 rounded-xl px-4 py-2.5 flex items-center gap-2 mb-4">
+            <AlertCircle className="w-4 h-4 text-warning shrink-0" />
+            <p className="text-xs text-foreground">You have <span className="font-bold text-warning">2 pending</span> transactions</p>
+            <NewBadge className="ml-auto" />
+          </button>
 
           {/* Balance Card */}
           <div className="bg-card rounded-2xl p-5 mb-6 border border-border">
@@ -110,18 +113,24 @@ const Dashboard = () => {
             <div className="h-px bg-border my-4" />
 
             {activeTab === "crypto" ? (
-              <div className="flex gap-3">
-                <button onClick={() => navigate("/deposit")} className="flex-1 bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
-                  <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center"><ArrowDownLeft className="w-5 h-5 text-primary" /></div>
-                  <span className="text-xs text-foreground font-medium">Deposit</span>
+              <div className="grid grid-cols-4 gap-2">
+                <button onClick={() => navigate("/deposit")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
+                  <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center"><ArrowDownLeft className="w-4 h-4 text-primary" /></div>
+                  <span className="text-[10px] text-foreground font-medium">Deposit</span>
                 </button>
-                <button onClick={() => navigate("/deex-pay")} className="flex-1 bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
-                  <div className="w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center"><CreditCard className="w-5 h-5 text-accent" /></div>
-                  <span className="text-xs text-foreground font-medium">DeeX Pay</span>
+                <button onClick={() => navigate("/sell-crypto")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
+                  <div className="w-9 h-9 rounded-full bg-success/15 flex items-center justify-center"><Send className="w-4 h-4 text-success" /></div>
+                  <span className="text-[10px] text-foreground font-medium">Sell</span>
                 </button>
-                <button onClick={() => navigate("/sell-crypto")} className="flex-1 bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
-                  <div className="w-10 h-10 rounded-full bg-success/15 flex items-center justify-center"><Send className="w-5 h-5 text-success" /></div>
-                  <span className="text-xs text-foreground font-medium">Sell Crypto</span>
+                <button onClick={() => navigate("/swap-crypto")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5 relative">
+                  <div className="w-9 h-9 rounded-full bg-accent/15 flex items-center justify-center"><ArrowDownUp className="w-4 h-4 text-accent" /></div>
+                  <span className="text-[10px] text-foreground font-medium">Swap</span>
+                  <NewBadge className="absolute -top-1 -right-1" />
+                </button>
+                <button onClick={() => navigate("/withdraw")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5 relative">
+                  <div className="w-9 h-9 rounded-full bg-deex-purple/15 flex items-center justify-center"><Upload className="w-4 h-4 text-deex-purple" /></div>
+                  <span className="text-[10px] text-foreground font-medium">Withdraw</span>
+                  <NewBadge className="absolute -top-1 -right-1" />
                 </button>
               </div>
             ) : (
@@ -133,7 +142,6 @@ const Dashboard = () => {
 
           {activeTab === "crypto" ? (
             <>
-              {/* Scrolling Rates Ticker */}
               <div className="mb-1">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold text-foreground">Today's Rates</h3>
@@ -166,13 +174,9 @@ const Dashboard = () => {
                 </div>
                 <div className="space-y-2">
                   {recentTxns.map((tx) => (
-                    <button key={tx.id} onClick={() => navigate("/receipt", { state: { type: tx.icon === "sell" ? "sell" : "airtime", data: tx } })} className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3">
+                    <button key={tx.id} onClick={() => navigate("/transaction-detail", { state: { tx } })} className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3">
                       <div className="flex items-center gap-3">
-                        {tx.icon === "sell" ? (
-                          <CryptoIcon symbol={tx.symbol} size="md" />
-                        ) : (
-                          <ProviderIcon name={tx.symbol} size="md" />
-                        )}
+                        {tx.icon === "sell" ? <CryptoIcon symbol={tx.symbol} size="md" /> : <ProviderIcon name={tx.symbol} size="md" />}
                         <div className="text-left">
                           <p className="text-sm font-medium text-foreground">{tx.type}</p>
                           <p className="text-xs text-muted-foreground">{tx.date}</p>

@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Gift, TrendingUp, ArrowDownLeft, Send, Banknote, FileText, X } from "lucide-react";
+import { Gift, TrendingUp, ArrowDownLeft, Send, Banknote, FileText, X, ArrowDownUp, Upload } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
+import NewBadge from "@/components/NewBadge";
 
 const QuickAction = () => {
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ const QuickAction = () => {
     { icon: TrendingUp, label: "See Rates", path: "/dashboard", color: "bg-accent/15 text-accent" },
     { icon: ArrowDownLeft, label: "Deposit Crypto", path: "/deposit", color: "bg-primary/15 text-primary" },
     { icon: Send, label: "Sell Crypto", path: "/sell-crypto", color: "bg-success/15 text-success" },
+    { icon: ArrowDownUp, label: "Swap Crypto", path: "/swap-crypto", color: "bg-accent/15 text-accent", isNew: true },
+    { icon: Upload, label: "Withdraw", path: "/withdraw", color: "bg-deex-purple/15 text-deex-purple", isNew: true },
     { icon: Banknote, label: "Send Money", path: "/send-money", color: "bg-deex-purple/15 text-deex-purple" },
     { icon: FileText, label: "Generate Statement", path: "/profile", color: "bg-deex-orange/15 text-deex-orange" },
   ];
@@ -25,7 +28,8 @@ const QuickAction = () => {
           <h2 className="text-xl font-bold text-foreground mb-8">Quick Actions</h2>
           <div className="grid grid-cols-3 gap-3 w-full">
             {actions.map((a) => (
-              <button key={a.label} onClick={() => navigate(a.path)} className="bg-secondary rounded-2xl p-4 flex flex-col items-center gap-2">
+              <button key={a.label} onClick={() => navigate(a.path)} className="bg-secondary rounded-2xl p-4 flex flex-col items-center gap-2 relative">
+                {a.isNew && <NewBadge className="absolute top-2 right-2" />}
                 <div className={`w-12 h-12 rounded-full ${a.color} flex items-center justify-center`}>
                   <a.icon className="w-5 h-5" />
                 </div>
