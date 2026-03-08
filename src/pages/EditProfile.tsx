@@ -8,10 +8,12 @@ import { toast } from "sonner";
 
 const EditProfile = () => {
   const navigate = useNavigate();
-  const [firstName, setFirstName] = useState("John");
-  const [lastName, setLastName] = useState("Doe");
-  const [email, setEmail] = useState("johndoe@email.com");
-  const [dob, setDob] = useState("1995-06-15");
+  const [firstName] = useState("John");
+  const [lastName] = useState("Doe");
+  const [email] = useState("johndoe@email.com");
+  const [dob] = useState("1995-06-15");
+  const [username, setUsername] = useState("@johndoe");
+  const [phone, setPhone] = useState("+234 810 367 4006");
 
   const handleSave = () => {
     toast.success("Profile updated successfully");
@@ -34,38 +36,36 @@ const EditProfile = () => {
           </div>
 
           <div className="space-y-4">
-            {/* Editable: First Name */}
+            {/* Non-editable: First Name */}
             <div>
-              <label className="text-sm text-muted-foreground mb-2 block">First Name</label>
-              <input value={firstName} onChange={e => setFirstName(e.target.value)} className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary" />
+              <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-1.5">First Name <Lock className="w-3 h-3" /></label>
+              <div className="w-full h-12 bg-muted rounded-xl px-4 flex items-center text-muted-foreground">{firstName}</div>
             </div>
-            {/* Editable: Last Name */}
+            {/* Non-editable: Last Name */}
             <div>
-              <label className="text-sm text-muted-foreground mb-2 block">Last Name</label>
-              <input value={lastName} onChange={e => setLastName(e.target.value)} className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary" />
+              <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-1.5">Last Name <Lock className="w-3 h-3" /></label>
+              <div className="w-full h-12 bg-muted rounded-xl px-4 flex items-center text-muted-foreground">{lastName}</div>
             </div>
-            {/* Editable: Email */}
+            {/* Non-editable: Email */}
             <div>
-              <label className="text-sm text-muted-foreground mb-2 block">Email</label>
-              <input value={email} onChange={e => setEmail(e.target.value)} className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary" />
+              <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-1.5">Email <Lock className="w-3 h-3" /></label>
+              <div className="w-full h-12 bg-muted rounded-xl px-4 flex items-center text-muted-foreground">{email}</div>
             </div>
-            {/* Editable: Date of Birth */}
+            {/* Non-editable: Date of Birth */}
             <div>
-              <label className="text-sm text-muted-foreground mb-2 block">Date of Birth</label>
-              <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary" />
+              <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-1.5">Date of Birth <Lock className="w-3 h-3" /></label>
+              <div className="w-full h-12 bg-muted rounded-xl px-4 flex items-center text-muted-foreground">{dob}</div>
             </div>
 
-            {/* Non-editable: Username */}
+            {/* Editable: Username */}
             <div>
-              <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-1.5">Username <Lock className="w-3 h-3" /></label>
-              <div className="w-full h-12 bg-muted rounded-xl px-4 flex items-center text-muted-foreground">@johndoe</div>
-              <p className="text-[10px] text-muted-foreground mt-1">Contact support to change username</p>
+              <label className="text-sm text-muted-foreground mb-2 block">Username</label>
+              <input value={username} onChange={e => setUsername(e.target.value)} className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary" />
             </div>
-            {/* Non-editable: Phone Number */}
+            {/* Editable: Phone Number */}
             <div>
-              <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-1.5">Phone Number <Lock className="w-3 h-3" /></label>
-              <div className="w-full h-12 bg-muted rounded-xl px-4 flex items-center text-muted-foreground">+234 810 367 4006</div>
-              <p className="text-[10px] text-muted-foreground mt-1">Contact support to change phone number</p>
+              <label className="text-sm text-muted-foreground mb-2 block">Phone Number</label>
+              <input value={phone} onChange={e => setPhone(e.target.value)} className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary" />
             </div>
           </div>
 
