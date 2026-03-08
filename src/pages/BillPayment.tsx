@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, CheckCircle, Clock as ClockIcon } from "lucide-react";
+import { ArrowLeft, CheckCircle } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
+import ProviderIcon from "@/components/ProviderIcon";
 
 const billConfigs: Record<string, { title: string; providers: string[]; fields: { label: string; placeholder: string; key: string }[]; hasPlans?: boolean; plans?: string[]; beneficiaryLabel: string }> = {
   airtime: {
@@ -19,9 +20,7 @@ const billConfigs: Record<string, { title: string; providers: string[]; fields: 
     providers: ["MTN", "Glo", "Airtel", "9mobile"],
     hasPlans: true,
     plans: ["1GB - ₦500", "2GB - ₦1,000", "5GB - ₦2,000", "10GB - ₦3,500"],
-    fields: [
-      { label: "Phone Number", placeholder: "Enter phone number", key: "phone" },
-    ],
+    fields: [{ label: "Phone Number", placeholder: "Enter phone number", key: "phone" }],
     beneficiaryLabel: "Recent Numbers",
   },
   electricity: {
@@ -85,22 +84,13 @@ const BillPayment = () => {
 
   const handleBeneficiarySelect = (id: string) => {
     const firstKey = config.fields[0]?.key;
-    if (firstKey) {
-      setFormData({ ...formData, [firstKey]: id });
-    }
+    if (firstKey) setFormData({ ...formData, [firstKey]: id });
   };
 
   if (step === "success") {
     const receiptState = {
       type: type,
-      data: {
-        service: config.title,
-        provider,
-        plan,
-        ...formData,
-        status: "Completed",
-        date: new Date().toLocaleString(),
-      }
+      data: { service: config.title, provider, plan, ...formData, status: "Completed", date: new Date().toLocaleString() }
     };
     return (
       <MobileLayout hideNav>
@@ -135,8 +125,10 @@ const BillPayment = () => {
               <p className="text-sm text-muted-foreground mb-4">Select provider</p>
               <div className="grid grid-cols-2 gap-3">
                 {config.providers.map((p) => (
-                  <button key={p} onClick={() => { setProvider(p); setStep("form"); }} className="bg-secondary rounded-xl py-4 px-4 text-sm font-medium text-foreground">
-                    {p}
+                  <button key={p} onClick={() => { setProvider(p); setStep("form"); }}
+                    className="bg-secondary rounded-xl py-4 px-4 flex items-center gap-3">
+                    <ProviderIcon name={p} size="md" />
+                    <span className="text-sm font-medium text-foreground">{p}</span>
                   </button>
                 ))}
               </div>
@@ -145,19 +137,18 @@ const BillPayment = () => {
 
           {step === "form" && (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">{provider}</p>
+              <div className="flex items-center gap-3">
+                <ProviderIcon name={provider} size="sm" />
+                <p className="text-sm text-muted-foreground">{provider}</p>
+              </div>
 
-              {/* Beneficiaries / History */}
               {beneficiaries.length > 0 && (
                 <div>
                   <label className="text-xs text-muted-foreground mb-2 block">{config.beneficiaryLabel}</label>
                   <div className="flex gap-2 overflow-x-auto pb-2">
                     {beneficiaries.map((b) => (
-                      <button
-                        key={b.id}
-                        onClick={() => handleBeneficiarySelect(b.id)}
-                        className={`shrink-0 bg-card border rounded-xl px-3 py-2 text-left ${formData[config.fields[0]?.key] === b.id ? "border-primary" : "border-border"}`}
-                      >
+                      <button key={b.id} onClick={() => handleBeneficiarySelect(b.id)}
+                        className={`shrink-0 bg-card border rounded-xl px-3 py-2 text-left ${formData[config.fields[0]?.key] === b.id ? "border-primary" : "border-border"}`}>
                         <p className="text-xs font-medium text-foreground">{b.label}</p>
                         <p className="text-[10px] text-muted-foreground">{b.sub}</p>
                       </button>
@@ -181,12 +172,8 @@ const BillPayment = () => {
               {config.fields.map((f) => (
                 <div key={f.key}>
                   <label className="text-xs text-muted-foreground mb-2 block">{f.label}</label>
-                  <input
-                    value={formData[f.key] || ""}
-                    onChange={(e) => setFormData({ ...formData, [f.key]: e.target.value })}
-                    placeholder={f.placeholder}
-                    className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary"
-                  />
+                  <input value={formData[f.key] || ""} onChange={(e) => setFormData({ ...formData, [f.key]: e.target.value })} placeholder={f.placeholder}
+                    className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary" />
                 </div>
               ))}
               <button onClick={() => setStep("review")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">Continue</button>
@@ -198,7 +185,13 @@ const BillPayment = () => {
               <p className="text-sm text-muted-foreground mb-4">Confirm payment</p>
               <div className="bg-secondary rounded-xl p-4 space-y-3 mb-6">
                 <div className="flex justify-between"><span className="text-sm text-muted-foreground">Service</span><span className="text-sm text-foreground">{config.title}</span></div>
-                <div className="flex justify-between"><span className="text-sm text-muted-foreground">Provider</span><span className="text-sm text-foreground">{provider}</span></div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Provider</span>
+                  <div className="flex items-center gap-2">
+                    <ProviderIcon name={provider} size="sm" />
+                    <span className="text-sm text-foreground">{provider}</span>
+                  </div>
+                </div>
                 {plan && <div className="flex justify-between"><span className="text-sm text-muted-foreground">Plan</span><span className="text-sm text-foreground">{plan}</span></div>}
                 {Object.entries(formData).map(([k, v]) => (
                   <div key={k} className="flex justify-between"><span className="text-sm text-muted-foreground capitalize">{k}</span><span className="text-sm text-foreground">{v}</span></div>

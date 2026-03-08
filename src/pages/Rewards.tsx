@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Copy, Check, Gift, Flame, Users, ChevronRight, ArrowLeft, CheckCircle } from "lucide-react";
+import { Copy, Check, Gift, Flame, Users, ChevronRight, ArrowLeft, Clock } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
@@ -9,7 +9,12 @@ const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 const streakDays = [true, true, true, false, false, false, false];
 
 const POINTS_BALANCE = 2450;
-const POINT_VALUE = 10; // 1 point = ₦10
+const POINT_VALUE = 10;
+
+const redemptionHistory = [
+  { id: 1, points: 500, cash: "₦5,000", status: "Approved", date: "Mar 6, 2026", account: "8103674006 - PalmPay" },
+  { id: 2, points: 200, cash: "₦2,000", status: "Processing", date: "Mar 8, 2026", account: "8103674006 - PalmPay" },
+];
 
 type View = "main" | "redeem" | "confirm" | "success";
 
@@ -35,12 +40,15 @@ const Rewards = () => {
       <MobileLayout hideNav>
         <PageTransition>
           <div className="min-h-screen flex flex-col items-center justify-center px-6">
-            <CheckCircle className="w-20 h-20 text-success mb-6" />
-            <h2 className="text-2xl font-bold text-foreground mb-2">Points Redeemed!</h2>
-            <p className="text-muted-foreground text-center mb-2">{pointsToRedeem} points converted</p>
-            <p className="text-2xl font-bold text-success mb-2">₦{cashValue.toLocaleString()}</p>
-            <p className="text-sm text-muted-foreground mb-8">Added to your Naira wallet</p>
-            <button onClick={() => navigate("/receipt", { state: { type: "reward", data: { points: `${pointsToRedeem} pts`, cash: `₦${cashValue.toLocaleString()}`, status: "Completed" } } })}
+            <Clock className="w-20 h-20 text-warning mb-6" />
+            <h2 className="text-2xl font-bold text-foreground mb-2">Redemption Submitted!</h2>
+            <p className="text-muted-foreground text-center mb-2">{pointsToRedeem} points → ₦{cashValue.toLocaleString()}</p>
+            <div className="bg-card border border-border rounded-xl p-4 w-full mb-4">
+              <div className="flex justify-between mb-2"><span className="text-sm text-muted-foreground">Credit to</span><span className="text-sm text-foreground">8103674006 - PalmPay</span></div>
+              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Status</span><span className="text-sm px-3 py-0.5 rounded-full bg-warning/20 text-warning">Processing</span></div>
+            </div>
+            <p className="text-xs text-muted-foreground mb-8 text-center">Your redemption is being reviewed by admin. You'll be notified once approved.</p>
+            <button onClick={() => navigate("/receipt", { state: { type: "reward", data: { points: `${pointsToRedeem} pts`, cash: `₦${cashValue.toLocaleString()}`, status: "Processing", adminStatus: "Processing", account: "8103674006 - PalmPay" } } })}
               className="w-full h-12 bg-secondary rounded-xl text-foreground font-semibold mb-3">View Receipt</button>
             <button onClick={() => { setView("main"); setRedeemAmount(""); }} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">Back to Rewards</button>
           </div>
@@ -67,8 +75,11 @@ const Rewards = () => {
               <div className="h-px bg-border" />
               <div className="flex justify-between"><span className="text-sm text-muted-foreground">You'll receive</span><span className="text-sm font-bold text-success">₦{cashValue.toLocaleString()}</span></div>
               <div className="h-px bg-border" />
+              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Credit to</span><span className="text-sm text-foreground">8103674006 - PalmPay</span></div>
+              <div className="h-px bg-border" />
               <div className="flex justify-between"><span className="text-sm text-muted-foreground">Remaining</span><span className="text-sm text-foreground">{(POINTS_BALANCE - pointsToRedeem).toLocaleString()} pts</span></div>
             </div>
+            <p className="text-xs text-muted-foreground text-center mb-4">Redemptions are processed after admin approval</p>
             <button onClick={() => setView("success")} className="w-full h-14 bg-primary rounded-xl text-primary-foreground font-semibold">Redeem Now</button>
           </div>
         </PageTransition>
@@ -87,32 +98,18 @@ const Rewards = () => {
               </button>
               <h2 className="text-lg font-bold text-foreground">Redeem Points</h2>
             </div>
-
             <div className="bg-gradient-to-br from-primary/20 to-accent/10 rounded-2xl p-5 mb-6 border border-border text-center">
               <p className="text-sm text-muted-foreground mb-1">Available Points</p>
               <p className="text-3xl font-bold text-primary">{POINTS_BALANCE.toLocaleString()}</p>
               <p className="text-sm text-success">≈ ₦{(POINTS_BALANCE * POINT_VALUE).toLocaleString()}</p>
             </div>
-
             <div className="mb-4">
               <label className="text-sm text-foreground mb-2 block">Points to redeem</label>
-              <input
-                type="number"
-                value={redeemAmount}
-                onChange={(e) => setRedeemAmount(e.target.value)}
-                placeholder="Enter points"
-                max={maxRedeem}
-                className="w-full h-14 bg-card border border-border rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary text-center text-xl"
-              />
-              {pointsToRedeem > 0 && (
-                <p className="text-center text-sm text-success mt-2">= ₦{cashValue.toLocaleString()}</p>
-              )}
-              {pointsToRedeem > maxRedeem && (
-                <p className="text-center text-xs text-destructive mt-1">Exceeds your balance</p>
-              )}
+              <input type="number" value={redeemAmount} onChange={(e) => setRedeemAmount(e.target.value)} placeholder="Enter points" max={maxRedeem}
+                className="w-full h-14 bg-card border border-border rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary text-center text-xl" />
+              {pointsToRedeem > 0 && <p className="text-center text-sm text-success mt-2">= ₦{cashValue.toLocaleString()}</p>}
+              {pointsToRedeem > maxRedeem && <p className="text-center text-xs text-destructive mt-1">Exceeds your balance</p>}
             </div>
-
-            {/* Quick amounts */}
             <div className="flex gap-2 mb-6">
               {[100, 500, 1000, 2450].map((amt) => (
                 <button key={amt} onClick={() => setRedeemAmount(String(Math.min(amt, maxRedeem)))}
@@ -121,11 +118,8 @@ const Rewards = () => {
                 </button>
               ))}
             </div>
-
-            <button
-              onClick={() => pointsToRedeem > 0 && pointsToRedeem <= maxRedeem && setView("confirm")}
-              className={`w-full h-14 rounded-xl font-semibold ${pointsToRedeem > 0 && pointsToRedeem <= maxRedeem ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
-            >
+            <button onClick={() => pointsToRedeem > 0 && pointsToRedeem <= maxRedeem && setView("confirm")}
+              className={`w-full h-14 rounded-xl font-semibold ${pointsToRedeem > 0 && pointsToRedeem <= maxRedeem ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
               Continue
             </button>
           </div>
@@ -140,7 +134,6 @@ const Rewards = () => {
         <div className="px-4 pt-6">
           <h2 className="text-lg font-bold text-foreground mb-4">Rewards</h2>
 
-          {/* Referral Banner */}
           <div className="bg-gradient-to-r from-primary/30 to-accent/20 rounded-2xl p-5 mb-6 border border-primary/20">
             <div className="flex items-center gap-3 mb-3">
               <Gift className="w-8 h-8 text-primary" />
@@ -157,7 +150,6 @@ const Rewards = () => {
             </div>
           </div>
 
-          {/* Explore */}
           <h3 className="text-sm font-semibold text-foreground mb-3">Explore</h3>
           <div className="flex gap-3 mb-6">
             <div className="flex-1 bg-secondary rounded-xl p-4">
@@ -172,7 +164,6 @@ const Rewards = () => {
             </div>
           </div>
 
-          {/* Weekly Cashback */}
           <div className="bg-secondary rounded-xl p-4 mb-4">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm font-semibold text-foreground">Weekly Cashback</p>
@@ -184,7 +175,6 @@ const Rewards = () => {
             <p className="text-xs text-muted-foreground">₦6,500 / ₦10,000 target</p>
           </div>
 
-          {/* DeeXpoints - Tappable to redeem */}
           <button onClick={() => setView("redeem")} className="w-full bg-secondary rounded-xl p-4 mb-4 flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-foreground">DeeXpoints</p>
@@ -197,7 +187,22 @@ const Rewards = () => {
             </div>
           </button>
 
-          {/* Daily Streak */}
+          {/* Redemption History */}
+          <h3 className="text-sm font-semibold text-foreground mb-3">Redemption History</h3>
+          <div className="space-y-2 mb-4">
+            {redemptionHistory.map((r) => (
+              <div key={r.id} className="bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-foreground">{r.points} pts → {r.cash}</p>
+                  <p className="text-xs text-muted-foreground">{r.date} • {r.account}</p>
+                </div>
+                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${r.status === "Approved" ? "bg-success/20 text-success" : "bg-warning/20 text-warning"}`}>
+                  {r.status}
+                </span>
+              </div>
+            ))}
+          </div>
+
           <div className="bg-secondary rounded-xl p-4 mb-4">
             <p className="text-sm font-semibold text-foreground mb-3">Daily Streak</p>
             <div className="flex justify-between">

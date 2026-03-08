@@ -4,8 +4,8 @@ import { LineChart, Line, XAxis, ResponsiveContainer } from "recharts";
 import { useState } from "react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
+import CryptoIcon from "@/components/CryptoIcon";
 
-// Realistic chart data per asset
 const chartDataByAsset: Record<string, number[]> = {
   BTC: [67800, 67200, 66800, 67100, 66500, 66900, 66200, 66600, 65800, 66100, 66800, 67400, 67100, 67500, 67378],
   ETH: [3180, 3210, 3195, 3240, 3220, 3260, 3235, 3250, 3270, 3245, 3280, 3260, 3250, 3255, 3250],
@@ -16,14 +16,14 @@ const chartDataByAsset: Record<string, number[]> = {
   DOGE: [0.230, 0.232, 0.228, 0.235, 0.233, 0.238, 0.236, 0.240, 0.237, 0.242, 0.240, 0.238, 0.241, 0.240, 0.240],
 };
 
-const assetData: Record<string, { name: string; symbol: string; price: string; change: string; changeUsd: string; balance: string; color: string; chartColor: string }> = {
-  BTC: { name: "Bitcoin", symbol: "BTC", price: "$ 67,378.3", change: "-0.90%", changeUsd: "$ -611.49", balance: "0.02340000 BTC", color: "bg-warning text-background", chartColor: "#EAB308" },
-  ETH: { name: "Ethereum", symbol: "ETH", price: "$ 3,250.5", change: "+1.20%", changeUsd: "$ +38.50", balance: "0.15000000 ETH", color: "bg-deex-blue text-background", chartColor: "#3B82F6" },
-  USDT: { name: "Tether USD", symbol: "USDT", price: "$ 1.00", change: "+0.01%", changeUsd: "$ +0.01", balance: "5,420.00 USDT", color: "bg-success text-background", chartColor: "#22C55E" },
-  USDC: { name: "USD Coin", symbol: "USDC", price: "$ 1.00", change: "+0.00%", changeUsd: "$ +0.00", balance: "2,100.00 USDC", color: "bg-primary text-background", chartColor: "#3B82F6" },
-  SOL: { name: "Solana", symbol: "SOL", price: "$ 150.2", change: "+3.50%", changeUsd: "$ +5.08", balance: "12.50000000 SOL", color: "bg-deex-purple text-background", chartColor: "#8B5CF6" },
-  TRX: { name: "Tron", symbol: "TRX", price: "$ 0.140", change: "+1.10%", changeUsd: "$ +0.002", balance: "1,200.00 TRX", color: "bg-deex-red text-background", chartColor: "#EF4444" },
-  DOGE: { name: "Dogecoin", symbol: "DOGE", price: "$ 0.240", change: "+2.30%", changeUsd: "$ +0.005", balance: "500.00 DOGE", color: "bg-deex-orange text-background", chartColor: "#F59E0B" },
+const assetData: Record<string, { name: string; symbol: string; price: string; change: string; changeUsd: string; balance: string; chartColor: string }> = {
+  BTC: { name: "Bitcoin", symbol: "BTC", price: "$ 67,378.3", change: "-0.90%", changeUsd: "$ -611.49", balance: "0.02340000 BTC", chartColor: "#EAB308" },
+  ETH: { name: "Ethereum", symbol: "ETH", price: "$ 3,250.5", change: "+1.20%", changeUsd: "$ +38.50", balance: "0.15000000 ETH", chartColor: "#3B82F6" },
+  USDT: { name: "Tether USD", symbol: "USDT", price: "$ 1.00", change: "+0.01%", changeUsd: "$ +0.01", balance: "5,420.00 USDT", chartColor: "#22C55E" },
+  USDC: { name: "USD Coin", symbol: "USDC", price: "$ 1.00", change: "+0.00%", changeUsd: "$ +0.00", balance: "2,100.00 USDC", chartColor: "#3B82F6" },
+  SOL: { name: "Solana", symbol: "SOL", price: "$ 150.2", change: "+3.50%", changeUsd: "$ +5.08", balance: "12.50000000 SOL", chartColor: "#8B5CF6" },
+  TRX: { name: "Tron", symbol: "TRX", price: "$ 0.140", change: "+1.10%", changeUsd: "$ +0.002", balance: "1,200.00 TRX", chartColor: "#EF4444" },
+  DOGE: { name: "Dogecoin", symbol: "DOGE", price: "$ 0.240", change: "+2.30%", changeUsd: "$ +0.005", balance: "500.00 DOGE", chartColor: "#F59E0B" },
 };
 
 const recentTxns = [
@@ -32,7 +32,6 @@ const recentTxns = [
 ];
 
 const timeframes = ["1D", "1W", "1M", "1Y", "All"];
-
 const tourSteps = [
   { title: "Deposit", description: "Tap the Deposit button to receive crypto into your wallet. Select the network carefully." },
   { title: "Withdraw", description: "Send crypto from your wallet to an external address. Double-check the address and network." },
@@ -56,22 +55,14 @@ const AssetDetail = () => {
     <MobileLayout hideNav>
       <PageTransition>
         <div className="pt-4">
-          {/* Header */}
           <div className="px-4 flex items-center justify-between mb-6">
-            <button onClick={() => navigate(-1)}>
-              <ArrowLeft className="w-6 h-6 text-foreground" />
-            </button>
+            <button onClick={() => navigate(-1)}><ArrowLeft className="w-6 h-6 text-foreground" /></button>
             <h2 className="text-lg font-bold text-foreground">{asset.symbol}</h2>
-            <button onClick={() => { setShowTour(true); setTourStep(0); }}>
-              <Info className="w-6 h-6 text-muted-foreground" />
-            </button>
+            <button onClick={() => { setShowTour(true); setTourStep(0); }}><Info className="w-6 h-6 text-muted-foreground" /></button>
           </div>
 
-          {/* Icon & Price */}
           <div className="flex flex-col items-center mb-4 px-4">
-            <div className={`w-16 h-16 rounded-full ${asset.color} flex items-center justify-center text-lg font-bold mb-3`}>
-              {asset.symbol.charAt(0)}
-            </div>
+            <CryptoIcon symbol={key} size="lg" className="mb-3" />
             <p className="text-sm text-muted-foreground">Current {asset.symbol} Price</p>
             <p className="text-3xl font-bold text-foreground">{asset.price}</p>
             <p className={`text-sm ${isNegative ? "text-destructive" : "text-success"}`}>
@@ -79,7 +70,6 @@ const AssetDetail = () => {
             </p>
           </div>
 
-          {/* Chart */}
           <div className="w-full h-48 mb-2">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
@@ -89,7 +79,6 @@ const AssetDetail = () => {
             </ResponsiveContainer>
           </div>
 
-          {/* Timeframe */}
           <div className="flex justify-around px-4 mb-8">
             {timeframes.map((tf) => (
               <button key={tf} onClick={() => setActiveTimeframe(tf)}
@@ -99,27 +88,22 @@ const AssetDetail = () => {
             ))}
           </div>
 
-          {/* Balance card */}
           <div className="mx-4 bg-card border border-border rounded-2xl p-5 mb-6">
             <p className="text-sm text-muted-foreground text-center mb-1">Total {asset.symbol} Balance</p>
             <p className="text-2xl font-bold text-foreground text-center mb-4">{asset.balance}</p>
             <div className="flex gap-3">
               <button onClick={() => navigate("/deposit")} className="flex-1 bg-primary/10 border border-primary/20 rounded-xl py-3 flex items-center justify-center gap-2">
-                <Plus className="w-4 h-4 text-primary" />
-                <span className="text-sm text-primary font-medium">Deposit</span>
+                <Plus className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-medium">Deposit</span>
               </button>
               <button className="flex-1 bg-primary/10 border border-primary/20 rounded-xl py-3 flex items-center justify-center gap-2">
-                <ArrowUpRight className="w-4 h-4 text-primary" />
-                <span className="text-sm text-primary font-medium">Withdraw</span>
+                <ArrowUpRight className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-medium">Withdraw</span>
               </button>
               <button className="flex-1 bg-primary/10 border border-primary/20 rounded-xl py-3 flex items-center justify-center gap-2">
-                <ArrowLeftRight className="w-4 h-4 text-primary" />
-                <span className="text-sm text-primary font-medium">Swap</span>
+                <ArrowLeftRight className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-medium">Swap</span>
               </button>
             </div>
           </div>
 
-          {/* Recent transactions */}
           <div className="px-4 mb-8">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-foreground">Recent transactions</h3>
@@ -130,9 +114,7 @@ const AssetDetail = () => {
                 <div key={i}>
                   <button onClick={() => navigate("/receipt", { state: { type: "swap", data: tx } })} className="w-full flex items-center justify-between px-4 py-3.5">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full ${asset.color} flex items-center justify-center text-xs font-bold`}>
-                        {asset.symbol.charAt(0)}
-                      </div>
+                      <CryptoIcon symbol={key} />
                       <div className="text-left">
                         <p className="text-sm font-medium text-foreground">{tx.type}</p>
                         <p className="text-xs text-muted-foreground">{tx.date} • <span className="text-success">{tx.status}</span></p>
@@ -150,32 +132,24 @@ const AssetDetail = () => {
           </div>
         </div>
 
-        {/* App Tour Modal */}
         {showTour && (
           <div className="fixed inset-0 bg-background/80 z-50 flex items-center justify-center px-6" onClick={() => setShowTour(false)}>
             <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-[380px]" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <span className="text-xs text-muted-foreground">Step {tourStep + 1} of {tourSteps.length}</span>
-                <button onClick={() => setShowTour(false)}>
-                  <X className="w-5 h-5 text-muted-foreground" />
-                </button>
+                <button onClick={() => setShowTour(false)}><X className="w-5 h-5 text-muted-foreground" /></button>
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">{tourSteps[tourStep].title}</h3>
               <p className="text-sm text-muted-foreground mb-6">{tourSteps[tourStep].description}</p>
               <div className="flex gap-3">
                 {tourStep > 0 && (
-                  <button onClick={() => setTourStep(tourStep - 1)} className="flex-1 h-10 border border-border rounded-xl text-foreground text-sm font-medium">
-                    Back
-                  </button>
+                  <button onClick={() => setTourStep(tourStep - 1)} className="flex-1 h-10 border border-border rounded-xl text-foreground text-sm font-medium">Back</button>
                 )}
-                <button
-                  onClick={() => tourStep < tourSteps.length - 1 ? setTourStep(tourStep + 1) : setShowTour(false)}
-                  className="flex-1 h-10 bg-primary rounded-xl text-primary-foreground text-sm font-semibold"
-                >
+                <button onClick={() => tourStep < tourSteps.length - 1 ? setTourStep(tourStep + 1) : setShowTour(false)}
+                  className="flex-1 h-10 bg-primary rounded-xl text-primary-foreground text-sm font-semibold">
                   {tourStep < tourSteps.length - 1 ? "Next" : "Got it!"}
                 </button>
               </div>
-              {/* Progress dots */}
               <div className="flex gap-1 justify-center mt-4">
                 {tourSteps.map((_, i) => (
                   <div key={i} className={`w-2 h-2 rounded-full ${i === tourStep ? "bg-primary" : "bg-muted"}`} />
