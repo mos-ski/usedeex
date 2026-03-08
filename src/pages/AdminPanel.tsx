@@ -429,6 +429,13 @@ const AdminPanel = () => {
   const [complianceFilter, setComplianceFilter] = useState<"all" | "pending" | "reviewing" | "resolved" | "dismissed">("all");
   const [complianceRules, setComplianceRules] = useState<ComplianceRule[]>(defaultComplianceRules);
   const [complianceNote, setComplianceNote] = useState("");
+  const [confirmAction, setConfirmAction] = useState<{ label: string; description: string; onConfirm: () => void } | null>(null);
+  const [inlineSaved, setInlineSaved] = useState<Record<string, boolean>>({});
+
+  const showInlineFeedback = (key: string) => {
+    setInlineSaved(prev => ({ ...prev, [key]: true }));
+    setTimeout(() => setInlineSaved(prev => ({ ...prev, [key]: false })), 2000);
+  };
 
   const isKycTab = activeTab === "kyc" || activeTab === "kyc-compliance" || activeTab === "kyc-rules";
   const isComplianceTab = activeTab === "compliance" || activeTab === "compliance-alerts" || activeTab === "compliance-rules" || activeTab === "compliance-detail";
