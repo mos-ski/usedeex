@@ -408,7 +408,7 @@ const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; is
 const AdminPanel = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
-  const [kycExpanded, setKycExpanded] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const [showBalance, setShowBalance] = useState(false);
   const [walletTab, setWalletTab] = useState<"deex" | "customers">("deex");
   const [ordersTab, setOrdersTab] = useState<"orders" | "payouts" | "rewards" | "otc">("orders");
@@ -425,8 +425,21 @@ const AdminPanel = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<typeof customersList[0] | null>(null);
   const [tablePage, setTablePage] = useState(1);
   const perPage = 5;
+  const [selectedAlert, setSelectedAlert] = useState<ComplianceAlert | null>(null);
+  const [complianceFilter, setComplianceFilter] = useState<"all" | "pending" | "reviewing" | "resolved" | "dismissed">("all");
+  const [complianceRules, setComplianceRules] = useState<ComplianceRule[]>(defaultComplianceRules);
+  const [complianceNote, setComplianceNote] = useState("");
 
   const isKycTab = activeTab === "kyc" || activeTab === "kyc-compliance" || activeTab === "kyc-rules";
+  const isComplianceTab = activeTab === "compliance" || activeTab === "compliance-alerts" || activeTab === "compliance-rules" || activeTab === "compliance-detail";
+
+  const filteredAlerts = complianceFilter === "all" ? complianceAlerts : complianceAlerts.filter(a => a.status === complianceFilter);
+  const alertStats = {
+    total: complianceAlerts.length,
+    critical: complianceAlerts.filter(a => a.severity === "critical").length,
+    pending: complianceAlerts.filter(a => a.status === "pending").length,
+    autoSuspended: complianceAlerts.filter(a => a.autoSuspended).length,
+  };
 
   const currentWallet = walletTab === "deex" ? deexWallet : customersWallet;
 
