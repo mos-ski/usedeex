@@ -10,7 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    navigate("/dashboard");
+    navigate("/pin");
   };
 
   return (
