@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Wallet, ShoppingCart, Users, Shield, ListChecks, BarChart3,
   Settings, LogOut, Bell, Search, ChevronDown, ChevronRight, Eye, EyeOff,
   ExternalLink, Plus, Upload, Info, AlertCircle, Trash2, FileText, ArrowLeft,
-  ChevronLeft
+  ChevronLeft, CreditCard, Snowflake
 } from "lucide-react";
 import CryptoIcon from "@/components/CryptoIcon";
 import {
@@ -17,7 +17,7 @@ const NewBadge = () => (
 );
 
 // ===== TYPES =====
-type AdminTab = "dashboard" | "wallets" | "orders" | "users" | "kyc" | "kyc-compliance" | "kyc-rules" | "reports" | "settings" | "audit-log" | "customer-detail";
+type AdminTab = "dashboard" | "wallets" | "orders" | "users" | "kyc" | "kyc-compliance" | "kyc-rules" | "reports" | "settings" | "audit-log" | "customer-detail" | "virtual-cards";
 
 // ===== MOCK DATA =====
 const dashboardMetrics = [
@@ -198,6 +198,7 @@ const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; is
   { icon: LayoutDashboard, label: "Dashboard", tab: "dashboard" },
   { icon: Wallet, label: "Wallets", tab: "wallets" },
   { icon: ShoppingCart, label: "Orders", tab: "orders" },
+  { icon: CreditCard, label: "Virtual Cards", tab: "virtual-cards", isNew: true },
   { icon: Users, label: "Users", tab: "users" },
   { icon: Shield, label: "Kyc logs", tab: "kyc", children: [
     { label: "Compliance", tab: "kyc-compliance" },
