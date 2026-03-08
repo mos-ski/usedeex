@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Eye, EyeOff, ArrowDownLeft, Send, TrendingUp, ArrowLeftRight, CreditCard, Phone, Wifi, Zap, Gamepad2 } from "lucide-react";
+import { Bell, Eye, EyeOff, ArrowDownLeft, Send, TrendingUp, ArrowLeftRight, CreditCard, Phone, Wifi, Zap, Gamepad2, Wallet } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
@@ -106,7 +106,7 @@ const Dashboard = () => {
             <div className="h-px bg-border my-4" />
 
             {activeTab === "crypto" ? (
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 <button onClick={() => navigate("/deposit")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
                   <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center"><ArrowDownLeft className="w-4 h-4 text-primary" /></div>
                   <span className="text-[10px] text-foreground font-medium">Deposit</span>
@@ -118,6 +118,11 @@ const Dashboard = () => {
                 <button onClick={() => navigate("/deex-pay")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5 relative">
                   <div className="w-9 h-9 rounded-full bg-accent/15 flex items-center justify-center"><CreditCard className="w-4 h-4 text-accent" /></div>
                   <span className="text-[10px] text-foreground font-medium">DeeX Pay</span>
+                  <NewBadge className="absolute -top-1 -right-1" />
+                </button>
+                <button onClick={() => navigate("/virtual-cards")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5 relative">
+                  <div className="w-9 h-9 rounded-full bg-warning/15 flex items-center justify-center"><Wallet className="w-4 h-4 text-warning" /></div>
+                  <span className="text-[10px] text-foreground font-medium">Cards</span>
                   <NewBadge className="absolute -top-1 -right-1" />
                 </button>
               </div>

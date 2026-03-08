@@ -34,6 +34,7 @@ import KycVerification from "./pages/KycVerification";
 import Support from "./pages/Support";
 import QuickAction from "./pages/QuickAction";
 import AdminPanel from "./pages/AdminPanel";
+import VirtualCards from "./pages/VirtualCards";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -76,6 +77,7 @@ const App = () => (
           <Route path="/kyc" element={<KycVerification />} />
           <Route path="/support" element={<Support />} />
           <Route path="/quick-action" element={<QuickAction />} />
+          <Route path="/virtual-cards" element={<VirtualCards />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
