@@ -776,7 +776,7 @@ const AdminPanel = () => {
                   </tr></thead>
                   <tbody>
                     {customersList.map((c, i) => (
-                      <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => { setSelectedCustomer(c); setActiveTab("customer-detail"); }}>
+                      <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => navigate(`/admin/users/${i}`)}>
                         <td className="px-4 py-3 text-sm text-foreground">{c.name}</td>
                         <td className="px-4 py-3 text-sm text-muted-foreground">{c.email}</td>
                         <td className="px-4 py-3"><span className="text-[10px] px-2.5 py-1 rounded-full font-medium bg-deex-blue/20 text-deex-blue">{c.kyc}</span></td>
