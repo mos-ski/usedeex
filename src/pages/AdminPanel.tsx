@@ -457,12 +457,13 @@ const AdminPanel = () => {
         <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = item.tab === activeTab || (item.children && item.children.some(c => c.tab === activeTab));
+            const isExpanded = expandedSections[item.tab] || false;
             return (
               <div key={item.tab}>
                 <button
                   onClick={() => {
                     if (item.children) {
-                      setKycExpanded(!kycExpanded);
+                      setExpandedSections(prev => ({ ...prev, [item.tab]: !prev[item.tab] }));
                       setActiveTab(item.tab);
                     } else {
                       setActiveTab(item.tab);
@@ -478,10 +479,10 @@ const AdminPanel = () => {
                     {item.isNew && <NewBadge />}
                   </div>
                   {item.children && (
-                    <ChevronDown className={`w-4 h-4 transition-transform ${kycExpanded ? "rotate-180" : ""}`} />
+                    <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                   )}
                 </button>
-                {item.children && kycExpanded && (
+                {item.children && isExpanded && (
                   <div className="ml-10 mt-0.5 space-y-0.5">
                     {item.children.map(child => (
                       <button
