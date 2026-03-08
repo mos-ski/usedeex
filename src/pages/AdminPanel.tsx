@@ -4,7 +4,8 @@ import {
   LayoutDashboard, Wallet, ShoppingCart, Users, Shield, ListChecks, BarChart3,
   Settings, LogOut, Bell, Search, ChevronDown, ChevronRight, Eye, EyeOff,
   ExternalLink, Plus, Upload, Info, AlertCircle, Trash2, FileText, ArrowLeft,
-  ChevronLeft, CreditCard, Snowflake
+  ChevronLeft, CreditCard, Snowflake, AlertTriangle, ShieldAlert, Zap,
+  Monitor, MapPin, Ban, Lock, MessageSquare, ArrowUpRight, Clock, Filter
 } from "lucide-react";
 import CryptoIcon from "@/components/CryptoIcon";
 import {
@@ -17,7 +18,7 @@ const NewBadge = () => (
 );
 
 // ===== TYPES =====
-type AdminTab = "dashboard" | "wallets" | "orders" | "users" | "kyc" | "kyc-compliance" | "kyc-rules" | "reports" | "settings" | "audit-log" | "customer-detail" | "virtual-cards";
+type AdminTab = "dashboard" | "wallets" | "orders" | "users" | "kyc" | "kyc-compliance" | "kyc-rules" | "compliance" | "compliance-alerts" | "compliance-rules" | "compliance-detail" | "reports" | "settings" | "audit-log" | "customer-detail" | "virtual-cards";
 
 // ===== MOCK DATA =====
 const dashboardMetrics = [
@@ -181,6 +182,164 @@ const reportCards = [
   { title: "Survey", desc: "Collect feedback and data for market research, product development, and more.", color: "text-deex-purple" },
 ];
 
+// ===== COMPLIANCE MOCK DATA =====
+type ComplianceAlert = {
+  id: string;
+  userName: string;
+  email: string;
+  severity: "critical" | "high" | "medium" | "low";
+  trigger: string;
+  triggerType: "high-frequency" | "multi-device" | "large-withdrawal" | "failed-kyc" | "wash-trading";
+  description: string;
+  date: string;
+  status: "pending" | "reviewing" | "resolved" | "dismissed";
+  autoSuspended: boolean;
+  details: { label: string; value: string }[];
+  timeline: { action: string; time: string; actor: string }[];
+};
+
+const complianceAlerts: ComplianceAlert[] = [
+  {
+    id: "CA-001", userName: "Victor Odigili", email: "victor.odigili@gmail.com", severity: "critical",
+    trigger: "High-Frequency Trading", triggerType: "high-frequency",
+    description: "23 trades executed within 4 minutes. Threshold: 10 trades / 5 min.",
+    date: "Mar 8, 2026, 4:12 PM", status: "pending", autoSuspended: true,
+    details: [
+      { label: "Trades in window", value: "23 trades / 4 min" },
+      { label: "Total volume", value: "$12,450.00" },
+      { label: "Avg trade size", value: "$541.30" },
+      { label: "IP Address", value: "102.89.46.211" },
+      { label: "Device", value: "iPhone 15 Pro — Safari" },
+      { label: "Location", value: "Lagos, Nigeria" },
+    ],
+    timeline: [
+      { action: "System auto-suspended account", time: "4:12 PM", actor: "System" },
+      { action: "23rd trade detected — threshold breached", time: "4:12 PM", actor: "System" },
+      { action: "10th trade in 3 min — monitoring started", time: "4:10 PM", actor: "System" },
+      { action: "First trade in burst", time: "4:08 PM", actor: "Victor Odigili" },
+    ],
+  },
+  {
+    id: "CA-002", userName: "Chidinma Obi", email: "chidinma.obi@yahoo.com", severity: "high",
+    trigger: "Multiple Device Logins", triggerType: "multi-device",
+    description: "Logged in from 4 different devices across 3 countries within 2 hours.",
+    date: "Mar 8, 2026, 2:30 PM", status: "reviewing", autoSuspended: false,
+    details: [
+      { label: "Devices", value: "4 unique devices" },
+      { label: "Countries", value: "Nigeria, Ghana, UK" },
+      { label: "Time span", value: "2 hours" },
+      { label: "Current IP", value: "185.32.109.44" },
+      { label: "Device", value: "Samsung Galaxy S24 — Chrome" },
+      { label: "Location", value: "London, UK" },
+    ],
+    timeline: [
+      { action: "Login from London, UK (new device)", time: "2:30 PM", actor: "Chidinma Obi" },
+      { action: "Login from Accra, Ghana (new device)", time: "1:45 PM", actor: "Chidinma Obi" },
+      { action: "Login from Lagos, NG (new device)", time: "1:02 PM", actor: "Chidinma Obi" },
+      { action: "Login from Lagos, NG (known device)", time: "12:30 PM", actor: "Chidinma Obi" },
+    ],
+  },
+  {
+    id: "CA-003", userName: "Ibrahim Abubakar", email: "ibrahim.abu@gmail.com", severity: "high",
+    trigger: "Large Withdrawal Spike", triggerType: "large-withdrawal",
+    description: "Withdrew $8,500 in a single transaction — 340% above user's average.",
+    date: "Mar 8, 2026, 11:15 AM", status: "pending", autoSuspended: false,
+    details: [
+      { label: "Withdrawal amount", value: "$8,500.00" },
+      { label: "User avg withdrawal", value: "$1,930.00" },
+      { label: "Deviation", value: "340% above average" },
+      { label: "Destination", value: "External wallet — 0x3f...a9c2" },
+      { label: "Device", value: "MacBook Pro — Chrome" },
+      { label: "Location", value: "Abuja, Nigeria" },
+    ],
+    timeline: [
+      { action: "Withdrawal of $8,500 initiated", time: "11:15 AM", actor: "Ibrahim Abubakar" },
+      { action: "Large amount flag triggered", time: "11:15 AM", actor: "System" },
+      { action: "Previous withdrawal: $1,200", time: "Mar 6, 3:00 PM", actor: "Ibrahim Abubakar" },
+    ],
+  },
+  {
+    id: "CA-004", userName: "Lucky Holland", email: "hollandlucky09@gmail.com", severity: "medium",
+    trigger: "Failed KYC Attempts", triggerType: "failed-kyc",
+    description: "5 failed KYC Level 2 verification attempts in 24 hours with different documents.",
+    date: "Mar 7, 2026, 8:20 PM", status: "pending", autoSuspended: false,
+    details: [
+      { label: "Failed attempts", value: "5 in 24 hours" },
+      { label: "Documents used", value: "3 different IDs" },
+      { label: "Current KYC", value: "Level 1" },
+      { label: "IP Address", value: "197.210.55.12" },
+      { label: "Device", value: "Tecno Spark 10 — Chrome" },
+      { label: "Location", value: "Port Harcourt, Nigeria" },
+    ],
+    timeline: [
+      { action: "5th KYC attempt failed — flag raised", time: "8:20 PM", actor: "System" },
+      { action: "4th attempt — different NIN submitted", time: "7:55 PM", actor: "Lucky Holland" },
+      { action: "3rd attempt — new document uploaded", time: "6:30 PM", actor: "Lucky Holland" },
+      { action: "1st KYC attempt failed", time: "2:15 PM", actor: "Lucky Holland" },
+    ],
+  },
+  {
+    id: "CA-005", userName: "Efeme Jeremiah", email: "ejaifeefemegreat@gmail.com", severity: "critical",
+    trigger: "Rapid Deposit-Withdraw Cycle", triggerType: "wash-trading",
+    description: "6 deposit-withdraw cycles in 30 minutes totaling $15,200. Possible wash trading.",
+    date: "Mar 7, 2026, 3:45 PM", status: "resolved", autoSuspended: true,
+    details: [
+      { label: "Cycles detected", value: "6 in 30 min" },
+      { label: "Total volume", value: "$15,200.00" },
+      { label: "Net movement", value: "$23.50 (negligible)" },
+      { label: "Assets involved", value: "USDT, BTC" },
+      { label: "Device", value: "Desktop — Firefox" },
+      { label: "Location", value: "Benin City, Nigeria" },
+    ],
+    timeline: [
+      { action: "Account suspended — wash trading confirmed", time: "4:00 PM", actor: "Adedamola A." },
+      { action: "6th cycle completed — auto-suspension triggered", time: "3:45 PM", actor: "System" },
+      { action: "Pattern detected: deposit-withdraw loop", time: "3:30 PM", actor: "System" },
+      { action: "First deposit in cycle", time: "3:15 PM", actor: "Efeme Jeremiah" },
+    ],
+  },
+  {
+    id: "CA-006", userName: "Fortune Chigor", email: "chigorfortune25@gmail.com", severity: "low",
+    trigger: "Multiple Device Logins", triggerType: "multi-device",
+    description: "Logged in from 2 new devices in Lagos within 1 hour. Likely personal devices.",
+    date: "Mar 6, 2026, 9:00 AM", status: "dismissed", autoSuspended: false,
+    details: [
+      { label: "Devices", value: "2 new devices" },
+      { label: "Location", value: "Lagos, Nigeria (same city)" },
+      { label: "Time span", value: "1 hour" },
+      { label: "IP Address", value: "102.89.33.78" },
+      { label: "Device", value: "iPhone 14 — Safari" },
+      { label: "Previous devices", value: "1 registered" },
+    ],
+    timeline: [
+      { action: "Dismissed — same-city devices", time: "10:00 AM", actor: "Dawood K." },
+      { action: "Login from new iPhone", time: "9:45 AM", actor: "Fortune Chigor" },
+      { action: "Login from new iPad", time: "9:00 AM", actor: "Fortune Chigor" },
+    ],
+  },
+];
+
+type ComplianceRule = {
+  id: string;
+  name: string;
+  trigger: string;
+  threshold: string;
+  action: string;
+  enabled: boolean;
+  lastTriggered: string;
+  triggeredCount: number;
+};
+
+const defaultComplianceRules: ComplianceRule[] = [
+  { id: "R1", name: "High-Frequency Trading", trigger: "Trades exceeding threshold in time window", threshold: "10 trades / 5 minutes", action: "Auto-suspend + Alert", enabled: true, lastTriggered: "Mar 8, 2026", triggeredCount: 3 },
+  { id: "R2", name: "Multi-Device Login", trigger: "Logins from multiple devices/locations", threshold: "3+ devices / 2 hours", action: "Alert only", enabled: true, lastTriggered: "Mar 8, 2026", triggeredCount: 7 },
+  { id: "R3", name: "Large Withdrawal Spike", trigger: "Withdrawal exceeds % above user average", threshold: "200% above average", action: "Hold + Alert", enabled: true, lastTriggered: "Mar 8, 2026", triggeredCount: 2 },
+  { id: "R4", name: "Failed KYC Attempts", trigger: "Multiple failed verifications in time window", threshold: "3 failures / 24 hours", action: "Alert only", enabled: true, lastTriggered: "Mar 7, 2026", triggeredCount: 4 },
+  { id: "R5", name: "Wash Trading Detection", trigger: "Rapid deposit-withdraw cycles with negligible net", threshold: "3 cycles / 1 hour", action: "Auto-suspend + Alert", enabled: true, lastTriggered: "Mar 7, 2026", triggeredCount: 1 },
+  { id: "R6", name: "Geo-Velocity Check", trigger: "Login from impossible travel distance", threshold: ">500km / 1 hour", action: "Auto-suspend + Alert", enabled: false, lastTriggered: "Never", triggeredCount: 0 },
+  { id: "R7", name: "Dormant Account Activity", trigger: "Large transaction on inactive account", threshold: "90+ days inactive, >$500 tx", action: "Alert only", enabled: false, lastTriggered: "Never", triggeredCount: 0 },
+];
+
 // ===== STATUS BADGE =====
 const statusBadge = (status: string) => {
   const s = status.toUpperCase();
@@ -191,6 +350,38 @@ const statusBadge = (status: string) => {
     PENDING: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
   };
   return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider ${styles[s] || "bg-muted text-muted-foreground"}`}>{s}</span>;
+};
+
+const severityBadge = (severity: string) => {
+  const styles: Record<string, string> = {
+    critical: "bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))]",
+    high: "bg-[hsl(var(--deex-orange))]/20 text-[hsl(var(--deex-orange))]",
+    medium: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
+    low: "bg-muted text-muted-foreground",
+  };
+  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${styles[severity] || "bg-muted text-muted-foreground"}`}>{severity}</span>;
+};
+
+const alertStatusBadge = (status: string) => {
+  const styles: Record<string, string> = {
+    pending: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
+    reviewing: "bg-[hsl(var(--deex-blue))]/20 text-[hsl(var(--deex-blue))]",
+    resolved: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
+    dismissed: "bg-muted text-muted-foreground",
+  };
+  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${styles[status] || "bg-muted text-muted-foreground"}`}>{status}</span>;
+};
+
+const triggerIcon = (type: string) => {
+  const icons: Record<string, typeof AlertTriangle> = {
+    "high-frequency": Zap,
+    "multi-device": Monitor,
+    "large-withdrawal": ArrowUpRight,
+    "failed-kyc": ShieldAlert,
+    "wash-trading": AlertTriangle,
+  };
+  const Icon = icons[type] || AlertCircle;
+  return <Icon className="w-4 h-4" />;
 };
 
 // ===== NAV ITEMS =====
@@ -204,6 +395,10 @@ const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; is
     { label: "Compliance", tab: "kyc-compliance" },
     { label: "Rules Manager", tab: "kyc-rules" },
   ]},
+  { icon: AlertTriangle, label: "Compliance", tab: "compliance", isNew: true, children: [
+    { label: "Alerts", tab: "compliance-alerts" },
+    { label: "Rules Engine", tab: "compliance-rules" },
+  ]},
   { icon: FileText, label: "Audit Log", tab: "audit-log", isNew: true },
   { icon: BarChart3, label: "Reports", tab: "reports" },
   { icon: Settings, label: "Settings", tab: "settings" },
@@ -213,7 +408,7 @@ const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; is
 const AdminPanel = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
-  const [kycExpanded, setKycExpanded] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const [showBalance, setShowBalance] = useState(false);
   const [walletTab, setWalletTab] = useState<"deex" | "customers">("deex");
   const [ordersTab, setOrdersTab] = useState<"orders" | "payouts" | "rewards" | "otc">("orders");
@@ -230,8 +425,21 @@ const AdminPanel = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<typeof customersList[0] | null>(null);
   const [tablePage, setTablePage] = useState(1);
   const perPage = 5;
+  const [selectedAlert, setSelectedAlert] = useState<ComplianceAlert | null>(null);
+  const [complianceFilter, setComplianceFilter] = useState<"all" | "pending" | "reviewing" | "resolved" | "dismissed">("all");
+  const [complianceRules, setComplianceRules] = useState<ComplianceRule[]>(defaultComplianceRules);
+  const [complianceNote, setComplianceNote] = useState("");
 
   const isKycTab = activeTab === "kyc" || activeTab === "kyc-compliance" || activeTab === "kyc-rules";
+  const isComplianceTab = activeTab === "compliance" || activeTab === "compliance-alerts" || activeTab === "compliance-rules" || activeTab === "compliance-detail";
+
+  const filteredAlerts = complianceFilter === "all" ? complianceAlerts : complianceAlerts.filter(a => a.status === complianceFilter);
+  const alertStats = {
+    total: complianceAlerts.length,
+    critical: complianceAlerts.filter(a => a.severity === "critical").length,
+    pending: complianceAlerts.filter(a => a.status === "pending").length,
+    autoSuspended: complianceAlerts.filter(a => a.autoSuspended).length,
+  };
 
   const currentWallet = walletTab === "deex" ? deexWallet : customersWallet;
 
@@ -249,12 +457,13 @@ const AdminPanel = () => {
         <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = item.tab === activeTab || (item.children && item.children.some(c => c.tab === activeTab));
+            const isExpanded = expandedSections[item.tab] || false;
             return (
               <div key={item.tab}>
                 <button
                   onClick={() => {
                     if (item.children) {
-                      setKycExpanded(!kycExpanded);
+                      setExpandedSections(prev => ({ ...prev, [item.tab]: !prev[item.tab] }));
                       setActiveTab(item.tab);
                     } else {
                       setActiveTab(item.tab);
@@ -270,10 +479,10 @@ const AdminPanel = () => {
                     {item.isNew && <NewBadge />}
                   </div>
                   {item.children && (
-                    <ChevronDown className={`w-4 h-4 transition-transform ${kycExpanded ? "rotate-180" : ""}`} />
+                    <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                   )}
                 </button>
-                {item.children && kycExpanded && (
+                {item.children && isExpanded && (
                   <div className="ml-10 mt-0.5 space-y-0.5">
                     {item.children.map(child => (
                       <button
@@ -305,7 +514,7 @@ const AdminPanel = () => {
           <div className="flex items-center gap-2 text-foreground">
             <span className="text-muted-foreground">—</span>
             <h1 className="text-base font-semibold">
-              {activeTab === "dashboard" ? "Dashboard" : activeTab === "wallets" ? "Wallets" : activeTab === "orders" ? "Transactions" : activeTab === "users" ? "Users" : isKycTab ? "" : activeTab === "reports" ? "Reports" : "Settings"}
+              {activeTab === "dashboard" ? "Dashboard" : activeTab === "wallets" ? "Wallets" : activeTab === "orders" ? "Transactions" : activeTab === "users" ? "Users" : isKycTab ? "" : isComplianceTab ? "Compliance" : activeTab === "reports" ? "Reports" : activeTab === "audit-log" ? "Audit Log" : activeTab === "virtual-cards" ? "Virtual Cards" : "Settings"}
             </h1>
           </div>
           <div className="flex items-center gap-3">
@@ -1166,7 +1375,292 @@ const AdminPanel = () => {
             </div>
           )}
 
-          {/* ===== CUSTOMER DETAIL ===== */}
+          {/* ===== COMPLIANCE ALERTS ===== */}
+          {(activeTab === "compliance" || activeTab === "compliance-alerts") && (
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-1">Suspicious Activity Alerts <NewBadge /></h2>
+              <p className="text-sm text-muted-foreground mb-6">Monitor flagged accounts and take action on compliance violations.</p>
+
+              {/* Stats cards */}
+              <div className="grid grid-cols-4 gap-4 mb-6">
+                {[
+                  { label: "Total Alerts", value: alertStats.total.toString(), color: "text-[hsl(var(--deex-blue))]", bg: "bg-[hsl(var(--deex-blue))]/10" },
+                  { label: "Critical", value: alertStats.critical.toString(), color: "text-[hsl(var(--destructive))]", bg: "bg-[hsl(var(--destructive))]/10" },
+                  { label: "Pending Review", value: alertStats.pending.toString(), color: "text-[hsl(var(--warning))]", bg: "bg-[hsl(var(--warning))]/10" },
+                  { label: "Auto-Suspended", value: alertStats.autoSuspended.toString(), color: "text-[hsl(var(--deex-orange))]", bg: "bg-[hsl(var(--deex-orange))]/10" },
+                ].map(s => (
+                  <div key={s.label} className="bg-card border border-border rounded-xl p-5">
+                    <p className={`text-sm font-medium mb-1 ${s.color}`}>{s.label}</p>
+                    <p className="text-2xl font-bold text-foreground">{s.value}</p>
+                    <div className={`mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${s.bg} ${s.color}`}>
+                      <AlertTriangle className="w-3 h-3" /> Active
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Filter tabs */}
+              <div className="flex items-center gap-2 mb-4">
+                {(["all", "pending", "reviewing", "resolved", "dismissed"] as const).map(f => (
+                  <button
+                    key={f}
+                    onClick={() => setComplianceFilter(f)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                      complianceFilter === f ? "bg-[hsl(var(--deex-blue))] text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {f.charAt(0).toUpperCase() + f.slice(1)} {f === "all" ? `(${complianceAlerts.length})` : `(${complianceAlerts.filter(a => a.status === f).length})`}
+                  </button>
+                ))}
+              </div>
+
+              {/* Alerts table */}
+              <div className="bg-card border border-border rounded-xl overflow-hidden">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border">
+                      {["Severity", "User", "Trigger", "Description", "Status", "Date", ""].map(h => (
+                        <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredAlerts.map(alert => (
+                      <tr key={alert.id} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors cursor-pointer" onClick={() => { setSelectedAlert(alert); setActiveTab("compliance-detail"); }}>
+                        <td className="px-4 py-3">{severityBadge(alert.severity)}</td>
+                        <td className="px-4 py-3">
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{alert.userName}</p>
+                            <p className="text-xs text-muted-foreground">{alert.email}</p>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">{triggerIcon(alert.triggerType)}</span>
+                            <span className="text-sm text-foreground">{alert.trigger}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground max-w-[200px] truncate">{alert.description}</td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-1.5">
+                            {alertStatusBadge(alert.status)}
+                            {alert.autoSuspended && <Ban className="w-3 h-3 text-[hsl(var(--destructive))]" />}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{alert.date}</td>
+                        <td className="px-4 py-3"><ChevronRight className="w-4 h-4 text-muted-foreground" /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ===== COMPLIANCE ALERT DETAIL ===== */}
+          {activeTab === "compliance-detail" && selectedAlert && (
+            <div>
+              <button onClick={() => { setActiveTab("compliance-alerts"); setSelectedAlert(null); }} className="text-sm text-[hsl(var(--deex-blue))] mb-4 hover:underline flex items-center gap-1">
+                <ChevronLeft className="w-4 h-4" /> Back to Alerts
+              </button>
+
+              <div className="flex gap-6">
+                {/* Left: Alert info */}
+                <div className="flex-1 space-y-4">
+                  {/* Alert header */}
+                  <div className="bg-card border border-border rounded-xl p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        {severityBadge(selectedAlert.severity)}
+                        {alertStatusBadge(selectedAlert.status)}
+                        {selectedAlert.autoSuspended && (
+                          <span className="text-[10px] px-2.5 py-1 rounded-full font-semibold bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))] flex items-center gap-1">
+                            <Ban className="w-3 h-3" /> AUTO-SUSPENDED
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-xs text-muted-foreground">{selectedAlert.id}</span>
+                    </div>
+
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-12 rounded-full bg-[hsl(var(--deex-blue))]/20 flex items-center justify-center text-base font-bold text-[hsl(var(--deex-blue))]">
+                        {selectedAlert.userName.split(" ").map(n => n[0]).join("").substring(0, 2)}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-foreground">{selectedAlert.userName}</h3>
+                        <p className="text-sm text-muted-foreground">{selectedAlert.email}</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-secondary/50 rounded-lg p-4 mb-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-muted-foreground">{triggerIcon(selectedAlert.triggerType)}</span>
+                        <h4 className="text-sm font-semibold text-foreground">{selectedAlert.trigger}</h4>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{selectedAlert.description}</p>
+                    </div>
+
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> Flagged: {selectedAlert.date}
+                    </p>
+                  </div>
+
+                  {/* Details grid */}
+                  <div className="bg-card border border-border rounded-xl p-6">
+                    <h4 className="text-sm font-semibold text-foreground mb-4">Suspicious Activity Details</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      {selectedAlert.details.map(d => (
+                        <div key={d.label} className="bg-secondary rounded-lg p-3">
+                          <p className="text-xs text-muted-foreground mb-1">{d.label}</p>
+                          <p className="text-sm font-medium text-foreground">{d.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Timeline */}
+                  <div className="bg-card border border-border rounded-xl p-6">
+                    <h4 className="text-sm font-semibold text-foreground mb-4">Event Timeline</h4>
+                    <div className="space-y-0">
+                      {selectedAlert.timeline.map((event, i) => (
+                        <div key={i} className="flex gap-4 relative">
+                          <div className="flex flex-col items-center">
+                            <div className={`w-2.5 h-2.5 rounded-full shrink-0 mt-1.5 ${
+                              event.actor === "System" ? "bg-[hsl(var(--warning))]" : "bg-[hsl(var(--deex-blue))]"
+                            }`} />
+                            {i < selectedAlert.timeline.length - 1 && <div className="w-px h-full bg-border min-h-[32px]" />}
+                          </div>
+                          <div className="pb-4">
+                            <p className="text-sm text-foreground">{event.action}</p>
+                            <p className="text-xs text-muted-foreground">{event.time} — {event.actor}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Actions */}
+                <div className="w-80 shrink-0 space-y-4">
+                  <div className="bg-card border border-border rounded-xl p-5">
+                    <h4 className="text-sm font-semibold text-foreground mb-3">Admin Actions</h4>
+                    <div className="space-y-2">
+                      <button onClick={() => { import("sonner").then(m => m.toast.success("Alert approved — flag cleared")); }} className="w-full h-9 bg-[hsl(var(--success))]/20 text-[hsl(var(--success))] rounded-lg text-sm font-medium border border-[hsl(var(--success))]/20 hover:bg-[hsl(var(--success))]/30 transition-colors">
+                        ✓ Approve / Clear Flag
+                      </button>
+                      <button onClick={() => { import("sonner").then(m => m.toast("Alert dismissed")); }} className="w-full h-9 bg-secondary text-foreground rounded-lg text-sm font-medium hover:bg-secondary/80 transition-colors">
+                        Dismiss Alert
+                      </button>
+                      <button onClick={() => { import("sonner").then(m => m.toast.warning("User account suspended")); }} className="w-full h-9 bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))] rounded-lg text-sm font-medium border border-[hsl(var(--destructive))]/20 hover:bg-[hsl(var(--destructive))]/20 transition-colors flex items-center justify-center gap-1.5">
+                        <Ban className="w-3.5 h-3.5" /> Suspend User
+                      </button>
+                      <button onClick={() => { import("sonner").then(m => m.toast.warning("Wallet frozen for this user")); }} className="w-full h-9 bg-[hsl(var(--deex-blue))]/10 text-[hsl(var(--deex-blue))] rounded-lg text-sm font-medium border border-[hsl(var(--deex-blue))]/20 hover:bg-[hsl(var(--deex-blue))]/20 transition-colors flex items-center justify-center gap-1.5">
+                        <Lock className="w-3.5 h-3.5" /> Freeze Wallet
+                      </button>
+                      <button onClick={() => { import("sonner").then(m => m.toast("KYC re-verification requested")); }} className="w-full h-9 bg-[hsl(var(--deex-orange))]/10 text-[hsl(var(--deex-orange))] rounded-lg text-sm font-medium border border-[hsl(var(--deex-orange))]/20 hover:bg-[hsl(var(--deex-orange))]/20 transition-colors flex items-center justify-center gap-1.5">
+                        <ShieldAlert className="w-3.5 h-3.5" /> Request Additional KYC
+                      </button>
+                      <button onClick={() => { import("sonner").then(m => m.toast("Escalated to senior admin")); }} className="w-full h-9 bg-[hsl(var(--deex-purple))]/10 text-[hsl(var(--deex-purple))] rounded-lg text-sm font-medium border border-[hsl(var(--deex-purple))]/20 hover:bg-[hsl(var(--deex-purple))]/20 transition-colors flex items-center justify-center gap-1.5">
+                        <ArrowUpRight className="w-3.5 h-3.5" /> Escalate to Senior Admin
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="bg-card border border-border rounded-xl p-5">
+                    <h4 className="text-sm font-semibold text-foreground mb-3">Internal Notes</h4>
+                    <textarea
+                      value={complianceNote}
+                      onChange={e => setComplianceNote(e.target.value)}
+                      placeholder="Add investigation notes..."
+                      className="w-full h-24 bg-secondary rounded-lg p-3 text-sm text-foreground placeholder:text-muted-foreground outline-none resize-none"
+                    />
+                    <button
+                      onClick={() => { import("sonner").then(m => m.toast.success("Note saved")); setComplianceNote(""); }}
+                      className="mt-2 text-xs text-[hsl(var(--deex-blue))] font-medium hover:underline"
+                    >Save Note</button>
+                  </div>
+
+                  <div className="bg-card border border-border rounded-xl p-5">
+                    <h4 className="text-sm font-semibold text-foreground mb-3">Quick Info</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Rule triggered</span>
+                        <span className="text-foreground font-medium">{selectedAlert.trigger}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Auto-suspended</span>
+                        <span className={`font-medium ${selectedAlert.autoSuspended ? "text-[hsl(var(--destructive))]" : "text-muted-foreground"}`}>{selectedAlert.autoSuspended ? "Yes" : "No"}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Severity</span>
+                        <span className="text-foreground font-medium capitalize">{selectedAlert.severity}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ===== COMPLIANCE RULES ENGINE ===== */}
+          {activeTab === "compliance-rules" && (
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-1">Auto-Suspension Rules Engine <NewBadge /></h2>
+              <p className="text-sm text-muted-foreground mb-6">Configure thresholds that trigger automatic flags and suspensions.</p>
+
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                {[
+                  { label: "Active Rules", value: complianceRules.filter(r => r.enabled).length.toString(), color: "text-[hsl(var(--success))]" },
+                  { label: "Disabled Rules", value: complianceRules.filter(r => !r.enabled).length.toString(), color: "text-muted-foreground" },
+                  { label: "Total Triggers (all time)", value: complianceRules.reduce((sum, r) => sum + r.triggeredCount, 0).toString(), color: "text-[hsl(var(--deex-blue))]" },
+                ].map(s => (
+                  <div key={s.label} className="bg-card border border-border rounded-xl p-5">
+                    <p className={`text-sm font-medium mb-1 ${s.color}`}>{s.label}</p>
+                    <p className="text-2xl font-bold text-foreground">{s.value}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-3">
+                {complianceRules.map(rule => (
+                  <div key={rule.id} className={`bg-card border rounded-xl p-5 transition-colors ${rule.enabled ? "border-border" : "border-border opacity-60"}`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <h4 className="text-sm font-semibold text-foreground">{rule.name}</h4>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                          rule.action.includes("Auto-suspend") ? "bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))]" :
+                          rule.action.includes("Hold") ? "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]" :
+                          "bg-[hsl(var(--deex-blue))]/20 text-[hsl(var(--deex-blue))]"
+                        }`}>{rule.action}</span>
+                      </div>
+                      <button
+                        onClick={() => setComplianceRules(prev => prev.map(r => r.id === rule.id ? { ...r, enabled: !r.enabled } : r))}
+                        className={`relative w-11 h-6 rounded-full transition-colors ${rule.enabled ? "bg-[hsl(var(--success))]" : "bg-muted"}`}
+                      >
+                        <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-foreground transition-transform ${rule.enabled ? "left-[22px]" : "left-0.5"}`} />
+                      </button>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-3">{rule.trigger}</p>
+                    <div className="flex items-center gap-6 text-xs">
+                      <div>
+                        <span className="text-muted-foreground">Threshold: </span>
+                        <span className="text-foreground font-medium">{rule.threshold}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Last triggered: </span>
+                        <span className="text-foreground font-medium">{rule.lastTriggered}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Times triggered: </span>
+                        <span className="text-foreground font-medium">{rule.triggeredCount}</span>
+                      </div>
+                      <button className="ml-auto text-[hsl(var(--deex-blue))] hover:underline text-xs font-medium">Edit threshold</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           {activeTab === "customer-detail" && selectedCustomer && (
             <div>
               <button onClick={() => { setActiveTab("users"); setSelectedCustomer(null); }} className="text-sm text-deex-blue mb-4 hover:underline flex items-center gap-1"><ChevronLeft className="w-4 h-4" /> Back to Users</button>
