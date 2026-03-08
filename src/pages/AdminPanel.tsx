@@ -18,7 +18,7 @@ const NewBadge = () => (
 );
 
 // ===== TYPES =====
-type AdminTab = "dashboard" | "wallets" | "orders" | "users" | "kyc" | "kyc-compliance" | "kyc-rules" | "reports" | "settings" | "audit-log" | "customer-detail" | "virtual-cards";
+type AdminTab = "dashboard" | "wallets" | "orders" | "users" | "kyc" | "kyc-compliance" | "kyc-rules" | "compliance" | "compliance-alerts" | "compliance-rules" | "compliance-detail" | "reports" | "settings" | "audit-log" | "customer-detail" | "virtual-cards";
 
 // ===== MOCK DATA =====
 const dashboardMetrics = [
