@@ -35,6 +35,7 @@ import Support from "./pages/Support";
 import QuickAction from "./pages/QuickAction";
 import AdminPanel from "./pages/AdminPanel";
 import VirtualCards from "./pages/VirtualCards";
+import TradeStreak from "./pages/TradeStreak";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
