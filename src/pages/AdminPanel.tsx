@@ -194,7 +194,7 @@ const statusBadge = (status: string) => {
 };
 
 // ===== NAV ITEMS =====
-const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; children?: { label: string; tab: AdminTab }[] }[] = [
+const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; isNew?: boolean; children?: { label: string; tab: AdminTab; isNew?: boolean }[] }[] = [
   { icon: LayoutDashboard, label: "Dashboard", tab: "dashboard" },
   { icon: Wallet, label: "Wallets", tab: "wallets" },
   { icon: ShoppingCart, label: "Orders", tab: "orders" },
@@ -203,6 +203,7 @@ const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; ch
     { label: "Compliance", tab: "kyc-compliance" },
     { label: "Rules Manager", tab: "kyc-rules" },
   ]},
+  { icon: FileText, label: "Audit Log", tab: "audit-log", isNew: true },
   { icon: BarChart3, label: "Reports", tab: "reports" },
   { icon: Settings, label: "Settings", tab: "settings" },
 ];
