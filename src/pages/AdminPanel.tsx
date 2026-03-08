@@ -1044,6 +1044,87 @@ const AdminPanel = () => {
             </div>
           )}
 
+          {/* ===== VIRTUAL CARDS ===== */}
+          {activeTab === "virtual-cards" && (
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-1">Virtual Cards <NewBadge /></h2>
+              <p className="text-sm text-muted-foreground mb-4">Manage all user virtual cards, issuance, and limits.</p>
+
+              <div className="grid grid-cols-4 gap-4 mb-6">
+                {[
+                  { label: "Total Cards Issued", value: "347" },
+                  { label: "Active Cards", value: "289" },
+                  { label: "Frozen Cards", value: "42" },
+                  { label: "Revenue (Fees)", value: "$694" },
+                ].map(m => (
+                  <div key={m.label} className="bg-card border border-border rounded-xl p-5">
+                    <p className="text-xs text-muted-foreground mb-1">{m.label}</p>
+                    <p className="text-xl font-bold text-foreground">{m.value}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-sm font-semibold text-foreground">Recent Card Activity</p>
+                <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"><Upload className="w-3.5 h-3.5" /> EXPORT</button>
+              </div>
+
+              <div className="bg-card border border-border rounded-xl overflow-hidden">
+                <table className="w-full">
+                  <thead><tr className="border-b border-border">
+                    {["User", "Card Label", "Last 4", "Balance", "Status", "Daily Limit", "Created"].map(h => (
+                      <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                    ))}
+                  </tr></thead>
+                  <tbody>
+                    {[
+                      { user: "John Doe", label: "Shopping Card", last4: "4291", balance: "$245.80", status: "ACTIVE", dailyLimit: "$500", created: "Feb 15, 2026" },
+                      { user: "John Doe", label: "Subscriptions", last4: "8173", balance: "$52.10", status: "FROZEN", dailyLimit: "$200", created: "Jan 20, 2026" },
+                      { user: "Adewale Musa", label: "Main Card", last4: "6502", balance: "$1,200.00", status: "ACTIVE", dailyLimit: "$1,000", created: "Mar 1, 2026" },
+                      { user: "Chidinma Obi", label: "Travel", last4: "3817", balance: "$89.50", status: "ACTIVE", dailyLimit: "$500", created: "Feb 28, 2026" },
+                      { user: "Divine Omajuwa", label: "Business", last4: "9244", balance: "$3,450.00", status: "ACTIVE", dailyLimit: "$2,000", created: "Jan 15, 2026" },
+                    ].map((card, i) => (
+                      <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                        <td className="px-4 py-3 text-sm text-foreground">{card.user}</td>
+                        <td className="px-4 py-3 text-sm text-foreground">{card.label}</td>
+                        <td className="px-4 py-3 text-sm text-muted-foreground font-mono">•••• {card.last4}</td>
+                        <td className="px-4 py-3 text-sm text-foreground">{card.balance}</td>
+                        <td className="px-4 py-3">
+                          <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold ${
+                            card.status === "ACTIVE" ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" : "bg-[hsl(var(--deex-blue))]/20 text-[hsl(var(--deex-blue))]"
+                          }`}>{card.status}</span>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-muted-foreground">{card.dailyLimit}</td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground">{card.created}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mt-6 bg-card border border-border rounded-xl p-6 max-w-2xl">
+                <h3 className="text-sm font-semibold text-foreground mb-4">Card Settings</h3>
+                <div className="space-y-4">
+                  {[
+                    { label: "Card Creation Fee", value: "$2.00" },
+                    { label: "Max Cards per User", value: "3" },
+                    { label: "Min KYC Level Required", value: "Level 2" },
+                    { label: "Default Daily Limit", value: "$500" },
+                    { label: "Default Monthly Limit", value: "$5,000" },
+                  ].map(s => (
+                    <div key={s.label} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+                      <p className="text-sm text-foreground">{s.label}</p>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-medium text-foreground">{s.value}</span>
+                        <button className="text-xs text-deex-blue hover:underline">Edit</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* ===== AUDIT LOG ===== */}
           {activeTab === "audit-log" && (
             <div>
