@@ -188,6 +188,9 @@ const AdminUserDetail = () => {
   const [autoWithdrawal, setAutoWithdrawal] = useState(mockUser.autoWithdrawal);
   const [copied, setCopied] = useState(false);
   const [kycExpanded, setKycExpanded] = useState(false);
+  const [nudgedTasks, setNudgedTasks] = useState<Record<number, boolean>>({});
+  const [confirmAction, setConfirmAction] = useState<{ label: string; description: string; onConfirm: () => void; destructive?: boolean } | null>(null);
+  const [activityFilter, setActivityFilter] = useState<string>("all");
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
