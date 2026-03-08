@@ -168,7 +168,7 @@ const Rewards = () => {
 
               <h3 className="text-sm font-semibold text-foreground mb-3">Explore</h3>
               <div className="flex gap-3 mb-6">
-                <button onClick={() => navigate("/rewards")} className="flex-1 bg-secondary rounded-xl p-4 text-left">
+                <button onClick={() => navigate("/trade-streak")} className="flex-1 bg-secondary rounded-xl p-4 text-left">
                   <Flame className="w-6 h-6 text-deex-orange mb-2" />
                   <p className="text-sm font-semibold text-foreground">Trade Streak</p>
                   <p className="text-xs text-muted-foreground">Trade daily for bonuses</p>
