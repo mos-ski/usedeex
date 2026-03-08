@@ -465,19 +465,48 @@ const AdminUserDetail = () => {
                 </div>
               )}
 
-              {/* ===== ACTIVITIES TAB ===== */}
+              {/* ===== ACTIVITIES TAB (Audit Log) ===== */}
               {activeTab === "activities" && (
-                <div className="space-y-0">
-                  {userActivities.map((a, i) => (
-                    <div key={i} className="py-5 border-b border-border">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="w-2 h-2 rounded-full bg-deex-orange" />
-                        <p className="text-sm font-semibold text-foreground">{a.type}</p>
-                      </div>
-                      <p className="text-sm text-muted-foreground ml-4">{a.desc}</p>
-                      <p className="text-xs text-muted-foreground ml-4 mt-1">{a.time}</p>
-                    </div>
-                  ))}
+                <div>
+                  <div className="flex items-center gap-2 mb-4 flex-wrap">
+                    {["all", "auth", "wallet", "trade", "kyc", "security", "settings", "referral", "reward"].map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setActivityFilter(cat)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${activityFilter === cat ? "bg-[hsl(var(--deex-blue))] text-background" : "bg-secondary text-muted-foreground hover:text-foreground"}`}
+                      >
+                        {cat === "all" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-border">
+                          {["Time", "Category", "Event", "Details", "IP Address"].map(h => (
+                            <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {userActivities
+                          .filter(a => activityFilter === "all" || a.category === activityFilter)
+                          .map((a, i) => (
+                          <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                            <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{a.time}</td>
+                            <td className="px-4 py-3">
+                              <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider ${activityCategoryColors[a.category] || "bg-muted text-muted-foreground"}`}>
+                                {a.category.toUpperCase()}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-sm font-medium text-foreground">{a.type}</td>
+                            <td className="px-4 py-3 text-sm text-muted-foreground">{a.desc}</td>
+                            <td className="px-4 py-3 text-xs text-muted-foreground font-mono">{a.ip}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
 
@@ -497,7 +526,7 @@ const AdminUserDetail = () => {
                         <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
                           <td className="px-4 py-3 text-sm text-muted-foreground">{r.date}</td>
                           <td className="px-4 py-3 text-sm text-foreground">{r.activity}</td>
-                          <td className="px-4 py-3 text-sm text-muted-foreground">{r.description || "—"}</td>
+                          <td className="px-4 py-3 text-sm text-muted-foreground">{r.description}</td>
                           <td className="px-4 py-3 text-sm text-foreground text-right">{r.amount}</td>
                         </tr>
                       ))}
@@ -512,8 +541,8 @@ const AdminUserDetail = () => {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-border">
-                        {["Task", "Status", "Date Completed"].map(h => (
-                          <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                        {["Task", "Status", "Date Completed", "Action"].map(h => (
+                          <th key={h} className={`text-xs text-muted-foreground font-medium px-4 py-3 ${h === "Action" ? "text-right" : "text-left"}`}>{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -523,6 +552,29 @@ const AdminUserDetail = () => {
                           <td className="px-4 py-3 text-sm text-foreground">{t.task}</td>
                           <td className="px-4 py-3">{statusBadge(t.status === "Completed" ? "COMPLETED" : "PENDING")}</td>
                           <td className="px-4 py-3 text-xs text-muted-foreground">{t.date}</td>
+                          <td className="px-4 py-3 text-right">
+                            {t.status === "Pending" ? (
+                              nudgedTasks[i] ? (
+                                <span className="text-xs text-[hsl(var(--success))]">✓ Nudged</span>
+                              ) : (
+                                <button
+                                  onClick={() => setConfirmAction({
+                                    label: "Nudge User",
+                                    description: `Send a push notification to ${mockUser.name} to complete "${t.task}"?`,
+                                    onConfirm: () => {
+                                      setNudgedTasks(prev => ({ ...prev, [i]: true }));
+                                      setConfirmAction(null);
+                                    }
+                                  })}
+                                  className="text-xs px-3 py-1.5 rounded-lg bg-[hsl(var(--deex-blue))]/10 text-[hsl(var(--deex-blue))] hover:bg-[hsl(var(--deex-blue))]/20 font-medium transition-colors"
+                                >
+                                  Nudge
+                                </button>
+                              )
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -532,24 +584,48 @@ const AdminUserDetail = () => {
 
               {/* ===== REFERRALS TAB ===== */}
               {activeTab === "referrals" && (
-                <div className="bg-card border border-border rounded-xl overflow-hidden">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border">
-                        {["Date", "Email"].map(h => (
-                          <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {userReferrals.map((r, i) => (
-                        <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
-                          <td className="px-4 py-3 text-sm text-muted-foreground">{r.date}</td>
-                          <td className="px-4 py-3 text-sm text-foreground">{r.email}</td>
+                <div>
+                  <div className="grid grid-cols-3 gap-4 mb-4">
+                    <div className="bg-card border border-border rounded-xl p-4">
+                      <p className="text-sm text-muted-foreground mb-1">Total Referrals</p>
+                      <p className="text-xl font-bold text-foreground">{userReferrals.length}</p>
+                    </div>
+                    <div className="bg-card border border-border rounded-xl p-4">
+                      <p className="text-sm text-muted-foreground mb-1">Total Points Earned</p>
+                      <p className="text-xl font-bold text-primary">{userReferrals.reduce((sum, r) => sum + r.pointsEarned, 0).toLocaleString()}</p>
+                    </div>
+                    <div className="bg-card border border-border rounded-xl p-4">
+                      <p className="text-sm text-muted-foreground mb-1">Active Referrals</p>
+                      <p className="text-xl font-bold text-[hsl(var(--success))]">{userReferrals.filter(r => r.status === "Active").length}</p>
+                    </div>
+                  </div>
+                  <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-border">
+                          {["Date", "Email", "Status", "Points Earned"].map(h => (
+                            <th key={h} className={`text-xs text-muted-foreground font-medium px-4 py-3 ${h === "Points Earned" ? "text-right" : "text-left"}`}>{h}</th>
+                          ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {userReferrals.map((r, i) => (
+                          <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                            <td className="px-4 py-3 text-sm text-muted-foreground">{r.date}</td>
+                            <td className="px-4 py-3 text-sm text-foreground">{r.email}</td>
+                            <td className="px-4 py-3">
+                              <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold ${
+                                r.status === "Active" ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" :
+                                r.status === "Signed up" ? "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]" :
+                                "bg-muted text-muted-foreground"
+                              }`}>{r.status}</span>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-foreground text-right">{r.pointsEarned > 0 ? `+${r.pointsEarned} pts` : "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
 
