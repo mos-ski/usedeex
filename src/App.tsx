@@ -25,6 +25,9 @@ import Rewards from "./pages/Rewards";
 import ReferralDashboard from "./pages/ReferralDashboard";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
+import GenerateStatement from "./pages/GenerateStatement";
+import AboutDeeX from "./pages/AboutDeeX";
 import SecuritySettings from "./pages/SecuritySettings";
 import BankAccounts from "./pages/BankAccounts";
 import KycVerification from "./pages/KycVerification";
@@ -65,6 +68,9 @@ const App = () => (
           <Route path="/referrals" element={<ReferralDashboard />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/generate-statement" element={<GenerateStatement />} />
+          <Route path="/about" element={<AboutDeeX />} />
           <Route path="/security" element={<SecuritySettings />} />
           <Route path="/bank-accounts" element={<BankAccounts />} />
           <Route path="/kyc" element={<KycVerification />} />

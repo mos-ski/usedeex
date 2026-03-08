@@ -1,16 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Shield, Building2, FileText, BadgeCheck, Users, Info, LogOut, ChevronRight, HelpCircle } from "lucide-react";
+import { ArrowLeft, Shield, Users as UsersIcon, FileText, BadgeCheck, Info, LogOut, ChevronRight, HelpCircle, BookOpen } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import NewBadge from "@/components/NewBadge";
 
 const settingsItems = [
   { icon: Shield, label: "Security", path: "/security", isNew: true },
-  { icon: Building2, label: "Bank Accounts", path: "/bank-accounts", isNew: true },
-  { icon: FileText, label: "Generate Statement", path: "/profile" },
+  { icon: BookOpen, label: "Manage Beneficiaries", path: "/bank-accounts", isNew: true },
+  { icon: FileText, label: "Generate Statement", path: "/generate-statement", isNew: true },
   { icon: BadgeCheck, label: "KYC Verification", path: "/kyc", badge: true, badgeText: "Verified", isNew: true },
-  { icon: Users, label: "Refer & Earn", path: "/referrals", isNew: true },
+  { icon: UsersIcon, label: "Refer & Earn", path: "/referrals", isNew: true },
   { icon: HelpCircle, label: "Help & Support", path: "/support", isNew: true },
-  { icon: Info, label: "About DeeX", path: "/profile" },
+  { icon: Info, label: "About DeeX", path: "/about", isNew: true },
 ];
 
 const Profile = () => {
@@ -31,12 +31,12 @@ const Profile = () => {
           <p className="text-lg font-bold text-foreground">John Doe</p>
           <p className="text-sm text-muted-foreground">johndoe@email.com</p>
           <p className="text-xs text-muted-foreground">@johndoe</p>
-          <button className="mt-3 px-6 py-2 bg-secondary rounded-full text-sm text-foreground font-medium">Edit Profile</button>
+          <button onClick={() => navigate("/edit-profile")} className="mt-3 px-6 py-2 bg-secondary rounded-full text-sm text-foreground font-medium">Edit Profile</button>
         </div>
 
         <div className="space-y-2 mb-6">
           {settingsItems.map((item) => (
-            <button key={item.label} onClick={() => navigate(item.path || "/profile")} className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3.5">
+            <button key={item.label} onClick={() => navigate(item.path)} className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3.5">
               <div className="flex items-center gap-3">
                 <item.icon className="w-5 h-5 text-muted-foreground" />
                 <span className="text-sm font-medium text-foreground">{item.label}</span>

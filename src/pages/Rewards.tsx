@@ -4,6 +4,7 @@ import { Copy, Check, Gift, Flame, Users, ChevronRight, ArrowLeft, Clock } from 
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
+import NewBadge from "@/components/NewBadge";
 
 const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 const streakDays = [true, true, true, false, false, false, false];
@@ -14,6 +15,8 @@ const POINT_VALUE = 10;
 const redemptionHistory = [
   { id: 1, points: 500, cash: "₦5,000", status: "Approved", date: "Mar 6, 2026", account: "8103674006 - PalmPay" },
   { id: 2, points: 200, cash: "₦2,000", status: "Processing", date: "Mar 8, 2026", account: "8103674006 - PalmPay" },
+  { id: 3, points: 1000, cash: "₦10,000", status: "Approved", date: "Feb 20, 2026", account: "8103674006 - PalmPay" },
+  { id: 4, points: 300, cash: "₦3,000", status: "Approved", date: "Feb 10, 2026", account: "9012345678 - Opay" },
 ];
 
 type View = "main" | "redeem" | "confirm" | "success";
@@ -23,6 +26,7 @@ const Rewards = () => {
   const [copied, setCopied] = useState(false);
   const [view, setView] = useState<View>("main");
   const [redeemAmount, setRedeemAmount] = useState("");
+  const [activeTab, setActiveTab] = useState<"rewards" | "history">("rewards");
   const referralLink = "https://deex.app/ref/johndoe";
 
   const handleCopy = () => {
@@ -134,88 +138,109 @@ const Rewards = () => {
         <div className="px-4 pt-6">
           <h2 className="text-lg font-bold text-foreground mb-4">Rewards</h2>
 
-          <div className="bg-gradient-to-r from-primary/30 to-accent/20 rounded-2xl p-5 mb-6 border border-primary/20">
-            <div className="flex items-center gap-3 mb-3">
-              <Gift className="w-8 h-8 text-primary" />
-              <div>
-                <p className="text-sm font-bold text-foreground">Invite Friends & Earn</p>
-                <p className="text-xs text-muted-foreground">Earn ₦500 for every friend who trades</p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <input readOnly value={referralLink} className="flex-1 h-10 bg-secondary/50 rounded-lg px-3 text-xs text-muted-foreground outline-none" />
-              <button onClick={handleCopy} className="h-10 px-4 bg-primary rounded-lg text-primary-foreground text-sm font-medium flex items-center gap-1">
-                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              </button>
-            </div>
+          {/* Tabs */}
+          <div className="flex bg-secondary rounded-full p-1 mb-6">
+            <button onClick={() => setActiveTab("rewards")} className={`flex-1 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === "rewards" ? "bg-muted text-foreground" : "text-muted-foreground"}`}>
+              Rewards
+            </button>
+            <button onClick={() => setActiveTab("history")} className={`flex-1 py-2 rounded-full text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${activeTab === "history" ? "bg-muted text-foreground" : "text-muted-foreground"}`}>
+              History <NewBadge />
+            </button>
           </div>
 
-          <h3 className="text-sm font-semibold text-foreground mb-3">Explore</h3>
-          <div className="flex gap-3 mb-6">
-            <div className="flex-1 bg-secondary rounded-xl p-4">
-              <Flame className="w-6 h-6 text-deex-orange mb-2" />
-              <p className="text-sm font-semibold text-foreground">Trade Streak</p>
-              <p className="text-xs text-muted-foreground">Trade daily for bonuses</p>
-            </div>
-            <div className="flex-1 bg-secondary rounded-xl p-4">
-              <Users className="w-6 h-6 text-primary mb-2" />
-              <p className="text-sm font-semibold text-foreground">Refer & Win</p>
-              <p className="text-xs text-muted-foreground">Win up to ₦50,000</p>
-            </div>
-          </div>
-
-          <div className="bg-secondary rounded-xl p-4 mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-semibold text-foreground">Weekly Cashback</p>
-              <span className="text-xs text-muted-foreground">4d 12h left</span>
-            </div>
-            <div className="w-full h-2 bg-muted rounded-full mb-1">
-              <div className="h-2 bg-primary rounded-full" style={{ width: "65%" }} />
-            </div>
-            <p className="text-xs text-muted-foreground">₦6,500 / ₦10,000 target</p>
-          </div>
-
-          <button onClick={() => setView("redeem")} className="w-full bg-secondary rounded-xl p-4 mb-4 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-foreground">DeeXpoints</p>
-              <p className="text-2xl font-bold text-primary">{POINTS_BALANCE.toLocaleString()}</p>
-              <p className="text-xs text-success">≈ ₦{(POINTS_BALANCE * POINT_VALUE).toLocaleString()}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-primary font-medium">Redeem</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
-            </div>
-          </button>
-
-          {/* Redemption History */}
-          <h3 className="text-sm font-semibold text-foreground mb-3">Redemption History</h3>
-          <div className="space-y-2 mb-4">
-            {redemptionHistory.map((r) => (
-              <div key={r.id} className="bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-foreground">{r.points} pts → {r.cash}</p>
-                  <p className="text-xs text-muted-foreground">{r.date} • {r.account}</p>
-                </div>
-                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${r.status === "Approved" ? "bg-success/20 text-success" : "bg-warning/20 text-warning"}`}>
-                  {r.status}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div className="bg-secondary rounded-xl p-4 mb-4">
-            <p className="text-sm font-semibold text-foreground mb-3">Daily Streak</p>
-            <div className="flex justify-between">
-              {days.map((d, i) => (
-                <div key={d} className="flex flex-col items-center gap-1">
-                  <span className="text-[10px] text-muted-foreground">{d}</span>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${streakDays[i] ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-                    {streakDays[i] ? "✓" : i + 1}
+          {activeTab === "rewards" ? (
+            <>
+              <div className="bg-gradient-to-r from-primary/30 to-accent/20 rounded-2xl p-5 mb-6 border border-primary/20">
+                <div className="flex items-center gap-3 mb-3">
+                  <Gift className="w-8 h-8 text-primary" />
+                  <div>
+                    <p className="text-sm font-bold text-foreground">Invite Friends & Earn</p>
+                    <p className="text-xs text-muted-foreground">Earn ₦500 for every friend who trades</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
+                <div className="flex gap-2">
+                  <input readOnly value={referralLink} className="flex-1 h-10 bg-secondary/50 rounded-lg px-3 text-xs text-muted-foreground outline-none" />
+                  <button onClick={handleCopy} className="h-10 px-4 bg-primary rounded-lg text-primary-foreground text-sm font-medium flex items-center gap-1">
+                    {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <h3 className="text-sm font-semibold text-foreground mb-3">Explore</h3>
+              <div className="flex gap-3 mb-6">
+                <div className="flex-1 bg-secondary rounded-xl p-4">
+                  <Flame className="w-6 h-6 text-deex-orange mb-2" />
+                  <p className="text-sm font-semibold text-foreground">Trade Streak</p>
+                  <p className="text-xs text-muted-foreground">Trade daily for bonuses</p>
+                </div>
+                <div className="flex-1 bg-secondary rounded-xl p-4">
+                  <Users className="w-6 h-6 text-primary mb-2" />
+                  <p className="text-sm font-semibold text-foreground">Refer & Win</p>
+                  <p className="text-xs text-muted-foreground">Win up to ₦50,000</p>
+                </div>
+              </div>
+
+              <div className="bg-secondary rounded-xl p-4 mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-semibold text-foreground">Weekly Cashback</p>
+                  <span className="text-xs text-muted-foreground">4d 12h left</span>
+                </div>
+                <div className="w-full h-2 bg-muted rounded-full mb-1">
+                  <div className="h-2 bg-primary rounded-full" style={{ width: "65%" }} />
+                </div>
+                <p className="text-xs text-muted-foreground">₦6,500 / ₦10,000 target</p>
+              </div>
+
+              <button onClick={() => setView("redeem")} className="w-full bg-secondary rounded-xl p-4 mb-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">DeeXpoints</p>
+                  <p className="text-2xl font-bold text-primary">{POINTS_BALANCE.toLocaleString()}</p>
+                  <p className="text-xs text-success">≈ ₦{(POINTS_BALANCE * POINT_VALUE).toLocaleString()}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-primary font-medium">Redeem</span>
+                  <ChevronRight className="w-5 h-5 text-primary" />
+                </div>
+              </button>
+
+              <div className="bg-secondary rounded-xl p-4 mb-4">
+                <p className="text-sm font-semibold text-foreground mb-3">Daily Streak</p>
+                <div className="flex justify-between">
+                  {days.map((d, i) => (
+                    <div key={d} className="flex flex-col items-center gap-1">
+                      <span className="text-[10px] text-muted-foreground">{d}</span>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${streakDays[i] ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                        {streakDays[i] ? "✓" : i + 1}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="space-y-2 mb-4">
+                {redemptionHistory.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground">No redemptions yet</p>
+                  </div>
+                ) : (
+                  redemptionHistory.map((r) => (
+                    <div key={r.id} className="bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{r.points} pts → {r.cash}</p>
+                        <p className="text-xs text-muted-foreground">{r.date} • {r.account}</p>
+                      </div>
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${r.status === "Approved" ? "bg-success/20 text-success" : "bg-warning/20 text-warning"}`}>
+                        {r.status}
+                      </span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </>
+          )}
         </div>
       </PageTransition>
       <BottomNav />
