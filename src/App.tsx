@@ -79,6 +79,7 @@ const App = () => (
           <Route path="/support" element={<Support />} />
           <Route path="/quick-action" element={<QuickAction />} />
           <Route path="/virtual-cards" element={<VirtualCards />} />
+          <Route path="/trade-streak" element={<TradeStreak />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
