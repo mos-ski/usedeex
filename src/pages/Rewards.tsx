@@ -276,7 +276,7 @@ const Rewards = () => {
                 <div className="space-y-2.5">
                   {[
                     { action: "Sign-up Bonus (3 tasks)", reward: "500 pts (₦5,000)", wallet: "DeeXPoints" },
-                    { action: "Referral trade (≥ $10)", reward: "10 pts (₦100)", wallet: "DeeXPoints" },
+                    { action: "Referral first trade (> $100)", reward: "100 pts (₦1,000)", wallet: "DeeXPoints" },
                     { action: "7-day trade streak", reward: "100 pts (₦1,000)", wallet: "DeeXPoints" },
                     { action: "Trade ₦2M weekly", reward: "₦50,000 cashback", wallet: "Bank" },
                   ].map(r => (
