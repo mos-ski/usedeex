@@ -104,7 +104,7 @@ const AdminUserDetail = () => {
       {summaryTab === "user-summary" && (
         <>
           {/* Summary cards */}
-          <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
             <div className="bg-card border border-border rounded-xl p-4">
               <p className="text-sm text-[hsl(var(--deex-orange))] mb-1">Total transaction payout</p>
               <p className="text-xl font-bold text-foreground">{mockUser.totalPayout}</p>
