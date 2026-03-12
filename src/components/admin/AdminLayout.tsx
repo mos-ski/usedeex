@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Wallet, ShoppingCart, Users, Shield, BarChart3,
   Settings, LogOut, Bell, ChevronDown, CreditCard, FileText,
-  AlertTriangle, Gift, Banknote, Menu, X,
+  AlertTriangle, Gift, Banknote, Menu, X, Smartphone,
 } from "lucide-react";
 import { useState } from "react";
 import { NewBadge } from "./AdminUtils";
