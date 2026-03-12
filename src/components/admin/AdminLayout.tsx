@@ -8,7 +8,7 @@ import { useState } from "react";
 import { NewBadge } from "./AdminUtils";
 
 export type AdminTab =
-  | "dashboard" | "wallets" | "orders" | "users" | "kyc"
+  | "dashboard" | "wallets" | "orders" | "payouts" | "users" | "kyc"
   | "kyc-compliance" | "kyc-rules"
   | "compliance" | "compliance-alerts" | "compliance-rules" | "compliance-detail"
   | "reports" | "settings" | "audit-log" | "virtual-cards"
