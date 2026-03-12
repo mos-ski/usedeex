@@ -509,7 +509,19 @@ const AdminGiftCards = () => {
 
             {/* Card image */}
             {selectedOrder.cardImage ? (
-              <img src={selectedOrder.cardImage} alt="Gift card" className="w-full rounded-lg mb-4" />
+              <div className="relative group mb-4">
+                <img src={selectedOrder.cardImage} alt="Gift card" className="w-full rounded-lg" />
+                <a
+                  href={selectedOrder.cardImage}
+                  download={`giftcard-${selectedOrder.id}.png`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute top-2 right-2 h-8 w-8 flex items-center justify-center rounded-lg bg-black/60 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80"
+                  title="Download image"
+                >
+                  <Download className="h-4 w-4" />
+                </a>
+              </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-8 text-muted-foreground bg-secondary rounded-lg mb-4">
                 <Image className="h-10 w-10 mb-2" />
