@@ -5,7 +5,8 @@ import {
   Settings, LogOut, Bell, Search, ChevronDown, ChevronRight, Eye, EyeOff,
   ExternalLink, Plus, Upload, Info, AlertCircle, Trash2, FileText, ArrowLeft,
   ChevronLeft, CreditCard, Snowflake, AlertTriangle, ShieldAlert, Zap,
-  Monitor, MapPin, Ban, Lock, MessageSquare, ArrowUpRight, Clock, Filter
+  Monitor, MapPin, Ban, Lock, MessageSquare, ArrowUpRight, Clock, Filter,
+  Gift, CheckCircle, XCircle, Download, TrendingUp
 } from "lucide-react";
 import CryptoIcon from "@/components/CryptoIcon";
 import {
@@ -18,7 +19,7 @@ const NewBadge = () => (
 );
 
 // ===== TYPES =====
-type AdminTab = "dashboard" | "wallets" | "orders" | "users" | "kyc" | "kyc-compliance" | "kyc-rules" | "compliance" | "compliance-alerts" | "compliance-rules" | "compliance-detail" | "reports" | "settings" | "audit-log" | "customer-detail" | "virtual-cards";
+type AdminTab = "dashboard" | "wallets" | "orders" | "users" | "kyc" | "kyc-compliance" | "kyc-rules" | "compliance" | "compliance-alerts" | "compliance-rules" | "compliance-detail" | "reports" | "settings" | "audit-log" | "customer-detail" | "virtual-cards" | "rewards-admin";
 
 // ===== MOCK DATA =====
 const dashboardMetrics = [
@@ -400,6 +401,7 @@ const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; is
     { label: "Rules Engine", tab: "compliance-rules" },
   ]},
   { icon: FileText, label: "Audit Log", tab: "audit-log", isNew: true },
+  { icon: Gift, label: "Rewards", tab: "rewards-admin", isNew: true },
   { icon: BarChart3, label: "Reports", tab: "reports" },
   { icon: Settings, label: "Settings", tab: "settings" },
 ];
@@ -430,6 +432,7 @@ const AdminPanel = () => {
   const [complianceRules, setComplianceRules] = useState<ComplianceRule[]>(defaultComplianceRules);
   const [complianceNote, setComplianceNote] = useState("");
   const [confirmAction, setConfirmAction] = useState<{ label: string; description: string; onConfirm: () => void } | null>(null);
+  const [rewardsSubTab, setRewardsSubTab] = useState<"config" | "payouts" | "earners" | "activity">("config");
   const [inlineSaved, setInlineSaved] = useState<Record<string, boolean>>({});
 
   const showInlineFeedback = (key: string) => {
@@ -521,7 +524,7 @@ const AdminPanel = () => {
           <div className="flex items-center gap-2 text-foreground">
             <span className="text-muted-foreground">—</span>
             <h1 className="text-base font-semibold">
-              {activeTab === "dashboard" ? "Dashboard" : activeTab === "wallets" ? "Wallets" : activeTab === "orders" ? "Transactions" : activeTab === "users" ? "Users" : isKycTab ? "" : isComplianceTab ? "Compliance" : activeTab === "reports" ? "Reports" : activeTab === "audit-log" ? "Audit Log" : activeTab === "virtual-cards" ? "Virtual Cards" : "Settings"}
+              {activeTab === "dashboard" ? "Dashboard" : activeTab === "wallets" ? "Wallets" : activeTab === "orders" ? "Transactions" : activeTab === "users" ? "Users" : isKycTab ? "" : isComplianceTab ? "Compliance" : activeTab === "reports" ? "Reports" : activeTab === "audit-log" ? "Audit Log" : activeTab === "virtual-cards" ? "Virtual Cards" : activeTab === "rewards-admin" ? "Rewards & DeeXPoints" : "Settings"}
             </h1>
           </div>
           <div className="flex items-center gap-3">
@@ -1255,6 +1258,272 @@ const AdminPanel = () => {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+          )}
+
+
+          {/* ===== REWARDS ADMIN ===== */}
+          {activeTab === "rewards-admin" && (
+            <div>
+              <h2 className="text-lg font-semibold text-foreground mb-1">Rewards & DeeXPoints <NewBadge /></h2>
+              <p className="text-sm text-muted-foreground mb-5">Configure reward parameters, manage payouts, and track user activity.</p>
+
+              {/* Metrics */}
+              <div className="grid grid-cols-4 gap-4 mb-6">
+                {[
+                  { label: "Total Points Issued", value: "1,247,500", sub: "All time" },
+                  { label: "Points Redeemed", value: "892,300", sub: "₦8,923,000" },
+                  { label: "Pending Payouts", value: "12", sub: "₦156,000" },
+                  { label: "Active Streaks", value: "347", sub: "Users" },
+                ].map(m => (
+                  <div key={m.label} className="bg-card border border-border rounded-xl p-5">
+                    <p className="text-xs text-muted-foreground mb-1">{m.label}</p>
+                    <p className="text-xl font-bold text-foreground">{m.value}</p>
+                    <p className="text-[10px] text-muted-foreground">{m.sub}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Sub-tabs */}
+              <div className="flex gap-6 mb-6 border-b border-border">
+                {(["config", "payouts", "earners", "activity"] as const).map(t => (
+                  <button key={t} onClick={() => setRewardsSubTab(t)}
+                    className={`text-sm pb-2 border-b-2 transition-colors ${rewardsSubTab === t ? "border-[hsl(var(--deex-blue))] text-[hsl(var(--deex-blue))] font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+                    {t === "config" ? "Configuration" : t === "payouts" ? "Payout Approvals" : t === "earners" ? "Top Earners" : "Activity Log"}
+                  </button>
+                ))}
+              </div>
+
+              {/* Configuration */}
+              {rewardsSubTab === "config" && (
+                <div className="space-y-6 max-w-3xl">
+                  <div className="bg-card border border-border rounded-xl p-6">
+                    <h3 className="text-sm font-semibold text-foreground mb-4">Reward Values</h3>
+                    <div className="space-y-0">
+                      {[
+                        { label: "Sign-up Bonus (after 3 tasks)", value: "500 pts (₦5,000)", wallet: "DeeXPoints", action: "signup" },
+                        { label: "Referral Trade (per trade ≥ $10)", value: "10 pts (₦100)", wallet: "DeeXPoints", action: "referral" },
+                        { label: "7-Day Trade Streak", value: "100 pts (₦1,000)", wallet: "DeeXPoints", action: "streak" },
+                        { label: "Weekly Cashback (₦2M trade)", value: "₦50,000", wallet: "Bank Account", action: "cashback" },
+                      ].map(r => (
+                        <div key={r.action} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+                          <div>
+                            <p className="text-sm text-foreground">{r.label}</p>
+                            <p className="text-[10px] text-muted-foreground">Credited to: {r.wallet}</p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium text-foreground">{r.value}</span>
+                            <button onClick={() => showInlineFeedback(`reward-${r.action}`)}
+                              className="text-xs text-[hsl(var(--deex-blue))] hover:underline">
+                              {inlineSaved[`reward-${r.action}`] ? "✓ Saved" : "Edit"}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-card border border-border rounded-xl p-6">
+                    <h3 className="text-sm font-semibold text-foreground mb-4">System Settings</h3>
+                    <div className="space-y-0">
+                      {[
+                        { label: "Point-to-Naira Rate", value: "1 pt = ₦10" },
+                        { label: "Minimum Redemption", value: "500 pts (₦5,000)" },
+                        { label: "Cashback Pool (Weekly)", value: "₦500,000" },
+                        { label: "Cashback Pool Reset", value: "Every Sunday" },
+                        { label: "Referral Min Trade", value: "$10" },
+                        { label: "USDT Reward Toggle", value: "Sign-up only" },
+                      ].map(s => (
+                        <div key={s.label} className="flex items-center justify-between py-3 border-b border-border last:border-0">
+                          <p className="text-sm text-foreground">{s.label}</p>
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium text-foreground">{s.value}</span>
+                            <button onClick={() => showInlineFeedback(`sys-${s.label}`)}
+                              className="text-xs text-[hsl(var(--deex-blue))] hover:underline">
+                              {inlineSaved[`sys-${s.label}`] ? "✓ Saved" : "Edit"}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Payout Approvals */}
+              {rewardsSubTab === "payouts" && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex gap-2">
+                      {["all", "pending", "approved", "rejected"].map(f => (
+                        <button key={f} className={`px-3 py-1.5 rounded-lg text-xs font-medium ${f === "all" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+                          {f.charAt(0).toUpperCase() + f.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                    <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+                      <Download className="w-3.5 h-3.5" /> Export
+                    </button>
+                  </div>
+                  <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <table className="w-full">
+                      <thead><tr className="border-b border-border bg-secondary/50">
+                        {["User", "Points", "Cash Value", "Account", "Date", "Status", "Action"].map(h => (
+                          <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                        ))}
+                      </tr></thead>
+                      <tbody>
+                        {[
+                          { user: "Adewale M.", email: "adewale@email.com", points: 500, cash: "₦5,000", account: "8103674006 - PalmPay", date: "Mar 10, 2026", status: "Pending" },
+                          { user: "Chidinma O.", email: "chidinma@email.com", points: 1000, cash: "₦10,000", account: "0234567890 - GTBank", date: "Mar 10, 2026", status: "Pending" },
+                          { user: "Ibrahim A.", email: "ibrahim@email.com", points: 2000, cash: "₦20,000", account: "1234567890 - Access", date: "Mar 9, 2026", status: "Pending" },
+                          { user: "Fatima K.", email: "fatima@email.com", points: 500, cash: "₦5,000", account: "9012345678 - Opay", date: "Mar 8, 2026", status: "Approved" },
+                          { user: "Victor E.", email: "victor@email.com", points: 800, cash: "₦8,000", account: "5678901234 - Kuda", date: "Mar 7, 2026", status: "Approved" },
+                          { user: "Grace N.", email: "grace@email.com", points: 500, cash: "₦5,000", account: "2345678901 - UBA", date: "Mar 6, 2026", status: "Rejected" },
+                        ].map((p, i) => (
+                          <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30">
+                            <td className="px-4 py-3">
+                              <p className="text-sm text-foreground font-medium">{p.user}</p>
+                              <p className="text-[10px] text-muted-foreground">{p.email}</p>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-foreground">{p.points.toLocaleString()} pts</td>
+                            <td className="px-4 py-3 text-sm font-medium text-foreground">{p.cash}</td>
+                            <td className="px-4 py-3 text-xs text-muted-foreground">{p.account}</td>
+                            <td className="px-4 py-3 text-xs text-muted-foreground">{p.date}</td>
+                            <td className="px-4 py-3">
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${p.status === "Pending" ? "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]" : p.status === "Approved" ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" : "bg-destructive/20 text-destructive"}`}>
+                                {p.status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              {p.status === "Pending" ? (
+                                <div className="flex items-center gap-1.5">
+                                  <button onClick={() => setConfirmAction({ label: "Approve Payout", description: `Approve ₦${p.cash} payout to ${p.user} (${p.account})?`, onConfirm: () => { showInlineFeedback(`payout-${i}`); setConfirmAction(null); } })}
+                                    className="w-7 h-7 rounded-lg bg-[hsl(var(--success))]/20 flex items-center justify-center hover:bg-[hsl(var(--success))]/30">
+                                    <CheckCircle className="w-3.5 h-3.5 text-[hsl(var(--success))]" />
+                                  </button>
+                                  <button onClick={() => setConfirmAction({ label: "Reject Payout", description: `Reject ${p.user}'s redemption of ${p.points} points?`, onConfirm: () => { showInlineFeedback(`payout-${i}`); setConfirmAction(null); } })}
+                                    className="w-7 h-7 rounded-lg bg-destructive/20 flex items-center justify-center hover:bg-destructive/30">
+                                    <XCircle className="w-3.5 h-3.5 text-destructive" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="text-[10px] text-muted-foreground">{inlineSaved[`payout-${i}`] ? "✓ Done" : "—"}</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Top Earners */}
+              {rewardsSubTab === "earners" && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm text-muted-foreground">Ranked by total points earned</p>
+                    <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+                      <Download className="w-3.5 h-3.5" /> Export
+                    </button>
+                  </div>
+                  <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <table className="w-full">
+                      <thead><tr className="border-b border-border bg-secondary/50">
+                        {["Rank", "User", "Total Earned", "Referrals", "Streak Days", "Redeemed", "Balance"].map(h => (
+                          <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                        ))}
+                      </tr></thead>
+                      <tbody>
+                        {[
+                          { rank: 1, user: "Ibrahim Abubakar", total: 15200, referrals: 86, streak: 42, redeemed: 12000, balance: 3200 },
+                          { rank: 2, user: "Divine Omajuwa", total: 8900, referrals: 52, streak: 28, redeemed: 6000, balance: 2900 },
+                          { rank: 3, user: "Chibueze Umeh", total: 6450, referrals: 34, streak: 21, redeemed: 4000, balance: 2450 },
+                          { rank: 4, user: "Adewale Martins", total: 4300, referrals: 18, streak: 14, redeemed: 3000, balance: 1300 },
+                          { rank: 5, user: "Fatima Kabiru", total: 3800, referrals: 12, streak: 30, redeemed: 2500, balance: 1300 },
+                          { rank: 6, user: "Grace Nwosu", total: 2750, referrals: 8, streak: 7, redeemed: 1500, balance: 1250 },
+                          { rank: 7, user: "Victor Eze", total: 2100, referrals: 5, streak: 12, redeemed: 1000, balance: 1100 },
+                          { rank: 8, user: "Chidinma Obi", total: 1800, referrals: 3, streak: 9, redeemed: 500, balance: 1300 },
+                        ].map(e => (
+                          <tr key={e.rank} className="border-b border-border last:border-0 hover:bg-secondary/30">
+                            <td className="px-4 py-3">
+                              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${e.rank <= 3 ? "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]" : "bg-muted text-muted-foreground"}`}>{e.rank}</span>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-foreground font-medium">{e.user}</td>
+                            <td className="px-4 py-3 text-sm font-semibold text-[hsl(var(--success))]">{e.total.toLocaleString()} pts</td>
+                            <td className="px-4 py-3 text-sm text-foreground">{e.referrals}</td>
+                            <td className="px-4 py-3 text-sm text-foreground">{e.streak} days</td>
+                            <td className="px-4 py-3 text-sm text-muted-foreground">{e.redeemed.toLocaleString()} pts</td>
+                            <td className="px-4 py-3 text-sm text-foreground">{e.balance.toLocaleString()} pts</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Activity Log */}
+              {rewardsSubTab === "activity" && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex gap-2">
+                      {["all", "referral", "streak", "signup", "cashback", "redemption"].map(f => (
+                        <button key={f} className={`px-3 py-1.5 rounded-lg text-xs font-medium ${f === "all" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+                          {f.charAt(0).toUpperCase() + f.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                    <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+                      <Download className="w-3.5 h-3.5" /> Export
+                    </button>
+                  </div>
+                  <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <table className="w-full">
+                      <thead><tr className="border-b border-border bg-secondary/50">
+                        {["User", "Action", "Category", "Points", "Value (₦)", "Date"].map(h => (
+                          <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                        ))}
+                      </tr></thead>
+                      <tbody>
+                        {[
+                          { user: "Adewale M.", action: "Referred friend traded $25", category: "Referral", points: 10, value: 100, date: "Mar 10, 2026 14:32" },
+                          { user: "Chidinma O.", action: "Completed 7-day trade streak", category: "Streak", points: 100, value: 1000, date: "Mar 10, 2026 12:15" },
+                          { user: "Ibrahim A.", action: "Redeemed 2000 pts to bank", category: "Redemption", points: -2000, value: -20000, date: "Mar 9, 2026 18:44" },
+                          { user: "Fatima K.", action: "Sign-up bonus (3/3 tasks)", category: "Signup", points: 500, value: 5000, date: "Mar 9, 2026 10:22" },
+                          { user: "Victor E.", action: "Daily trade bonus", category: "Trade", points: 50, value: 500, date: "Mar 9, 2026 09:15" },
+                          { user: "Grace N.", action: "Referred friend traded $100", category: "Referral", points: 10, value: 100, date: "Mar 8, 2026 16:30" },
+                          { user: "Divine O.", action: "Weekly cashback claimed", category: "Cashback", points: 0, value: 50000, date: "Mar 8, 2026 11:00" },
+                          { user: "Chibueze U.", action: "Referred friend traded $50", category: "Referral", points: 10, value: 100, date: "Mar 7, 2026 15:45" },
+                        ].map((a, i) => (
+                          <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30">
+                            <td className="px-4 py-3 text-sm text-foreground font-medium">{a.user}</td>
+                            <td className="px-4 py-3 text-sm text-foreground">{a.action}</td>
+                            <td className="px-4 py-3">
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                                a.category === "Referral" ? "bg-primary/20 text-primary" :
+                                a.category === "Streak" ? "bg-[hsl(var(--deex-orange))]/20 text-[hsl(var(--deex-orange))]" :
+                                a.category === "Signup" ? "bg-accent/20 text-accent" :
+                                a.category === "Cashback" ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" :
+                                a.category === "Redemption" ? "bg-destructive/20 text-destructive" :
+                                "bg-[hsl(var(--deex-purple))]/20 text-[hsl(var(--deex-purple))]"
+                              }`}>{a.category}</span>
+                            </td>
+                            <td className={`px-4 py-3 text-sm font-medium ${a.points >= 0 ? "text-[hsl(var(--success))]" : "text-destructive"}`}>
+                              {a.points >= 0 ? `+${a.points}` : a.points}
+                            </td>
+                            <td className={`px-4 py-3 text-sm ${a.value >= 0 ? "text-foreground" : "text-destructive"}`}>
+                              {a.value >= 0 ? `₦${a.value.toLocaleString()}` : `-₦${Math.abs(a.value).toLocaleString()}`}
+                            </td>
+                            <td className="px-4 py-3 text-xs text-muted-foreground">{a.date}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
             </div>
