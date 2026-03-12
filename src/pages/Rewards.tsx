@@ -24,8 +24,8 @@ const signupTasks = [
 ];
 
 const earningsLog: EarningEntry[] = [
-  { id: 1, source: "Adewale M. traded $25", category: "referral", points: 10, date: "Mar 10, 2026", period: "today" },
-  { id: 2, source: "Chidinma O. traded $100", category: "referral", points: 10, date: "Mar 10, 2026", period: "today" },
+  { id: 1, source: "Adewale M. referral traded > $100", category: "referral", points: 100, date: "Mar 10, 2026", period: "today" },
+  { id: 2, source: "Chidinma O. referral traded > $100", category: "referral", points: 100, date: "Mar 10, 2026", period: "today" },
   { id: 3, source: "7-day trade streak completed", category: "streak", points: 100, date: "Mar 9, 2026", period: "week" },
   { id: 4, source: "Daily trade bonus", category: "trade", points: 50, date: "Mar 9, 2026", period: "week" },
   { id: 5, source: "Ibrahim A. traded $50", category: "referral", points: 10, date: "Mar 8, 2026", period: "week" },
