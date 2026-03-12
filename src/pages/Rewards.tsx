@@ -229,7 +229,7 @@ const Rewards = () => {
                   <Gift className="w-8 h-8 text-primary" />
                   <div>
                     <p className="text-sm font-bold text-foreground">Invite Friends & Earn</p>
-                    <p className="text-xs text-muted-foreground">Earn 10 pts for every referral trade</p>
+                    <p className="text-xs text-muted-foreground">Earn 100 pts when your referral trades &gt; $100</p>
                   </div>
                 </div>
                 <div className="flex gap-2">
