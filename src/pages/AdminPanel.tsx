@@ -1431,7 +1431,123 @@ const AdminPanel = () => {
                 </div>
               )}
 
-              {/* Top Earners */}
+              {/* Influencers */}
+              {rewardsSubTab === "influencers" && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm text-muted-foreground">Manage influencer accounts with custom profit-share referral rewards</p>
+                    <button onClick={() => { setShowInfluencerForm(true); setEditingInfluencer(null); setInfluencerFormData({ username: "", minTrade: "100", profitShare: "50" }); }}
+                      className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-xs font-medium hover:bg-primary/90">
+                      <Plus className="w-3.5 h-3.5" /> Appoint Influencer
+                    </button>
+                  </div>
+
+                  {/* Appoint / Edit form */}
+                  {showInfluencerForm && (
+                    <div className="bg-card border border-border rounded-xl p-6 mb-6 max-w-2xl">
+                      <h4 className="text-sm font-semibold text-foreground mb-4">{editingInfluencer ? "Edit Influencer Config" : "Appoint New Influencer"}</h4>
+                      <div className="space-y-4">
+                        {!editingInfluencer && (
+                          <div>
+                            <label className="text-xs text-muted-foreground mb-1 block">Username / Email</label>
+                            <input value={influencerFormData.username} onChange={e => setInfluencerFormData(p => ({ ...p, username: e.target.value }))}
+                              placeholder="Search user by name or email..."
+                              className="w-full h-10 bg-secondary rounded-lg px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary" />
+                          </div>
+                        )}
+                        <div className="flex gap-4">
+                          <div className="flex-1">
+                            <label className="text-xs text-muted-foreground mb-1 block">Min Trade Value ($)</label>
+                            <input type="number" value={influencerFormData.minTrade} onChange={e => setInfluencerFormData(p => ({ ...p, minTrade: e.target.value }))}
+                              className="w-full h-10 bg-secondary rounded-lg px-4 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <label className="text-xs text-muted-foreground mb-1 block">Profit Share % (of ₦5/$ profit)</label>
+                            <input type="number" value={influencerFormData.profitShare} onChange={e => setInfluencerFormData(p => ({ ...p, profitShare: e.target.value }))}
+                              min="1" max="100"
+                              className="w-full h-10 bg-secondary rounded-lg px-4 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary" />
+                          </div>
+                        </div>
+                        <div className="bg-secondary/50 rounded-lg p-3">
+                          <p className="text-xs text-muted-foreground">
+                            <Info className="w-3.5 h-3.5 inline mr-1" />
+                            Example: On a ${influencerFormData.minTrade || 100} trade, platform profit = ₦{(Number(influencerFormData.minTrade) || 100) * 5}. 
+                            At {influencerFormData.profitShare || 50}% share → influencer earns {Math.round(((Number(influencerFormData.minTrade) || 100) * 5 * (Number(influencerFormData.profitShare) || 50) / 100) / 10)} pts 
+                            (₦{Math.round((Number(influencerFormData.minTrade) || 100) * 5 * (Number(influencerFormData.profitShare) || 50) / 100)}).
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button onClick={() => {
+                            if (editingInfluencer) {
+                              setMockInfluencers(prev => prev.map(inf => inf.id === editingInfluencer ? { ...inf, minTrade: Number(influencerFormData.minTrade), profitShare: Number(influencerFormData.profitShare) } : inf));
+                            }
+                            setShowInfluencerForm(false);
+                            showInlineFeedback("influencer-save");
+                          }} className="px-5 py-2 bg-primary text-primary-foreground rounded-lg text-xs font-medium">
+                            {editingInfluencer ? "Save Changes" : "Appoint"}
+                          </button>
+                          <button onClick={() => setShowInfluencerForm(false)} className="px-5 py-2 bg-secondary text-foreground rounded-lg text-xs font-medium">Cancel</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <table className="w-full">
+                      <thead><tr className="border-b border-border bg-secondary/50">
+                        {["User", "Status", "Referrals", "Min Trade", "Profit Share", "Total Earned", "Actions"].map(h => (
+                          <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                        ))}
+                      </tr></thead>
+                      <tbody>
+                        {mockInfluencers.map(inf => (
+                          <tr key={inf.id} className="border-b border-border last:border-0 hover:bg-secondary/30">
+                            <td className="px-4 py-3">
+                              <p className="text-sm text-foreground font-medium">{inf.user}</p>
+                              <p className="text-[10px] text-muted-foreground">{inf.email}</p>
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${inf.status === "Active" ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" : "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]"}`}>
+                                {inf.status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-foreground">{inf.referrals}</td>
+                            <td className="px-4 py-3 text-sm text-foreground">${inf.minTrade}</td>
+                            <td className="px-4 py-3 text-sm font-medium text-primary">{inf.profitShare}%</td>
+                            <td className="px-4 py-3 text-sm font-semibold text-[hsl(var(--success))]">{inf.totalEarned.toLocaleString()} pts</td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-1.5">
+                                <button onClick={() => {
+                                  setEditingInfluencer(inf.id);
+                                  setInfluencerFormData({ username: inf.user, minTrade: String(inf.minTrade), profitShare: String(inf.profitShare) });
+                                  setShowInfluencerForm(true);
+                                }} className="text-xs text-[hsl(var(--deex-blue))] hover:underline">Edit</button>
+                                <span className="text-muted-foreground">|</span>
+                                <button onClick={() => setMockInfluencers(prev => prev.map(i => i.id === inf.id ? { ...i, status: i.status === "Active" ? "Paused" as const : "Active" as const } : i))}
+                                  className="text-xs text-[hsl(var(--warning))] hover:underline">
+                                  {inf.status === "Active" ? "Pause" : "Activate"}
+                                </button>
+                                <span className="text-muted-foreground">|</span>
+                                <button onClick={() => setConfirmAction({ label: "Remove Influencer", description: `Remove ${inf.user} as influencer? They will revert to standard referral rules (100 pts one-time).`, onConfirm: () => { setMockInfluencers(prev => prev.filter(i => i.id !== inf.id)); setConfirmAction(null); } })}
+                                  className="text-xs text-destructive hover:underline">Remove</button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="bg-secondary/50 rounded-lg p-4 mt-4">
+                    <p className="text-xs text-muted-foreground">
+                      <Info className="w-3.5 h-3.5 inline mr-1" />
+                      <strong className="text-foreground">How influencer profit-share works:</strong> Platform makes ₦5 per $1 traded. If an influencer's referral trades above their min trade value, the influencer earns a percentage of that profit as DeeXPoints (1 pt = ₦10). Influencers still earn the standard sign-up bonus loop but their referral reward is replaced by profit-share.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+
               {rewardsSubTab === "earners" && (
                 <div>
                   <div className="flex items-center justify-between mb-4">
