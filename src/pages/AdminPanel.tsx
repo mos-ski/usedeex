@@ -1616,14 +1616,14 @@ const AdminPanel = () => {
                       </tr></thead>
                       <tbody>
                         {[
-                          { user: "Adewale M.", action: "Referred friend traded $25", category: "Referral", points: 10, value: 100, date: "Mar 10, 2026 14:32" },
+                          { user: "Adewale M.", action: "Referral first trade > $100 (one-time)", category: "Referral", points: 100, value: 1000, date: "Mar 10, 2026 14:32" },
                           { user: "Chidinma O.", action: "Completed 7-day trade streak", category: "Streak", points: 100, value: 1000, date: "Mar 10, 2026 12:15" },
                           { user: "Ibrahim A.", action: "Redeemed 2000 pts to bank", category: "Redemption", points: -2000, value: -20000, date: "Mar 9, 2026 18:44" },
                           { user: "Fatima K.", action: "Sign-up bonus (3/3 tasks)", category: "Signup", points: 500, value: 5000, date: "Mar 9, 2026 10:22" },
                           { user: "Victor E.", action: "Daily trade bonus", category: "Trade", points: 50, value: 500, date: "Mar 9, 2026 09:15" },
-                          { user: "Grace N.", action: "Referred friend traded $100", category: "Referral", points: 10, value: 100, date: "Mar 8, 2026 16:30" },
+                          { user: "Ibrahim A.", action: "Influencer profit-share — referral traded $200 (50%)", category: "Referral", points: 50, value: 500, date: "Mar 8, 2026 16:30" },
                           { user: "Divine O.", action: "Weekly cashback claimed", category: "Cashback", points: 0, value: 50000, date: "Mar 8, 2026 11:00" },
-                          { user: "Chibueze U.", action: "Referred friend traded $50", category: "Referral", points: 10, value: 100, date: "Mar 7, 2026 15:45" },
+                          { user: "Grace N.", action: "Referral first trade > $100 (one-time)", category: "Referral", points: 100, value: 1000, date: "Mar 7, 2026 15:45" },
                         ].map((a, i) => (
                           <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30">
                             <td className="px-4 py-3 text-sm text-foreground font-medium">{a.user}</td>
