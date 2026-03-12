@@ -392,6 +392,7 @@ const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; is
   { icon: Wallet, label: "Wallets", tab: "wallets" },
   { icon: ShoppingCart, label: "Orders", tab: "orders" },
   { icon: CreditCard, label: "Virtual Cards", tab: "virtual-cards", isNew: true },
+  { icon: Gift, label: "Gift Cards", tab: "giftcards", isNew: true },
   { icon: Users, label: "Users", tab: "users" },
   { icon: Shield, label: "Kyc logs", tab: "kyc", children: [
     { label: "Compliance", tab: "kyc-compliance" },
