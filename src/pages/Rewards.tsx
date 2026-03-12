@@ -20,7 +20,7 @@ const MIN_REDEEM = 500; // ₦5,000 minimum
 const signupTasks = [
   { label: "Complete KYC-1 (BVN + Verification)", done: true },
   { label: "First crypto trade ≥ $50", done: true },
-  { label: "Refer a friend who trades ≥ $10", done: false },
+  { label: "Refer a friend who trades > $100", done: false },
 ];
 
 const earningsLog: EarningEntry[] = [
