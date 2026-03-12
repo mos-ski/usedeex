@@ -432,6 +432,7 @@ const AdminPanel = () => {
   const [complianceRules, setComplianceRules] = useState<ComplianceRule[]>(defaultComplianceRules);
   const [complianceNote, setComplianceNote] = useState("");
   const [confirmAction, setConfirmAction] = useState<{ label: string; description: string; onConfirm: () => void } | null>(null);
+  const [rewardsSubTab, setRewardsSubTab] = useState<"config" | "payouts" | "earners" | "activity">("config");
   const [inlineSaved, setInlineSaved] = useState<Record<string, boolean>>({});
 
   const showInlineFeedback = (key: string) => {
