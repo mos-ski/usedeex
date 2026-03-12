@@ -301,7 +301,10 @@ const AdminUserDetail = () => {
                 {mockUser.initials}
               </div>
               <div>
-                <h2 className="text-xl font-bold text-foreground">{mockUser.name}</h2>
+                <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                  {mockUser.name}
+                  {isInfluencer && <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-primary/20 text-primary">INFLUENCER</span>}
+                </h2>
                 <p className="text-sm text-deex-blue">{mockUser.email}</p>
               </div>
             </div>
