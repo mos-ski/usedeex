@@ -177,8 +177,8 @@ const AdminUserDetail = () => {
                 </div>
               </div>
               {mockUser.linkedAccounts.map(acc => (
-                <div key={acc.accountNumber} className="flex items-center gap-16">
-                  <p className="text-sm text-foreground font-medium w-44 shrink-0">Linked Account</p>
+                <div key={acc.accountNumber} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-8 md:gap-16">
+                  <p className="text-sm text-foreground font-medium sm:w-44 shrink-0">Linked Account</p>
                   <div className="flex-1 h-11 bg-secondary rounded-lg px-4 flex items-center justify-between text-sm text-muted-foreground">
                     <span>{acc.bank} — {acc.accountName} — {acc.accountNumber}</span>
                     <CopyButton text={acc.accountNumber} label="Account number" />
