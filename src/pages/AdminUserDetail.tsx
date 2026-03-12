@@ -170,7 +170,7 @@ const AdminUserDetail = () => {
                 </div>
               ))}
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-8 md:gap-16">
-                <p className="text-sm text-foreground font-medium w-44 shrink-0">Referral Link</p>
+                <p className="text-sm text-foreground font-medium sm:w-44 shrink-0">Referral Link</p>
                 <div className="flex-1 h-11 bg-secondary rounded-lg px-4 flex items-center justify-between text-sm text-muted-foreground">
                   <span className="truncate">{mockUser.referralLink}</span>
                   <CopyButton text={mockUser.referralLink} label="Referral link" />
