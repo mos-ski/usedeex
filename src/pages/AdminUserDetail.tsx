@@ -191,6 +191,9 @@ const AdminUserDetail = () => {
   const [nudgedTasks, setNudgedTasks] = useState<Record<number, boolean>>({});
   const [confirmAction, setConfirmAction] = useState<{ label: string; description: string; onConfirm: () => void; destructive?: boolean } | null>(null);
   const [activityFilter, setActivityFilter] = useState<string>("all");
+  const [isInfluencer, setIsInfluencer] = useState(true);
+  const [influencerConfig, setInfluencerConfig] = useState({ minTrade: "150", profitShare: "30" });
+  const [editingInfluencerConfig, setEditingInfluencerConfig] = useState(false);
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
