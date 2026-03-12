@@ -32,7 +32,7 @@ const AdminWallets = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
         <div>
           <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-3">WALLETS</p>
           <div className="flex gap-4">
@@ -51,7 +51,7 @@ const AdminWallets = () => {
       </div>
 
       {/* Balance cards */}
-      <div className={`grid ${walletTab === "deex" ? "grid-cols-3" : "grid-cols-1 max-w-[600px]"} gap-4 mb-6`}>
+      <div className={`grid ${walletTab === "deex" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1 max-w-[600px]"} gap-3 md:gap-4 mb-6`}>
         <div className="bg-card border border-border rounded-xl p-5">
           <p className="text-xs text-muted-foreground mb-1">Total Crypto</p>
           <p className="text-2xl font-bold text-foreground">{showBalance ? currentWallet.totalCrypto : "****"}</p>
@@ -95,7 +95,7 @@ const AdminWallets = () => {
 
       {/* Performance */}
       <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-4">PERFORMANCE</p>
-      <div className="flex gap-6 mb-6">
+      <div className="flex flex-col lg:flex-row gap-6 mb-6">
         <div className="flex-1 bg-card border border-border rounded-xl p-5">
           <p className="text-sm font-semibold text-foreground mb-4">Trade Volume</p>
           <ResponsiveContainer width="100%" height={200}>
@@ -108,7 +108,7 @@ const AdminWallets = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="w-80 shrink-0 bg-card border border-border rounded-xl p-5">
+        <div className="w-full lg:w-80 lg:shrink-0 bg-card border border-border rounded-xl p-5">
           <p className="text-sm font-semibold text-foreground mb-4">Assets</p>
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
@@ -132,7 +132,7 @@ const AdminWallets = () => {
       </div>
 
       {/* Activity */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
         <p className="text-sm font-semibold text-foreground">Activity</p>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <label className="flex items-center gap-2">

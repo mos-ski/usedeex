@@ -60,7 +60,7 @@ const AdminUserDetail = () => {
       </div>
 
       {/* User header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-full bg-accent/30 flex items-center justify-center text-lg font-bold text-accent">
             {mockUser.initials}
@@ -104,7 +104,7 @@ const AdminUserDetail = () => {
       {summaryTab === "user-summary" && (
         <>
           {/* Summary cards */}
-          <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
             <div className="bg-card border border-border rounded-xl p-4">
               <p className="text-sm text-[hsl(var(--deex-orange))] mb-1">Total transaction payout</p>
               <p className="text-xl font-bold text-foreground">{mockUser.totalPayout}</p>
@@ -124,7 +124,7 @@ const AdminUserDetail = () => {
           </div>
 
           {/* Activity header with Switch */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
             <p className="text-sm font-semibold text-foreground">Activity</p>
             <div className="flex items-center gap-4 text-xs text-muted-foreground">
               <label className="flex items-center gap-2">
@@ -142,7 +142,7 @@ const AdminUserDetail = () => {
           </div>
 
           {/* User tabs */}
-          <div className="flex gap-6 mb-6 border-b border-border">
+          <div className="flex gap-4 md:gap-6 mb-6 border-b border-border overflow-x-auto pb-0">
             {userTabs.map(t => (
               <button key={t.key} onClick={() => setActiveTab(t.key)}
                 className={`text-sm pb-2 border-b-2 transition-colors ${activeTab === t.key ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
@@ -161,24 +161,24 @@ const AdminUserDetail = () => {
                 { label: "DeeX Tag", value: mockUser.deexTag },
                 { label: "Customer ID", value: mockUser.customerId },
               ].map(field => (
-                <div key={field.label} className="flex items-center gap-16">
-                  <p className="text-sm text-foreground font-medium w-44 shrink-0">{field.label}</p>
+                <div key={field.label} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-8 md:gap-16">
+                  <p className="text-sm text-foreground font-medium sm:w-44 shrink-0">{field.label}</p>
                   <div className="flex-1 h-11 bg-secondary rounded-lg px-4 flex items-center justify-between text-sm text-muted-foreground">
                     <span>{field.value}</span>
                     <CopyButton text={field.value} label={field.label} />
                   </div>
                 </div>
               ))}
-              <div className="flex items-center gap-16">
-                <p className="text-sm text-foreground font-medium w-44 shrink-0">Referral Link</p>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-8 md:gap-16">
+                <p className="text-sm text-foreground font-medium sm:w-44 shrink-0">Referral Link</p>
                 <div className="flex-1 h-11 bg-secondary rounded-lg px-4 flex items-center justify-between text-sm text-muted-foreground">
                   <span className="truncate">{mockUser.referralLink}</span>
                   <CopyButton text={mockUser.referralLink} label="Referral link" />
                 </div>
               </div>
               {mockUser.linkedAccounts.map(acc => (
-                <div key={acc.accountNumber} className="flex items-center gap-16">
-                  <p className="text-sm text-foreground font-medium w-44 shrink-0">Linked Account</p>
+                <div key={acc.accountNumber} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-8 md:gap-16">
+                  <p className="text-sm text-foreground font-medium sm:w-44 shrink-0">Linked Account</p>
                   <div className="flex-1 h-11 bg-secondary rounded-lg px-4 flex items-center justify-between text-sm text-muted-foreground">
                     <span>{acc.bank} — {acc.accountName} — {acc.accountNumber}</span>
                     <CopyButton text={acc.accountNumber} label="Account number" />

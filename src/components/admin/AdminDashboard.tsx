@@ -19,7 +19,7 @@ const AdminDashboard = () => {
           {showBalance ? "HIDE BALANCE" : "SHOW BALANCE"}
         </button>
       </div>
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
         {dashboardMetrics.map(m => (
           <div key={m.label} className="bg-card border border-border rounded-xl p-5">
             <p className="text-xs text-muted-foreground mb-2">{m.label}</p>
@@ -33,7 +33,7 @@ const AdminDashboard = () => {
 
       {/* Performance */}
       <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-4">PERFORMANCE</p>
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         <div className="flex-1 bg-card border border-border rounded-xl p-5">
           <div className="flex gap-4 mb-4">
             {(["all", "crypto", "giftcard"] as const).map(t => (
@@ -66,7 +66,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="w-72 shrink-0">
+        <div className="w-full lg:w-72 lg:shrink-0">
           <div className="bg-card border border-border rounded-xl p-5">
             <p className="text-sm font-semibold text-foreground mb-3">Quick Links</p>
             <div className="space-y-2">

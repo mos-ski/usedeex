@@ -41,7 +41,7 @@ const AdminUsers = () => {
   return (
     <div>
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
         <div className="bg-card border border-border rounded-xl p-5">
           <p className="text-xs text-muted-foreground mb-1">Total Customers</p>
           <p className="text-2xl font-bold text-foreground">{usersStats.total.toLocaleString()}</p>
@@ -67,7 +67,7 @@ const AdminUsers = () => {
       </div>
 
       {/* Tabs + Search + Export */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
         <div className="flex gap-4">
           {(["customers", "merchants", "clients"] as const).map(t => (
             <button key={t} onClick={() => setUsersTab(t)} className={`text-sm pb-1 border-b-2 ${usersTab === t ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground"}`}>
@@ -92,7 +92,7 @@ const AdminUsers = () => {
       </div>
 
       {/* Status filter tabs with counts */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {(["all", "active", "inactive", "flagged"] as const).map(s => (
           <button key={s} onClick={() => { setStatusTab(s); setPage(1); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium ${statusTab === s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>

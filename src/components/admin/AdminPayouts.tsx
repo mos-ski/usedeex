@@ -26,7 +26,7 @@ const AdminPayouts = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2">
           <p className="text-xs font-semibold text-muted-foreground tracking-wider">PAYOUTS</p>
           <NewBadge />
@@ -37,7 +37,7 @@ const AdminPayouts = () => {
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6">
         <div className="bg-card border border-border rounded-xl p-5">
           <p className="text-xs text-muted-foreground mb-1">Total Payouts</p>
           <p className="text-2xl font-bold text-foreground">{payoutsList.length}</p>
@@ -53,7 +53,7 @@ const AdminPayouts = () => {
       </div>
 
       {/* Status filter */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {(["All", "COMPLETED", "PENDING", "FAILED"] as const).map(s => (
           <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium ${statusFilter === s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>

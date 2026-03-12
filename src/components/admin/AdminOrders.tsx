@@ -61,7 +61,7 @@ const AdminOrders = () => {
   return (
     <div>
       {/* Summary cards */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-6">
         <div className="bg-card border border-border rounded-xl p-5">
           <p className="text-sm text-muted-foreground mb-1">Total Order</p>
           <p className="text-2xl font-bold text-foreground">{ordersData.totalOrder}</p>
@@ -103,7 +103,7 @@ const AdminOrders = () => {
       </div>
 
       {/* Activity header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
         <p className="text-sm font-semibold text-foreground">Activity</p>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <label className="flex items-center gap-2">
@@ -116,7 +116,7 @@ const AdminOrders = () => {
       </div>
 
       {/* Status filter tabs */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {(["All", "COMPLETED", "PENDING", "FAILED"] as const).map(s => (
           <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium ${statusFilter === s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
