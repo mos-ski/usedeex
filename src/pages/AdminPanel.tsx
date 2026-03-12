@@ -3,6 +3,7 @@ import AdminLayout, { AdminTab } from "@/components/admin/AdminLayout";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import AdminWallets from "@/components/admin/AdminWallets";
 import AdminOrders from "@/components/admin/AdminOrders";
+import AdminPayouts from "@/components/admin/AdminPayouts";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminKYC from "@/components/admin/AdminKYC";
 import AdminCompliance from "@/components/admin/AdminCompliance";
@@ -21,6 +22,7 @@ const AdminPanel = () => {
       {activeTab === "dashboard" && <AdminDashboard />}
       {activeTab === "wallets" && <AdminWallets />}
       {activeTab === "orders" && <AdminOrders />}
+      {activeTab === "payouts" && <AdminPayouts />}
       {activeTab === "users" && <AdminUsers />}
       {activeTab === "kyc" && <AdminKYC />}
       {(activeTab === "kyc-compliance" || activeTab === "kyc-rules") && (

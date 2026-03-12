@@ -78,45 +78,6 @@ const AdminWallets = () => {
         )}
       </div>
 
-      {/* Deposit Info Card (DeeX only) */}
-      {walletTab === "deex" && (
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-card border border-border rounded-xl p-5">
-            <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-3">CASH DEPOSIT INFO</p>
-            <div className="space-y-2">
-              {[
-                { label: "Bank", value: deexWallet.depositInfo.bankName },
-                { label: "Account Name", value: deexWallet.depositInfo.accountName },
-                { label: "Account Number", value: deexWallet.depositInfo.accountNumber },
-              ].map(item => (
-                <div key={item.label} className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">{item.label}</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm text-foreground font-medium">{item.value}</span>
-                    <CopyButton text={item.value} label={item.label} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="bg-card border border-border rounded-xl p-5">
-            <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-3">CRYPTO DEPOSIT</p>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Network</span>
-                <span className="text-sm text-foreground font-medium">{deexWallet.depositInfo.cryptoNetwork}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Address</span>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-sm text-foreground font-mono text-[11px]">{deexWallet.depositInfo.cryptoAddress}</span>
-                  <CopyButton text={deexWallet.depositInfo.cryptoAddress} label="Address" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Asset cards */}
       <div className="flex gap-4 overflow-x-auto pb-2 mb-6">
@@ -201,7 +162,7 @@ const AdminWallets = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              {["Type", "Amount", "Amount(NGN)", "Trans ID", "Status", "Date"].map(h => (
+              {["Type", "Partner", "Amount", "Amount(NGN)", "Bal Before", "Bal After", "Trans ID", "Status", "Date"].map(h => (
                 <TableHead key={h}>{h}</TableHead>
               ))}
             </TableRow>
@@ -214,12 +175,21 @@ const AdminWallets = () => {
                     <span className={`w-2 h-2 rounded-full ${w.type === "Credit" ? "bg-[hsl(var(--success))]" : "bg-primary"}`} />
                     <div>
                       <p className="text-sm font-medium text-foreground">{w.type}</p>
-                      <p className="text-xs text-muted-foreground">{w.provider} · {w.sub}</p>
+                      <p className="text-xs text-muted-foreground">{w.sub}</p>
                     </div>
                   </div>
                 </TableCell>
+                <TableCell>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                    w.partner === "Obiex" ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" :
+                    w.partner === "Hizo" ? "bg-primary/20 text-primary" :
+                    "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]"
+                  }`}>{w.partner}</span>
+                </TableCell>
                 <TableCell className="text-sm text-foreground">{w.amount}</TableCell>
                 <TableCell className="text-sm text-foreground">{w.ngn}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">{w.balanceBefore}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">{w.balanceAfter}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">
                     <span className="text-xs text-muted-foreground font-mono">{w.txId.slice(0, 12)}...</span>

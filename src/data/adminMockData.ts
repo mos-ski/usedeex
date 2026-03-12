@@ -66,18 +66,18 @@ export const assetDistribution = [
 ];
 
 export const walletActivity = [
-  { type: "Debit", provider: "Hizo", sub: "Payout", amount: "-45.474 BTC", ngn: "63,436.65", txId: "69adba40210aef2d638ebe72", status: "COMPLETED", date: "Mar 8th, 2026, 7:04 PM" },
-  { type: "Credit", provider: "Obiex", sub: "Deposit", amount: "+0.000680 BTC", ngn: "—", txId: "69adb83210aef2d638e9c3c", status: "COMPLETED", date: "Mar 8th, 2026, 6:56 PM" },
-  { type: "Credit", provider: "Obiex", sub: "Deposit", amount: "+500.05 USDT", ngn: "—", txId: "69ada29b210aef2d638c0177", status: "COMPLETED", date: "Mar 8th, 2026, 5:23 PM" },
-  { type: "Debit", provider: "Hizo", sub: "Payout", amount: "-24.00 USDT", ngn: "33,480.00", txId: "69ad9d78210aef2d638bab7e", status: "COMPLETED", date: "Mar 8th, 2026, 5:02 PM" },
-  { type: "Credit", provider: "Obiex", sub: "Deposit", amount: "+24.00 USDT", ngn: "—", txId: "69ad9d5c210aef2d638baa46", status: "COMPLETED", date: "Mar 8th, 2026, 5:01 PM" },
-  { type: "Credit", provider: "Obiex", sub: "Autoswap", amount: "+0.000744 BTC", ngn: "—", txId: "69ad930c210aef2d638af259", status: "COMPLETED", date: "Mar 8th, 2026, 4:17 PM" },
-  { type: "Credit", provider: "Obiex", sub: "Deposit", amount: "+0.000744 BTC", ngn: "—", txId: "69ad929f210aef2d638ad6f1", status: "COMPLETED", date: "Mar 8th, 2026, 4:15 PM" },
-  { type: "Debit", provider: "Hizo", sub: "Payout", amount: "-50.00 USDT", ngn: "69,750.00", txId: "69ad8fbc210aef2d638a866c", status: "COMPLETED", date: "Mar 8th, 2026, 4:03 PM" },
-  { type: "Credit", provider: "Obiex", sub: "Deposit", amount: "+120.00 USDT", ngn: "—", txId: "69ad7fbc210aef2d638a766c", status: "COMPLETED", date: "Mar 8th, 2026, 3:45 PM" },
-  { type: "Debit", provider: "Hizo", sub: "Payout", amount: "-75.00 USDT", ngn: "104,625.00", txId: "69ad6fbc210aef2d638a666c", status: "COMPLETED", date: "Mar 8th, 2026, 3:30 PM" },
-  { type: "Credit", provider: "Obiex", sub: "Deposit", amount: "+0.0015 BTC", ngn: "—", txId: "69ad5fbc210aef2d638a566c", status: "COMPLETED", date: "Mar 8th, 2026, 2:15 PM" },
-  { type: "Debit", provider: "Hizo", sub: "Payout", amount: "-200.00 USDT", ngn: "279,000.00", txId: "69ad4fbc210aef2d638a466c", status: "PENDING", date: "Mar 8th, 2026, 1:45 PM" },
+  { type: "Debit", partner: "Hizo", sub: "Payout", amount: "-45.474 BTC", ngn: "63,436.65", txId: "69adba40210aef2d638ebe72", status: "COMPLETED", date: "Mar 8th, 2026, 7:04 PM", balanceBefore: "$23,560.07", balanceAfter: "$23,496.60" },
+  { type: "Credit", partner: "Obiex", sub: "Deposit", amount: "+0.000680 BTC", ngn: "—", txId: "69adb83210aef2d638e9c3c", status: "COMPLETED", date: "Mar 8th, 2026, 6:56 PM", balanceBefore: "$23,514.17", balanceAfter: "$23,560.07" },
+  { type: "Credit", partner: "Obiex", sub: "Deposit", amount: "+500.05 USDT", ngn: "—", txId: "69ada29b210aef2d638c0177", status: "COMPLETED", date: "Mar 8th, 2026, 5:23 PM", balanceBefore: "$23,014.12", balanceAfter: "$23,514.17" },
+  { type: "Debit", partner: "Hizo", sub: "Payout", amount: "-24.00 USDT", ngn: "33,480.00", txId: "69ad9d78210aef2d638bab7e", status: "COMPLETED", date: "Mar 8th, 2026, 5:02 PM", balanceBefore: "$23,038.12", balanceAfter: "$23,014.12" },
+  { type: "Credit", partner: "Obiex", sub: "Deposit", amount: "+24.00 USDT", ngn: "—", txId: "69ad9d5c210aef2d638baa46", status: "COMPLETED", date: "Mar 8th, 2026, 5:01 PM", balanceBefore: "$23,014.12", balanceAfter: "$23,038.12" },
+  { type: "Credit", partner: "Obiex", sub: "Autoswap", amount: "+0.000744 BTC", ngn: "—", txId: "69ad930c210aef2d638af259", status: "COMPLETED", date: "Mar 8th, 2026, 4:17 PM", balanceBefore: "$22,964.04", balanceAfter: "$23,014.12" },
+  { type: "Credit", partner: "Obiex", sub: "Deposit", amount: "+0.000744 BTC", ngn: "—", txId: "69ad929f210aef2d638ad6f1", status: "COMPLETED", date: "Mar 8th, 2026, 4:15 PM", balanceBefore: "$22,913.96", balanceAfter: "$22,964.04" },
+  { type: "Debit", partner: "Hizo", sub: "Payout", amount: "-50.00 USDT", ngn: "69,750.00", txId: "69ad8fbc210aef2d638a866c", status: "COMPLETED", date: "Mar 8th, 2026, 4:03 PM", balanceBefore: "$22,963.96", balanceAfter: "$22,913.96" },
+  { type: "Credit", partner: "Obiex", sub: "Deposit", amount: "+120.00 USDT", ngn: "—", txId: "69ad7fbc210aef2d638a766c", status: "COMPLETED", date: "Mar 8th, 2026, 3:45 PM", balanceBefore: "$22,843.96", balanceAfter: "$22,963.96" },
+  { type: "Debit", partner: "Palmpay", sub: "Payout", amount: "-75.00 USDT", ngn: "104,625.00", txId: "69ad6fbc210aef2d638a666c", status: "COMPLETED", date: "Mar 8th, 2026, 3:30 PM", balanceBefore: "$22,918.96", balanceAfter: "$22,843.96" },
+  { type: "Credit", partner: "Obiex", sub: "Deposit", amount: "+0.0015 BTC", ngn: "—", txId: "69ad5fbc210aef2d638a566c", status: "COMPLETED", date: "Mar 8th, 2026, 2:15 PM", balanceBefore: "$22,817.96", balanceAfter: "$22,918.96" },
+  { type: "Debit", partner: "Hizo", sub: "Payout", amount: "-200.00 USDT", ngn: "279,000.00", txId: "69ad4fbc210aef2d638a466c", status: "PENDING", date: "Mar 8th, 2026, 1:45 PM", balanceBefore: "$23,017.96", balanceAfter: "$22,817.96" },
 ];
 
 // Orders

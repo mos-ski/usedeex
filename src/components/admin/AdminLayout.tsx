@@ -2,13 +2,13 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Wallet, ShoppingCart, Users, Shield, BarChart3,
   Settings, LogOut, Bell, ChevronDown, CreditCard, FileText,
-  AlertTriangle, Gift,
+  AlertTriangle, Gift, Banknote,
 } from "lucide-react";
 import { useState } from "react";
 import { NewBadge } from "./AdminUtils";
 
 export type AdminTab =
-  | "dashboard" | "wallets" | "orders" | "users" | "kyc"
+  | "dashboard" | "wallets" | "orders" | "payouts" | "users" | "kyc"
   | "kyc-compliance" | "kyc-rules"
   | "compliance" | "compliance-alerts" | "compliance-rules" | "compliance-detail"
   | "reports" | "settings" | "audit-log" | "virtual-cards"
@@ -26,6 +26,7 @@ export const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", tab: "dashboard" },
   { icon: Wallet, label: "Wallets", tab: "wallets" },
   { icon: ShoppingCart, label: "Orders", tab: "orders" },
+  { icon: Banknote, label: "Payouts", tab: "payouts", isNew: true },
   { icon: CreditCard, label: "Virtual Cards", tab: "virtual-cards", isNew: true },
   { icon: Gift, label: "Gift Cards", tab: "giftcards", isNew: true },
   { icon: Users, label: "Users", tab: "users" },
