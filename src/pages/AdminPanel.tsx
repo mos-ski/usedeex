@@ -432,7 +432,16 @@ const AdminPanel = () => {
   const [complianceRules, setComplianceRules] = useState<ComplianceRule[]>(defaultComplianceRules);
   const [complianceNote, setComplianceNote] = useState("");
   const [confirmAction, setConfirmAction] = useState<{ label: string; description: string; onConfirm: () => void } | null>(null);
-  const [rewardsSubTab, setRewardsSubTab] = useState<"config" | "payouts" | "earners" | "activity">("config");
+  const [rewardsSubTab, setRewardsSubTab] = useState<"config" | "payouts" | "earners" | "activity" | "influencers">("config");
+  const [showInfluencerForm, setShowInfluencerForm] = useState(false);
+  const [influencerFormData, setInfluencerFormData] = useState({ username: "", minTrade: "100", profitShare: "50" });
+  const [editingInfluencer, setEditingInfluencer] = useState<string | null>(null);
+  const [mockInfluencers, setMockInfluencers] = useState([
+    { id: "1", user: "Ibrahim Abubakar", email: "ibrahim.abu@gmail.com", status: "Active" as const, referrals: 86, minTrade: 100, profitShare: 50, totalEarned: 12500 },
+    { id: "2", user: "Divine Omajuwa", email: "divineomajuwa@gmail.com", status: "Active" as const, referrals: 52, minTrade: 150, profitShare: 30, totalEarned: 6800 },
+    { id: "3", user: "Chibueze Umeh", email: "chibuezeumeh903@gmail.com", status: "Paused" as const, referrals: 34, minTrade: 100, profitShare: 40, totalEarned: 4200 },
+    { id: "4", user: "Fatima Kabiru", email: "fatima.k@gmail.com", status: "Active" as const, referrals: 12, minTrade: 200, profitShare: 60, totalEarned: 3100 },
+  ]);
   const [inlineSaved, setInlineSaved] = useState<Record<string, boolean>>({});
 
   const showInlineFeedback = (key: string) => {
