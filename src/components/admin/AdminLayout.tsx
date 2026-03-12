@@ -30,6 +30,7 @@ export const navItems: NavItem[] = [
   { icon: Banknote, label: "Payouts", tab: "payouts", isNew: true },
   { icon: CreditCard, label: "Virtual Cards", tab: "virtual-cards", isNew: true },
   { icon: Gift, label: "Gift Cards", tab: "giftcards", isNew: true },
+  { icon: Smartphone, label: "Bill Payments", tab: "bill-payments", isNew: true },
   { icon: Users, label: "Users", tab: "users" },
   { icon: Shield, label: "Kyc logs", tab: "kyc", children: [
     { label: "Compliance", tab: "kyc-compliance" },
