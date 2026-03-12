@@ -12,10 +12,6 @@ import {
 } from "recharts";
 
 type WalletActivityItem = typeof walletActivity[0];
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell,
-} from "recharts";
 
 const PER_PAGE = 8;
 
