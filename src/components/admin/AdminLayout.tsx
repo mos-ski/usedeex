@@ -26,6 +26,7 @@ export const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", tab: "dashboard" },
   { icon: Wallet, label: "Wallets", tab: "wallets" },
   { icon: ShoppingCart, label: "Orders", tab: "orders" },
+  { icon: Banknote, label: "Payouts", tab: "payouts", isNew: true },
   { icon: CreditCard, label: "Virtual Cards", tab: "virtual-cards", isNew: true },
   { icon: Gift, label: "Gift Cards", tab: "giftcards", isNew: true },
   { icon: Users, label: "Users", tab: "users" },

@@ -162,7 +162,7 @@ const AdminWallets = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              {["Type", "Amount", "Amount(NGN)", "Trans ID", "Status", "Date"].map(h => (
+              {["Type", "Partner", "Amount", "Amount(NGN)", "Bal Before", "Bal After", "Trans ID", "Status", "Date"].map(h => (
                 <TableHead key={h}>{h}</TableHead>
               ))}
             </TableRow>
