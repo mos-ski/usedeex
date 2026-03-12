@@ -1314,7 +1314,7 @@ const AdminPanel = () => {
                     <div className="space-y-0">
                       {[
                         { label: "Sign-up Bonus (after 3 tasks)", value: "500 pts (₦5,000)", wallet: "DeeXPoints", action: "signup" },
-                        { label: "Referral Trade (per trade ≥ $10)", value: "10 pts (₦100)", wallet: "DeeXPoints", action: "referral" },
+                        { label: "Referral First Trade (> $100)", value: "100 pts (₦1,000)", wallet: "DeeXPoints", action: "referral" },
                         { label: "7-Day Trade Streak", value: "100 pts (₦1,000)", wallet: "DeeXPoints", action: "streak" },
                         { label: "Weekly Cashback (₦2M trade)", value: "₦50,000", wallet: "Bank Account", action: "cashback" },
                       ].map(r => (
