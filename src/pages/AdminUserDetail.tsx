@@ -142,7 +142,7 @@ const AdminUserDetail = () => {
           </div>
 
           {/* User tabs */}
-          <div className="flex gap-6 mb-6 border-b border-border">
+          <div className="flex gap-4 md:gap-6 mb-6 border-b border-border overflow-x-auto pb-0">
             {userTabs.map(t => (
               <button key={t.key} onClick={() => setActiveTab(t.key)}
                 className={`text-sm pb-2 border-b-2 transition-colors ${activeTab === t.key ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
