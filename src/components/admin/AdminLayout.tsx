@@ -13,7 +13,7 @@ export type AdminTab =
   | "kyc-compliance" | "kyc-rules"
   | "compliance" | "compliance-alerts" | "compliance-rules" | "compliance-detail"
   | "reports" | "settings" | "audit-log" | "virtual-cards"
-  | "rewards-admin" | "giftcards";
+  | "rewards-admin" | "giftcards" | "bill-payments";
 
 type NavItem = {
   icon: typeof LayoutDashboard;
