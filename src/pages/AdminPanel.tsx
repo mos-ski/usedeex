@@ -400,6 +400,7 @@ const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; is
     { label: "Rules Engine", tab: "compliance-rules" },
   ]},
   { icon: FileText, label: "Audit Log", tab: "audit-log", isNew: true },
+  { icon: Gift, label: "Rewards", tab: "rewards-admin", isNew: true },
   { icon: BarChart3, label: "Reports", tab: "reports" },
   { icon: Settings, label: "Settings", tab: "settings" },
 ];
