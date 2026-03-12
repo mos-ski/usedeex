@@ -191,6 +191,9 @@ const AdminUserDetail = () => {
   const [nudgedTasks, setNudgedTasks] = useState<Record<number, boolean>>({});
   const [confirmAction, setConfirmAction] = useState<{ label: string; description: string; onConfirm: () => void; destructive?: boolean } | null>(null);
   const [activityFilter, setActivityFilter] = useState<string>("all");
+  const [isInfluencer, setIsInfluencer] = useState(true);
+  const [influencerConfig, setInfluencerConfig] = useState({ minTrade: "150", profitShare: "30" });
+  const [editingInfluencerConfig, setEditingInfluencerConfig] = useState(false);
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -298,7 +301,10 @@ const AdminUserDetail = () => {
                 {mockUser.initials}
               </div>
               <div>
-                <h2 className="text-xl font-bold text-foreground">{mockUser.name}</h2>
+                <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                  {mockUser.name}
+                  {isInfluencer && <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-primary/20 text-primary">INFLUENCER</span>}
+                </h2>
                 <p className="text-sm text-deex-blue">{mockUser.email}</p>
               </div>
             </div>
@@ -432,6 +438,74 @@ const AdminUserDetail = () => {
                         </div>
                       ))}
                     </div>
+                  </div>
+
+                  {/* Influencer Section */}
+                  <div className="mt-6 bg-card border border-border rounded-xl p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <p className="text-sm text-foreground font-semibold">Influencer Status</p>
+                        {isInfluencer && (
+                          <span className="text-[10px] px-2.5 py-1 rounded-full font-semibold bg-primary/20 text-primary">INFLUENCER</span>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => {
+                          if (isInfluencer) {
+                            setConfirmAction({
+                              label: "Remove Influencer",
+                              description: `Remove ${mockUser.name} as influencer? They will revert to standard referral rules (100 pts one-time per referral who trades > $100).`,
+                              onConfirm: () => { setIsInfluencer(false); setConfirmAction(null); }
+                            });
+                          } else {
+                            setIsInfluencer(true);
+                            setEditingInfluencerConfig(true);
+                          }
+                        }}
+                        className={`relative w-11 h-6 rounded-full transition-colors ${isInfluencer ? "bg-[hsl(var(--success))]" : "bg-muted"}`}
+                      >
+                        <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-foreground transition-transform ${isInfluencer ? "left-[22px]" : "left-0.5"}`} />
+                      </button>
+                    </div>
+
+                    {isInfluencer && (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-8">
+                          <div className="flex-1">
+                            <p className="text-xs text-muted-foreground mb-1">Min Trade Value</p>
+                            {editingInfluencerConfig ? (
+                              <input type="number" value={influencerConfig.minTrade} onChange={e => setInfluencerConfig(p => ({ ...p, minTrade: e.target.value }))}
+                                className="w-full h-10 bg-secondary rounded-lg px-4 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary" />
+                            ) : (
+                              <div className="h-10 bg-secondary rounded-lg px-4 flex items-center text-sm text-foreground">${influencerConfig.minTrade}</div>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-xs text-muted-foreground mb-1">Profit Share % (of ₦5/$)</p>
+                            {editingInfluencerConfig ? (
+                              <input type="number" value={influencerConfig.profitShare} onChange={e => setInfluencerConfig(p => ({ ...p, profitShare: e.target.value }))}
+                                min="1" max="100"
+                                className="w-full h-10 bg-secondary rounded-lg px-4 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary" />
+                            ) : (
+                              <div className="h-10 bg-secondary rounded-lg px-4 flex items-center text-sm text-foreground">{influencerConfig.profitShare}%</div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="bg-secondary/50 rounded-lg p-3">
+                          <p className="text-[10px] text-muted-foreground">
+                            Example: On a ${influencerConfig.minTrade} trade → profit ₦{Number(influencerConfig.minTrade) * 5} → {influencerConfig.profitShare}% = {Math.round(Number(influencerConfig.minTrade) * 5 * Number(influencerConfig.profitShare) / 100 / 10)} pts (₦{Math.round(Number(influencerConfig.minTrade) * 5 * Number(influencerConfig.profitShare) / 100)})
+                          </p>
+                        </div>
+                        <button onClick={() => { setEditingInfluencerConfig(!editingInfluencerConfig); if (editingInfluencerConfig) toast.success("Influencer config saved"); }}
+                          className="text-xs text-[hsl(var(--deex-blue))] hover:underline font-medium">
+                          {editingInfluencerConfig ? "Save Config" : "Edit Config"}
+                        </button>
+                      </div>
+                    )}
+
+                    {!isInfluencer && (
+                      <p className="text-xs text-muted-foreground">This user uses standard referral rules: 100 pts one-time when a referral trades &gt; $100.</p>
+                    )}
                   </div>
                 </div>
               )}

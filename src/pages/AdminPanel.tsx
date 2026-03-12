@@ -432,7 +432,16 @@ const AdminPanel = () => {
   const [complianceRules, setComplianceRules] = useState<ComplianceRule[]>(defaultComplianceRules);
   const [complianceNote, setComplianceNote] = useState("");
   const [confirmAction, setConfirmAction] = useState<{ label: string; description: string; onConfirm: () => void } | null>(null);
-  const [rewardsSubTab, setRewardsSubTab] = useState<"config" | "payouts" | "earners" | "activity">("config");
+  const [rewardsSubTab, setRewardsSubTab] = useState<"config" | "payouts" | "earners" | "activity" | "influencers">("config");
+  const [showInfluencerForm, setShowInfluencerForm] = useState(false);
+  const [influencerFormData, setInfluencerFormData] = useState({ username: "", minTrade: "100", profitShare: "50" });
+  const [editingInfluencer, setEditingInfluencer] = useState<string | null>(null);
+  const [mockInfluencers, setMockInfluencers] = useState([
+    { id: "1", user: "Ibrahim Abubakar", email: "ibrahim.abu@gmail.com", status: "Active" as const, referrals: 86, minTrade: 100, profitShare: 50, totalEarned: 12500 },
+    { id: "2", user: "Divine Omajuwa", email: "divineomajuwa@gmail.com", status: "Active" as const, referrals: 52, minTrade: 150, profitShare: 30, totalEarned: 6800 },
+    { id: "3", user: "Chibueze Umeh", email: "chibuezeumeh903@gmail.com", status: "Paused" as const, referrals: 34, minTrade: 100, profitShare: 40, totalEarned: 4200 },
+    { id: "4", user: "Fatima Kabiru", email: "fatima.k@gmail.com", status: "Active" as const, referrals: 12, minTrade: 200, profitShare: 60, totalEarned: 3100 },
+  ]);
   const [inlineSaved, setInlineSaved] = useState<Record<string, boolean>>({});
 
   const showInlineFeedback = (key: string) => {
@@ -1288,10 +1297,11 @@ const AdminPanel = () => {
 
               {/* Sub-tabs */}
               <div className="flex gap-6 mb-6 border-b border-border">
-                {(["config", "payouts", "earners", "activity"] as const).map(t => (
+                {(["config", "payouts", "influencers", "earners", "activity"] as const).map(t => (
                   <button key={t} onClick={() => setRewardsSubTab(t)}
                     className={`text-sm pb-2 border-b-2 transition-colors ${rewardsSubTab === t ? "border-[hsl(var(--deex-blue))] text-[hsl(var(--deex-blue))] font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
-                    {t === "config" ? "Configuration" : t === "payouts" ? "Payout Approvals" : t === "earners" ? "Top Earners" : "Activity Log"}
+                    {t === "config" ? "Configuration" : t === "payouts" ? "Payout Approvals" : t === "earners" ? "Top Earners" : t === "influencers" ? "Influencers" : "Activity Log"}
+                    {t === "influencers" && <NewBadge />}
                   </button>
                 ))}
               </div>
@@ -1304,7 +1314,7 @@ const AdminPanel = () => {
                     <div className="space-y-0">
                       {[
                         { label: "Sign-up Bonus (after 3 tasks)", value: "500 pts (₦5,000)", wallet: "DeeXPoints", action: "signup" },
-                        { label: "Referral Trade (per trade ≥ $10)", value: "10 pts (₦100)", wallet: "DeeXPoints", action: "referral" },
+                        { label: "Referral First Trade (> $100)", value: "100 pts (₦1,000)", wallet: "DeeXPoints", action: "referral" },
                         { label: "7-Day Trade Streak", value: "100 pts (₦1,000)", wallet: "DeeXPoints", action: "streak" },
                         { label: "Weekly Cashback (₦2M trade)", value: "₦50,000", wallet: "Bank Account", action: "cashback" },
                       ].map(r => (
@@ -1333,7 +1343,7 @@ const AdminPanel = () => {
                         { label: "Minimum Redemption", value: "500 pts (₦5,000)" },
                         { label: "Cashback Pool (Weekly)", value: "₦500,000" },
                         { label: "Cashback Pool Reset", value: "Every Sunday" },
-                        { label: "Referral Min Trade", value: "$10" },
+                        { label: "Referral Min Trade", value: "$100" },
                         { label: "USDT Reward Toggle", value: "Sign-up only" },
                       ].map(s => (
                         <div key={s.label} className="flex items-center justify-between py-3 border-b border-border last:border-0">
@@ -1421,7 +1431,123 @@ const AdminPanel = () => {
                 </div>
               )}
 
-              {/* Top Earners */}
+              {/* Influencers */}
+              {rewardsSubTab === "influencers" && (
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm text-muted-foreground">Manage influencer accounts with custom profit-share referral rewards</p>
+                    <button onClick={() => { setShowInfluencerForm(true); setEditingInfluencer(null); setInfluencerFormData({ username: "", minTrade: "100", profitShare: "50" }); }}
+                      className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-xs font-medium hover:bg-primary/90">
+                      <Plus className="w-3.5 h-3.5" /> Appoint Influencer
+                    </button>
+                  </div>
+
+                  {/* Appoint / Edit form */}
+                  {showInfluencerForm && (
+                    <div className="bg-card border border-border rounded-xl p-6 mb-6 max-w-2xl">
+                      <h4 className="text-sm font-semibold text-foreground mb-4">{editingInfluencer ? "Edit Influencer Config" : "Appoint New Influencer"}</h4>
+                      <div className="space-y-4">
+                        {!editingInfluencer && (
+                          <div>
+                            <label className="text-xs text-muted-foreground mb-1 block">Username / Email</label>
+                            <input value={influencerFormData.username} onChange={e => setInfluencerFormData(p => ({ ...p, username: e.target.value }))}
+                              placeholder="Search user by name or email..."
+                              className="w-full h-10 bg-secondary rounded-lg px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary" />
+                          </div>
+                        )}
+                        <div className="flex gap-4">
+                          <div className="flex-1">
+                            <label className="text-xs text-muted-foreground mb-1 block">Min Trade Value ($)</label>
+                            <input type="number" value={influencerFormData.minTrade} onChange={e => setInfluencerFormData(p => ({ ...p, minTrade: e.target.value }))}
+                              className="w-full h-10 bg-secondary rounded-lg px-4 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <label className="text-xs text-muted-foreground mb-1 block">Profit Share % (of ₦5/$ profit)</label>
+                            <input type="number" value={influencerFormData.profitShare} onChange={e => setInfluencerFormData(p => ({ ...p, profitShare: e.target.value }))}
+                              min="1" max="100"
+                              className="w-full h-10 bg-secondary rounded-lg px-4 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary" />
+                          </div>
+                        </div>
+                        <div className="bg-secondary/50 rounded-lg p-3">
+                          <p className="text-xs text-muted-foreground">
+                            <Info className="w-3.5 h-3.5 inline mr-1" />
+                            Example: On a ${influencerFormData.minTrade || 100} trade, platform profit = ₦{(Number(influencerFormData.minTrade) || 100) * 5}. 
+                            At {influencerFormData.profitShare || 50}% share → influencer earns {Math.round(((Number(influencerFormData.minTrade) || 100) * 5 * (Number(influencerFormData.profitShare) || 50) / 100) / 10)} pts 
+                            (₦{Math.round((Number(influencerFormData.minTrade) || 100) * 5 * (Number(influencerFormData.profitShare) || 50) / 100)}).
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button onClick={() => {
+                            if (editingInfluencer) {
+                              setMockInfluencers(prev => prev.map(inf => inf.id === editingInfluencer ? { ...inf, minTrade: Number(influencerFormData.minTrade), profitShare: Number(influencerFormData.profitShare) } : inf));
+                            }
+                            setShowInfluencerForm(false);
+                            showInlineFeedback("influencer-save");
+                          }} className="px-5 py-2 bg-primary text-primary-foreground rounded-lg text-xs font-medium">
+                            {editingInfluencer ? "Save Changes" : "Appoint"}
+                          </button>
+                          <button onClick={() => setShowInfluencerForm(false)} className="px-5 py-2 bg-secondary text-foreground rounded-lg text-xs font-medium">Cancel</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="bg-card border border-border rounded-xl overflow-hidden">
+                    <table className="w-full">
+                      <thead><tr className="border-b border-border bg-secondary/50">
+                        {["User", "Status", "Referrals", "Min Trade", "Profit Share", "Total Earned", "Actions"].map(h => (
+                          <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                        ))}
+                      </tr></thead>
+                      <tbody>
+                        {mockInfluencers.map(inf => (
+                          <tr key={inf.id} className="border-b border-border last:border-0 hover:bg-secondary/30">
+                            <td className="px-4 py-3">
+                              <p className="text-sm text-foreground font-medium">{inf.user}</p>
+                              <p className="text-[10px] text-muted-foreground">{inf.email}</p>
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${inf.status === "Active" ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" : "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]"}`}>
+                                {inf.status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-foreground">{inf.referrals}</td>
+                            <td className="px-4 py-3 text-sm text-foreground">${inf.minTrade}</td>
+                            <td className="px-4 py-3 text-sm font-medium text-primary">{inf.profitShare}%</td>
+                            <td className="px-4 py-3 text-sm font-semibold text-[hsl(var(--success))]">{inf.totalEarned.toLocaleString()} pts</td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-1.5">
+                                <button onClick={() => {
+                                  setEditingInfluencer(inf.id);
+                                  setInfluencerFormData({ username: inf.user, minTrade: String(inf.minTrade), profitShare: String(inf.profitShare) });
+                                  setShowInfluencerForm(true);
+                                }} className="text-xs text-[hsl(var(--deex-blue))] hover:underline">Edit</button>
+                                <span className="text-muted-foreground">|</span>
+                                <button onClick={() => setMockInfluencers(prev => prev.map(i => i.id === inf.id ? { ...i, status: i.status === "Active" ? "Paused" as const : "Active" as const } : i))}
+                                  className="text-xs text-[hsl(var(--warning))] hover:underline">
+                                  {inf.status === "Active" ? "Pause" : "Activate"}
+                                </button>
+                                <span className="text-muted-foreground">|</span>
+                                <button onClick={() => setConfirmAction({ label: "Remove Influencer", description: `Remove ${inf.user} as influencer? They will revert to standard referral rules (100 pts one-time).`, onConfirm: () => { setMockInfluencers(prev => prev.filter(i => i.id !== inf.id)); setConfirmAction(null); } })}
+                                  className="text-xs text-destructive hover:underline">Remove</button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="bg-secondary/50 rounded-lg p-4 mt-4">
+                    <p className="text-xs text-muted-foreground">
+                      <Info className="w-3.5 h-3.5 inline mr-1" />
+                      <strong className="text-foreground">How influencer profit-share works:</strong> Platform makes ₦5 per $1 traded. If an influencer's referral trades above their min trade value, the influencer earns a percentage of that profit as DeeXPoints (1 pt = ₦10). Influencers still earn the standard sign-up bonus loop but their referral reward is replaced by profit-share.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+
               {rewardsSubTab === "earners" && (
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -1490,14 +1616,14 @@ const AdminPanel = () => {
                       </tr></thead>
                       <tbody>
                         {[
-                          { user: "Adewale M.", action: "Referred friend traded $25", category: "Referral", points: 10, value: 100, date: "Mar 10, 2026 14:32" },
+                          { user: "Adewale M.", action: "Referral first trade > $100 (one-time)", category: "Referral", points: 100, value: 1000, date: "Mar 10, 2026 14:32" },
                           { user: "Chidinma O.", action: "Completed 7-day trade streak", category: "Streak", points: 100, value: 1000, date: "Mar 10, 2026 12:15" },
                           { user: "Ibrahim A.", action: "Redeemed 2000 pts to bank", category: "Redemption", points: -2000, value: -20000, date: "Mar 9, 2026 18:44" },
                           { user: "Fatima K.", action: "Sign-up bonus (3/3 tasks)", category: "Signup", points: 500, value: 5000, date: "Mar 9, 2026 10:22" },
                           { user: "Victor E.", action: "Daily trade bonus", category: "Trade", points: 50, value: 500, date: "Mar 9, 2026 09:15" },
-                          { user: "Grace N.", action: "Referred friend traded $100", category: "Referral", points: 10, value: 100, date: "Mar 8, 2026 16:30" },
+                          { user: "Ibrahim A.", action: "Influencer profit-share — referral traded $200 (50%)", category: "Referral", points: 50, value: 500, date: "Mar 8, 2026 16:30" },
                           { user: "Divine O.", action: "Weekly cashback claimed", category: "Cashback", points: 0, value: 50000, date: "Mar 8, 2026 11:00" },
-                          { user: "Chibueze U.", action: "Referred friend traded $50", category: "Referral", points: 10, value: 100, date: "Mar 7, 2026 15:45" },
+                          { user: "Grace N.", action: "Referral first trade > $100 (one-time)", category: "Referral", points: 100, value: 1000, date: "Mar 7, 2026 15:45" },
                         ].map((a, i) => (
                           <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/30">
                             <td className="px-4 py-3 text-sm text-foreground font-medium">{a.user}</td>

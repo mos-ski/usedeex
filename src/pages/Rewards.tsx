@@ -20,21 +20,21 @@ const MIN_REDEEM = 500; // ₦5,000 minimum
 const signupTasks = [
   { label: "Complete KYC-1 (BVN + Verification)", done: true },
   { label: "First crypto trade ≥ $50", done: true },
-  { label: "Refer a friend who trades ≥ $10", done: false },
+  { label: "Refer a friend who trades > $100", done: false },
 ];
 
 const earningsLog: EarningEntry[] = [
-  { id: 1, source: "Adewale M. traded $25", category: "referral", points: 10, date: "Mar 10, 2026", period: "today" },
-  { id: 2, source: "Chidinma O. traded $100", category: "referral", points: 10, date: "Mar 10, 2026", period: "today" },
+  { id: 1, source: "Adewale M. referral traded > $100", category: "referral", points: 100, date: "Mar 10, 2026", period: "today" },
+  { id: 2, source: "Chidinma O. referral traded > $100", category: "referral", points: 100, date: "Mar 10, 2026", period: "today" },
   { id: 3, source: "7-day trade streak completed", category: "streak", points: 100, date: "Mar 9, 2026", period: "week" },
   { id: 4, source: "Daily trade bonus", category: "trade", points: 50, date: "Mar 9, 2026", period: "week" },
-  { id: 5, source: "Ibrahim A. traded $50", category: "referral", points: 10, date: "Mar 8, 2026", period: "week" },
+  { id: 5, source: "Ibrahim A. referral traded > $100", category: "referral", points: 100, date: "Mar 8, 2026", period: "week" },
   { id: 6, source: "Sign-up KYC-1 completed", category: "signup", points: 200, date: "Mar 6, 2026", period: "week" },
   { id: 7, source: "First crypto trade bonus", category: "signup", points: 200, date: "Mar 6, 2026", period: "week" },
   { id: 8, source: "Daily trade bonus", category: "trade", points: 50, date: "Mar 5, 2026", period: "all" },
-  { id: 9, source: "Fatima K. traded $75", category: "referral", points: 10, date: "Mar 1, 2026", period: "all" },
+  { id: 9, source: "Fatima K. referral traded > $100", category: "referral", points: 100, date: "Mar 1, 2026", period: "all" },
   { id: 10, source: "Weekly cashback reward", category: "cashback", points: 500, date: "Feb 28, 2026", period: "all" },
-  { id: 11, source: "Victor E. traded $200", category: "referral", points: 10, date: "Feb 25, 2026", period: "all" },
+  { id: 11, source: "Victor E. referral traded > $100", category: "referral", points: 100, date: "Feb 25, 2026", period: "all" },
 ];
 
 const redemptionHistory: Redemption[] = [
@@ -229,7 +229,7 @@ const Rewards = () => {
                   <Gift className="w-8 h-8 text-primary" />
                   <div>
                     <p className="text-sm font-bold text-foreground">Invite Friends & Earn</p>
-                    <p className="text-xs text-muted-foreground">Earn 10 pts for every referral trade</p>
+                    <p className="text-xs text-muted-foreground">Earn 100 pts when your referral trades &gt; $100</p>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -251,7 +251,7 @@ const Rewards = () => {
                 <button onClick={() => navigate("/referrals")} className="flex-1 bg-secondary rounded-xl p-4 text-left">
                   <Users className="w-6 h-6 text-primary mb-2" />
                   <p className="text-sm font-semibold text-foreground">Refer & Win</p>
-                  <p className="text-xs text-muted-foreground">10 pts per referral trade</p>
+                  <p className="text-xs text-muted-foreground">100 pts per referral</p>
                 </button>
               </div>
 
@@ -276,7 +276,7 @@ const Rewards = () => {
                 <div className="space-y-2.5">
                   {[
                     { action: "Sign-up Bonus (3 tasks)", reward: "500 pts (₦5,000)", wallet: "DeeXPoints" },
-                    { action: "Referral trade (≥ $10)", reward: "10 pts (₦100)", wallet: "DeeXPoints" },
+                    { action: "Referral first trade (> $100)", reward: "100 pts (₦1,000)", wallet: "DeeXPoints" },
                     { action: "7-day trade streak", reward: "100 pts (₦1,000)", wallet: "DeeXPoints" },
                     { action: "Trade ₦2M weekly", reward: "₦50,000 cashback", wallet: "Bank" },
                   ].map(r => (
