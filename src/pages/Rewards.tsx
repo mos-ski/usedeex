@@ -251,7 +251,7 @@ const Rewards = () => {
                 <button onClick={() => navigate("/referrals")} className="flex-1 bg-secondary rounded-xl p-4 text-left">
                   <Users className="w-6 h-6 text-primary mb-2" />
                   <p className="text-sm font-semibold text-foreground">Refer & Win</p>
-                  <p className="text-xs text-muted-foreground">10 pts per referral trade</p>
+                  <p className="text-xs text-muted-foreground">100 pts per referral</p>
                 </button>
               </div>
 
