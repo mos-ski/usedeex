@@ -1297,10 +1297,11 @@ const AdminPanel = () => {
 
               {/* Sub-tabs */}
               <div className="flex gap-6 mb-6 border-b border-border">
-                {(["config", "payouts", "earners", "activity"] as const).map(t => (
+                {(["config", "payouts", "influencers", "earners", "activity"] as const).map(t => (
                   <button key={t} onClick={() => setRewardsSubTab(t)}
                     className={`text-sm pb-2 border-b-2 transition-colors ${rewardsSubTab === t ? "border-[hsl(var(--deex-blue))] text-[hsl(var(--deex-blue))] font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
-                    {t === "config" ? "Configuration" : t === "payouts" ? "Payout Approvals" : t === "earners" ? "Top Earners" : "Activity Log"}
+                    {t === "config" ? "Configuration" : t === "payouts" ? "Payout Approvals" : t === "earners" ? "Top Earners" : t === "influencers" ? "Influencers" : "Activity Log"}
+                    {t === "influencers" && <NewBadge />}
                   </button>
                 ))}
               </div>
