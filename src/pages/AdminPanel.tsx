@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AdminGiftCards from "@/components/admin/AdminGiftCards";
 import {
   LayoutDashboard, Wallet, ShoppingCart, Users, Shield, ListChecks, BarChart3,
   Settings, LogOut, Bell, Search, ChevronDown, ChevronRight, Eye, EyeOff,
@@ -19,7 +20,7 @@ const NewBadge = () => (
 );
 
 // ===== TYPES =====
-type AdminTab = "dashboard" | "wallets" | "orders" | "users" | "kyc" | "kyc-compliance" | "kyc-rules" | "compliance" | "compliance-alerts" | "compliance-rules" | "compliance-detail" | "reports" | "settings" | "audit-log" | "customer-detail" | "virtual-cards" | "rewards-admin";
+type AdminTab = "dashboard" | "wallets" | "orders" | "users" | "kyc" | "kyc-compliance" | "kyc-rules" | "compliance" | "compliance-alerts" | "compliance-rules" | "compliance-detail" | "reports" | "settings" | "audit-log" | "customer-detail" | "virtual-cards" | "rewards-admin" | "giftcards";
 
 // ===== MOCK DATA =====
 const dashboardMetrics = [
@@ -391,6 +392,7 @@ const navItems: { icon: typeof LayoutDashboard; label: string; tab: AdminTab; is
   { icon: Wallet, label: "Wallets", tab: "wallets" },
   { icon: ShoppingCart, label: "Orders", tab: "orders" },
   { icon: CreditCard, label: "Virtual Cards", tab: "virtual-cards", isNew: true },
+  { icon: Gift, label: "Gift Cards", tab: "giftcards", isNew: true },
   { icon: Users, label: "Users", tab: "users" },
   { icon: Shield, label: "Kyc logs", tab: "kyc", children: [
     { label: "Compliance", tab: "kyc-compliance" },
@@ -533,7 +535,7 @@ const AdminPanel = () => {
           <div className="flex items-center gap-2 text-foreground">
             <span className="text-muted-foreground">—</span>
             <h1 className="text-base font-semibold">
-              {activeTab === "dashboard" ? "Dashboard" : activeTab === "wallets" ? "Wallets" : activeTab === "orders" ? "Transactions" : activeTab === "users" ? "Users" : isKycTab ? "" : isComplianceTab ? "Compliance" : activeTab === "reports" ? "Reports" : activeTab === "audit-log" ? "Audit Log" : activeTab === "virtual-cards" ? "Virtual Cards" : activeTab === "rewards-admin" ? "Rewards & DeeXPoints" : "Settings"}
+              {activeTab === "dashboard" ? "Dashboard" : activeTab === "wallets" ? "Wallets" : activeTab === "orders" ? "Transactions" : activeTab === "users" ? "Users" : isKycTab ? "" : isComplianceTab ? "Compliance" : activeTab === "reports" ? "Reports" : activeTab === "audit-log" ? "Audit Log" : activeTab === "virtual-cards" ? "Virtual Cards" : activeTab === "giftcards" ? "Gift Cards" : activeTab === "rewards-admin" ? "Rewards & DeeXPoints" : "Settings"}
             </h1>
           </div>
           <div className="flex items-center gap-3">
@@ -1272,6 +1274,9 @@ const AdminPanel = () => {
             </div>
           )}
 
+
+          {/* ===== GIFT CARDS ===== */}
+          {activeTab === "giftcards" && <AdminGiftCards />}
 
           {/* ===== REWARDS ADMIN ===== */}
           {activeTab === "rewards-admin" && (
