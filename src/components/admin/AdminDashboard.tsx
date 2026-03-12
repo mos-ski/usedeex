@@ -19,7 +19,7 @@ const AdminDashboard = () => {
           {showBalance ? "HIDE BALANCE" : "SHOW BALANCE"}
         </button>
       </div>
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
         {dashboardMetrics.map(m => (
           <div key={m.label} className="bg-card border border-border rounded-xl p-5">
             <p className="text-xs text-muted-foreground mb-2">{m.label}</p>
