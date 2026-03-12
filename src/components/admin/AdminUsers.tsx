@@ -67,7 +67,7 @@ const AdminUsers = () => {
       </div>
 
       {/* Tabs + Search + Export */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
         <div className="flex gap-4">
           {(["customers", "merchants", "clients"] as const).map(t => (
             <button key={t} onClick={() => setUsersTab(t)} className={`text-sm pb-1 border-b-2 ${usersTab === t ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground"}`}>
