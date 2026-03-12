@@ -95,7 +95,7 @@ const AdminWallets = () => {
 
       {/* Performance */}
       <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-4">PERFORMANCE</p>
-      <div className="flex gap-6 mb-6">
+      <div className="flex flex-col lg:flex-row gap-6 mb-6">
         <div className="flex-1 bg-card border border-border rounded-xl p-5">
           <p className="text-sm font-semibold text-foreground mb-4">Trade Volume</p>
           <ResponsiveContainer width="100%" height={200}>
