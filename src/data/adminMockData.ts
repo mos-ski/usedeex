@@ -169,18 +169,48 @@ export const customersList = [
   { name: "Grace Nwosu", email: "grace.nwosu@gmail.com", kyc: "Level 2", phone: "07099001122", created: "Feb 1st, 2026, 9:45 AM", lastLogin: "Mar 8th, 2026, 4:00 PM", status: "active" as const },
 ];
 
+// KYC Levels Config
+export const kycLevelsConfig = [
+  {
+    level: 1,
+    title: "KYC 1",
+    tradingLimit: "$1,000",
+    withdrawalLimit: "$100",
+    requirements: ["BVN submission", "Liveness check (selfie + motion)"],
+    unlocks: ["Basic trading", "Low withdrawal access"],
+  },
+  {
+    level: 2,
+    title: "KYC 2",
+    tradingLimit: "$10,000",
+    withdrawalLimit: "$500",
+    requirements: ["Valid government-issued ID (Passport / NIN / Driver's License)", "House address verification (utility bill / bank statement)"],
+    unlocks: ["Higher sell limits", "Increased withdrawal limits"],
+  },
+  {
+    level: 3,
+    title: "KYC 3",
+    tradingLimit: "$25,000",
+    withdrawalLimit: "$1,000",
+    requirements: ["Employment details or business documentation", "Source of income declaration", "Risk questionnaire", "Mandatory 2FA activation"],
+    unlocks: ["Highest trading limits", "Highest withdrawal limits", "Priority processing"],
+  },
+];
+
 // KYC
 export const kycLogs = [
-  { name: "CHIBUEZE UMEH", email: "chibuezeumeh903@gmail.com", level: "KYC 3", status: "APPROVED", date: "Feb 25th, 2026, 8:03 AM", bvn: "22345678901", document: "Driver's License" },
-  { name: "OSASENAGA ERHARUYI", email: "emmosa718@gmail.com", level: "KYC 3", status: "APPROVED", date: "Feb 22nd, 2026, 7:42 AM", bvn: "22345678902", document: "Int'l Passport" },
-  { name: "FRIDAY AZIAKPONO", email: "poundsfriday57@gmail.com", level: "KYC 3", status: "APPROVED", date: "Feb 21st, 2026, 9:01 PM", bvn: "22345678903", document: "NIN Slip" },
-  { name: "Idris Abdullahi", email: "idris53279@gmail.com", level: "KYC 2", status: "REJECTED", date: "Feb 20th, 2026, 12:20 PM", bvn: "22345678904", document: "Voter's Card" },
-  { name: "Donatus Aideyan", email: "sundaydonatusa@gmail.com", level: "KYC 3", status: "APPROVED", date: "Feb 19th, 2026, 7:56 PM", bvn: "22345678905", document: "Driver's License" },
-  { name: "Quincy James", email: "jamesquincy3326@gmail.com", level: "KYC 3", status: "APPROVED", date: "Feb 16th, 2026, 3:58 PM", bvn: "22345678906", document: "Int'l Passport" },
-  { name: "David Enyowhara", email: "fionabecon57@gmail.com", level: "KYC 2", status: "PENDING", date: "Feb 3rd, 2026, 12:09 AM", bvn: "22345678907", document: "NIN Slip" },
-  { name: "Efeme Jeremiah", email: "ejaifeefemegreat@gmail.com", level: "KYC 2", status: "PENDING", date: "Jan 31st, 2026, 12:45 AM", bvn: "22345678908", document: "Driver's License" },
-  { name: "Fortune Chigor", email: "chigorfortune25@gmail.com", level: "KYC 2", status: "PENDING", date: "Jan 28th, 2026, 2:28 PM", bvn: "22345678909", document: "Voter's Card" },
-  { name: "Lucky Holland", email: "hollandlucky09@gmail.com", level: "KYC 2", status: "PENDING", date: "Jan 28th, 2026, 2:25 PM", bvn: "22345678910", document: "NIN Slip" },
+  { name: "CHIBUEZE UMEH", email: "chibuezeumeh903@gmail.com", level: "KYC 3", currentLevel: 3, status: "APPROVED", date: "Feb 25th, 2026, 8:03 AM", bvn: "22345678901", document: "Driver's License", twoFaEnabled: true, rejectionReason: "" },
+  { name: "OSASENAGA ERHARUYI", email: "emmosa718@gmail.com", level: "KYC 3", currentLevel: 3, status: "APPROVED", date: "Feb 22nd, 2026, 7:42 AM", bvn: "22345678902", document: "Int'l Passport", twoFaEnabled: true, rejectionReason: "" },
+  { name: "FRIDAY AZIAKPONO", email: "poundsfriday57@gmail.com", level: "KYC 3", currentLevel: 3, status: "APPROVED", date: "Feb 21st, 2026, 9:01 PM", bvn: "22345678903", document: "NIN Slip", twoFaEnabled: true, rejectionReason: "" },
+  { name: "Idris Abdullahi", email: "idris53279@gmail.com", level: "KYC 2", currentLevel: 1, status: "REJECTED", date: "Feb 20th, 2026, 12:20 PM", bvn: "22345678904", document: "Voter's Card", twoFaEnabled: false, rejectionReason: "Document does not match BVN records" },
+  { name: "Donatus Aideyan", email: "sundaydonatusa@gmail.com", level: "KYC 3", currentLevel: 3, status: "APPROVED", date: "Feb 19th, 2026, 7:56 PM", bvn: "22345678905", document: "Driver's License", twoFaEnabled: true, rejectionReason: "" },
+  { name: "Quincy James", email: "jamesquincy3326@gmail.com", level: "KYC 3", currentLevel: 3, status: "APPROVED", date: "Feb 16th, 2026, 3:58 PM", bvn: "22345678906", document: "Int'l Passport", twoFaEnabled: true, rejectionReason: "" },
+  { name: "David Enyowhara", email: "fionabecon57@gmail.com", level: "KYC 2", currentLevel: 1, status: "PENDING", date: "Feb 3rd, 2026, 12:09 AM", bvn: "22345678907", document: "NIN Slip", twoFaEnabled: false, rejectionReason: "" },
+  { name: "Efeme Jeremiah", email: "ejaifeefemegreat@gmail.com", level: "KYC 2", currentLevel: 1, status: "PENDING", date: "Jan 31st, 2026, 12:45 AM", bvn: "22345678908", document: "Driver's License", twoFaEnabled: false, rejectionReason: "" },
+  { name: "Fortune Chigor", email: "chigorfortune25@gmail.com", level: "KYC 2", currentLevel: 1, status: "PENDING", date: "Jan 28th, 2026, 2:28 PM", bvn: "22345678909", document: "Utility Bill", twoFaEnabled: false, rejectionReason: "" },
+  { name: "Lucky Holland", email: "hollandlucky09@gmail.com", level: "KYC 2", currentLevel: 1, status: "PENDING", date: "Jan 28th, 2026, 2:25 PM", bvn: "22345678910", document: "NIN Slip", twoFaEnabled: false, rejectionReason: "" },
+  { name: "Grace Nwosu", email: "grace.nwosu@gmail.com", level: "KYC 3", currentLevel: 2, status: "PENDING", date: "Mar 1st, 2026, 10:30 AM", bvn: "22345678911", document: "Employment Letter", twoFaEnabled: true, rejectionReason: "" },
+  { name: "Fatima Kabiru", email: "fatima.kab@gmail.com", level: "KYC 3", currentLevel: 2, status: "PENDING", date: "Mar 3rd, 2026, 2:15 PM", bvn: "22345678912", document: "Business Registration", twoFaEnabled: false, rejectionReason: "" },
 ];
 
 // Payroll
