@@ -5,7 +5,13 @@ import CryptoIcon from "@/components/CryptoIcon";
 import { deexWallet, customersWallet, tradeVolumeData, assetDistribution, walletActivity } from "@/data/adminMockData";
 import { StatusBadge, CopyButton, AdminPagination } from "./AdminUtils";
 import { Switch } from "@/components/ui/switch";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ResponsiveTable, ResponsiveColumn } from "./ResponsiveTable";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell,
+} from "recharts";
+
+type WalletActivityItem = typeof walletActivity[0];
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
