@@ -132,7 +132,7 @@ const AdminWallets = () => {
       </div>
 
       {/* Activity */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
         <p className="text-sm font-semibold text-foreground">Activity</p>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <label className="flex items-center gap-2">

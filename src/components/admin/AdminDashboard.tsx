@@ -66,7 +66,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="w-72 shrink-0">
+        <div className="w-full lg:w-72 lg:shrink-0">
           <div className="bg-card border border-border rounded-xl p-5">
             <p className="text-sm font-semibold text-foreground mb-3">Quick Links</p>
             <div className="space-y-2">

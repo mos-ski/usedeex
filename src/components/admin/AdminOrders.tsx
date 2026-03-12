@@ -103,7 +103,7 @@ const AdminOrders = () => {
       </div>
 
       {/* Activity header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
         <p className="text-sm font-semibold text-foreground">Activity</p>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <label className="flex items-center gap-2">
@@ -116,7 +116,7 @@ const AdminOrders = () => {
       </div>
 
       {/* Status filter tabs */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {(["All", "COMPLETED", "PENDING", "FAILED"] as const).map(s => (
           <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium ${statusFilter === s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>

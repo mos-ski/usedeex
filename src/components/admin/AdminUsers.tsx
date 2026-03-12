@@ -92,7 +92,7 @@ const AdminUsers = () => {
       </div>
 
       {/* Status filter tabs with counts */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {(["all", "active", "inactive", "flagged"] as const).map(s => (
           <button key={s} onClick={() => { setStatusTab(s); setPage(1); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium ${statusTab === s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
