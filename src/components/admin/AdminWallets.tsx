@@ -175,12 +175,21 @@ const AdminWallets = () => {
                     <span className={`w-2 h-2 rounded-full ${w.type === "Credit" ? "bg-[hsl(var(--success))]" : "bg-primary"}`} />
                     <div>
                       <p className="text-sm font-medium text-foreground">{w.type}</p>
-                      <p className="text-xs text-muted-foreground">{w.provider} · {w.sub}</p>
+                      <p className="text-xs text-muted-foreground">{w.sub}</p>
                     </div>
                   </div>
                 </TableCell>
+                <TableCell>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                    w.partner === "Obiex" ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" :
+                    w.partner === "Hizo" ? "bg-primary/20 text-primary" :
+                    "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]"
+                  }`}>{w.partner}</span>
+                </TableCell>
                 <TableCell className="text-sm text-foreground">{w.amount}</TableCell>
                 <TableCell className="text-sm text-foreground">{w.ngn}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">{w.balanceBefore}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">{w.balanceAfter}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">
                     <span className="text-xs text-muted-foreground font-mono">{w.txId.slice(0, 12)}...</span>
