@@ -32,7 +32,7 @@ const AdminWallets = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
         <div>
           <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-3">WALLETS</p>
           <div className="flex gap-4">
