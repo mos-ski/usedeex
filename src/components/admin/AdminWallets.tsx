@@ -78,45 +78,6 @@ const AdminWallets = () => {
         )}
       </div>
 
-      {/* Deposit Info Card (DeeX only) */}
-      {walletTab === "deex" && (
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-card border border-border rounded-xl p-5">
-            <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-3">CASH DEPOSIT INFO</p>
-            <div className="space-y-2">
-              {[
-                { label: "Bank", value: deexWallet.depositInfo.bankName },
-                { label: "Account Name", value: deexWallet.depositInfo.accountName },
-                { label: "Account Number", value: deexWallet.depositInfo.accountNumber },
-              ].map(item => (
-                <div key={item.label} className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">{item.label}</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm text-foreground font-medium">{item.value}</span>
-                    <CopyButton text={item.value} label={item.label} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="bg-card border border-border rounded-xl p-5">
-            <p className="text-xs font-semibold text-muted-foreground tracking-wider mb-3">CRYPTO DEPOSIT</p>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Network</span>
-                <span className="text-sm text-foreground font-medium">{deexWallet.depositInfo.cryptoNetwork}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Address</span>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-sm text-foreground font-mono text-[11px]">{deexWallet.depositInfo.cryptoAddress}</span>
-                  <CopyButton text={deexWallet.depositInfo.cryptoAddress} label="Address" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Asset cards */}
       <div className="flex gap-4 overflow-x-auto pb-2 mb-6">
