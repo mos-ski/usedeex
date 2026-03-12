@@ -61,7 +61,7 @@ const AdminOrders = () => {
   return (
     <div>
       {/* Summary cards */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-6">
         <div className="bg-card border border-border rounded-xl p-5">
           <p className="text-sm text-muted-foreground mb-1">Total Order</p>
           <p className="text-2xl font-bold text-foreground">{ordersData.totalOrder}</p>
