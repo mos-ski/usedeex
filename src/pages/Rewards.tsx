@@ -34,7 +34,7 @@ const earningsLog: EarningEntry[] = [
   { id: 8, source: "Daily trade bonus", category: "trade", points: 50, date: "Mar 5, 2026", period: "all" },
   { id: 9, source: "Fatima K. referral traded > $100", category: "referral", points: 100, date: "Mar 1, 2026", period: "all" },
   { id: 10, source: "Weekly cashback reward", category: "cashback", points: 500, date: "Feb 28, 2026", period: "all" },
-  { id: 11, source: "Victor E. traded $200", category: "referral", points: 10, date: "Feb 25, 2026", period: "all" },
+  { id: 11, source: "Victor E. referral traded > $100", category: "referral", points: 100, date: "Feb 25, 2026", period: "all" },
 ];
 
 const redemptionHistory: Redemption[] = [
