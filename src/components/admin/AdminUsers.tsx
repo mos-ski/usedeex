@@ -41,7 +41,7 @@ const AdminUsers = () => {
   return (
     <div>
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
         <div className="bg-card border border-border rounded-xl p-5">
           <p className="text-xs text-muted-foreground mb-1">Total Customers</p>
           <p className="text-2xl font-bold text-foreground">{usersStats.total.toLocaleString()}</p>
