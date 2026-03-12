@@ -5,11 +5,13 @@ import CryptoIcon from "@/components/CryptoIcon";
 import { deexWallet, customersWallet, tradeVolumeData, assetDistribution, walletActivity } from "@/data/adminMockData";
 import { StatusBadge, CopyButton, AdminPagination } from "./AdminUtils";
 import { Switch } from "@/components/ui/switch";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ResponsiveTable, ResponsiveColumn } from "./ResponsiveTable";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
 } from "recharts";
+
+type WalletActivityItem = typeof walletActivity[0];
 
 const PER_PAGE = 8;
 
@@ -158,51 +160,39 @@ const AdminWallets = () => {
         </div>
       </div>
 
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {["Type", "Partner", "Amount", "Amount(NGN)", "Bal Before", "Bal After", "Trans ID", "Status", "Date"].map(h => (
-                <TableHead key={h}>{h}</TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginated.map((w, i) => (
-              <TableRow key={i}>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${w.type === "Credit" ? "bg-[hsl(var(--success))]" : "bg-primary"}`} />
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{w.type}</p>
-                      <p className="text-xs text-muted-foreground">{w.sub}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
-                    w.partner === "Obiex" ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" :
-                    w.partner === "Hizo" ? "bg-primary/20 text-primary" :
-                    "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]"
-                  }`}>{w.partner}</span>
-                </TableCell>
-                <TableCell className="text-sm text-foreground">{w.amount}</TableCell>
-                <TableCell className="text-sm text-foreground">{w.ngn}</TableCell>
-                <TableCell className="text-xs text-muted-foreground">{w.balanceBefore}</TableCell>
-                <TableCell className="text-xs text-muted-foreground">{w.balanceAfter}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs text-muted-foreground font-mono">{w.txId.slice(0, 12)}...</span>
-                    <CopyButton text={w.txId} label="Trans ID" />
-                  </div>
-                </TableCell>
-                <TableCell><StatusBadge status={w.status} /></TableCell>
-                <TableCell className="text-xs text-muted-foreground">{w.date}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      {(() => {
+        const activityColumns: ResponsiveColumn<WalletActivityItem>[] = [
+          { key: "type", label: "Type", mobile: true, render: (w) => (
+            <div className="flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full ${w.type === "Credit" ? "bg-[hsl(var(--success))]" : "bg-primary"}`} />
+              <div>
+                <p className="text-sm font-medium text-foreground">{w.type}</p>
+                <p className="text-xs text-muted-foreground">{w.sub}</p>
+              </div>
+            </div>
+          )},
+          { key: "partner", label: "Partner", mobile: true, render: (w) => (
+            <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+              w.partner === "Obiex" ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" :
+              w.partner === "Hizo" ? "bg-primary/20 text-primary" :
+              "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]"
+            }`}>{w.partner}</span>
+          )},
+          { key: "amount", label: "Amount", mobile: true, render: (w) => <span className="text-sm text-foreground">{w.amount}</span> },
+          { key: "ngn", label: "Amount(NGN)", render: (w) => <span className="text-sm text-foreground">{w.ngn}</span> },
+          { key: "balBefore", label: "Bal Before", render: (w) => <span className="text-xs text-muted-foreground">{w.balanceBefore}</span> },
+          { key: "balAfter", label: "Bal After", render: (w) => <span className="text-xs text-muted-foreground">{w.balanceAfter}</span> },
+          { key: "txId", label: "Trans ID", render: (w) => (
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-muted-foreground font-mono">{w.txId.slice(0, 12)}...</span>
+              <CopyButton text={w.txId} label="Trans ID" />
+            </div>
+          )},
+          { key: "status", label: "Status", mobile: true, render: (w) => <StatusBadge status={w.status} /> },
+          { key: "date", label: "Date", render: (w) => <span className="text-xs text-muted-foreground">{w.date}</span> },
+        ];
+        return <ResponsiveTable data={paginated} columns={activityColumns} startIndex={(page - 1) * PER_PAGE} />;
+      })()}
 
       <AdminPagination page={page} totalPages={totalPages} totalItems={filtered.length} perPage={PER_PAGE} onPageChange={setPage} />
     </div>

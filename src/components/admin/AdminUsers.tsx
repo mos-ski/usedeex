@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Upload, ArrowUpDown } from "lucide-react";
+import { Search, Upload } from "lucide-react";
 import { usersStats, signupData, customersList } from "@/data/adminMockData";
 import { StatusBadge, CopyButton, AdminPagination } from "./AdminUtils";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ResponsiveTable, ResponsiveColumn } from "./ResponsiveTable";
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  AreaChart, Area, ResponsiveContainer,
 } from "recharts";
 
 const PER_PAGE = 10;
+
+type Customer = typeof customersList[0];
 
 const AdminUsers = () => {
   const navigate = useNavigate();
@@ -38,6 +40,69 @@ const AdminUsers = () => {
     return name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
   };
 
+  const columns: ResponsiveColumn<Customer>[] = [
+    {
+      key: "sn",
+      label: "S/N",
+      render: (_, i) => <span className="text-xs text-muted-foreground">{i + 1}</span>,
+    },
+    {
+      key: "name",
+      label: "Name",
+      mobile: true,
+      render: (c) => (
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
+            {getInitials(c.name)}
+          </div>
+          <span className="text-sm text-foreground font-medium truncate">{c.name}</span>
+        </div>
+      ),
+    },
+    {
+      key: "email",
+      label: "Email",
+      render: (c) => (
+        <div className="flex items-center gap-1">
+          <span className="text-sm text-muted-foreground truncate">{c.email}</span>
+          <CopyButton text={c.email} label="Email" />
+        </div>
+      ),
+    },
+    {
+      key: "kyc",
+      label: "KYC",
+      mobile: true,
+      render: (c) => <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-primary/20 text-primary">{c.kyc}</span>,
+    },
+    {
+      key: "phone",
+      label: "Phone",
+      render: (c) => (
+        <div className="flex items-center gap-1">
+          <span className="text-sm text-muted-foreground">{c.phone}</span>
+          <CopyButton text={c.phone} label="Phone" />
+        </div>
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      mobile: true,
+      render: (c) => <StatusBadge status={c.status} />,
+    },
+    {
+      key: "created",
+      label: "Date Created",
+      render: (c) => <span className="text-xs text-muted-foreground">{c.created}</span>,
+    },
+    {
+      key: "lastLogin",
+      label: "Last Login",
+      render: (c) => <span className="text-xs text-muted-foreground">{c.lastLogin}</span>,
+    },
+  ];
+
   return (
     <div>
       {/* Stats */}
@@ -46,8 +111,8 @@ const AdminUsers = () => {
           <p className="text-xs text-muted-foreground mb-1">Total Customers</p>
           <p className="text-2xl font-bold text-foreground">{usersStats.total.toLocaleString()}</p>
         </div>
-        <div className="bg-card border border-border rounded-xl p-5 col-span-2">
-          <div className="flex gap-4 mb-2">
+        <div className="bg-card border border-border rounded-xl p-5 col-span-2 lg:col-span-2">
+          <div className="flex gap-4 mb-2 flex-wrap">
             {usersStats.breakdown.map(b => (
               <div key={b.label}>
                 <p className="text-xs text-muted-foreground mb-0.5">{b.label}</p>
@@ -56,7 +121,7 @@ const AdminUsers = () => {
             ))}
           </div>
         </div>
-        <div className="bg-card border border-border rounded-xl p-5">
+        <div className="bg-card border border-border rounded-xl p-5 hidden lg:block">
           <p className="text-xs text-muted-foreground mb-2">Signups (chart)</p>
           <ResponsiveContainer width="100%" height={60}>
             <AreaChart data={signupData}>
@@ -95,62 +160,19 @@ const AdminUsers = () => {
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {(["all", "active", "inactive", "flagged"] as const).map(s => (
           <button key={s} onClick={() => { setStatusTab(s); setPage(1); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium ${statusTab === s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${statusTab === s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
             {s === "all" ? "All Customers" : s.charAt(0).toUpperCase() + s.slice(1)} ({statusCounts[s]})
           </button>
         ))}
       </div>
 
       {/* Table */}
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12">S/N</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>KYC</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date Created</TableHead>
-              <TableHead>Last Login</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginated.map((c, i) => (
-              <TableRow key={i} className="cursor-pointer" onClick={() => navigate(`/admin/users/${(page - 1) * PER_PAGE + i}`)}>
-                <TableCell className="text-xs text-muted-foreground">{(page - 1) * PER_PAGE + i + 1}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
-                      {getInitials(c.name)}
-                    </div>
-                    <span className="text-sm text-foreground font-medium">{c.name}</span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm text-muted-foreground">{c.email}</span>
-                    <CopyButton text={c.email} label="Email" />
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className="text-[10px] px-2.5 py-1 rounded-full font-medium bg-primary/20 text-primary">{c.kyc}</span>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm text-muted-foreground">{c.phone}</span>
-                    <CopyButton text={c.phone} label="Phone" />
-                  </div>
-                </TableCell>
-                <TableCell><StatusBadge status={c.status} /></TableCell>
-                <TableCell className="text-xs text-muted-foreground">{c.created}</TableCell>
-                <TableCell className="text-xs text-muted-foreground">{c.lastLogin}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      <ResponsiveTable
+        data={paginated}
+        columns={columns}
+        onRowClick={(c, i) => navigate(`/admin/users/${(page - 1) * PER_PAGE + paginated.indexOf(c)}`)}
+        startIndex={(page - 1) * PER_PAGE}
+      />
 
       <AdminPagination page={page} totalPages={totalPages} totalItems={filtered.length} perPage={PER_PAGE} onPageChange={setPage} />
     </div>

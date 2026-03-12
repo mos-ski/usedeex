@@ -618,3 +618,39 @@ export const holdingBalance = [
   { symbol: "SOL", amount: "0.000 SOL", usd: "$0.00" },
   { symbol: "DOGE", amount: "0.000 DOGE", usd: "$0.00" },
 ];
+
+// Bill Payments
+export const billPaymentStats = {
+  totalTransactions: 1247,
+  totalVolume: "₦18,456,320.00",
+  successRate: "94.2%",
+  failedCount: 72,
+};
+
+export const billPaymentsList = [
+  { id: "BP-001", user: "Divine Omajuwa", type: "Airtime", provider: "MTN", amount: "₦2,000.00", phone: "08104103948", status: "COMPLETED", date: "Mar 8th, 2026, 6:45 PM", txRef: "bill_69adb83210aef2d" },
+  { id: "BP-002", user: "Ibrahim Abubakar", type: "Data", provider: "Airtel", amount: "₦5,000.00", phone: "08055667788", status: "COMPLETED", date: "Mar 8th, 2026, 5:30 PM", txRef: "bill_69ada29b210aef2" },
+  { id: "BP-003", user: "Chidinma Obi", type: "Electricity", provider: "IKEDC", amount: "₦15,000.00", phone: "07098765432", status: "FAILED", date: "Mar 8th, 2026, 4:20 PM", txRef: "bill_69ad9d5c210aef2" },
+  { id: "BP-004", user: "Adewale Musa", type: "Cable TV", provider: "DSTV", amount: "₦24,500.00", phone: "08123456789", status: "COMPLETED", date: "Mar 8th, 2026, 3:15 PM", txRef: "bill_69ad930c210aef2" },
+  { id: "BP-005", user: "Fortune Chigor", type: "Betting", provider: "Sportybet", amount: "₦10,000.00", phone: "08066778899", status: "COMPLETED", date: "Mar 8th, 2026, 2:00 PM", txRef: "bill_69ad929f210aef2" },
+  { id: "BP-006", user: "Quincy James", type: "Airtime", provider: "Glo", amount: "₦1,000.00", phone: "09088990011", status: "COMPLETED", date: "Mar 8th, 2026, 12:45 PM", txRef: "bill_69ad823210aef2d" },
+  { id: "BP-007", user: "Victor Odigili", type: "Data", provider: "9mobile", amount: "₦3,500.00", phone: "09011223344", status: "PENDING", date: "Mar 8th, 2026, 11:30 AM", txRef: "bill_69ad723210aef2d" },
+  { id: "BP-008", user: "Lucky Holland", type: "Electricity", provider: "EKEDC", amount: "₦8,000.00", phone: "07044556677", status: "COMPLETED", date: "Mar 7th, 2026, 10:15 PM", txRef: "bill_69ad623210aef2d" },
+  { id: "BP-009", user: "Grace Nwosu", type: "Cable TV", provider: "GOtv", amount: "₦6,800.00", phone: "07099001122", status: "COMPLETED", date: "Mar 7th, 2026, 8:00 PM", txRef: "bill_69ad523210aef2d" },
+  { id: "BP-010", user: "Efeme Jeremiah", type: "Betting", provider: "Bet9ja", amount: "₦5,000.00", phone: "08033445566", status: "FAILED", date: "Mar 7th, 2026, 6:45 PM", txRef: "bill_69ad423210aef2d" },
+  { id: "BP-011", user: "Aisha Mohammed", type: "Airtime", provider: "MTN", amount: "₦500.00", phone: "08145678901", status: "COMPLETED", date: "Mar 7th, 2026, 5:30 PM", txRef: "bill_69ad323210aef2d" },
+  { id: "BP-012", user: "Emeka Nwankwo", type: "Data", provider: "MTN", amount: "₦2,500.00", phone: "08156789012", status: "COMPLETED", date: "Mar 7th, 2026, 4:15 PM", txRef: "bill_69ad223210aef2d" },
+  { id: "BP-013", user: "Tunde Bakare", type: "Electricity", provider: "AEDC", amount: "₦20,000.00", phone: "08167890123", status: "COMPLETED", date: "Mar 7th, 2026, 3:00 PM", txRef: "bill_69ad123210aef2d" },
+  { id: "BP-014", user: "Blessing Okoro", type: "Airtime", provider: "Airtel", amount: "₦3,000.00", phone: "08178901234", status: "PENDING", date: "Mar 7th, 2026, 1:45 PM", txRef: "bill_69ad023210aef2d" },
+  { id: "BP-015", user: "Yusuf Bello", type: "Cable TV", provider: "Startimes", amount: "₦4,200.00", phone: "08189012345", status: "COMPLETED", date: "Mar 7th, 2026, 12:30 PM", txRef: "bill_69acf23210aef2d" },
+  { id: "BP-016", user: "Chinedu Eze", type: "Betting", provider: "1xBet", amount: "₦15,000.00", phone: "08190123456", status: "COMPLETED", date: "Mar 6th, 2026, 11:00 PM", txRef: "bill_69ace23210aef2d" },
+  { id: "BP-017", user: "Ngozi Okafor", type: "Data", provider: "Glo", amount: "₦1,500.00", phone: "08201234567", status: "COMPLETED", date: "Mar 6th, 2026, 9:45 PM", txRef: "bill_69acd23210aef2d" },
+  { id: "BP-018", user: "Samuel Adeyemi", type: "Electricity", provider: "PHEDC", amount: "₦12,000.00", phone: "08212345678", status: "FAILED", date: "Mar 6th, 2026, 8:30 PM", txRef: "bill_69acc23210aef2d" },
+  { id: "BP-019", user: "Oluwaseun Daramola", type: "Airtime", provider: "9mobile", amount: "₦1,000.00", phone: "08223456789", status: "COMPLETED", date: "Mar 6th, 2026, 7:15 PM", txRef: "bill_69acb23210aef2d" },
+  { id: "BP-020", user: "Kelechi Amadi", type: "Cable TV", provider: "DSTV", amount: "₦29,000.00", phone: "08234567890", status: "COMPLETED", date: "Mar 6th, 2026, 6:00 PM", txRef: "bill_69aca23210aef2d" },
+  { id: "BP-021", user: "Ruth Adeola", type: "Betting", provider: "NairaBet", amount: "₦7,500.00", phone: "08245678901", status: "COMPLETED", date: "Mar 6th, 2026, 4:45 PM", txRef: "bill_69ac923210aef2d" },
+  { id: "BP-022", user: "Precious Igwe", type: "Airtime", provider: "MTN", amount: "₦5,000.00", phone: "08256789012", status: "PENDING", date: "Mar 6th, 2026, 3:30 PM", txRef: "bill_69ac823210aef2d" },
+  { id: "BP-023", user: "Abdullahi Sani", type: "Data", provider: "Airtel", amount: "₦4,000.00", phone: "08267890123", status: "COMPLETED", date: "Mar 5th, 2026, 11:15 PM", txRef: "bill_69ac723210aef2d" },
+  { id: "BP-024", user: "Olu Fashola", type: "Electricity", provider: "IBEDC", amount: "₦10,000.00", phone: "08278901234", status: "COMPLETED", date: "Mar 5th, 2026, 9:00 PM", txRef: "bill_69ac623210aef2d" },
+  { id: "BP-025", user: "Hauwa Garba", type: "Airtime", provider: "Glo", amount: "₦2,000.00", phone: "08289012345", status: "COMPLETED", date: "Mar 5th, 2026, 7:45 PM", txRef: "bill_69ac523210aef2d" },
+];

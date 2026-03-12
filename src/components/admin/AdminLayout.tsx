@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Wallet, ShoppingCart, Users, Shield, BarChart3,
   Settings, LogOut, Bell, ChevronDown, CreditCard, FileText,
-  AlertTriangle, Gift, Banknote, Menu, X,
+  AlertTriangle, Gift, Banknote, Menu, X, Smartphone,
 } from "lucide-react";
 import { useState } from "react";
 import { NewBadge } from "./AdminUtils";
@@ -13,7 +13,7 @@ export type AdminTab =
   | "kyc-compliance" | "kyc-rules"
   | "compliance" | "compliance-alerts" | "compliance-rules" | "compliance-detail"
   | "reports" | "settings" | "audit-log" | "virtual-cards"
-  | "rewards-admin" | "giftcards";
+  | "rewards-admin" | "giftcards" | "bill-payments";
 
 type NavItem = {
   icon: typeof LayoutDashboard;
@@ -30,6 +30,7 @@ export const navItems: NavItem[] = [
   { icon: Banknote, label: "Payouts", tab: "payouts", isNew: true },
   { icon: CreditCard, label: "Virtual Cards", tab: "virtual-cards", isNew: true },
   { icon: Gift, label: "Gift Cards", tab: "giftcards", isNew: true },
+  { icon: Smartphone, label: "Bill Payments", tab: "bill-payments", isNew: true },
   { icon: Users, label: "Users", tab: "users" },
   { icon: Shield, label: "Kyc logs", tab: "kyc", children: [
     { label: "Compliance", tab: "kyc-compliance" },

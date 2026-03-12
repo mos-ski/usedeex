@@ -4,38 +4,23 @@ import { toast } from "sonner";
 import { ordersData, ordersList } from "@/data/adminMockData";
 import { StatusBadge, CopyButton, AdminPagination } from "./AdminUtils";
 import { Switch } from "@/components/ui/switch";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ResponsiveTable, ResponsiveColumn } from "./ResponsiveTable";
 
 const PER_PAGE = 10;
-type SortField = "name" | "amount" | "date" | "status";
+
+type OrderItem = typeof ordersList[0];
 
 const AdminOrders = () => {
   const [autoPay, setAutoPay] = useState(true);
   const [statusFilter, setStatusFilter] = useState("All");
-  const [sortField, setSortField] = useState<SortField | null>(null);
-  const [sortAsc, setSortAsc] = useState(true);
   const [page, setPage] = useState(1);
-
-  const toggleSort = (field: SortField) => {
-    if (sortField === field) setSortAsc(!sortAsc);
-    else { setSortField(field); setSortAsc(true); }
-  };
 
   const filteredOrders = ordersList.filter(o =>
     statusFilter === "All" || o.status === statusFilter
   );
 
-  let sortedOrders = [...filteredOrders];
-  if (sortField) {
-    sortedOrders.sort((a, b) => {
-      const av = a[sortField] || "";
-      const bv = b[sortField] || "";
-      return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
-    });
-  }
-
-  const totalPages = Math.ceil(sortedOrders.length / PER_PAGE);
-  const paginated = sortedOrders.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const totalPages = Math.ceil(filteredOrders.length / PER_PAGE);
+  const paginated = filteredOrders.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   const statusCounts = {
     All: ordersList.length,
@@ -44,19 +29,34 @@ const AdminOrders = () => {
     FAILED: ordersList.filter(o => o.status === "FAILED").length,
   };
 
-  const SortableHead = ({ label, field }: { label: string; field: SortField }) => (
-    <TableHead>
-      <button onClick={() => toggleSort(field)} className="flex items-center gap-1 hover:text-foreground">
-        {label} <ArrowUpDown className="w-3 h-3" />
-      </button>
-    </TableHead>
-  );
-
   const handleRetry = (txId: string, name: string) => {
     toast.success(`Retrying payout for ${name}...`, {
       description: `Order ${txId.slice(0, 10)}... has been queued for retry.`,
     });
   };
+
+  const columns: ResponsiveColumn<OrderItem>[] = [
+    { key: "name", label: "Name", mobile: true, render: (o) => <span className="text-sm text-foreground font-medium truncate">{o.name}</span> },
+    { key: "asset", label: "Asset", mobile: true, render: (o) => <span className="text-sm text-foreground">{o.asset}</span> },
+    { key: "type", label: "Type", render: (o) => <span className="text-xs text-muted-foreground">{o.type}</span> },
+    { key: "amount", label: "Amount", mobile: true, render: (o) => <span className="text-sm text-foreground">{o.amount}</span> },
+    { key: "wallet", label: "Wallet Address", render: (o) => o.walletAddress !== "—" ? (
+      <div className="flex items-center gap-1"><span className="text-xs text-muted-foreground font-mono">{o.walletAddress}</span><CopyButton text={o.walletAddress} label="Wallet" /></div>
+    ) : <span className="text-xs text-muted-foreground">—</span> },
+    { key: "confirms", label: "Confirms", render: (o) => <span className="text-xs text-muted-foreground">{o.confirmations > 0 ? `${o.confirmations} ✓` : "—"}</span> },
+    { key: "txId", label: "Trans ID", render: (o) => (
+      <div className="flex items-center gap-1"><span className="text-xs text-muted-foreground font-mono">{o.txId.slice(0, 10)}...</span><CopyButton text={o.txId} label="Trans ID" /></div>
+    )},
+    { key: "payoutRef", label: "Payout Ref", render: (o) => <span className="text-xs text-muted-foreground">{o.payoutRef}</span> },
+    { key: "date", label: "Date", render: (o) => <span className="text-xs text-muted-foreground whitespace-nowrap">{o.date}</span> },
+    { key: "status", label: "Status", mobile: true, render: (o) => <StatusBadge status={o.status} /> },
+    { key: "action", label: "Action", render: (o) => o.status === "FAILED" ? (
+      <button onClick={(e) => { e.stopPropagation(); handleRetry(o.txId, o.name); }}
+        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))] hover:bg-[hsl(var(--warning))]/30 text-[10px] font-semibold transition-colors">
+        <RotateCcw className="w-3 h-3" /> Retry
+      </button>
+    ) : <span className="text-xs text-muted-foreground">—</span> },
+  ];
 
   return (
     <div>
@@ -119,73 +119,14 @@ const AdminOrders = () => {
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {(["All", "COMPLETED", "PENDING", "FAILED"] as const).map(s => (
           <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium ${statusFilter === s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${statusFilter === s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
             {s === "All" ? `All (${statusCounts.All})` : `${s.charAt(0) + s.slice(1).toLowerCase()} (${statusCounts[s]})`}
           </button>
         ))}
       </div>
 
-      {/* Orders table */}
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <SortableHead label="Name" field="name" />
-              <TableHead>Asset</TableHead>
-              <TableHead>Type</TableHead>
-              <SortableHead label="Amount" field="amount" />
-              <TableHead>Wallet Address</TableHead>
-              <TableHead>Confirms</TableHead>
-              <TableHead>Trans ID</TableHead>
-              <TableHead>Payout Ref</TableHead>
-              <SortableHead label="Date" field="date" />
-              <SortableHead label="Status" field="status" />
-              <TableHead>Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginated.map((o, i) => (
-              <TableRow key={i}>
-                <TableCell className="text-sm text-foreground font-medium">{o.name}</TableCell>
-                <TableCell className="text-sm text-foreground">{o.asset}</TableCell>
-                <TableCell className="text-xs text-muted-foreground">{o.type}</TableCell>
-                <TableCell className="text-sm text-foreground whitespace-pre-line">{o.amount}</TableCell>
-                <TableCell>
-                  {o.walletAddress !== "—" ? (
-                    <div className="flex items-center gap-1">
-                      <span className="text-xs text-muted-foreground font-mono">{o.walletAddress}</span>
-                      <CopyButton text={o.walletAddress} label="Wallet" />
-                    </div>
-                  ) : <span className="text-xs text-muted-foreground">—</span>}
-                </TableCell>
-                <TableCell className="text-xs text-muted-foreground">{o.confirmations > 0 ? `${o.confirmations} ✓` : "—"}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs text-muted-foreground font-mono">{o.txId.slice(0, 10)}...</span>
-                    <CopyButton text={o.txId} label="Trans ID" />
-                  </div>
-                </TableCell>
-                <TableCell className="text-xs text-muted-foreground">{o.payoutRef}</TableCell>
-                <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{o.date}</TableCell>
-                <TableCell><StatusBadge status={o.status} /></TableCell>
-                <TableCell>
-                  {o.status === "FAILED" ? (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); handleRetry(o.txId, o.name); }}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))] hover:bg-[hsl(var(--warning))]/30 text-[10px] font-semibold transition-colors"
-                    >
-                      <RotateCcw className="w-3 h-3" /> Retry
-                    </button>
-                  ) : (
-                    <span className="text-xs text-muted-foreground">—</span>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-      <AdminPagination page={page} totalPages={totalPages} totalItems={sortedOrders.length} perPage={PER_PAGE} onPageChange={setPage} />
+      <ResponsiveTable data={paginated} columns={columns} startIndex={(page - 1) * PER_PAGE} />
+      <AdminPagination page={page} totalPages={totalPages} totalItems={filteredOrders.length} perPage={PER_PAGE} onPageChange={setPage} />
     </div>
   );
 };
