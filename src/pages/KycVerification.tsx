@@ -13,7 +13,7 @@ const levels = [
     tradingLimit: "$1,000",
     withdrawalLimit: "$100",
     requirements: ["BVN submission", "Liveness check (selfie + motion)"],
-    completed: true,
+    completed: false,
   },
   {
     level: 2,
@@ -21,7 +21,7 @@ const levels = [
     tradingLimit: "$10,000",
     withdrawalLimit: "$500",
     requirements: ["Government-issued ID (Passport / NIN / Driver's License)", "Address verification (utility bill / bank statement)"],
-    completed: true,
+    completed: false,
   },
   {
     level: 3,
