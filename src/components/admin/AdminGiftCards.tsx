@@ -152,11 +152,11 @@ const AdminGiftCards = () => {
     <div className="space-y-6">
       {/* Sub-tabs */}
       <div className="flex items-center gap-1 bg-secondary rounded-lg p-1 w-fit">
-        {([
-          { key: "orders", label: "Orders", icon: CreditCard, badge: pendingCount },
-          { key: "brands", label: "Brands & Rates", icon: Settings },
-          { key: "analytics", label: "Analytics", icon: BarChart3 },
-        ] as const).map(tab => (
+      {([
+          { key: "orders" as const, label: "Orders", icon: CreditCard, badge: pendingCount },
+          { key: "brands" as const, label: "Brands & Rates", icon: Settings, badge: 0 },
+          { key: "analytics" as const, label: "Analytics", icon: BarChart3, badge: 0 },
+        ]).map(tab => (
           <button
             key={tab.key}
             onClick={() => setSubTab(tab.key)}
@@ -166,7 +166,7 @@ const AdminGiftCards = () => {
           >
             <tab.icon className="w-4 h-4" />
             {tab.label}
-            {tab.badge && tab.badge > 0 && (
+            {tab.badge > 0 && (
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[hsl(var(--warning))] text-[10px] font-bold text-background">
                 {tab.badge}
               </span>
