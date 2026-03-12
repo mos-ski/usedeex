@@ -1343,7 +1343,7 @@ const AdminPanel = () => {
                         { label: "Minimum Redemption", value: "500 pts (₦5,000)" },
                         { label: "Cashback Pool (Weekly)", value: "₦500,000" },
                         { label: "Cashback Pool Reset", value: "Every Sunday" },
-                        { label: "Referral Min Trade", value: "$10" },
+                        { label: "Referral Min Trade", value: "$100" },
                         { label: "USDT Reward Toggle", value: "Sign-up only" },
                       ].map(s => (
                         <div key={s.label} className="flex items-center justify-between py-3 border-b border-border last:border-0">
