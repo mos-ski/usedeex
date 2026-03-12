@@ -1275,6 +1275,9 @@ const AdminPanel = () => {
           )}
 
 
+          {/* ===== GIFT CARDS ===== */}
+          {activeTab === "giftcards" && <AdminGiftCards />}
+
           {/* ===== REWARDS ADMIN ===== */}
           {activeTab === "rewards-admin" && (
             <div>
