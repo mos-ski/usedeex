@@ -441,14 +441,16 @@ export const mockUser = {
 };
 
 export const userTransactions = [
-  { asset: "ETH", type: "Deex-Deposits", amount: "0.041 ETH", txId: "69addc03d54ca8190d9d122f", date: "Mar 8th, 2026 | 9:28 PM", status: "COMPLETED" },
-  { asset: "USDT", type: "Deex-Deposits", amount: "200.00 USDT", txId: "69adc991210aef2d6390a7f2", date: "Mar 8th, 2026 | 8:10 PM", status: "COMPLETED" },
-  { asset: "USDT", type: "Deex-Deposits", amount: "497.769 USDT", txId: "69adc856210aef2d63908822", date: "Mar 8th, 2026 | 8:04 PM", status: "COMPLETED" },
-  { asset: "BTC", type: "Deex-Asset-Swaps", amount: "0.000824\nBTC → USDT", txId: "69adbfce210aef2d638f8ddb", date: "Mar 8th, 2026 | 7:28 PM", status: "COMPLETED" },
-  { asset: "BTC", type: "Deex-Deposits", amount: "0.000824 BTC", txId: "69adbfb6210aef2d638f7488", date: "Mar 8th, 2026 | 7:28 PM", status: "COMPLETED" },
-  { asset: "USDT", type: "Deex-Deposits", amount: "500.05 USDT", txId: "69ada29b210aef2d638c0177", date: "Mar 8th, 2026 | 5:23 PM", status: "COMPLETED" },
-  { asset: "BTC", type: "Deex-Asset-Swaps", amount: "0.000744\nBTC → USDT", txId: "69ad930c210aef2d638af259", date: "Mar 8th, 2026 | 4:17 PM", status: "COMPLETED" },
-  { asset: "BTC", type: "Deex-Deposits", amount: "0.000744 BTC", txId: "69ad929f210aef2d638ad6f1", date: "Mar 8th, 2026 | 4:15 PM", status: "COMPLETED" },
+  { asset: "ETH", type: "Deex-Deposits", amount: "0.041 ETH", txId: "69addc03d54ca8190d9d122f", date: "Mar 8th, 2026 | 9:28 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$21,298.45", balanceAfter: "$21,375.22" },
+  { asset: "USDT", type: "Deex-Deposits", amount: "200.00 USDT", txId: "69adc991210aef2d6390a7f2", date: "Mar 8th, 2026 | 8:10 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$21,098.45", balanceAfter: "$21,298.45" },
+  { asset: "USDT", type: "Deex-Deposits", amount: "497.769 USDT", txId: "69adc856210aef2d63908822", date: "Mar 8th, 2026 | 8:04 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$20,600.68", balanceAfter: "$21,098.45" },
+  { asset: "BTC", type: "Deex-Asset-Swaps", amount: "0.000824\nBTC → USDT", txId: "69adbfce210aef2d638f8ddb", date: "Mar 8th, 2026 | 7:28 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "debit" as const, balanceBefore: "$20,680.01", balanceAfter: "$20,600.68" },
+  { asset: "BTC", type: "Deex-Deposits", amount: "0.000824 BTC", txId: "69adbfb6210aef2d638f7488", date: "Mar 8th, 2026 | 7:28 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$20,600.68", balanceAfter: "$20,680.01" },
+  { asset: "USDT", type: "Sell", amount: "500.05 USDT", txId: "69ada29b210aef2d638c0177", date: "Mar 8th, 2026 | 5:23 PM", status: "COMPLETED", channel: "order" as const, creditDebit: "debit" as const, balanceBefore: "$21,100.73", balanceAfter: "$20,600.68" },
+  { asset: "BTC", type: "Deex-Asset-Swaps", amount: "0.000744\nBTC → USDT", txId: "69ad930c210aef2d638af259", date: "Mar 8th, 2026 | 4:17 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "debit" as const, balanceBefore: "$21,155.89", balanceAfter: "$21,100.73" },
+  { asset: "BTC", type: "Deex-Deposits", amount: "0.000744 BTC", txId: "69ad929f210aef2d638ad6f1", date: "Mar 8th, 2026 | 4:15 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$21,100.73", balanceAfter: "$21,155.89" },
+  { asset: "USDT", type: "Sell", amount: "150.00 USDT", txId: "69ad82bc210aef2d638a166c", date: "Mar 7th, 2026 | 6:30 PM", status: "COMPLETED", channel: "order" as const, creditDebit: "debit" as const, balanceBefore: "$21,250.73", balanceAfter: "$21,100.73" },
+  { asset: "USDT", type: "Payout", amount: "₦209,250.00", txId: "69ad72bc210aef2d6389066c", date: "Mar 7th, 2026 | 6:32 PM", status: "COMPLETED", channel: "payout" as const, creditDebit: "debit" as const, balanceBefore: "₦209,250.00", balanceAfter: "₦0.00" },
 ];
 
 export const userActivities = [

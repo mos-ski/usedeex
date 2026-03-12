@@ -193,14 +193,32 @@ const AdminUserDetail = () => {
             <div className="bg-card border border-border rounded-xl overflow-hidden">
               <Table>
                 <TableHeader><TableRow>
-                  {["Asset", "Type", "Amount", "Trans ID", "Date", "Status"].map(h => <TableHead key={h}>{h}</TableHead>)}
+                  {["Asset", "Type", "Channel", "C/D", "Amount", "Bal Before", "Bal After", "Trans ID", "Date", "Status"].map(h => <TableHead key={h}>{h}</TableHead>)}
                 </TableRow></TableHeader>
                 <TableBody>
                   {userTransactions.map((t, i) => (
                     <TableRow key={i}>
                       <TableCell><div className="flex items-center gap-2"><CryptoIcon symbol={t.asset} size="sm" /><span className="text-sm text-foreground">{t.asset}</span></div></TableCell>
                       <TableCell className="text-sm text-foreground">{t.type}</TableCell>
+                      <TableCell>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                          t.channel === "wallet" ? "bg-primary/20 text-primary" :
+                          t.channel === "order" ? "bg-[hsl(var(--deex-orange))]/20 text-[hsl(var(--deex-orange))]" :
+                          "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]"
+                        }`}>
+                          {t.channel === "wallet" ? "Wallet" : t.channel === "order" ? "Order" : "Payout"}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                          t.creditDebit === "credit" ? "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]" : "bg-destructive/20 text-destructive"
+                        }`}>
+                          {t.creditDebit === "credit" ? "CR" : "DR"}
+                        </span>
+                      </TableCell>
                       <TableCell className="text-sm text-foreground whitespace-pre-line">{t.amount}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground font-mono">{t.balanceBefore}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground font-mono">{t.balanceAfter}</TableCell>
                       <TableCell><div className="flex items-center gap-1"><span className="text-xs text-muted-foreground font-mono">{t.txId.slice(0, 12)}...</span><CopyButton text={t.txId} label="Trans ID" /></div></TableCell>
                       <TableCell className="text-xs text-muted-foreground">{t.date}</TableCell>
                       <TableCell><StatusBadge status={t.status} /></TableCell>
