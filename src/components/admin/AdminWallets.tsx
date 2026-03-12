@@ -108,7 +108,7 @@ const AdminWallets = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="w-80 shrink-0 bg-card border border-border rounded-xl p-5">
+        <div className="w-full lg:w-80 lg:shrink-0 bg-card border border-border rounded-xl p-5">
           <p className="text-sm font-semibold text-foreground mb-4">Assets</p>
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
