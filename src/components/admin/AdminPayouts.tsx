@@ -37,7 +37,7 @@ const AdminPayouts = () => {
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6">
         <div className="bg-card border border-border rounded-xl p-5">
           <p className="text-xs text-muted-foreground mb-1">Total Payouts</p>
           <p className="text-2xl font-bold text-foreground">{payoutsList.length}</p>
