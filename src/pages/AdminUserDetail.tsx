@@ -60,7 +60,7 @@ const AdminUserDetail = () => {
       </div>
 
       {/* User header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-full bg-accent/30 flex items-center justify-center text-lg font-bold text-accent">
             {mockUser.initials}
