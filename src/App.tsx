@@ -20,6 +20,7 @@ import TransactionDetail from "./pages/TransactionDetail";
 import DeexPay from "./pages/DeexPay";
 import GiftCards from "./pages/GiftCards";
 import BillPayment from "./pages/BillPayment";
+import NairaWallet from "./pages/NairaWallet";
 import Activity from "./pages/Activity";
 import Rewards from "./pages/Rewards";
 import ReferralDashboard from "./pages/ReferralDashboard";
@@ -66,6 +67,7 @@ const App = () => (
           <Route path="/deex-pay" element={<DeexPay />} />
           <Route path="/giftcards" element={<GiftCards />} />
           <Route path="/bills/:type" element={<BillPayment />} />
+          <Route path="/naira-wallet" element={<NairaWallet />} />
           <Route path="/activity" element={<Activity />} />
           <Route path="/rewards" element={<Rewards />} />
           <Route path="/referrals" element={<ReferralDashboard />} />

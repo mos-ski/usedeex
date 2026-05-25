@@ -39,8 +39,8 @@ const SendMoney = () => {
       <MobileLayout hideNav>
         <div className="px-4 pt-4">
           <div className="flex items-center mb-6">
-            <button onClick={() => setStep("form")} className="absolute">
-              <ArrowLeft className="w-6 h-6 text-foreground" />
+            <button onClick={() => setStep("form")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+              <ArrowLeft className="w-5 h-5 text-foreground" />
             </button>
             <h2 className="text-lg font-bold text-foreground w-full text-center">Confirm Transfer</h2>
           </div>
@@ -67,8 +67,8 @@ const SendMoney = () => {
     <MobileLayout hideNav>
       <div className="px-4 pt-4 pb-8">
         <div className="flex items-center mb-6">
-          <button onClick={() => navigate(-1)} className="absolute">
-            <ArrowLeft className="w-6 h-6 text-foreground" />
+          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+            <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <h2 className="text-lg font-bold text-foreground w-full text-center">Send Money</h2>
         </div>

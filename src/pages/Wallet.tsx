@@ -1,10 +1,11 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ChevronRight } from "lucide-react";
+import { Eye, EyeOff, ChevronRight, Wallet } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
 import CryptoIcon from "@/components/CryptoIcon";
+import { nairaWalletBalance } from "@/data/nairaWalletData";
 
 const assets = [
   { symbol: "BTC", name: "Bitcoin", balance: "0.0234", value: "$2,280.12" },
@@ -59,6 +60,19 @@ const Wallet = () => {
               <div className={`w-2 h-2 rounded-full transition-colors ${cardIndex === 1 ? "bg-primary" : "bg-muted"}`} />
             </div>
           </div>
+
+          <button onClick={() => navigate("/naira-wallet")} className="w-full bg-gradient-to-r from-primary/10 to-success/5 border border-primary/20 rounded-xl px-4 py-3.5 flex items-center justify-between mb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center">
+                <Wallet className="w-5 h-5 text-primary" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-medium text-foreground">Naira Wallet</p>
+                <p className="text-xs text-muted-foreground">{showBalance ? `₦${nairaWalletBalance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}` : "••••••"}</p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          </button>
 
           <h3 className="text-sm font-semibold text-foreground mb-3">Assets</h3>
           <div className="space-y-2">

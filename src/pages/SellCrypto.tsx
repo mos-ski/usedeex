@@ -79,7 +79,7 @@ const SellCrypto = () => {
         <PageTransition>
           <div className="px-4 pt-4">
             <div className="flex items-center mb-6">
-              <button onClick={() => setStep("source")} className="absolute"><ArrowLeft className="w-6 h-6 text-foreground" /></button>
+              <button onClick={() => setStep("source")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
               <h2 className="text-lg font-bold text-foreground w-full text-center">Sell from External Wallet</h2>
             </div>
 
@@ -185,7 +185,7 @@ const SellCrypto = () => {
         <PageTransition>
           <div className="px-4 pt-4">
             <div className="flex items-center mb-6">
-              <button onClick={() => setStep("review")} className="absolute"><ArrowLeft className="w-6 h-6 text-foreground" /></button>
+              <button onClick={() => setStep("review")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
               <h2 className="text-lg font-bold text-foreground w-full text-center">Deposit {selectedAsset.symbol}</h2>
             </div>
             <div className="flex flex-col items-center">
@@ -228,7 +228,7 @@ const SellCrypto = () => {
         <PageTransition>
           <div className="px-4 pt-4">
             <div className="flex items-center mb-6">
-              <button onClick={() => setStep("form")} className="absolute"><ArrowLeft className="w-6 h-6 text-foreground" /></button>
+              <button onClick={() => setStep("form")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
               <h2 className="text-lg font-bold text-foreground w-full text-center">Confirm Trade</h2>
             </div>
             <div className="bg-card border border-border rounded-xl p-5 space-y-4 mb-6">
@@ -259,7 +259,7 @@ const SellCrypto = () => {
         <PageTransition>
           <div className="px-4 pt-4">
             <div className="flex items-center mb-8">
-              <button onClick={() => setStep("source")} className="absolute"><ArrowLeft className="w-6 h-6 text-foreground" /></button>
+              <button onClick={() => setStep("source")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
               <h2 className="text-lg font-bold text-foreground w-full text-center">Sell from Wallet</h2>
             </div>
 
@@ -339,7 +339,7 @@ const SellCrypto = () => {
       <PageTransition>
         <div className="px-4 pt-4">
           <div className="flex items-center mb-8">
-            <button onClick={() => navigate(-1)} className="absolute"><ArrowLeft className="w-6 h-6 text-foreground" /></button>
+            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
             <h2 className="text-lg font-bold text-foreground w-full text-center">Sell Crypto</h2>
           </div>
 

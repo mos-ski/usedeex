@@ -37,8 +37,8 @@ const Deposit = () => {
       <PageTransition>
         <div className="px-4 pt-4">
           <div className="flex items-center mb-6">
-            <button onClick={() => step === "address" ? setStep("select") : navigate(-1)} className="absolute">
-              <ArrowLeft className="w-6 h-6 text-foreground" />
+            <button onClick={() => step === "address" ? setStep("select") : navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+              <ArrowLeft className="w-5 h-5 text-foreground" />
             </button>
             <h2 className="text-lg font-bold text-foreground w-full text-center">
               {step === "select" ? "Deposit" : `Receive ${selectedCrypto.name}`}

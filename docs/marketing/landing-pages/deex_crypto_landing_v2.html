@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DeeX — Turn Your Crypto to Naira, Instantly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<style>
+/* ============================================================
+   DESIGN TOKENS
+============================================================ */
+:root {
+  --bg:        #07090E;
+  --bg-2:      #0C0F17;
+  --surface:   #111520;
+  --surface-2: #181D2C;
+  --border:    #1C2136;
+  --border-2:  #242A40;
+
+  --green:     #00C896;
+  --green-dim: rgba(0,200,150,0.10);
+  --green-glow:rgba(0,200,150,0.18);
+  --primary:   #4F6EF5;
+  --primary-dim:rgba(79,110,245,0.10);
+  --amber:     #F5A623;
+
+  --text-1:    #F0F2F8;
+  --text-2:    #8B92AF;
+  --text-3:    #424B6A;
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+
+  --font: 'Sora', sans-serif;
+}
+
+/* ============================================================
+   RESET
+============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--text-2);font-family:var(--font);font-size:16px;line-height:1.6;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{font-family:var(--font);cursor:pointer;border:none;outline:none}
+input{font-family:var(--font)}
+
+/* ============================================================
+   UTILITY
+============================================================ */
+.container{width:100%;max-width:1180px;margin:0 auto;padding:0 28px}
+
+.section-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--green);margin-bottom:14px;
+}
+.section-eyebrow .material-icons-round{font-size:14px}
+
+h2.section-heading{
+  font-size:clamp(28px,3.5vw,44px);font-weight:800;color:var(--text-1);
+  line-height:1.1;letter-spacing:-.03em;margin-bottom:14px;
+}
+h2.section-heading em{font-style:italic;font-weight:300;color:var(--green)}
+.section-sub{font-size:17px;color:var(--text-2);line-height:1.7;max-width:520px}
+
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
+.reveal.visible{opacity:1;transform:none}
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}
+.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+
+/* ============================================================
+   NAV
+============================================================ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:62px;display:flex;align-items:center;padding:0 28px;
+  background:rgba(7,9,14,.88);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{max-width:1180px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:800;color:var(--text-1);letter-spacing:-.02em}
+.logo-mark{width:30px;height:30px;background:linear-gradient(135deg,var(--green),var(--primary));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+.nav-links a{font-size:13px;font-weight:500;color:var(--text-2);transition:color .2s}
+.nav-links a:hover{color:var(--text-1)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.nav-login{font-size:13px;font-weight:600;color:var(--text-2);transition:color .2s;padding:8px 14px}
+.nav-login:hover{color:var(--text-1)}
+.nav-cta{background:var(--green);color:#07110E;padding:9px 18px;border-radius:var(--radius-xs);font-size:13px;font-weight:700;transition:all .2s;display:flex;align-items:center;gap:6px}
+.nav-cta:hover{filter:brightness(1.1)}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
+.nav-hamburger span{width:22px;height:2px;background:var(--text-2);border-radius:2px}
+
+/* ============================================================
+   TICKER
+============================================================ */
+.ticker{overflow:hidden;background:var(--bg-2);border-bottom:1px solid var(--border);padding:11px 0;margin-top:62px}
+.ticker-track{display:flex;gap:40px;width:max-content;animation:scroll 28s linear infinite}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:13px;font-weight:600}
+.ticker-name{color:var(--text-3)}
+.ticker-rate{color:var(--text-1)}
+.ticker-change{color:var(--green);font-size:11px}
+.ticker-sep{color:var(--border-2);font-size:16px}
+
+/* ============================================================
+   HERO  — stripped back
+============================================================ */
+.hero{padding:72px 0 80px;position:relative;overflow:hidden}
+.hero-glow{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(0,200,150,.07) 0%,transparent 65%);top:-180px;right:-180px;pointer-events:none}
+.hero-glow-2{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(79,110,245,.06) 0%,transparent 65%);bottom:-100px;left:-100px;pointer-events:none}
+
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;position:relative;z-index:1}
+
+.hero h1{font-size:clamp(34px,4.2vw,54px);font-weight:800;color:var(--text-1);line-height:1.08;letter-spacing:-.035em;margin-bottom:18px}
+.hero h1 em{font-style:italic;font-weight:300;color:var(--green);display:block}
+.hero-sub{font-size:16px;line-height:1.7;color:var(--text-2);margin-bottom:36px;max-width:440px}
+
+/* Form card */
+.hero-form{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-lg);padding:24px;position:relative;overflow:hidden}
+.hero-form::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--primary),var(--green))}
+
+.reward-strip{display:flex;align-items:center;gap:10px;background:var(--green-dim);border:1px solid rgba(0,200,150,.2);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:18px}
+.reward-strip-icon{width:34px;height:34px;background:rgba(0,200,150,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.reward-strip-icon .material-icons-round{font-size:18px;color:var(--green)}
+.reward-strip strong{display:block;font-size:13px;font-weight:700;color:var(--green)}
+.reward-strip span{font-size:11px;color:var(--text-2)}
+
+.fgroup{margin-bottom:12px}
+.fgroup label{display:block;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+.fgroup input{width:100%;background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:12px 14px;font-size:14px;color:var(--text-1);outline:none;transition:border-color .2s,box-shadow .2s}
+.fgroup input::placeholder{color:var(--text-3)}
+.fgroup input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,200,150,.1)}
+
+.form-btn{width:100%;padding:14px;background:var(--green);border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;color:#071810;cursor:pointer;transition:all .2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 28px rgba(0,200,150,.28)}
+.form-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.form-btn .material-icons-round{font-size:18px}
+.form-note{font-size:11px;color:var(--text-3);text-align:center;margin-top:10px;line-height:1.5}
+.form-note a{color:var(--text-2);text-decoration:underline;text-underline-offset:2px}
+
+.form-success{display:none;padding:16px 0;text-align:center}
+.form-success-icon{width:52px;height:52px;background:var(--green-dim);border:1px solid rgba(0,200,150,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.form-success-icon .material-icons-round{font-size:26px;color:var(--green)}
+.form-success h3{font-size:17px;font-weight:700;color:var(--text-1);margin-bottom:6px}
+.form-success p{font-size:13px;color:var(--text-2)}
+
+/* Rate card — right side */
+.hero-rates{display:flex;flex-direction:column;gap:14px}
+.rate-card{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-lg);padding:22px}
+.rate-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.rate-card-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--text-1)}
+.rate-card-title .material-icons-round{font-size:16px;color:var(--green)}
+.live-pill{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--green);background:var(--green-dim);border:1px solid rgba(0,200,150,.2);padding:3px 10px;border-radius:100px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+.rate-rows{display:flex;flex-direction:column;gap:8px}
+.rate-row{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:border-color .2s,background .2s}
+.rate-row:hover{border-color:var(--border-2);background:var(--surface-2)}
+.rate-row.active{border-color:var(--green);background:rgba(0,200,150,.04)}
+.rate-row-l{display:flex;align-items:center;gap:10px}
+.rate-row-name{font-size:13px;font-weight:600;color:var(--text-1)}
+.rate-row-sym{font-size:11px;color:var(--text-3)}
+.rate-row-r{text-align:right}
+.rate-row-val{font-size:13px;font-weight:700;color:var(--text-1)}
+.rate-row-change{font-size:11px;color:var(--green)}
+
+.calc-card{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-lg);padding:18px 22px}
+.calc-label{font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.calc-row{display:flex;align-items:center;gap:10px}
+.calc-input{flex:1;background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;gap:8px}
+.calc-input input{background:none;border:none;outline:none;font-size:17px;font-weight:800;color:var(--text-1);width:100%;font-family:var(--font)}
+.calc-cur-badge{font-size:11px;font-weight:700;color:var(--text-3);background:var(--surface-2);padding:3px 8px;border-radius:4px;white-space:nowrap}
+.calc-arrow .material-icons-round{font-size:18px;color:var(--text-3)}
+.calc-output{flex:1;background:var(--green-dim);border:1px solid rgba(0,200,150,.22);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
+.calc-output-val{font-size:17px;font-weight:800;color:var(--green)}
+.calc-output-cur{font-size:11px;color:var(--green);opacity:.7;font-weight:700}
+
+/* ============================================================
+   CRYPTO ICONS — SVG inline
+============================================================ */
+.ci{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.ci svg{width:34px;height:34px}
+/* small variant */
+.ci-sm{width:26px;height:26px}
+.ci-sm svg{width:26px;height:26px}
+
+/* ============================================================
+   TRUST BAR
+============================================================ */
+.trust-bar{background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:28px 0}
+.trust-inner{display:grid;grid-template-columns:repeat(4,1fr)}
+.trust-item{text-align:center;padding:12px 20px;border-right:1px solid var(--border)}
+.trust-item:last-child{border-right:none}
+.trust-num{font-size:30px;font-weight:800;color:var(--text-1);letter-spacing:-.03em;line-height:1;margin-bottom:4px}
+.trust-num span{color:var(--green)}
+.trust-lbl{font-size:12px;color:var(--text-3);font-weight:500}
+
+/* ============================================================
+   HOW IT WORKS
+============================================================ */
+.hiw{padding:96px 0}
+.hiw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);border-radius:var(--radius-xl);overflow:hidden;margin-top:52px}
+.hiw-step{background:var(--surface);padding:36px 30px;position:relative;transition:background .2s}
+.hiw-step:hover{background:var(--surface-2)}
+.step-num{width:36px;height:36px;border-radius:9px;background:var(--primary-dim);border:1px solid rgba(79,110,245,.2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--primary);margin-bottom:18px}
+.hiw-icon{width:44px;height:44px;background:var(--bg-2);border:1px solid var(--border-2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.hiw-icon .material-icons-round{font-size:22px;color:var(--green)}
+.hiw-step h3{font-size:17px;font-weight:700;color:var(--text-1);margin-bottom:8px;letter-spacing:-.01em}
+.hiw-step p{font-size:13px;color:var(--text-2);line-height:1.6}
+.step-arr{position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:28px;height:28px;background:var(--surface);border:1px solid var(--border-2);border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:2}
+.step-arr .material-icons-round{font-size:14px;color:var(--text-3)}
+
+/* ============================================================
+   FEATURES
+============================================================ */
+.features{padding:40px 0 96px}
+.feat-block{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;padding:72px 0;border-bottom:1px solid var(--border)}
+.feat-block:last-child{border-bottom:none}
+.feat-block.flip{direction:rtl}
+.feat-block.flip>*{direction:ltr}
+
+.feat-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:12px}
+.feat-text h3{font-size:clamp(22px,2.4vw,30px);font-weight:800;color:var(--text-1);line-height:1.2;letter-spacing:-.025em;margin-bottom:14px}
+.feat-text h3 em{font-style:italic;font-weight:300;color:var(--green)}
+.feat-text p{font-size:15px;color:var(--text-2);line-height:1.7;margin-bottom:24px}
+.feat-pills{display:flex;flex-wrap:wrap;gap:8px}
+.feat-pill{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border-2);border-radius:100px;padding:6px 13px;font-size:12px;font-weight:500;color:var(--text-2)}
+.feat-pill .material-icons-round{font-size:13px;color:var(--green)}
+
+/* Mock UI wrapper */
+.mock-ui{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-xl);overflow:hidden}
+.mock-bar{display:flex;align-items:center;gap:6px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.mock-bar .d{width:9px;height:9px;border-radius:50%}
+.mock-bar .dr{background:#FF5F57}.mock-bar .dy{background:#FEBC2E}.mock-bar .dg{background:#28C840}
+.mock-bar-title{font-size:12px;color:var(--text-3);margin-left:8px}
+.mock-body{padding:22px}
+.mock-title{font-size:15px;font-weight:700;color:var(--text-1);margin-bottom:16px}
+
+/* Sell mock */
+.mock-asset-row{display:flex;align-items:center;justify-content:space-between;background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px}
+.mock-asset-info{display:flex;align-items:center;gap:10px}
+.mock-asset-name{font-size:13px;font-weight:600;color:var(--text-1)}
+.mock-asset-bal{font-size:11px;color:var(--text-3)}
+.mock-amount-row{display:flex;align-items:center;justify-content:space-between;background:var(--bg-2);border:1px solid var(--green);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;box-shadow:0 0 0 3px rgba(0,200,150,.07)}
+.mock-amount-val{font-size:20px;font-weight:800;color:var(--text-1)}
+.mock-max{font-size:11px;font-weight:700;color:var(--green);background:var(--green-dim);padding:3px 9px;border-radius:4px}
+.mock-rate-row{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--green-dim);border:1px solid rgba(0,200,150,.18);border-radius:var(--radius-sm);margin-bottom:14px}
+.mock-rate-lbl{font-size:12px;color:var(--text-2)}
+.mock-rate-val{font-size:13px;font-weight:700;color:var(--green)}
+.mock-lock{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);margin-bottom:14px}
+.mock-lock .material-icons-round{font-size:13px}
+.mock-btn-row{display:flex;gap:8px}
+.mock-btn-sec{flex:1;padding:11px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:var(--radius-sm);font-family:var(--font);font-size:13px;font-weight:600;color:var(--text-2);cursor:pointer;text-align:center}
+.mock-btn-pri{flex:2;padding:11px;background:var(--green);border-radius:var(--radius-sm);font-family:var(--font);font-size:13px;font-weight:700;color:#071810;cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px}
+.mock-btn-pri .material-icons-round{font-size:15px}
+
+/* Swap mock */
+.mock-swap-from,.mock-swap-to{background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--radius-md);padding:14px;margin-bottom:4px}
+.mock-swap-to{border-color:rgba(79,110,245,.3);background:rgba(79,110,245,.04);margin-top:4px}
+.mock-swap-mini-label{font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.mock-swap-row{display:flex;align-items:center;justify-content:space-between}
+.mock-swap-val{font-size:22px;font-weight:800;color:var(--text-1)}
+.mock-swap-to .mock-swap-val{color:var(--primary)}
+.mock-swap-usd{font-size:11px;color:var(--text-3);margin-top:3px}
+.mock-swap-asset{display:flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:8px;padding:7px 10px}
+.mock-swap-asset-name{font-size:13px;font-weight:700;color:var(--text-1)}
+.mock-swap-toggle{width:32px;height:32px;background:var(--surface);border:2px solid var(--border-2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;cursor:pointer;color:var(--primary)}
+.mock-swap-toggle .material-icons-round{font-size:17px}
+.mock-fee{display:flex;justify-content:space-between;padding:8px 0;font-size:12px;margin-top:6px}
+.mock-fee-lbl{color:var(--text-3)}
+.mock-fee-val{color:var(--amber);font-weight:600}
+.mock-swap-btn{width:100%;padding:12px;background:var(--primary);border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:13px;font-weight:700;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px}
+.mock-swap-btn .material-icons-round{font-size:15px}
+
+/* Withdraw mock */
+.mock-steps{display:flex;gap:5px;margin-bottom:18px}
+.mock-step-bar{flex:1;height:3px;border-radius:2px;background:var(--border-2)}
+.mock-step-bar.done{background:var(--green)}
+.mock-step-bar.active{background:var(--primary)}
+.mock-field{background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:11px 14px;margin-bottom:9px}
+.mock-field-lbl{font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.mock-field-val{font-size:13px;color:var(--text-1);font-weight:500;font-family:monospace}
+.mock-net-pills{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.mock-net-pill{padding:5px 11px;border-radius:100px;font-size:12px;font-weight:600;background:var(--surface-2);border:1px solid var(--border-2);color:var(--text-3)}
+.mock-net-pill.on{background:var(--primary-dim);border-color:rgba(79,110,245,.35);color:var(--primary)}
+.mock-fee-warn{background:rgba(245,166,35,.09);border:1px solid rgba(245,166,35,.22);border-radius:var(--radius-sm);padding:9px 13px;display:flex;justify-content:space-between;font-size:12px;margin-bottom:13px;align-items:center}
+.mock-fee-warn-lbl{color:var(--text-2);display:flex;align-items:center;gap:5px}
+.mock-fee-warn-lbl .material-icons-round{font-size:14px;color:var(--amber)}
+.mock-fee-warn-val{color:var(--amber);font-weight:700}
+.mock-wd-btn{width:100%;padding:12px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:var(--radius-sm);font-family:var(--font);font-size:13px;font-weight:700;color:var(--text-1);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px}
+.mock-wd-btn .material-icons-round{font-size:15px;color:var(--text-2)}
+
+/* ============================================================
+   RATES SECTION
+============================================================ */
+.rates-sec{padding:88px 0;background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.rates-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:48px}
+.rates-card{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-lg);padding:18px;transition:border-color .2s,transform .25s;cursor:default}
+.rates-card:hover{border-color:rgba(0,200,150,.3);transform:translateY(-3px)}
+.rates-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.rates-card-name{font-size:12px;font-weight:600;color:var(--text-2)}
+.rates-card-rate{font-size:22px;font-weight:800;color:var(--text-1);letter-spacing:-.02em;line-height:1;margin-bottom:3px}
+.rates-card-label{font-size:11px;color:var(--text-3)}
+.rates-card-change{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:var(--green);background:var(--green-dim);padding:3px 8px;border-radius:100px;margin-top:8px}
+.rates-card-change .material-icons-round{font-size:12px}
+.rates-cta{text-align:center;margin-top:40px}
+.rates-cta a{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#071810;padding:13px 28px;border-radius:var(--radius-sm);font-size:14px;font-weight:700;transition:all .2s;box-shadow:0 4px 24px rgba(0,200,150,.25)}
+.rates-cta a:hover{filter:brightness(1.1)}
+.rates-cta a .material-icons-round{font-size:17px}
+
+/* ============================================================
+   WHATSAPP SOCIAL PROOF
+============================================================ */
+.wa-section{padding:96px 0;background:var(--bg)}
+.wa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:52px}
+
+/* WhatsApp chat bubble card */
+.wa-card{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-lg);overflow:hidden;transition:border-color .2s,transform .25s}
+.wa-card:hover{border-color:rgba(0,200,150,.2);transform:translateY(-4px)}
+
+.wa-header{background:#1A1F2E;padding:12px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.wa-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.wa-av-1{background:linear-gradient(135deg,#25D366,#128C7E)}
+.wa-av-2{background:linear-gradient(135deg,#F7931A,#C06C00)}
+.wa-av-3{background:linear-gradient(135deg,#627EEA,#3E4FA0)}
+.wa-av-4{background:linear-gradient(135deg,#FF6B6B,#C0392B)}
+.wa-av-5{background:linear-gradient(135deg,#9945FF,#6A1FC0)}
+.wa-av-6{background:linear-gradient(135deg,#26A17B,#0E6B50)}
+.wa-contact-name{font-size:13px;font-weight:700;color:var(--text-1)}
+.wa-contact-status{font-size:11px;color:#25D366}
+.wa-header-icon{margin-left:auto;color:var(--text-3)}
+.wa-header-icon .material-icons-round{font-size:18px}
+
+.wa-chat{padding:14px;background:var(--bg-2);display:flex;flex-direction:column;gap:10px;min-height:180px}
+.wa-msg{max-width:82%;padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.55;position:relative}
+.wa-msg-in{background:#1D2535;border:1px solid var(--border-2);color:var(--text-2);border-bottom-left-radius:3px;align-self:flex-start}
+.wa-msg-out{background:#005C4B;color:#E8F5F2;border-bottom-right-radius:3px;align-self:flex-end}
+.wa-msg-time{font-size:10px;opacity:.55;margin-top:4px;text-align:right}
+.wa-msg-in .wa-msg-time{text-align:left}
+
+/* CEO reply strip */
+.wa-footer{padding:10px 14px;background:#12161F;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.wa-footer-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--primary));display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0}
+.wa-footer-text{font-size:11px;color:var(--text-3)}
+.wa-footer-text strong{color:var(--green);font-weight:700}
+
+/* ============================================================
+   APP MOCKUP + DOWNLOAD
+============================================================ */
+.app-section{padding:96px 0;background:var(--bg-2);border-top:1px solid var(--border)}
+.app-inner{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+
+.app-text .section-eyebrow{margin-bottom:14px}
+.app-text h2{font-size:clamp(26px,3vw,40px);font-weight:800;color:var(--text-1);line-height:1.12;letter-spacing:-.03em;margin-bottom:14px}
+.app-text h2 em{font-style:italic;font-weight:300;color:var(--green)}
+.app-text p{font-size:15px;color:var(--text-2);line-height:1.7;margin-bottom:32px;max-width:440px}
+
+.store-btns{display:flex;gap:12px;flex-wrap:wrap}
+.store-btn{display:flex;align-items:center;gap:11px;background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-md);padding:12px 20px;transition:all .2s;min-width:155px}
+.store-btn:hover{border-color:var(--green);background:var(--surface-2)}
+.store-btn-icon .material-icons-round{font-size:26px;color:var(--text-1)}
+.store-btn-copy{}
+.store-btn-sub{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1px}
+.store-btn-name{font-size:14px;font-weight:700;color:var(--text-1)}
+
+/* Phone mockup */
+.phone-wrap{display:flex;justify-content:center;align-items:center;position:relative}
+.phone-glow{position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(0,200,150,.12) 0%,transparent 65%);z-index:0}
+.phone{position:relative;z-index:1;width:260px}
+.phone-shell{background:linear-gradient(170deg,#1E2235,#0E1018);border:2px solid #2A3050;border-radius:40px;padding:12px;box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04)}
+.phone-notch{width:80px;height:7px;background:#0E1018;border-radius:4px;margin:0 auto 10px}
+.phone-screen{background:var(--bg);border-radius:28px;overflow:hidden;padding:16px 14px}
+
+/* App screen inside phone */
+.app-nav-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.app-greeting{font-size:11px;color:var(--text-3)}
+.app-greeting strong{display:block;font-size:14px;font-weight:700;color:var(--text-1)}
+.app-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--primary))}
+
+.app-balance-card{background:linear-gradient(135deg,#0E2E24,#071810);border:1px solid rgba(0,200,150,.2);border-radius:14px;padding:14px;margin-bottom:12px}
+.app-balance-label{font-size:10px;color:rgba(0,200,150,.6);font-weight:600;margin-bottom:2px}
+.app-balance-val{font-size:22px;font-weight:800;color:var(--text-1);letter-spacing:-.02em}
+.app-balance-sub{font-size:10px;color:rgba(0,200,150,.5);margin-top:2px}
+.app-action-row{display:flex;gap:8px;margin-bottom:12px}
+.app-action{flex:1;background:var(--surface);border:1px solid var(--border-2);border-radius:10px;padding:9px 6px;text-align:center}
+.app-action .material-icons-round{font-size:17px;color:var(--green);display:block;margin:0 auto 3px}
+.app-action-lbl{font-size:9px;font-weight:600;color:var(--text-3)}
+
+.app-rates-mini{margin-bottom:10px}
+.app-rates-label{font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.app-rate-row{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;background:var(--surface);border-radius:8px;margin-bottom:5px}
+.app-rate-asset{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--text-1)}
+.app-rate-ngn{font-size:11px;font-weight:700;color:var(--green)}
+
+.phone-home{width:40px;height:4px;background:var(--border-2);border-radius:2px;margin:8px auto 0}
+
+/* ============================================================
+   TESTIMONIALS (text)
+============================================================ */
+.testi-section{padding:96px 0;background:var(--bg)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px}
+.testi-card{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-lg);padding:26px;transition:border-color .2s,transform .25s}
+.testi-card:hover{border-color:rgba(0,200,150,.2);transform:translateY(-3px)}
+.testi-quote-mark{font-size:36px;line-height:1;color:var(--green);opacity:.3;font-family:Georgia,serif;margin-bottom:12px}
+.testi-text{font-size:14px;color:var(--text-2);line-height:1.7;font-style:italic;margin-bottom:22px}
+.testi-author{display:flex;align-items:center;gap:11px}
+.testi-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.av-a{background:linear-gradient(135deg,#F7931A,#E05A00)}
+.av-b{background:linear-gradient(135deg,#627EEA,#4050A0)}
+.av-c{background:linear-gradient(135deg,#00C896,#007A5C)}
+.testi-name{font-size:13px;font-weight:700;color:var(--text-1)}
+.testi-loc{font-size:11px;color:var(--text-3)}
+.testi-stars{color:var(--amber);font-size:11px;margin-top:2px}
+
+/* ============================================================
+   FAQ
+============================================================ */
+.faq-section{padding:96px 0;background:var(--bg-2);border-top:1px solid var(--border)}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:48px}
+.faq-item{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-md);overflow:hidden;cursor:pointer}
+.faq-q{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:14px;font-weight:600;color:var(--text-1);user-select:none;transition:background .2s}
+.faq-q:hover{background:var(--surface-2)}
+.faq-q .material-icons-round{color:var(--text-3);font-size:18px;transition:transform .3s;flex-shrink:0}
+.faq-item.open .faq-q{color:var(--green)}
+.faq-item.open .faq-q .material-icons-round{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-a-inner{padding:0 20px 18px;font-size:13px;color:var(--text-2);line-height:1.7;border-top:1px solid var(--border)}
+.faq-a-inner{padding-top:14px}
+.faq-item.open .faq-a{max-height:300px}
+
+/* ============================================================
+   FINAL CTA
+============================================================ */
+.final-cta{padding:100px 0;background:var(--bg)}
+.final-cta-card{background:linear-gradient(140deg,var(--surface),var(--surface-2));border:1px solid var(--border-2);border-radius:var(--radius-xl);padding:72px 56px;text-align:center;position:relative;overflow:hidden}
+.final-cta-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--primary),var(--green),var(--primary))}
+.final-glow{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,200,150,.08) 0%,transparent 65%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none}
+.final-cta-card h2{font-size:clamp(26px,3.5vw,44px);font-weight:800;color:var(--text-1);line-height:1.1;letter-spacing:-.03em;margin-bottom:12px;position:relative;z-index:1}
+.final-cta-card h2 em{font-style:italic;font-weight:300;color:var(--green)}
+.final-cta-card>p{font-size:16px;color:var(--text-2);margin-bottom:40px;position:relative;z-index:1;max-width:440px;margin-left:auto;margin-right:auto}
+.final-form{display:flex;gap:10px;max-width:460px;margin:0 auto 14px;position:relative;z-index:1;flex-wrap:wrap}
+.final-form input{flex:1;min-width:160px;background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--radius-sm);padding:13px 16px;font-family:var(--font);font-size:14px;color:var(--text-1);outline:none;transition:border-color .2s}
+.final-form input::placeholder{color:var(--text-3)}
+.final-form input:focus{border-color:var(--green)}
+.final-form button{padding:13px 24px;background:var(--green);border:none;border-radius:var(--radius-sm);font-family:var(--font);font-size:14px;font-weight:700;color:#071810;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.final-form button:hover{filter:brightness(1.1)}
+.final-form button .material-icons-round{font-size:16px}
+.final-note{font-size:11px;color:var(--text-3);position:relative;z-index:1}
+.final-success{display:none;position:relative;z-index:1}
+.final-success p{font-size:17px;font-weight:700;color:var(--green)}
+.final-success small{font-size:13px;color:var(--text-2)}
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.footer{background:var(--bg-2);border-top:1px solid var(--border);padding:60px 0 28px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-logo{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:800;color:var(--text-1);margin-bottom:12px}
+.footer-brand p{font-size:13px;color:var(--text-3);line-height:1.65;max-width:240px;margin-bottom:18px}
+.footer-socials{display:flex;gap:8px}
+.footer-soc{width:34px;height:34px;background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:center;color:var(--text-3);transition:all .2s}
+.footer-soc:hover{border-color:var(--green);color:var(--green);background:var(--green-dim)}
+.footer-soc .material-icons-round{font-size:16px}
+.footer-col h4{font-size:11px;font-weight:700;color:var(--text-1);text-transform:uppercase;letter-spacing:.09em;margin-bottom:14px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.footer-col ul li a{font-size:13px;color:var(--text-3);transition:color .2s}
+.footer-col ul li a:hover{color:var(--text-2)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:22px;border-top:1px solid var(--border);font-size:12px;color:var(--text-3)}
+.footer-bottom-links{display:flex;gap:20px}
+.footer-bottom-links a{color:var(--text-3);transition:color .2s}
+.footer-bottom-links a:hover{color:var(--text-2)}
+
+/* ============================================================
+   MOBILE NAV
+============================================================ */
+.mobile-nav{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;flex-direction:column;padding:76px 24px 36px;gap:6px}
+.mobile-nav.open{display:flex}
+.mobile-nav a{padding:14px 18px;font-size:17px;font-weight:600;color:var(--text-2);border-radius:var(--radius-sm);transition:background .2s,color .2s}
+.mobile-nav a:hover{background:var(--surface);color:var(--text-1)}
+.mobile-close{position:absolute;top:18px;right:24px;background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-xs);padding:7px 12px;font-family:var(--font);font-size:13px;color:var(--text-2);cursor:pointer;display:flex;align-items:center;gap:5px}
+.mobile-close .material-icons-round{font-size:16px}
+.mobile-cta-btn{margin-top:14px;width:100%;padding:15px;background:var(--green);border:none;border-radius:var(--radius-md);font-family:var(--font);font-size:16px;font-weight:700;color:#071810;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.mobile-cta-btn .material-icons-round{font-size:18px}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media(max-width:1024px){
+  .rates-grid{grid-template-columns:repeat(3,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:28px}
+}
+@media(max-width:768px){
+  .nav-links,.nav-login,.nav-cta{display:none}
+  .nav-hamburger{display:flex}
+  .hero-inner{grid-template-columns:1fr;gap:40px}
+  .hero-rates{order:-1}
+  .trust-inner{grid-template-columns:1fr 1fr}
+  .trust-item{border-right:none;border-bottom:1px solid var(--border)}
+  .trust-item:nth-child(odd){border-right:1px solid var(--border)}
+  .trust-item:nth-last-child(-n+2){border-bottom:none}
+  .hiw-grid{grid-template-columns:1fr}
+  .step-arr{display:none}
+  .feat-block{grid-template-columns:1fr;gap:36px;padding:52px 0}
+  .feat-block.flip{direction:ltr}
+  .rates-grid{grid-template-columns:1fr 1fr}
+  .wa-grid{grid-template-columns:1fr}
+  .app-inner{grid-template-columns:1fr;gap:48px}
+  .phone-wrap{order:-1}
+  .testi-grid{grid-template-columns:1fr}
+  .faq-grid{grid-template-columns:1fr}
+  .final-cta-card{padding:44px 24px}
+  .final-form{flex-direction:column}
+  .final-form input{min-width:100%}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:12px;text-align:center}
+}
+@media(max-width:480px){
+  .hero h1{font-size:28px}
+  .rates-grid{grid-template-columns:1fr}
+  .wa-grid{grid-template-columns:1fr}
+  .trust-num{font-size:24px}
+  .store-btns{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="logo-mark">D</div>DeeX
+    </a>
+    <ul class="nav-links">
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#rates">Rates</a></li>
+      <li><a href="#app">Get the app</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="https://app.deexoptions.com/login" class="nav-login">Login</a>
+      <a href="#signup" class="nav-cta">
+        <span class="material-icons-round" style="font-size:15px">card_giftcard</span>
+        Claim ₦50,000
+      </a>
+    </div>
+    <div class="nav-hamburger" onclick="openNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-close" onclick="closeNav()">
+    <span class="material-icons-round">close</span> Close
+  </button>
+  <a href="#how-it-works" onclick="closeNav()">How it works</a>
+  <a href="#features" onclick="closeNav()">Features</a>
+  <a href="#rates" onclick="closeNav()">Rates</a>
+  <a href="#app" onclick="closeNav()">Get the app</a>
+  <a href="#faq" onclick="closeNav()">FAQ</a>
+  <a href="https://app.deexoptions.com/login" onclick="closeNav()">Login</a>
+  <button class="mobile-cta-btn" onclick="closeNav();scrollTo('signup')">
+    <span class="material-icons-round">card_giftcard</span>
+    Claim ₦50,000 Bonus
+  </button>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track" id="ticker">
+    <!-- Set 1 -->
+    <span class="ticker-item">
+      <!-- BTC icon -->
+      <svg width="18" height="18" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#F7931A"/><path d="M22.2 13.8c.3-2.1-1.3-3.2-3.5-4l.7-2.8-1.7-.4-.7 2.7-.9-.2.7-2.8-1.7-.4-.7 2.8-.7-.2-2.3-.6-.4 1.8s1.3.3 1.2.3c.7.2.8.6.8 1l-.8 3.3v.2l-1.2 4.6c-.1.2-.3.5-.7.4-.1 0-1.2-.3-1.2-.3l-.8 2 2.2.5.9.2-.7 2.9 1.7.4.7-2.8.9.2-.7 2.8 1.7.4.7-2.8c2.8.5 5 .3 5.9-2.2.7-2-.03-3.2-1.5-3.9 1.1-.3 1.9-1 2.1-2.5zm-3.7 5.2c-.5 2-3.9.9-5 .7l.9-3.5c1.1.3 4.6.8 4.1 2.8zm.5-5.2c-.5 1.8-3.3.9-4.3.7l.8-3.2c1 .3 4 .8 3.5 2.5z" fill="#fff"/></svg>
+      <span class="ticker-name">BTC/NGN</span>
+      <span class="ticker-rate" id="tk-btc">₦1,540/$</span>
+      <span class="ticker-change">+2.4%</span>
+    </span>
+    <span class="ticker-sep">·</span>
+    <span class="ticker-item">
+      <!-- ETH icon -->
+      <svg width="18" height="18" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#627EEA"/><path d="M16.498 4l-.09.31v15.43l.09.09 7.5-4.43L16.498 4z" fill="#C9D5FA"/><path d="M16.498 4L9 15.4l7.498 4.43V4z" fill="#fff"/><path d="M16.498 21.286l-.09.113v5.48l.09.272 7.5-10.56-7.5 4.695z" fill="#C9D5FA"/><path d="M16.498 27.15v-5.864L9 16.59l7.498 10.56z" fill="#fff"/><path d="M16.498 19.83l7.5-4.43-7.5-3.41v7.84z" fill="#A2B3F5"/><path d="M9 15.4l7.498 4.43V11.99L9 15.4z" fill="#C9D5FA"/></svg>
+      <span class="ticker-name">ETH/NGN</span>
+      <span class="ticker-rate">₦1,535/$</span>
+      <span class="ticker-change">+1.8%</span>
+    </span>
+    <span class="ticker-sep">·</span>
+    <span class="ticker-item">
+      <!-- USDT icon -->
+      <svg width="18" height="18" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#26A17B"/><path d="M17.2 17.6v-.01c-.07.01-.43.03-1.23.03-.64 0-1.08-.02-1.24-.03v.01C10.6 17.4 7.6 16.6 7.6 15.6s3-1.8 7.13-2v2.57c.16.01.61.04 1.25.04.76 0 1.14-.03 1.22-.04V13.6c4.12.2 7.1 1 7.1 2s-2.98 1.8-7.1 2zm0-4.3V11h5.7V8.12H9.1V11h5.7v2.3C10.18 13.56 6.5 14.6 6.5 15.8c0 1.19 3.68 2.23 8.3 2.48v8.88h2.4V18.3c4.6-.25 8.28-1.3 8.28-2.48 0-1.19-3.68-2.23-8.28-2.49z" fill="#fff"/></svg>
+      <span class="ticker-name">USDT/NGN</span>
+      <span class="ticker-rate">₦1,535/$</span>
+      <span class="ticker-change">+0.3%</span>
+    </span>
+    <span class="ticker-sep">·</span>
+    <span class="ticker-item">
+      <!-- SOL icon -->
+      <svg width="18" height="18" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#9945FF"/><path d="M9.5 21.3a.7.7 0 0 1 .5-.2h13.5a.35.35 0 0 1 .25.6l-2.5 2.5a.7.7 0 0 1-.5.2H7.25a.35.35 0 0 1-.25-.6l2.5-2.5zM9.5 7.8a.72.72 0 0 1 .5-.2h13.5a.35.35 0 0 1 .25.6l-2.5 2.5a.7.7 0 0 1-.5.2H7.25a.35.35 0 0 1-.25-.6L9.5 7.8zm11.5 6.6a.35.35 0 0 1-.25.6H7.25a.35.35 0 0 1-.25-.6l2.5-2.5a.7.7 0 0 1 .5-.2h13.5a.35.35 0 0 1 .25.6l-2.5 2.5-.25.1z" fill="url(#s)"/><defs><linearGradient id="s" x1="6" y1="16" x2="26" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#9945FF"/><stop offset=".5" stop-color="#14F195"/><stop offset="1" stop-color="#00C2FF"/></linearGradient></defs></svg>
+      <span class="ticker-name">SOL/NGN</span>
+      <span class="ticker-rate">₦1,532/$</span>
+      <span class="ticker-change">+3.1%</span>
+    </span>
+    <span class="ticker-sep">·</span>
+    <span class="ticker-item">
+      <!-- USDC icon -->
+      <svg width="18" height="18" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#2775CA"/><path d="M16 6c5.52 0 10 4.48 10 10S21.52 26 16 26 6 21.52 6 16 10.48 6 16 6zm0 1.5A8.5 8.5 0 1 0 24.5 16 8.5 8.5 0 0 0 16 7.5zm.88 2.3c3.36.43 5.62 2.96 5.62 6.2s-2.26 5.77-5.62 6.2v1.07h-1.57v-1.08C11.93 21.74 9.5 19.2 9.5 15.82h2.04c0 2.5 1.72 4.28 4.46 4.54V13.5c-2.43-.55-4.46-1.78-4.46-4.2 0-2.84 2.1-4.76 4.77-5.06V3.18h1.57v1.06zm1.57 5.38v5.64c1.77-.4 2.94-1.72 2.94-3.1 0-1.58-.95-2.3-2.94-2.54zm-3.14-5.25c-1.63.27-2.73 1.38-2.73 2.75 0 1.26.84 2.1 2.73 2.5V10z" fill="#fff"/></svg>
+      <span class="ticker-name">USDC/NGN</span>
+      <span class="ticker-rate">₦1,530/$</span>
+      <span class="ticker-change">+0.2%</span>
+    </span>
+    <span class="ticker-sep">·</span>
+    <!-- Duplicate set for seamless loop -->
+    <span class="ticker-item">
+      <svg width="18" height="18" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#F7931A"/><path d="M22.2 13.8c.3-2.1-1.3-3.2-3.5-4l.7-2.8-1.7-.4-.7 2.7-.9-.2.7-2.8-1.7-.4-.7 2.8-.7-.2-2.3-.6-.4 1.8s1.3.3 1.2.3c.7.2.8.6.8 1l-.8 3.3v.2l-1.2 4.6c-.1.2-.3.5-.7.4-.1 0-1.2-.3-1.2-.3l-.8 2 2.2.5.9.2-.7 2.9 1.7.4.7-2.8.9.2-.7 2.8 1.7.4.7-2.8c2.8.5 5 .3 5.9-2.2.7-2-.03-3.2-1.5-3.9 1.1-.3 1.9-1 2.1-2.5zm-3.7 5.2c-.5 2-3.9.9-5 .7l.9-3.5c1.1.3 4.6.8 4.1 2.8zm.5-5.2c-.5 1.8-3.3.9-4.3.7l.8-3.2c1 .3 4 .8 3.5 2.5z" fill="#fff"/></svg>
+      <span class="ticker-name">BTC/NGN</span>
+      <span class="ticker-rate">₦1,540/$</span>
+      <span class="ticker-change">+2.4%</span>
+    </span>
+    <span class="ticker-sep">·</span>
+    <span class="ticker-item">
+      <svg width="18" height="18" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#627EEA"/><path d="M16.498 4l-.09.31v15.43l.09.09 7.5-4.43L16.498 4z" fill="#C9D5FA"/><path d="M16.498 4L9 15.4l7.498 4.43V4z" fill="#fff"/><path d="M16.498 21.286l-.09.113v5.48l.09.272 7.5-10.56-7.5 4.695z" fill="#C9D5FA"/><path d="M16.498 27.15v-5.864L9 16.59l7.498 10.56z" fill="#fff"/><path d="M16.498 19.83l7.5-4.43-7.5-3.41v7.84z" fill="#A2B3F5"/><path d="M9 15.4l7.498 4.43V11.99L9 15.4z" fill="#C9D5FA"/></svg>
+      <span class="ticker-name">ETH/NGN</span>
+      <span class="ticker-rate">₦1,535/$</span>
+      <span class="ticker-change">+1.8%</span>
+    </span>
+    <span class="ticker-sep">·</span>
+    <span class="ticker-item">
+      <svg width="18" height="18" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#26A17B"/><path d="M17.2 17.6v-.01c-.07.01-.43.03-1.23.03-.64 0-1.08-.02-1.24-.03v.01C10.6 17.4 7.6 16.6 7.6 15.6s3-1.8 7.13-2v2.57c.16.01.61.04 1.25.04.76 0 1.14-.03 1.22-.04V13.6c4.12.2 7.1 1 7.1 2s-2.98 1.8-7.1 2zm0-4.3V11h5.7V8.12H9.1V11h5.7v2.3C10.18 13.56 6.5 14.6 6.5 15.8c0 1.19 3.68 2.23 8.3 2.48v8.88h2.4V18.3c4.6-.25 8.28-1.3 8.28-2.48 0-1.19-3.68-2.23-8.28-2.49z" fill="#fff"/></svg>
+      <span class="ticker-name">USDT/NGN</span>
+      <span class="ticker-rate">₦1,535/$</span>
+      <span class="ticker-change">+0.3%</span>
+    </span>
+    <span class="ticker-sep">·</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section class="hero" id="signup">
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+  <div class="container">
+    <div class="hero-inner">
+
+      <!-- Left -->
+      <div class="hero-left">
+        <div class="section-eyebrow reveal">
+          <span class="material-icons-round">location_on</span>
+          Nigeria · Instant payouts
+        </div>
+        <h1 class="reveal d1">
+          Your Bitcoin,<br>turned to Naira —
+          <em>in under 5 minutes.</em>
+        </h1>
+        <p class="hero-sub reveal d2">
+          No WhatsApp traders. No middlemen. Sell BTC, ETH, USDT and more at the best rates — straight to your bank account.
+        </p>
+
+        <div class="hero-form reveal d3" id="heroBox">
+          <div class="reward-strip">
+            <div class="reward-strip-icon">
+              <span class="material-icons-round">card_giftcard</span>
+            </div>
+            <div>
+              <strong>₦50,000 in your wallet — free</strong>
+              <span>New accounts only · Unlocks after your first trade</span>
+            </div>
+          </div>
+
+          <div id="heroFields">
+            <div class="fgroup">
+              <label>Email address</label>
+              <input type="email" id="hEmail" placeholder="you@gmail.com"/>
+            </div>
+            <div class="fgroup">
+              <label>Phone number</label>
+              <input type="tel" id="hPhone" placeholder="08012345678"/>
+            </div>
+            <button class="form-btn" onclick="submitHero()">
+              <span class="material-icons-round">arrow_forward</span>
+              Create Account &amp; Claim ₦50,000
+            </button>
+            <p class="form-note">
+              We'll send your password via SMS. By signing up you agree to our
+              <a href="https://deexoptions.com/terms">Terms</a> &amp;
+              <a href="https://deexoptions.com/privacy">Privacy Policy</a>.
+            </p>
+          </div>
+
+          <div class="form-success" id="heroSuccess">
+            <div class="form-success-icon">
+              <span class="material-icons-round">check_circle</span>
+            </div>
+            <h3>You're in — check your SMS</h3>
+            <p>Your temporary password and ₦50,000 wallet credit are on the way.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: rate card + calc -->
+      <div class="hero-rates">
+        <div class="rate-card reveal d1">
+          <div class="rate-card-header">
+            <div class="rate-card-title">
+              <span class="material-icons-round">schedule</span>
+              Live Rates
+            </div>
+            <div class="live-pill"><span class="live-dot"></span> Live</div>
+          </div>
+          <div class="rate-rows">
+            <!-- BTC -->
+            <div class="rate-row active" onclick="pickRate(this,'BTC',1540)">
+              <div class="rate-row-l">
+                <div class="ci ci-sm">
+                  <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#F7931A"/><path d="M22.2 13.8c.3-2.1-1.3-3.2-3.5-4l.7-2.8-1.7-.4-.7 2.7-.9-.2.7-2.8-1.7-.4-.7 2.8-.7-.2-2.3-.6-.4 1.8s1.3.3 1.2.3c.7.2.8.6.8 1l-.8 3.3v.2l-1.2 4.6c-.1.2-.3.5-.7.4-.1 0-1.2-.3-1.2-.3l-.8 2 2.2.5.9.2-.7 2.9 1.7.4.7-2.8.9.2-.7 2.8 1.7.4.7-2.8c2.8.5 5 .3 5.9-2.2.7-2-.03-3.2-1.5-3.9 1.1-.3 1.9-1 2.1-2.5zm-3.7 5.2c-.5 2-3.9.9-5 .7l.9-3.5c1.1.3 4.6.8 4.1 2.8zm.5-5.2c-.5 1.8-3.3.9-4.3.7l.8-3.2c1 .3 4 .8 3.5 2.5z" fill="#fff"/></svg>
+                </div>
+                <div><div class="rate-row-name">Bitcoin</div><div class="rate-row-sym">BTC</div></div>
+              </div>
+              <div class="rate-row-r">
+                <div class="rate-row-val">₦1,540 / $</div>
+                <div class="rate-row-change">▲ +2.4%</div>
+              </div>
+            </div>
+            <!-- ETH -->
+            <div class="rate-row" onclick="pickRate(this,'ETH',1535)">
+              <div class="rate-row-l">
+                <div class="ci ci-sm">
+                  <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#627EEA"/><path d="M16.498 4l-.09.31v15.43l.09.09 7.5-4.43L16.498 4z" fill="#C9D5FA"/><path d="M16.498 4L9 15.4l7.498 4.43V4z" fill="#fff"/><path d="M16.498 21.286l-.09.113v5.48l.09.272 7.5-10.56-7.5 4.695z" fill="#C9D5FA"/><path d="M16.498 27.15v-5.864L9 16.59l7.498 10.56z" fill="#fff"/><path d="M16.498 19.83l7.5-4.43-7.5-3.41v7.84z" fill="#A2B3F5"/><path d="M9 15.4l7.498 4.43V11.99L9 15.4z" fill="#C9D5FA"/></svg>
+                </div>
+                <div><div class="rate-row-name">Ethereum</div><div class="rate-row-sym">ETH</div></div>
+              </div>
+              <div class="rate-row-r">
+                <div class="rate-row-val">₦1,535 / $</div>
+                <div class="rate-row-change">▲ +1.8%</div>
+              </div>
+            </div>
+            <!-- USDT -->
+            <div class="rate-row" onclick="pickRate(this,'USDT',1535)">
+              <div class="rate-row-l">
+                <div class="ci ci-sm">
+                  <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#26A17B"/><path d="M17.2 17.6v-.01c-.07.01-.43.03-1.23.03-.64 0-1.08-.02-1.24-.03v.01C10.6 17.4 7.6 16.6 7.6 15.6s3-1.8 7.13-2v2.57c.16.01.61.04 1.25.04.76 0 1.14-.03 1.22-.04V13.6c4.12.2 7.1 1 7.1 2s-2.98 1.8-7.1 2zm0-4.3V11h5.7V8.12H9.1V11h5.7v2.3C10.18 13.56 6.5 14.6 6.5 15.8c0 1.19 3.68 2.23 8.3 2.48v8.88h2.4V18.3c4.6-.25 8.28-1.3 8.28-2.48 0-1.19-3.68-2.23-8.28-2.49z" fill="#fff"/></svg>
+                </div>
+                <div><div class="rate-row-name">Tether</div><div class="rate-row-sym">USDT</div></div>
+              </div>
+              <div class="rate-row-r">
+                <div class="rate-row-val">₦1,535 / $</div>
+                <div class="rate-row-change">▲ +0.3%</div>
+              </div>
+            </div>
+            <!-- USDC -->
+            <div class="rate-row" onclick="pickRate(this,'USDC',1530)">
+              <div class="rate-row-l">
+                <div class="ci ci-sm">
+                  <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#2775CA"/><path d="M16 6c5.52 0 10 4.48 10 10S21.52 26 16 26 6 21.52 6 16 10.48 6 16 6zm0 1.5A8.5 8.5 0 1 0 24.5 16 8.5 8.5 0 0 0 16 7.5zm.88 2.3c3.36.43 5.62 2.96 5.62 6.2s-2.26 5.77-5.62 6.2v1.07h-1.57v-1.08C11.93 21.74 9.5 19.2 9.5 15.82h2.04c0 2.5 1.72 4.28 4.46 4.54V13.5c-2.43-.55-4.46-1.78-4.46-4.2 0-2.84 2.1-4.76 4.77-5.06V3.18h1.57v1.06zm1.57 5.38v5.64c1.77-.4 2.94-1.72 2.94-3.1 0-1.58-.95-2.3-2.94-2.54zm-3.14-5.25c-1.63.27-2.73 1.38-2.73 2.75 0 1.26.84 2.1 2.73 2.5V10z" fill="#fff"/></svg>
+                </div>
+                <div><div class="rate-row-name">USD Coin</div><div class="rate-row-sym">USDC</div></div>
+              </div>
+              <div class="rate-row-r">
+                <div class="rate-row-val">₦1,530 / $</div>
+                <div class="rate-row-change">▲ +0.2%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="calc-card reveal d2">
+          <div class="calc-label">How much Naira will you get?</div>
+          <div class="calc-row">
+            <div class="calc-input">
+              <input type="number" id="calcAmt" value="100" oninput="recalc()"/>
+              <span class="calc-cur-badge">USD</span>
+            </div>
+            <div class="calc-arrow"><span class="material-icons-round">arrow_forward</span></div>
+            <div class="calc-output">
+              <span class="calc-output-val" id="calcOut">₦154,000</span>
+              <span class="calc-output-cur">NGN</span>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:8px;display:flex;align-items:center;gap:4px">
+            <span class="material-icons-round" style="font-size:13px">info</span>
+            Rate: ₦<span id="rateLabel">1,540</span> per $1 · <span id="curLabel">BTC</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="container">
+    <div class="trust-inner">
+      <div class="trust-item reveal"><div class="trust-num">100<span>K+</span></div><div class="trust-lbl">Verified users</div></div>
+      <div class="trust-item reveal d1"><div class="trust-num">1<span>M+</span></div><div class="trust-lbl">Transactions done</div></div>
+      <div class="trust-item reveal d2"><div class="trust-num"><span>&lt;</span>5<span>min</span></div><div class="trust-lbl">Average payout time</div></div>
+      <div class="trust-item reveal d3"><div class="trust-num">6<span>+</span></div><div class="trust-lbl">Assets supported</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     HOW IT WORKS
+============================================================ -->
+<section class="hiw" id="how-it-works">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow"><span class="material-icons-round">bolt</span> Process</div>
+      <h2 class="section-heading">Trade in 3 steps.<br><em>Get paid instantly.</em></h2>
+      <p class="section-sub">No calls. No waiting. DeeX processes your trade and sends Naira to your bank before you close the app.</p>
+    </div>
+    <div class="hiw-grid">
+      <div class="hiw-step reveal">
+        <div class="step-num">01</div>
+        <div class="hiw-icon"><span class="material-icons-round">person_add</span></div>
+        <h3>Create your account</h3>
+        <p>Sign up with email and phone in under 60 seconds. Verify your identity quickly. No domiciliary account needed.</p>
+        <div class="step-arr"><span class="material-icons-round">arrow_forward</span></div>
+      </div>
+      <div class="hiw-step reveal d1">
+        <div class="step-num">02</div>
+        <div class="hiw-icon"><span class="material-icons-round">currency_bitcoin</span></div>
+        <h3>Select asset, see your rate</h3>
+        <p>Choose BTC, ETH, USDT, USDC or SOL. The exact Naira amount is shown upfront — no hidden fees.</p>
+        <div class="step-arr"><span class="material-icons-round">arrow_forward</span></div>
+      </div>
+      <div class="hiw-step reveal d2">
+        <div class="step-num">03</div>
+        <div class="hiw-icon"><span class="material-icons-round">account_balance</span></div>
+        <h3>Cash lands in your account</h3>
+        <p>Send crypto to the address provided. DeeX detects it, confirms the trade, and sends Naira to your bank.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FEATURES
+============================================================ -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow"><span class="material-icons-round">widgets</span> Features</div>
+      <h2 class="section-heading">Three ways to turn<br>crypto into <em>real money.</em></h2>
+    </div>
+
+    <!-- Sell -->
+    <div class="feat-block reveal">
+      <div class="feat-text">
+        <div class="feat-label">Sell Crypto</div>
+        <h3>The best Naira rate<br>for your <em>Bitcoin.</em></h3>
+        <p>Stop selling to WhatsApp traders who ghost you. DeeX locks your rate upfront and sends Naira the moment your crypto confirms.</p>
+        <div class="feat-pills">
+          <span class="feat-pill"><span class="material-icons-round">check</span> BTC, ETH, USDT, USDC</span>
+          <span class="feat-pill"><span class="material-icons-round">check</span> Rate locked before you send</span>
+          <span class="feat-pill"><span class="material-icons-round">check</span> Any Nigerian bank account</span>
+          <span class="feat-pill"><span class="material-icons-round">check</span> External or DeeX wallet</span>
+        </div>
+      </div>
+      <div class="mock-ui reveal d1">
+        <div class="mock-bar"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span><span class="mock-bar-title">DeeX · Sell Crypto</span></div>
+        <div class="mock-body">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div class="mock-title" style="margin:0">Sell Crypto</div>
+            <div class="live-pill"><span class="live-dot"></span> Live rate</div>
+          </div>
+          <div class="mock-asset-row">
+            <div class="mock-asset-info">
+              <div class="ci ci-sm"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#F7931A"/><path d="M22.2 13.8c.3-2.1-1.3-3.2-3.5-4l.7-2.8-1.7-.4-.7 2.7-.9-.2.7-2.8-1.7-.4-.7 2.8-.7-.2-2.3-.6-.4 1.8s1.3.3 1.2.3c.7.2.8.6.8 1l-.8 3.3v.2l-1.2 4.6c-.1.2-.3.5-.7.4-.1 0-1.2-.3-1.2-.3l-.8 2 2.2.5.9.2-.7 2.9 1.7.4.7-2.8.9.2-.7 2.8 1.7.4.7-2.8c2.8.5 5 .3 5.9-2.2.7-2-.03-3.2-1.5-3.9 1.1-.3 1.9-1 2.1-2.5zm-3.7 5.2c-.5 2-3.9.9-5 .7l.9-3.5c1.1.3 4.6.8 4.1 2.8zm.5-5.2c-.5 1.8-3.3.9-4.3.7l.8-3.2c1 .3 4 .8 3.5 2.5z" fill="#fff"/></svg></div>
+              <div><div class="mock-asset-name">Bitcoin (BTC)</div><div class="mock-asset-bal">Balance: 0.045 BTC</div></div>
+            </div>
+            <span class="material-icons-round" style="color:var(--text-3);font-size:18px">expand_more</span>
+          </div>
+          <div class="mock-amount-row">
+            <div class="mock-amount-val">$500</div>
+            <div class="mock-max">MAX</div>
+          </div>
+          <div class="mock-rate-row">
+            <span class="mock-rate-lbl">You receive</span>
+            <span class="mock-rate-val">₦770,000.00</span>
+          </div>
+          <div class="mock-lock"><span class="material-icons-round">lock</span> Rate: ₦1,540/$ · Locked for 4:59</div>
+          <div class="mock-btn-row">
+            <div class="mock-btn-sec">Cancel</div>
+            <div class="mock-btn-pri"><span class="material-icons-round">arrow_forward</span> Confirm Sell</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Swap -->
+    <div class="feat-block flip reveal">
+      <div class="feat-text">
+        <div class="feat-label">Swap Crypto</div>
+        <h3>Switch from BTC to USDT<br><em>in seconds.</em></h3>
+        <p>Move from volatile assets to stables — or vice versa — without leaving DeeX. Real market cross-rates, transparent 0.5% fee, preview before you commit.</p>
+        <div class="feat-pills">
+          <span class="feat-pill"><span class="material-icons-round">check</span> BTC · ETH · USDT · SOL · USDC</span>
+          <span class="feat-pill"><span class="material-icons-round">check</span> 0.5% fee, shown upfront</span>
+          <span class="feat-pill"><span class="material-icons-round">check</span> Instant settlement</span>
+        </div>
+      </div>
+      <div class="mock-ui reveal d1">
+        <div class="mock-bar"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span><span class="mock-bar-title">DeeX · Swap</span></div>
+        <div class="mock-body">
+          <div class="mock-title">Swap Crypto</div>
+          <div style="position:relative">
+            <div class="mock-swap-from">
+              <div class="mock-swap-mini-label">You pay</div>
+              <div class="mock-swap-row">
+                <div><div class="mock-swap-val">0.01</div><div class="mock-swap-usd">≈ $630 USD</div></div>
+                <div class="mock-swap-asset">
+                  <div class="ci ci-sm"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#F7931A"/><path d="M22.2 13.8c.3-2.1-1.3-3.2-3.5-4l.7-2.8-1.7-.4-.7 2.7-.9-.2.7-2.8-1.7-.4-.7 2.8-.7-.2-2.3-.6-.4 1.8s1.3.3 1.2.3c.7.2.8.6.8 1l-.8 3.3v.2l-1.2 4.6c-.1.2-.3.5-.7.4-.1 0-1.2-.3-1.2-.3l-.8 2 2.2.5.9.2-.7 2.9 1.7.4.7-2.8.9.2-.7 2.8 1.7.4.7-2.8c2.8.5 5 .3 5.9-2.2.7-2-.03-3.2-1.5-3.9 1.1-.3 1.9-1 2.1-2.5zm-3.7 5.2c-.5 2-3.9.9-5 .7l.9-3.5c1.1.3 4.6.8 4.1 2.8zm.5-5.2c-.5 1.8-3.3.9-4.3.7l.8-3.2c1 .3 4 .8 3.5 2.5z" fill="#fff"/></svg></div>
+                  <span class="mock-swap-asset-name">BTC</span>
+                </div>
+              </div>
+            </div>
+            <div class="mock-swap-toggle"><span class="material-icons-round">swap_vert</span></div>
+            <div class="mock-swap-to">
+              <div class="mock-swap-mini-label">You receive</div>
+              <div class="mock-swap-row">
+                <div><div class="mock-swap-val">626.85</div><div class="mock-swap-usd">After 0.5% fee</div></div>
+                <div class="mock-swap-asset">
+                  <div class="ci ci-sm"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#26A17B"/><path d="M17.2 17.6v-.01c-.07.01-.43.03-1.23.03-.64 0-1.08-.02-1.24-.03v.01C10.6 17.4 7.6 16.6 7.6 15.6s3-1.8 7.13-2v2.57c.16.01.61.04 1.25.04.76 0 1.14-.03 1.22-.04V13.6c4.12.2 7.1 1 7.1 2s-2.98 1.8-7.1 2zm0-4.3V11h5.7V8.12H9.1V11h5.7v2.3C10.18 13.56 6.5 14.6 6.5 15.8c0 1.19 3.68 2.23 8.3 2.48v8.88h2.4V18.3c4.6-.25 8.28-1.3 8.28-2.48 0-1.19-3.68-2.23-8.28-2.49z" fill="#fff"/></svg></div>
+                  <span class="mock-swap-asset-name">USDT</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-fee"><span class="mock-fee-lbl">Fee (0.5%)</span><span class="mock-fee-val">3.15 USDT</span></div>
+          <button class="mock-swap-btn"><span class="material-icons-round">preview</span> Preview Swap</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Withdraw -->
+    <div class="feat-block reveal">
+      <div class="feat-text">
+        <div class="feat-label">Withdraw Crypto</div>
+        <h3>Move your crypto<br><em>anywhere, anytime.</em></h3>
+        <p>DeeX is not a walled garden. Withdraw to any external wallet on the correct network. Fees shown upfront, PIN-protected for security.</p>
+        <div class="feat-pills">
+          <span class="feat-pill"><span class="material-icons-round">check</span> BTC, ETH, USDT, SOL</span>
+          <span class="feat-pill"><span class="material-icons-round">check</span> Multi-network support</span>
+          <span class="feat-pill"><span class="material-icons-round">check</span> PIN confirmation</span>
+          <span class="feat-pill"><span class="material-icons-round">check</span> Network fee shown upfront</span>
+        </div>
+      </div>
+      <div class="mock-ui reveal d1">
+        <div class="mock-bar"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span><span class="mock-bar-title">DeeX · Withdraw</span></div>
+        <div class="mock-body">
+          <div class="mock-title">Withdraw USDT</div>
+          <div class="mock-steps">
+            <div class="mock-step-bar done"></div>
+            <div class="mock-step-bar done"></div>
+            <div class="mock-step-bar active"></div>
+            <div class="mock-step-bar"></div>
+            <div class="mock-step-bar"></div>
+          </div>
+          <div class="mock-field">
+            <div class="mock-field-lbl">Wallet address</div>
+            <div class="mock-field-val">TQn5x9BKv...R3mPq84</div>
+          </div>
+          <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px">Network</div>
+          <div class="mock-net-pills">
+            <div class="mock-net-pill on">TRC-20</div>
+            <div class="mock-net-pill">ERC-20</div>
+            <div class="mock-net-pill">BEP-20</div>
+          </div>
+          <div class="mock-field">
+            <div class="mock-field-lbl">Amount</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="mock-field-val" style="font-family:var(--font);font-size:17px;font-weight:800;color:var(--text-1)">500 USDT</div>
+              <div style="font-size:11px;color:var(--text-3)">Bal: 1,240</div>
+            </div>
+          </div>
+          <div class="mock-fee-warn">
+            <div class="mock-fee-warn-lbl"><span class="material-icons-round">info</span> Network fee</div>
+            <div class="mock-fee-warn-val">1.00 USDT</div>
+          </div>
+          <button class="mock-wd-btn"><span class="material-icons-round">lock</span> Enter PIN to confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     RATES
+============================================================ -->
+<section class="rates-sec" id="rates">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow"><span class="material-icons-round">show_chart</span> Today's rates</div>
+      <h2 class="section-heading">What you'll actually<br><em>get paid.</em></h2>
+      <p class="section-sub">Rates shown as Naira per $1. No estimates, no minimums — what you see is what lands in your bank.</p>
+    </div>
+    <div class="rates-grid">
+      <div class="rates-card reveal">
+        <div class="rates-card-top">
+          <div class="ci ci-sm"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#F7931A"/><path d="M22.2 13.8c.3-2.1-1.3-3.2-3.5-4l.7-2.8-1.7-.4-.7 2.7-.9-.2.7-2.8-1.7-.4-.7 2.8-.7-.2-2.3-.6-.4 1.8s1.3.3 1.2.3c.7.2.8.6.8 1l-.8 3.3v.2l-1.2 4.6c-.1.2-.3.5-.7.4-.1 0-1.2-.3-1.2-.3l-.8 2 2.2.5.9.2-.7 2.9 1.7.4.7-2.8.9.2-.7 2.8 1.7.4.7-2.8c2.8.5 5 .3 5.9-2.2.7-2-.03-3.2-1.5-3.9 1.1-.3 1.9-1 2.1-2.5zm-3.7 5.2c-.5 2-3.9.9-5 .7l.9-3.5c1.1.3 4.6.8 4.1 2.8zm.5-5.2c-.5 1.8-3.3.9-4.3.7l.8-3.2c1 .3 4 .8 3.5 2.5z" fill="#fff"/></svg></div>
+          <span class="rates-card-name">Bitcoin</span>
+        </div>
+        <div class="rates-card-rate">₦1,540</div>
+        <div class="rates-card-label">per $1 (BTC sell rate)</div>
+        <div class="rates-card-change"><span class="material-icons-round">trending_up</span> +2.4% today</div>
+      </div>
+      <div class="rates-card reveal d1">
+        <div class="rates-card-top">
+          <div class="ci ci-sm"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#627EEA"/><path d="M16.498 4l-.09.31v15.43l.09.09 7.5-4.43L16.498 4z" fill="#C9D5FA"/><path d="M16.498 4L9 15.4l7.498 4.43V4z" fill="#fff"/><path d="M16.498 21.286l-.09.113v5.48l.09.272 7.5-10.56-7.5 4.695z" fill="#C9D5FA"/><path d="M16.498 27.15v-5.864L9 16.59l7.498 10.56z" fill="#fff"/><path d="M16.498 19.83l7.5-4.43-7.5-3.41v7.84z" fill="#A2B3F5"/><path d="M9 15.4l7.498 4.43V11.99L9 15.4z" fill="#C9D5FA"/></svg></div>
+          <span class="rates-card-name">Ethereum</span>
+        </div>
+        <div class="rates-card-rate">₦1,535</div>
+        <div class="rates-card-label">per $1 (ETH sell rate)</div>
+        <div class="rates-card-change"><span class="material-icons-round">trending_up</span> +1.8% today</div>
+      </div>
+      <div class="rates-card reveal d2">
+        <div class="rates-card-top">
+          <div class="ci ci-sm"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#26A17B"/><path d="M17.2 17.6v-.01c-.07.01-.43.03-1.23.03-.64 0-1.08-.02-1.24-.03v.01C10.6 17.4 7.6 16.6 7.6 15.6s3-1.8 7.13-2v2.57c.16.01.61.04 1.25.04.76 0 1.14-.03 1.22-.04V13.6c4.12.2 7.1 1 7.1 2s-2.98 1.8-7.1 2zm0-4.3V11h5.7V8.12H9.1V11h5.7v2.3C10.18 13.56 6.5 14.6 6.5 15.8c0 1.19 3.68 2.23 8.3 2.48v8.88h2.4V18.3c4.6-.25 8.28-1.3 8.28-2.48 0-1.19-3.68-2.23-8.28-2.49z" fill="#fff"/></svg></div>
+          <span class="rates-card-name">Tether</span>
+        </div>
+        <div class="rates-card-rate">₦1,535</div>
+        <div class="rates-card-label">per $1 (USDT sell rate)</div>
+        <div class="rates-card-change"><span class="material-icons-round">trending_up</span> +0.3% today</div>
+      </div>
+      <div class="rates-card reveal d3">
+        <div class="rates-card-top">
+          <div class="ci ci-sm"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#2775CA"/><path d="M16 6c5.52 0 10 4.48 10 10S21.52 26 16 26 6 21.52 6 16 10.48 6 16 6zm0 1.5A8.5 8.5 0 1 0 24.5 16 8.5 8.5 0 0 0 16 7.5zm.88 2.3c3.36.43 5.62 2.96 5.62 6.2s-2.26 5.77-5.62 6.2v1.07h-1.57v-1.08C11.93 21.74 9.5 19.2 9.5 15.82h2.04c0 2.5 1.72 4.28 4.46 4.54V13.5c-2.43-.55-4.46-1.78-4.46-4.2 0-2.84 2.1-4.76 4.77-5.06V3.18h1.57v1.06zm1.57 5.38v5.64c1.77-.4 2.94-1.72 2.94-3.1 0-1.58-.95-2.3-2.94-2.54zm-3.14-5.25c-1.63.27-2.73 1.38-2.73 2.75 0 1.26.84 2.1 2.73 2.5V10z" fill="#fff"/></svg></div>
+          <span class="rates-card-name">USD Coin</span>
+        </div>
+        <div class="rates-card-rate">₦1,530</div>
+        <div class="rates-card-label">per $1 (USDC sell rate)</div>
+        <div class="rates-card-change"><span class="material-icons-round">trending_up</span> +0.2% today</div>
+      </div>
+      <div class="rates-card reveal d4">
+        <div class="rates-card-top">
+          <div class="ci ci-sm"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#9945FF"/><path d="M9.5 21.3a.7.7 0 0 1 .5-.2h13.5a.35.35 0 0 1 .25.6l-2.5 2.5a.7.7 0 0 1-.5.2H7.25a.35.35 0 0 1-.25-.6l2.5-2.5zM9.5 7.8a.72.72 0 0 1 .5-.2h13.5a.35.35 0 0 1 .25.6l-2.5 2.5a.7.7 0 0 1-.5.2H7.25a.35.35 0 0 1-.25-.6L9.5 7.8zm11.5 6.6a.35.35 0 0 1-.25.6H7.25a.35.35 0 0 1-.25-.6l2.5-2.5a.7.7 0 0 1 .5-.2h13.5a.35.35 0 0 1 .25.6l-2.5 2.5-.25.1z" fill="url(#sg)"/><defs><linearGradient id="sg" x1="6" y1="16" x2="26" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#9945FF"/><stop offset=".5" stop-color="#14F195"/><stop offset="1" stop-color="#00C2FF"/></linearGradient></defs></svg></div>
+          <span class="rates-card-name">Solana</span>
+        </div>
+        <div class="rates-card-rate">₦1,532</div>
+        <div class="rates-card-label">per $1 (SOL sell rate)</div>
+        <div class="rates-card-change"><span class="material-icons-round">trending_up</span> +3.1% today</div>
+      </div>
+    </div>
+    <div class="rates-cta reveal">
+      <a href="#signup">
+        <span class="material-icons-round">arrow_forward</span>
+        Trade at these rates · Claim ₦50K
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     WHATSAPP SOCIAL PROOF
+============================================================ -->
+<section class="wa-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow"><span class="material-icons-round">forum</span> Real customers · Real chats</div>
+      <h2 class="section-heading">What people say to<br>the <em>CEO directly.</em></h2>
+      <p class="section-sub">These are real WhatsApp conversations. Speed, rates, reliability — from the people who trade every day.</p>
+    </div>
+    <div class="wa-grid">
+
+      <!-- Card 1 -->
+      <div class="wa-card reveal">
+        <div class="wa-header">
+          <div class="wa-avatar wa-av-1">TC</div>
+          <div>
+            <div class="wa-contact-name">Tunde Collins</div>
+            <div class="wa-contact-status">online</div>
+          </div>
+          <div class="wa-header-icon"><span class="material-icons-round">more_vert</span></div>
+        </div>
+        <div class="wa-chat">
+          <div class="wa-msg wa-msg-in">
+            Bros I just sold my BTC on DeeX. Money entered my account in 3 minutes. 3 MINUTES!!
+            <div class="wa-msg-time">9:14 AM</div>
+          </div>
+          <div class="wa-msg wa-msg-in">
+            I've been using P2P traders for 2 years. Where was DeeX all this time?
+            <div class="wa-msg-time">9:14 AM</div>
+          </div>
+          <div class="wa-msg wa-msg-out">
+            Glad you made it in. Tell your people — this is what we built it for.
+            <div class="wa-msg-time">9:17 AM · CEO</div>
+          </div>
+        </div>
+        <div class="wa-footer">
+          <div class="wa-footer-avatar">C</div>
+          <div class="wa-footer-text"><strong>CEO, DeeX</strong> replied · 3 min later</div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="wa-card reveal d1">
+        <div class="wa-header">
+          <div class="wa-avatar wa-av-2">AO</div>
+          <div>
+            <div class="wa-contact-name">Ayo Okonkwo</div>
+            <div class="wa-contact-status">online</div>
+          </div>
+          <div class="wa-header-icon"><span class="material-icons-round">more_vert</span></div>
+        </div>
+        <div class="wa-chat">
+          <div class="wa-msg wa-msg-in">
+            Your rate is better than everywhere I checked. Sold USDT at ₦1,535. Every other app was offering ₦1,490.
+            <div class="wa-msg-time">2:31 PM</div>
+          </div>
+          <div class="wa-msg wa-msg-in">
+            Thank you boss. You are doing well for us Nigerians.
+            <div class="wa-msg-time">2:32 PM</div>
+          </div>
+          <div class="wa-msg wa-msg-out">
+            That's the goal. More volume = better rates. Keep trading.
+            <div class="wa-msg-time">2:38 PM · CEO</div>
+          </div>
+        </div>
+        <div class="wa-footer">
+          <div class="wa-footer-avatar">C</div>
+          <div class="wa-footer-text"><strong>CEO, DeeX</strong> replied · 6 min later</div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="wa-card reveal d2">
+        <div class="wa-header">
+          <div class="wa-avatar wa-av-3">FN</div>
+          <div>
+            <div class="wa-contact-name">Fatima Nnamdi</div>
+            <div class="wa-contact-status">online</div>
+          </div>
+          <div class="wa-header-icon"><span class="material-icons-round">more_vert</span></div>
+        </div>
+        <div class="wa-chat">
+          <div class="wa-msg wa-msg-in">
+            I was scared at first to try a new app. But my colleague sent me. Sold ETH yesterday, money came in 4 minutes.
+            <div class="wa-msg-time">7:08 PM</div>
+          </div>
+          <div class="wa-msg wa-msg-in">
+            Even got ₦50k bonus in my wallet. DeeX is different wallahi.
+            <div class="wa-msg-time">7:09 PM</div>
+          </div>
+          <div class="wa-msg wa-msg-out">
+            Welcome to the tribe Fatima. Security and speed — that's the promise.
+            <div class="wa-msg-time">7:15 PM · CEO</div>
+          </div>
+        </div>
+        <div class="wa-footer">
+          <div class="wa-footer-avatar">C</div>
+          <div class="wa-footer-text"><strong>CEO, DeeX</strong> replied · 7 min later</div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="wa-card reveal">
+        <div class="wa-header">
+          <div class="wa-avatar wa-av-4">KA</div>
+          <div>
+            <div class="wa-contact-name">Kola Adeyinka</div>
+            <div class="wa-contact-status">online</div>
+          </div>
+          <div class="wa-header-icon"><span class="material-icons-round">more_vert</span></div>
+        </div>
+        <div class="wa-chat">
+          <div class="wa-msg wa-msg-in">
+            Oga I had a problem with a transaction and your support team fixed it in 10 minutes. Not 10 hours. 10 MINUTES.
+            <div class="wa-msg-time">11:42 AM</div>
+          </div>
+          <div class="wa-msg wa-msg-out">
+            That's the standard. Anytime anything happens, we handle it fast.
+            <div class="wa-msg-time">11:48 AM · CEO</div>
+          </div>
+          <div class="wa-msg wa-msg-in">
+            I'm bringing all my crypto friends here. This is the real deal.
+            <div class="wa-msg-time">11:49 AM</div>
+          </div>
+        </div>
+        <div class="wa-footer">
+          <div class="wa-footer-avatar">C</div>
+          <div class="wa-footer-text"><strong>CEO, DeeX</strong> replied · 6 min later</div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="wa-card reveal d1">
+        <div class="wa-header">
+          <div class="wa-avatar wa-av-5">CE</div>
+          <div>
+            <div class="wa-contact-name">Chidi Ezeh</div>
+            <div class="wa-contact-status">online</div>
+          </div>
+          <div class="wa-header-icon"><span class="material-icons-round">more_vert</span></div>
+        </div>
+        <div class="wa-chat">
+          <div class="wa-msg wa-msg-in">
+            I've been using 4 different apps. DeeX has the best combo of speed and rate. No be lie.
+            <div class="wa-msg-time">4:20 PM</div>
+          </div>
+          <div class="wa-msg wa-msg-in">
+            That BTC rate of ₦1,540/$ no be small thing. Other apps capping at ₦1,490.
+            <div class="wa-msg-time">4:21 PM</div>
+          </div>
+          <div class="wa-msg wa-msg-out">
+            We work hard to give the best rate to our traders. Appreciate the loyalty.
+            <div class="wa-msg-time">4:26 PM · CEO</div>
+          </div>
+        </div>
+        <div class="wa-footer">
+          <div class="wa-footer-avatar">C</div>
+          <div class="wa-footer-text"><strong>CEO, DeeX</strong> replied · 5 min later</div>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="wa-card reveal d2">
+        <div class="wa-header">
+          <div class="wa-avatar wa-av-6">MU</div>
+          <div>
+            <div class="wa-contact-name">Miriam Usman</div>
+            <div class="wa-contact-status">online</div>
+          </div>
+          <div class="wa-header-icon"><span class="material-icons-round">more_vert</span></div>
+        </div>
+        <div class="wa-chat">
+          <div class="wa-msg wa-msg-in">
+            DeeX CEO thank you sir. I told my husband about DeeX and now he uses it too. Family account!
+            <div class="wa-msg-time">6:55 PM</div>
+          </div>
+          <div class="wa-msg wa-msg-out">
+            That's a family we're happy to have. Thank you for spreading the word Miriam.
+            <div class="wa-msg-time">7:01 PM · CEO</div>
+          </div>
+          <div class="wa-msg wa-msg-in">
+            Best rates in Nigeria. We no dey collect less!
+            <div class="wa-msg-time">7:02 PM</div>
+          </div>
+        </div>
+        <div class="wa-footer">
+          <div class="wa-footer-avatar">C</div>
+          <div class="wa-footer-text"><strong>CEO, DeeX</strong> replied · 6 min later</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     APP MOCKUP + DOWNLOAD
+============================================================ -->
+<section class="app-section" id="app">
+  <div class="container">
+    <div class="app-inner">
+      <div class="app-text">
+        <div class="section-eyebrow reveal"><span class="material-icons-round">smartphone</span> Mobile app</div>
+        <h2 class="reveal d1">Trade on the go.<br><em>Anytime. Anywhere.</em></h2>
+        <p class="reveal d2">The full DeeX experience in your pocket. Buy, sell, swap, pay bills, and manage your wallet — from any Android or iPhone.</p>
+        <div class="store-btns reveal d3">
+          <a href="https://play.google.com/store" class="store-btn">
+            <div class="store-btn-icon">
+              <!-- Play Store icon -->
+              <svg width="26" height="26" viewBox="0 0 24 24"><path d="M3.18 23.76c.34.19.74.18 1.08-.02l11.44-6.61-2.5-2.5-10.02 9.13zm-1.18-20.4v17.28c0 .46.26.87.66 1.07l9.4-9.35-9.4-9.35c-.4.2-.66.61-.66 1.07v.28zm20.42 8.14L19.3 9.6 16.54 12l2.76 2.4 3.12-1.82c.75-.44.75-1.24 0-1.68zm-16.37-9.89l11.44 6.61-2.5 2.5-10.02-9.13.08.02z" fill="url(#gp)"/><defs><linearGradient id="gp" x1="3" y1="12" x2="22" y2="12" gradientUnits="userSpaceOnUse"><stop stop-color="#00D2FF"/><stop offset="1" stop-color="#3A7BD5"/></linearGradient></defs></svg>
+            </div>
+            <div class="store-btn-copy">
+              <div class="store-btn-sub">Get it on</div>
+              <div class="store-btn-name">Google Play</div>
+            </div>
+          </a>
+          <a href="https://apps.apple.com" class="store-btn">
+            <div class="store-btn-icon">
+              <!-- Apple icon -->
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="var(--text-1)"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            </div>
+            <div class="store-btn-copy">
+              <div class="store-btn-sub">Download on the</div>
+              <div class="store-btn-name">App Store</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Phone mockup -->
+      <div class="phone-wrap reveal d1">
+        <div class="phone-glow"></div>
+        <div class="phone">
+          <div class="phone-shell">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+
+              <!-- App nav -->
+              <div class="app-nav-bar">
+                <div class="app-greeting">
+                  Good morning
+                  <strong>Tunde</strong>
+                </div>
+                <div class="app-avatar"></div>
+              </div>
+
+              <!-- Balance card -->
+              <div class="app-balance-card">
+                <div class="app-balance-label">Total Wallet Value</div>
+                <div class="app-balance-val">$1,240.50</div>
+                <div class="app-balance-sub">≈ ₦1,910,370 · Updated now</div>
+              </div>
+
+              <!-- Quick actions -->
+              <div class="app-action-row">
+                <div class="app-action">
+                  <span class="material-icons-round">south_west</span>
+                  <div class="app-action-lbl">Deposit</div>
+                </div>
+                <div class="app-action">
+                  <span class="material-icons-round">north_east</span>
+                  <div class="app-action-lbl">Sell</div>
+                </div>
+                <div class="app-action">
+                  <span class="material-icons-round">swap_horiz</span>
+                  <div class="app-action-lbl">Swap</div>
+                </div>
+                <div class="app-action">
+                  <span class="material-icons-round">more_horiz</span>
+                  <div class="app-action-lbl">More</div>
+                </div>
+              </div>
+
+              <!-- Mini rates -->
+              <div class="app-rates-mini">
+                <div class="app-rates-label">Live rates</div>
+                <div class="app-rate-row">
+                  <div class="app-rate-asset">
+                    <svg width="16" height="16" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#F7931A"/><path d="M22.2 13.8c.3-2.1-1.3-3.2-3.5-4l.7-2.8-1.7-.4-.7 2.7-.9-.2.7-2.8-1.7-.4-.7 2.8-.7-.2-2.3-.6-.4 1.8s1.3.3 1.2.3c.7.2.8.6.8 1l-.8 3.3v.2l-1.2 4.6c-.1.2-.3.5-.7.4-.1 0-1.2-.3-1.2-.3l-.8 2 2.2.5.9.2-.7 2.9 1.7.4.7-2.8.9.2-.7 2.8 1.7.4.7-2.8c2.8.5 5 .3 5.9-2.2.7-2-.03-3.2-1.5-3.9 1.1-.3 1.9-1 2.1-2.5zm-3.7 5.2c-.5 2-3.9.9-5 .7l.9-3.5c1.1.3 4.6.8 4.1 2.8zm.5-5.2c-.5 1.8-3.3.9-4.3.7l.8-3.2c1 .3 4 .8 3.5 2.5z" fill="#fff"/></svg>
+                    BTC
+                  </div>
+                  <div class="app-rate-ngn">₦1,540/$</div>
+                </div>
+                <div class="app-rate-row">
+                  <div class="app-rate-asset">
+                    <svg width="16" height="16" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#26A17B"/><path d="M17.2 17.6v-.01c-.07.01-.43.03-1.23.03-.64 0-1.08-.02-1.24-.03v.01C10.6 17.4 7.6 16.6 7.6 15.6s3-1.8 7.13-2v2.57c.16.01.61.04 1.25.04.76 0 1.14-.03 1.22-.04V13.6c4.12.2 7.1 1 7.1 2s-2.98 1.8-7.1 2zm0-4.3V11h5.7V8.12H9.1V11h5.7v2.3C10.18 13.56 6.5 14.6 6.5 15.8c0 1.19 3.68 2.23 8.3 2.48v8.88h2.4V18.3c4.6-.25 8.28-1.3 8.28-2.48 0-1.19-3.68-2.23-8.28-2.49z" fill="#fff"/></svg>
+                    USDT
+                  </div>
+                  <div class="app-rate-ngn">₦1,535/$</div>
+                </div>
+              </div>
+
+            </div>
+            <div class="phone-home"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TESTIMONIALS
+============================================================ -->
+<section class="testi-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow"><span class="material-icons-round">star</span> Reviews</div>
+      <h2 class="section-heading">100,000 Nigerians<br>already <em>cashed out.</em></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-quote-mark">"</div>
+        <p class="testi-text">Traded BTC and money hit my account before I could even screenshot the confirmation. This app is too fast.</p>
+        <div class="testi-author">
+          <div class="testi-av av-a">U</div>
+          <div>
+            <div class="testi-name">Uche Okonkwo</div>
+            <div class="testi-loc">Lagos</div>
+            <div class="testi-stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal d1">
+        <div class="testi-quote-mark">"</div>
+        <p class="testi-text">Super easy, super fast, zero wahala. I've been burned by P2P traders too many times. DeeX is the only way I sell now.</p>
+        <div class="testi-author">
+          <div class="testi-av av-b">M</div>
+          <div>
+            <div class="testi-name">Michael Adeyemi</div>
+            <div class="testi-loc">Abuja</div>
+            <div class="testi-stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal d2">
+        <div class="testi-quote-mark">"</div>
+        <p class="testi-text">Good rates and smooth deals. I've recommended DeeX to everyone in my trading group. None of them have complained.</p>
+        <div class="testi-author">
+          <div class="testi-av av-c">C</div>
+          <div>
+            <div class="testi-name">Clara Eze</div>
+            <div class="testi-loc">Port Harcourt</div>
+            <div class="testi-stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FAQ
+============================================================ -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow"><span class="material-icons-round">help_outline</span> FAQ</div>
+      <h2 class="section-heading">Questions before<br>you <em>trade?</em></h2>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item reveal" onclick="toggleFaq(this)">
+        <div class="faq-q">How long does it take to receive Naira?<span class="material-icons-round">expand_more</span></div>
+        <div class="faq-a"><div class="faq-a-inner">Most trades complete in under 5 minutes from the moment your crypto arrives at the deposit address. Bitcoin may take slightly longer due to network confirmations — typically 1 to 3 blocks.</div></div>
+      </div>
+      <div class="faq-item reveal d1" onclick="toggleFaq(this)">
+        <div class="faq-q">Is the rate I see the rate I actually get?<span class="material-icons-round">expand_more</span></div>
+        <div class="faq-a"><div class="faq-a-inner">Yes. When you initiate a sell, the rate is locked for a time window. As long as your crypto arrives within that window, you get exactly the rate shown — no surprises.</div></div>
+      </div>
+      <div class="faq-item reveal" onclick="toggleFaq(this)">
+        <div class="faq-q">Do I need to fund a DeeX wallet first?<span class="material-icons-round">expand_more</span></div>
+        <div class="faq-a"><div class="faq-a-inner">No. You can sell directly from an external wallet. Enter your amount, get the deposit address, send crypto from your own wallet, and Naira goes straight to your bank.</div></div>
+      </div>
+      <div class="faq-item reveal d1" onclick="toggleFaq(this)">
+        <div class="faq-q">Which networks are supported?<span class="material-icons-round">expand_more</span></div>
+        <div class="faq-a"><div class="faq-a-inner">BTC supports Bitcoin Mainnet and Lightning. ETH supports ERC-20. USDT supports TRC-20, ERC-20, and BEP-20. SOL supports Solana Mainnet. Always confirm the network before sending — wrong network transfers cannot be recovered.</div></div>
+      </div>
+      <div class="faq-item reveal" onclick="toggleFaq(this)">
+        <div class="faq-q">When does the ₦50,000 bonus unlock?<span class="material-icons-round">expand_more</span></div>
+        <div class="faq-a"><div class="faq-a-inner">The ₦50,000 credit is issued after your first completed trade. It can be used toward bill payments, swap fees, or future transactions. Not available as direct cash withdrawal. Valid 30 days from account creation.</div></div>
+      </div>
+      <div class="faq-item reveal d1" onclick="toggleFaq(this)">
+        <div class="faq-q">Is DeeX safe?<span class="material-icons-round">expand_more</span></div>
+        <div class="faq-a"><div class="faq-a-inner">DeeX uses 3-tier KYC, BVN encryption, and PIN-protected withdrawals. Your funds are tracked individually — not held in a shared pool. We do not store payment credentials.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FINAL CTA
+============================================================ -->
+<section class="final-cta">
+  <div class="container">
+    <div class="final-cta-card reveal">
+      <div class="final-glow"></div>
+      <h2>₦50,000 is waiting<br>in your <em>wallet.</em></h2>
+      <p>Sign up in 60 seconds. Your temporary password arrives by SMS. The bonus unlocks after your first trade.</p>
+      <div class="final-form" id="finalFormWrap">
+        <input type="email" id="fEmail" placeholder="Email address"/>
+        <input type="tel" id="fPhone" placeholder="Phone (08012…)"/>
+        <button onclick="submitFinal()">
+          <span class="material-icons-round">arrow_forward</span>
+          Claim ₦50K
+        </button>
+      </div>
+      <div class="final-success" id="finalOk">
+        <p>Account created — check your SMS</p>
+        <small>Your temporary password and ₦50,000 wallet credit are on their way.</small>
+      </div>
+      <p class="final-note" id="finalNote">New accounts only · No credit card required · Bonus valid 30 days</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo"><div class="logo-mark">D</div>DeeX</div>
+        <p>Nigeria's all-in-one crypto trading platform. Sell, swap, and withdraw digital assets with instant Naira payouts.</p>
+        <div class="footer-socials">
+          <a href="https://www.instagram.com/deex_options" class="footer-soc" aria-label="Instagram"><span class="material-icons-round">photo_camera</span></a>
+          <a href="https://twitter.com/deexoptions" class="footer-soc" aria-label="Twitter"><span class="material-icons-round">alternate_email</span></a>
+          <a href="https://www.facebook.com/profile.php?id=100089488502613" class="footer-soc" aria-label="Facebook"><span class="material-icons-round">facebook</span></a>
+          <a href="https://www.linkedin.com/company/deexoptions" class="footer-soc" aria-label="LinkedIn"><span class="material-icons-round">work</span></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#how-it-works">How it works</a></li>
+          <li><a href="#features">Sell Crypto</a></li>
+          <li><a href="#features">Swap Crypto</a></li>
+          <li><a href="#features">Withdraw</a></li>
+          <li><a href="https://deexoptions.com/merchant">Merchant</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="https://deexoptions.com/about">About Us</a></li>
+          <li><a href="https://deexoptions.com/blogs">Blog</a></li>
+          <li><a href="https://deexoptions.com/about#contacts">Contact</a></li>
+          <li><a href="https://deexoptions.com/fantasy">Football Fantasy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="https://wa.link/tskrf5">WhatsApp (Bulk)</a></li>
+          <li><a href="mailto:deexoptions@gmail.com">Email Support</a></li>
+          <li><a href="https://deexoptions.com/terms">Terms</a></li>
+          <li><a href="https://deexoptions.com/privacy">Privacy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 DeeX · Deexoptions. All rights reserved.</span>
+      <div class="footer-bottom-links">
+        <a href="https://deexoptions.com/terms">Terms</a>
+        <a href="https://deexoptions.com/privacy">Privacy</a>
+        <a href="https://deexoptions.com/about#contacts">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     JS
+============================================================ -->
+<script>
+/* ---- rate calc ---- */
+var curRate = 1540, curSym = 'BTC';
+function pickRate(el, sym, rate){
+  document.querySelectorAll('.rate-row').forEach(r=>r.classList.remove('active'));
+  el.classList.add('active');
+  curRate=rate; curSym=sym;
+  document.getElementById('rateLabel').textContent=rate.toLocaleString();
+  document.getElementById('curLabel').textContent=sym;
+  recalc();
+}
+function recalc(){
+  var usd=parseFloat(document.getElementById('calcAmt').value)||0;
+  var ngn=usd*curRate;
+  document.getElementById('calcOut').textContent='₦'+ngn.toLocaleString('en-NG',{maximumFractionDigits:0});
+}
+
+/* ---- forms ---- */
+function submitHero(){
+  var e=document.getElementById('hEmail').value.trim();
+  var p=document.getElementById('hPhone').value.trim();
+  if(!e||!p){alert('Please enter your email and phone number.');return;}
+  document.getElementById('heroFields').style.display='none';
+  document.getElementById('heroSuccess').style.display='block';
+}
+function submitFinal(){
+  var e=document.getElementById('fEmail').value.trim();
+  var p=document.getElementById('fPhone').value.trim();
+  if(!e||!p){alert('Please enter your email and phone number.');return;}
+  document.getElementById('finalFormWrap').style.display='none';
+  document.getElementById('finalNote').style.display='none';
+  document.getElementById('finalOk').style.display='block';
+}
+
+/* ---- FAQ ---- */
+function toggleFaq(item){
+  var open=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(f=>f.classList.remove('open'));
+  if(!open)item.classList.add('open');
+}
+
+/* ---- mobile nav ---- */
+function openNav(){document.getElementById('mobileNav').classList.add('open')}
+function closeNav(){document.getElementById('mobileNav').classList.remove('open')}
+function scrollTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+
+/* ---- scroll reveal ---- */
+var io=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:.1,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+</script>
+</body>
+</html>

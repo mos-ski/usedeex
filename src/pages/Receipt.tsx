@@ -42,6 +42,7 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
     { label: "Provider", value: d?.provider || "MTN" },
     { label: "Phone Number", value: d?.phone || "08103674006" },
     { label: "Amount", value: `₦${d?.amount || "2,000"}`, color: "text-primary" },
+    { label: "Payment Method", value: d?.paymentMethod || "Naira Wallet" },
     { label: "Hash ID", value: `AIR-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
     { label: "Status", value: d?.status || "Completed", isBadge: true },
     { label: "Timestamp", value: d?.date || new Date().toLocaleString() },
@@ -51,6 +52,7 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
     { label: "Provider", value: d?.provider || "MTN" },
     { label: "Phone Number", value: d?.phone || "08103674006" },
     { label: "Plan", value: d?.plan || "2GB - ₦1,000" },
+    { label: "Payment Method", value: d?.paymentMethod || "Naira Wallet" },
     { label: "Hash ID", value: `DAT-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
     { label: "Status", value: d?.status || "Completed", isBadge: true },
     { label: "Timestamp", value: d?.date || new Date().toLocaleString() },
@@ -61,6 +63,7 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
     { label: "Meter Number", value: d?.meter || "45123456789" },
     { label: "Amount", value: `₦${d?.amount || "15,000"}`, color: "text-primary" },
     { label: "Token", value: d?.token || "1234-5678-9012-3456" },
+    { label: "Payment Method", value: d?.paymentMethod || "Naira Wallet" },
     { label: "Hash ID", value: `ELC-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
     { label: "Status", value: d?.status || "Completed", isBadge: true },
     { label: "Timestamp", value: d?.date || new Date().toLocaleString() },
@@ -70,6 +73,7 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
     { label: "Platform", value: d?.provider || "Bet9ja" },
     { label: "User ID", value: d?.userId || "BET9JA_1234" },
     { label: "Amount", value: `₦${d?.amount || "5,000"}`, color: "text-primary" },
+    { label: "Payment Method", value: d?.paymentMethod || "Naira Wallet" },
     { label: "Hash ID", value: `BET-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
     { label: "Status", value: d?.status || "Completed", isBadge: true },
     { label: "Timestamp", value: d?.date || new Date().toLocaleString() },
@@ -249,7 +253,7 @@ const Receipt = () => {
       <PageTransition>
         <div className="px-4 pt-4">
           <div className="flex items-center mb-8">
-            <button onClick={() => navigate(-1)} className="absolute"><ArrowLeft className="w-6 h-6 text-foreground" /></button>
+            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
             <h2 className="text-lg font-bold text-foreground w-full text-center">Receipt</h2>
           </div>
 
