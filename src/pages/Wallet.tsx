@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ChevronRight, Wallet } from "lucide-react";
+import { Eye, EyeOff, ChevronRight, Wallet as WalletIcon } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
@@ -64,7 +64,7 @@ const Wallet = () => {
           <button onClick={() => navigate("/naira-wallet")} className="w-full bg-gradient-to-r from-primary/10 to-success/5 border border-primary/20 rounded-xl px-4 py-3.5 flex items-center justify-between mb-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center">
-                <Wallet className="w-5 h-5 text-primary" />
+                <WalletIcon className="w-5 h-5 text-primary" />
               </div>
               <div className="text-left">
                 <p className="text-sm font-medium text-foreground">Naira Wallet</p>

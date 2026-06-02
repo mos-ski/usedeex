@@ -1,30 +1,154 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Eye, EyeOff, Plus, ArrowDownLeft, ArrowUpRight, ChevronRight, CheckCircle, Wallet } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, ArrowDownLeft, ArrowUpRight, ChevronRight, CheckCircle, Wallet, ShieldCheck } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
 import ProviderIcon from "@/components/ProviderIcon";
 import { nairaWalletBalance, nairaWalletTransactions, nairaBanks } from "@/data/nairaWalletData";
+import { toast } from "sonner";
 
-type Step = "home" | "topup-method" | "topup-amount" | "topup-review" | "topup-success";
+type Step = "requirements" | "home" | "topup-method" | "topup-amount" | "topup-review" | "topup-success";
+type RequirementField = {
+  key: string;
+  label: string;
+  type: "select" | "text" | "date";
+  placeholder: string;
+  options?: string[];
+};
+
+const oldUserNairaWalletRequirements: RequirementField[] = [
+  {
+    key: "gender",
+    label: "Gender",
+    type: "select",
+    placeholder: "Select your gender",
+    options: ["Male", "Female", "Prefer not to say"],
+  },
+  {
+    key: "stateOfResidence",
+    label: "State of Residence",
+    type: "select",
+    placeholder: "Select your state",
+    options: ["Abuja FCT", "Lagos", "Ogun", "Oyo", "Rivers", "Kano", "Kaduna", "Enugu", "Anambra", "Delta"],
+  },
+  {
+    key: "lga",
+    label: "Local Government Area",
+    type: "text",
+    placeholder: "Enter your LGA",
+  },
+  {
+    key: "address",
+    label: "Residential Address",
+    type: "text",
+    placeholder: "Enter your home address",
+  },
+];
+
+const oldUserNeedsNairaWalletRequirements = true;
 
 const NairaWallet = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<Step>("home");
+  const [step, setStep] = useState<Step>(oldUserNeedsNairaWalletRequirements ? "requirements" : "home");
   const [showBalance, setShowBalance] = useState(true);
   const [selectedBank, setSelectedBank] = useState(nairaBanks[0]);
   const [topupAmount, setTopupAmount] = useState("");
+  const [requirements, setRequirements] = useState<Record<string, string>>({});
 
   const formattedBalance = nairaWalletBalance.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const requiredFieldsComplete = oldUserNairaWalletRequirements.every((field) => requirements[field.key]?.trim());
 
   const goBack = () => {
+    if (step === "requirements") { navigate(-1); return; }
     if (step === "home") { navigate(-1); return; }
     const flow: Step[] = ["home", "topup-method", "topup-amount", "topup-review", "topup-success"];
     const idx = flow.indexOf(step);
     if (idx <= 0) setStep("home");
     else setStep(flow[idx - 1]);
   };
+
+  const updateRequirement = (key: string, value: string) => {
+    setRequirements((current) => ({ ...current, [key]: value }));
+  };
+
+  const createWallet = () => {
+    if (!requiredFieldsComplete) return;
+    toast.success("Naira Wallet created successfully");
+    setStep("home");
+  };
+
+  if (step === "requirements") {
+    return (
+      <MobileLayout hideNav>
+        <PageTransition>
+          <div className="px-4 pt-4 pb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <button onClick={goBack} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                <ArrowLeft className="w-5 h-5 text-foreground" />
+              </button>
+              <h2 className="text-lg font-bold text-foreground">Create Naira Wallet</h2>
+            </div>
+
+            <div className="bg-gradient-to-br from-primary/15 to-success/10 border border-primary/20 rounded-2xl p-5 mb-6">
+              <div className="w-11 h-11 rounded-full bg-primary/15 flex items-center justify-center mb-4">
+                <ShieldCheck className="w-6 h-6 text-primary" />
+              </div>
+              <p className="text-xl font-bold text-foreground mb-2">Complete your profile</p>
+              <p className="text-sm text-muted-foreground leading-6">
+                We need a few missing details before opening your Naira Wallet. These requirements can change based on compliance rules.
+              </p>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              {oldUserNairaWalletRequirements.map((field) => (
+                <div key={field.key}>
+                  <label className="text-sm text-muted-foreground mb-2 block">{field.label}</label>
+                  {field.type === "select" ? (
+                    <select
+                      value={requirements[field.key] || ""}
+                      onChange={(event) => updateRequirement(field.key, event.target.value)}
+                      className={`w-full h-12 bg-secondary rounded-xl px-4 text-sm outline-none focus:ring-2 focus:ring-primary ${requirements[field.key] ? "text-foreground" : "text-muted-foreground"}`}
+                    >
+                      <option value="">{field.placeholder}</option>
+                      {field.options?.map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type={field.type}
+                      value={requirements[field.key] || ""}
+                      onChange={(event) => updateRequirement(field.key, event.target.value)}
+                      placeholder={field.placeholder}
+                      className="w-full h-12 bg-secondary rounded-xl px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-card border border-border rounded-xl p-4 mb-6">
+              <div className="flex items-start gap-3">
+                <Wallet className="w-5 h-5 text-primary mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground mb-1">What happens next?</p>
+                  <p className="text-xs text-muted-foreground leading-5">Your Naira Wallet will be created instantly in this mock flow. In production, the backend will return the exact fields old users still need to complete.</p>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={createWallet}
+              className={`w-full h-14 rounded-xl font-semibold ${requiredFieldsComplete ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+            >
+              Create Naira Wallet
+            </button>
+          </div>
+        </PageTransition>
+      </MobileLayout>
+    );
+  }
 
   if (step === "topup-success") {
     return (
