@@ -12,7 +12,7 @@ import {
   userRewards, userTasks, userReferrals, kycLevel1, kycLevel3, holdingBalance
 } from "@/data/adminMockData";
 
-type UserTab = "info" | "transactions" | "activities" | "rewards" | "task" | "referrals" | "kyc";
+type UserTab = "info" | "addresses" | "transactions" | "activities" | "rewards" | "task" | "referrals" | "kyc";
 type SummaryTab = "user-summary" | "holding-balance";
 type KycLevel = "level1" | "level2" | "level3";
 
@@ -44,6 +44,7 @@ const AdminUserDetail = () => {
 
   const userTabs: { key: UserTab; label: string }[] = [
     { key: "info", label: "Info" },
+    { key: "addresses", label: "Addresses" },
     { key: "transactions", label: "Transactions" },
     { key: "activities", label: "Activities" },
     { key: "rewards", label: "Rewards" },
@@ -51,6 +52,24 @@ const AdminUserDetail = () => {
     { key: "referrals", label: "Referrals" },
     { key: "kyc", label: "KYC" },
   ];
+
+  // Derive OTC addresses from transactions where channel === "order"
+  const otcAddresses = (() => {
+    const seen = new Set<string>();
+    const out: { asset: string; network: string; address: string; lastUsed: string; count: number }[] = [];
+    userTransactions.forEach(t => {
+      if (!t.walletAddress || t.channel !== "order") return;
+      const key = `${t.asset}-${t.network}-${t.walletAddress}`;
+      const existing = out.find(o => `${o.asset}-${o.network}-${o.address}` === key);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        seen.add(key);
+        out.push({ asset: t.asset, network: t.network || "—", address: t.walletAddress, lastUsed: t.date, count: 1 });
+      }
+    });
+    return out;
+  })();
 
   return (
     <AdminLayout activeTab="users" onTabChange={(tab) => navigate("/admin")} headerTitle="Users">
