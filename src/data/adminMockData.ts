@@ -509,16 +509,16 @@ export const mockUser = {
 };
 
 export const userTransactions = [
-  { asset: "ETH", type: "Deex-Deposits", amount: "0.041 ETH", txId: "69addc03d54ca8190d9d122f", date: "Mar 8th, 2026 | 9:28 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$21,298.45", balanceAfter: "$21,375.22" },
-  { asset: "USDT", type: "Deex-Deposits", amount: "200.00 USDT", txId: "69adc991210aef2d6390a7f2", date: "Mar 8th, 2026 | 8:10 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$21,098.45", balanceAfter: "$21,298.45" },
-  { asset: "USDT", type: "Deex-Deposits", amount: "497.769 USDT", txId: "69adc856210aef2d63908822", date: "Mar 8th, 2026 | 8:04 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$20,600.68", balanceAfter: "$21,098.45" },
-  { asset: "BTC", type: "Deex-Asset-Swaps", amount: "0.000824\nBTC → USDT", txId: "69adbfce210aef2d638f8ddb", date: "Mar 8th, 2026 | 7:28 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "debit" as const, balanceBefore: "$20,680.01", balanceAfter: "$20,600.68" },
-  { asset: "BTC", type: "Deex-Deposits", amount: "0.000824 BTC", txId: "69adbfb6210aef2d638f7488", date: "Mar 8th, 2026 | 7:28 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$20,600.68", balanceAfter: "$20,680.01" },
-  { asset: "USDT", type: "Sell", amount: "500.05 USDT", txId: "69ada29b210aef2d638c0177", date: "Mar 8th, 2026 | 5:23 PM", status: "COMPLETED", channel: "order" as const, creditDebit: "debit" as const, balanceBefore: "$21,100.73", balanceAfter: "$20,600.68" },
-  { asset: "BTC", type: "Deex-Asset-Swaps", amount: "0.000744\nBTC → USDT", txId: "69ad930c210aef2d638af259", date: "Mar 8th, 2026 | 4:17 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "debit" as const, balanceBefore: "$21,155.89", balanceAfter: "$21,100.73" },
-  { asset: "BTC", type: "Deex-Deposits", amount: "0.000744 BTC", txId: "69ad929f210aef2d638ad6f1", date: "Mar 8th, 2026 | 4:15 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$21,100.73", balanceAfter: "$21,155.89" },
-  { asset: "USDT", type: "Sell", amount: "150.00 USDT", txId: "69ad82bc210aef2d638a166c", date: "Mar 7th, 2026 | 6:30 PM", status: "COMPLETED", channel: "order" as const, creditDebit: "debit" as const, balanceBefore: "$21,250.73", balanceAfter: "$21,100.73" },
-  { asset: "USDT", type: "Payout", amount: "₦209,250.00", txId: "69ad72bc210aef2d6389066c", date: "Mar 7th, 2026 | 6:32 PM", status: "COMPLETED", channel: "payout" as const, creditDebit: "debit" as const, balanceBefore: "₦209,250.00", balanceAfter: "₦0.00" },
+  { asset: "ETH", type: "Deex-Deposits", amount: "0.041 ETH", txId: "69addc03d54ca8190d9d122f", date: "Mar 8th, 2026 | 9:28 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$21,298.45", balanceAfter: "$21,375.22", network: "ERC20", walletAddress: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e" },
+  { asset: "USDT", type: "Deex-Deposits", amount: "200.00 USDT", txId: "69adc991210aef2d6390a7f2", date: "Mar 8th, 2026 | 8:10 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$21,098.45", balanceAfter: "$21,298.45", network: "TRC20", walletAddress: "TJRabPrwbZy45sbavfcjinPJC18kjpRTv8" },
+  { asset: "USDT", type: "Deex-Deposits", amount: "497.769 USDT", txId: "69adc856210aef2d63908822", date: "Mar 8th, 2026 | 8:04 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$20,600.68", balanceAfter: "$21,098.45", network: "ERC20", walletAddress: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e" },
+  { asset: "BTC", type: "Deex-Asset-Swaps", amount: "0.000824\nBTC → USDT", txId: "69adbfce210aef2d638f8ddb", date: "Mar 8th, 2026 | 7:28 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "debit" as const, balanceBefore: "$20,680.01", balanceAfter: "$20,600.68", network: "Bitcoin", walletAddress: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq" },
+  { asset: "BTC", type: "Deex-Deposits", amount: "0.000824 BTC", txId: "69adbfb6210aef2d638f7488", date: "Mar 8th, 2026 | 7:28 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$20,600.68", balanceAfter: "$20,680.01", network: "Bitcoin", walletAddress: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq" },
+  { asset: "USDT", type: "Sell", amount: "500.05 USDT", txId: "69ada29b210aef2d638c0177", date: "Mar 8th, 2026 | 5:23 PM", status: "COMPLETED", channel: "order" as const, creditDebit: "debit" as const, balanceBefore: "$21,100.73", balanceAfter: "$20,600.68", network: "TRC20", walletAddress: "TJRabPrwbZy45sbavfcjinPJC18kjpRTv8" },
+  { asset: "BTC", type: "Deex-Asset-Swaps", amount: "0.000744\nBTC → USDT", txId: "69ad930c210aef2d638af259", date: "Mar 8th, 2026 | 4:17 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "debit" as const, balanceBefore: "$21,155.89", balanceAfter: "$21,100.73", network: "Bitcoin", walletAddress: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq" },
+  { asset: "BTC", type: "Deex-Deposits", amount: "0.000744 BTC", txId: "69ad929f210aef2d638ad6f1", date: "Mar 8th, 2026 | 4:15 PM", status: "COMPLETED", channel: "wallet" as const, creditDebit: "credit" as const, balanceBefore: "$21,100.73", balanceAfter: "$21,155.89", network: "Bitcoin", walletAddress: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq" },
+  { asset: "USDT", type: "Sell", amount: "150.00 USDT", txId: "69ad82bc210aef2d638a166c", date: "Mar 7th, 2026 | 6:30 PM", status: "COMPLETED", channel: "order" as const, creditDebit: "debit" as const, balanceBefore: "$21,250.73", balanceAfter: "$21,100.73", network: "ERC20", walletAddress: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e" },
+  { asset: "USDT", type: "Payout", amount: "₦209,250.00", txId: "69ad72bc210aef2d6389066c", date: "Mar 7th, 2026 | 6:32 PM", status: "COMPLETED", channel: "payout" as const, creditDebit: "debit" as const, balanceBefore: "₦209,250.00", balanceAfter: "₦0.00", network: "", walletAddress: "" },
 ];
 
 export const userActivities = [
@@ -612,11 +612,12 @@ export const kycLevel3 = {
 };
 
 export const holdingBalance = [
-  { symbol: "BTC", amount: "0.002481 BTC", usd: "$167.12" },
-  { symbol: "ETH", amount: "0.041 ETH", usd: "$79.29" },
-  { symbol: "USDT", amount: "1,247.819 USDT", usd: "$1,247.82" },
-  { symbol: "SOL", amount: "0.000 SOL", usd: "$0.00" },
-  { symbol: "DOGE", amount: "0.000 DOGE", usd: "$0.00" },
+  { symbol: "BTC", amount: "0.002481 BTC", usd: "$167.12", network: "Bitcoin", address: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq" },
+  { symbol: "ETH", amount: "0.041 ETH", usd: "$79.29", network: "ERC20", address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e" },
+  { symbol: "USDT", amount: "847.819 USDT", usd: "$847.82", network: "ERC20", address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e" },
+  { symbol: "USDT", amount: "400.000 USDT", usd: "$400.00", network: "TRC20", address: "TJRabPrwbZy45sbavfcjinPJC18kjpRTv8" },
+  { symbol: "SOL", amount: "0.000 SOL", usd: "$0.00", network: "Solana", address: "DRpbCBMxVnDK7maPGv7USSemqPHsQbJVTVjmNGCNzkUW" },
+  { symbol: "DOGE", amount: "0.000 DOGE", usd: "$0.00", network: "Dogecoin", address: "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L" },
 ];
 
 // Bill Payments
