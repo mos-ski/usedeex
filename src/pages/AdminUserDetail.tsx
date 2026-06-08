@@ -190,10 +190,10 @@ const AdminUserDetail = () => {
 
           {/* TRANSACTIONS TAB */}
           {activeTab === "transactions" && (
-            <div className="bg-card border border-border rounded-xl overflow-hidden">
+            <div className="bg-card border border-border rounded-xl overflow-x-auto">
               <Table>
                 <TableHeader><TableRow>
-                  {["Asset", "Type", "Channel", "C/D", "Amount", "Bal Before", "Bal After", "Trans ID", "Date", "Status"].map(h => <TableHead key={h}>{h}</TableHead>)}
+                  {["Asset", "Type", "Channel", "C/D", "Amount", "Wallet Address", "Bal Before", "Bal After", "Trans ID", "Date", "Status"].map(h => <TableHead key={h}>{h}</TableHead>)}
                 </TableRow></TableHeader>
                 <TableBody>
                   {userTransactions.map((t, i) => (
@@ -217,6 +217,17 @@ const AdminUserDetail = () => {
                         </span>
                       </TableCell>
                       <TableCell className="text-sm text-foreground whitespace-pre-line">{t.amount}</TableCell>
+                      <TableCell>
+                        {t.walletAddress ? (
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-secondary text-muted-foreground w-fit">{t.network}</span>
+                            <div className="flex items-center gap-1">
+                              <span className="text-xs text-muted-foreground font-mono">{t.walletAddress.slice(0, 8)}…{t.walletAddress.slice(-6)}</span>
+                              <CopyButton text={t.walletAddress} label="Wallet address" />
+                            </div>
+                          </div>
+                        ) : <span className="text-xs text-muted-foreground">—</span>}
+                      </TableCell>
                       <TableCell className="text-xs text-muted-foreground font-mono">{t.balanceBefore}</TableCell>
                       <TableCell className="text-xs text-muted-foreground font-mono">{t.balanceAfter}</TableCell>
                       <TableCell><div className="flex items-center gap-1"><span className="text-xs text-muted-foreground font-mono">{t.txId.slice(0, 12)}...</span><CopyButton text={t.txId} label="Trans ID" /></div></TableCell>
@@ -227,6 +238,7 @@ const AdminUserDetail = () => {
                 </TableBody>
               </Table>
             </div>
+
           )}
 
           {/* ACTIVITIES TAB */}
