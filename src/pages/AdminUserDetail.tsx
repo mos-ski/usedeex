@@ -467,22 +467,30 @@ const AdminUserDetail = () => {
               <p className="text-2xl font-bold text-foreground">USDT</p>
             </div>
           </div>
-          <div className="bg-card border border-border rounded-xl overflow-hidden">
+          <div className="bg-card border border-border rounded-xl overflow-x-auto">
             <Table>
               <TableHeader><TableRow>
-                {["Asset", "Amount", "USD Value"].map(h => <TableHead key={h} className={h === "USD Value" ? "text-right" : ""}>{h}</TableHead>)}
+                {["Asset", "Network", "Amount", "Wallet Address", "USD Value"].map(h => <TableHead key={h} className={h === "USD Value" ? "text-right" : ""}>{h}</TableHead>)}
               </TableRow></TableHeader>
               <TableBody>
                 {holdingBalance.map((h, i) => (
                   <TableRow key={i}>
                     <TableCell><div className="flex items-center gap-2"><CryptoIcon symbol={h.symbol} size="sm" /><span className="text-sm font-medium text-foreground">{h.symbol}</span></div></TableCell>
+                    <TableCell><span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-secondary text-muted-foreground">{h.network}</span></TableCell>
                     <TableCell className="text-sm text-foreground">{h.amount}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-muted-foreground font-mono">{h.address.slice(0, 8)}…{h.address.slice(-6)}</span>
+                        <CopyButton text={h.address} label="Wallet address" />
+                      </div>
+                    </TableCell>
                     <TableCell className="text-sm text-foreground text-right">{h.usd}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
+
         </div>
       )}
 
