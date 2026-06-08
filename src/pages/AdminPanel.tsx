@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import AdminLayout, { AdminTab } from "@/components/admin/AdminLayout";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import AdminWallets from "@/components/admin/AdminWallets";
@@ -17,6 +18,18 @@ import AdminBillPayments from "@/components/admin/AdminBillPayments";
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get("tab") as AdminTab | null;
+    if (tab) {
+      setActiveTab(tab);
+      navigate("/admin", { replace: true });
+    }
+  }, [location.search, navigate]);
+
 
   return (
     <AdminLayout activeTab={activeTab} onTabChange={setActiveTab}>
