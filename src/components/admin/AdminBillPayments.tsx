@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Upload, RotateCcw } from "lucide-react";
+import { Upload, RotateCcw, Search } from "lucide-react";
 import { toast } from "sonner";
 import { billPaymentStats, billPaymentsList } from "@/data/adminMockData";
 import { StatusBadge, CopyButton, AdminPagination, NewBadge } from "./AdminUtils";
@@ -14,12 +14,19 @@ type BillPayment = typeof billPaymentsList[0];
 const AdminBillPayments = () => {
   const [typeFilter, setTypeFilter] = useState<BillType>("All");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
 
   const filtered = billPaymentsList.filter(b => {
     const matchType = typeFilter === "All" || b.type === typeFilter;
     const matchStatus = statusFilter === "All" || b.status === statusFilter;
-    return matchType && matchStatus;
+    const s = searchQuery.toLowerCase().trim();
+    const matchSearch = !s ||
+      b.user.toLowerCase().includes(s) ||
+      b.phone.includes(s) ||
+      b.provider.toLowerCase().includes(s) ||
+      b.txRef.toLowerCase().includes(s);
+    return matchType && matchStatus && matchSearch;
   });
 
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
@@ -132,9 +139,17 @@ const AdminBillPayments = () => {
           <p className="text-xs font-semibold text-muted-foreground tracking-wider">BILL PAYMENTS</p>
           <NewBadge />
         </div>
-        <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
-          <Upload className="w-3.5 h-3.5" /> Export
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+            <input value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setPage(1); }}
+              placeholder="Search user, phone, ref…"
+              className="h-8 w-52 bg-secondary rounded-lg pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground outline-none" />
+          </div>
+          <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+            <Upload className="w-3.5 h-3.5" /> Export
+          </button>
+        </div>
       </div>
 
       {/* Stats */}

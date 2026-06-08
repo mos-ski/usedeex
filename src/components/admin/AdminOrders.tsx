@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowUpDown, AlertCircle, Upload, RotateCcw } from "lucide-react";
+import { ArrowUpDown, AlertCircle, Upload, RotateCcw, Search } from "lucide-react";
 import { toast } from "sonner";
 import { ordersData, ordersList } from "@/data/adminMockData";
 import { StatusBadge, CopyButton, AdminPagination } from "./AdminUtils";
@@ -13,11 +13,20 @@ type OrderItem = typeof ordersList[0];
 const AdminOrders = () => {
   const [autoPay, setAutoPay] = useState(true);
   const [statusFilter, setStatusFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
 
-  const filteredOrders = ordersList.filter(o =>
-    statusFilter === "All" || o.status === statusFilter
-  );
+  const filteredOrders = ordersList.filter(o => {
+    const matchStatus = statusFilter === "All" || o.status === statusFilter;
+    const s = searchQuery.toLowerCase().trim();
+    const matchSearch = !s ||
+      o.name.toLowerCase().includes(s) ||
+      o.asset.toLowerCase().includes(s) ||
+      o.txId.toLowerCase().includes(s) ||
+      (o.payoutRef || "").toLowerCase().includes(s) ||
+      (o.walletAddress || "").toLowerCase().includes(s);
+    return matchStatus && matchSearch;
+  });
 
   const totalPages = Math.ceil(filteredOrders.length / PER_PAGE);
   const paginated = filteredOrders.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -28,6 +37,7 @@ const AdminOrders = () => {
     PENDING: ordersList.filter(o => o.status === "PENDING").length,
     FAILED: ordersList.filter(o => o.status === "FAILED").length,
   };
+
 
   const handleRetry = (txId: string, name: string) => {
     toast.success(`Retrying payout for ${name}...`, {
@@ -105,7 +115,13 @@ const AdminOrders = () => {
       {/* Activity header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
         <p className="text-sm font-semibold text-foreground">Activity</p>
-        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+        <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+            <input value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setPage(1); }}
+              placeholder="Search name, asset, tx id…"
+              className="h-8 w-52 bg-secondary rounded-lg pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground outline-none" />
+          </div>
           <label className="flex items-center gap-2">
             <Switch checked={autoPay} onCheckedChange={v => { setAutoPay(v); toast.success(`Auto Pay ${v ? "enabled" : "disabled"}`); }} />
             AUTO PAY: {autoPay ? "ON" : "OFF"}
@@ -114,6 +130,7 @@ const AdminOrders = () => {
           <button className="flex items-center gap-1 hover:text-foreground"><Upload className="w-3.5 h-3.5" /> EXPORT</button>
         </div>
       </div>
+
 
       {/* Status filter tabs */}
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
