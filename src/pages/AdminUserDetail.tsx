@@ -207,6 +207,76 @@ const AdminUserDetail = () => {
             </div>
           )}
 
+          {/* ADDRESSES TAB */}
+          {activeTab === "addresses" && (
+            <div className="space-y-8">
+              {/* Wallets */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-semibold text-foreground">Wallets <span className="text-xs text-muted-foreground font-normal">({holdingBalance.length} addresses)</span></p>
+                </div>
+                <div className="bg-card border border-border rounded-xl overflow-x-auto">
+                  <Table>
+                    <TableHeader><TableRow>
+                      {["Asset", "Network", "Wallet Address", "Balance"].map(h => <TableHead key={h}>{h}</TableHead>)}
+                    </TableRow></TableHeader>
+                    <TableBody>
+                      {holdingBalance.map((h, i) => (
+                        <TableRow key={i}>
+                          <TableCell><div className="flex items-center gap-2"><CryptoIcon symbol={h.symbol} size="sm" /><span className="text-sm font-medium text-foreground">{h.symbol}</span></div></TableCell>
+                          <TableCell><span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-secondary text-muted-foreground">{h.network}</span></TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <span className="text-xs text-muted-foreground font-mono break-all">{h.address}</span>
+                              <CopyButton text={h.address} label="Wallet address" />
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{h.amount}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              {/* OTC */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-semibold text-foreground">OTC Counterparty Addresses <span className="text-xs text-muted-foreground font-normal">({otcAddresses.length} addresses)</span></p>
+                </div>
+                <div className="bg-card border border-border rounded-xl overflow-x-auto">
+                  {otcAddresses.length === 0 ? (
+                    <div className="p-6 text-center text-xs text-muted-foreground">No OTC transactions yet for this user.</div>
+                  ) : (
+                    <Table>
+                      <TableHeader><TableRow>
+                        {["Asset", "Network", "Wallet Address", "Tx Count", "Last Used"].map(h => <TableHead key={h}>{h}</TableHead>)}
+                      </TableRow></TableHeader>
+                      <TableBody>
+                        {otcAddresses.map((a, i) => (
+                          <TableRow key={i}>
+                            <TableCell><div className="flex items-center gap-2"><CryptoIcon symbol={a.asset} size="sm" /><span className="text-sm font-medium text-foreground">{a.asset}</span></div></TableCell>
+                            <TableCell><span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-secondary text-muted-foreground">{a.network}</span></TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-1">
+                                <span className="text-xs text-muted-foreground font-mono break-all">{a.address}</span>
+                                <CopyButton text={a.address} label="Wallet address" />
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-xs text-foreground">{a.count}</TableCell>
+                            <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{a.lastUsed}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+
+
           {/* TRANSACTIONS TAB */}
           {activeTab === "transactions" && (
             <div className="bg-card border border-border rounded-xl overflow-x-auto">
