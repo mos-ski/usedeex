@@ -612,11 +612,12 @@ export const kycLevel3 = {
 };
 
 export const holdingBalance = [
-  { symbol: "BTC", amount: "0.002481 BTC", usd: "$167.12" },
-  { symbol: "ETH", amount: "0.041 ETH", usd: "$79.29" },
-  { symbol: "USDT", amount: "1,247.819 USDT", usd: "$1,247.82" },
-  { symbol: "SOL", amount: "0.000 SOL", usd: "$0.00" },
-  { symbol: "DOGE", amount: "0.000 DOGE", usd: "$0.00" },
+  { symbol: "BTC", amount: "0.002481 BTC", usd: "$167.12", network: "Bitcoin", address: "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq" },
+  { symbol: "ETH", amount: "0.041 ETH", usd: "$79.29", network: "ERC20", address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e" },
+  { symbol: "USDT", amount: "847.819 USDT", usd: "$847.82", network: "ERC20", address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e" },
+  { symbol: "USDT", amount: "400.000 USDT", usd: "$400.00", network: "TRC20", address: "TJRabPrwbZy45sbavfcjinPJC18kjpRTv8" },
+  { symbol: "SOL", amount: "0.000 SOL", usd: "$0.00", network: "Solana", address: "DRpbCBMxVnDK7maPGv7USSemqPHsQbJVTVjmNGCNzkUW" },
+  { symbol: "DOGE", amount: "0.000 DOGE", usd: "$0.00", network: "Dogecoin", address: "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L" },
 ];
 
 // Bill Payments
