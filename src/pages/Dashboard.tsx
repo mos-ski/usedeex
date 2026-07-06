@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Eye, EyeOff, ArrowDownLeft, Send, TrendingUp, ArrowLeftRight, CreditCard, Phone, Wifi, Zap, Gamepad2, Wallet } from "lucide-react";
+import { Bell, Eye, EyeOff, ArrowDownLeft, Send, TrendingUp, ArrowLeftRight, CreditCard, Phone, Wifi, Zap, Gamepad2, Wallet, Gift } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
 import CryptoIcon from "@/components/CryptoIcon";
 import ProviderIcon from "@/components/ProviderIcon";
 import NewBadge from "@/components/NewBadge";
+import InviteCodeInput from "@/components/InviteCodeInput";
+import InviteCodeProgress from "@/components/InviteCodeProgress";
+import { useInviteCode } from "@/contexts/InviteCodeContext";
 
 const cryptoRates = [
   { name: "Bitcoin", symbol: "BTC", rate: "₦97,450,000", change: "+2.4%" },
@@ -72,6 +75,26 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"crypto" | "giftcards">("crypto");
   const [showBalance, setShowBalance] = useState(true);
+  const [showInviteCodeModal, setShowInviteCodeModal] = useState(false);
+  const { appliedCode, depositCompleted, tradeCompleted, hasSeenDashboardModal, applyCode, markDashboardModalSeen } = useInviteCode();
+
+  useEffect(() => {
+    // Prompt new users to enter an invite code the first time they land on the dashboard
+    if (!appliedCode && !hasSeenDashboardModal) {
+      const timer = setTimeout(() => setShowInviteCodeModal(true), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [appliedCode, hasSeenDashboardModal]);
+
+  const handleInviteCodeApply = (code: string) => {
+    applyCode(code);
+    setShowInviteCodeModal(false);
+  };
+
+  const handleCloseInviteModal = () => {
+    setShowInviteCodeModal(false);
+    markDashboardModalSeen();
+  };
 
   return (
     <MobileLayout>
@@ -89,6 +112,44 @@ const Dashboard = () => {
               <div className="absolute top-1 right-1 w-3 h-3 bg-warning rounded-full border-2 border-background" />
             </button>
           </div>
+
+          {/* Invite Code Progress Widget */}
+          {appliedCode && (
+            <div className="mb-6">
+              <InviteCodeProgress
+                code={appliedCode.code}
+                depositReward={appliedCode.depositReward}
+                tradeReward={appliedCode.tradeReward}
+                minDeposit={appliedCode.minDeposit}
+                minTrade={appliedCode.minTrade}
+                depositCompleted={depositCompleted}
+                tradeCompleted={tradeCompleted}
+                depositDeadlineDays={appliedCode.depositDeadlineDays}
+                tradeDeadlineDays={appliedCode.tradeDeadlineDays}
+              />
+            </div>
+          )}
+
+          {/* Invite Code Banner (if not applied and not showing modal) */}
+          {!appliedCode && !showInviteCodeModal && (
+            <div className="mb-6">
+              <button
+                onClick={() => setShowInviteCodeModal(true)}
+                className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center gap-3"
+              >
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                  <Gift className="w-5 h-5 text-primary" />
+                </div>
+                <div className="text-left flex-1">
+                  <p className="text-sm font-semibold text-foreground">Have an invite code?</p>
+                  <p className="text-xs text-muted-foreground">Enter it to earn rewards on your first deposit and trade</p>
+                </div>
+                <div className="text-primary">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </div>
+              </button>
+            </div>
+          )}
 
           {/* Greeting */}
           <p className="text-sm text-muted-foreground mb-4">{getGreeting()}, <span className="text-foreground font-medium">John</span> 👋</p>
@@ -211,6 +272,14 @@ const Dashboard = () => {
         </div>
       </PageTransition>
       <BottomNav />
+
+      {/* Invite Code Modal */}
+      {showInviteCodeModal && (
+        <InviteCodeInput
+          onApply={handleInviteCodeApply}
+          onClose={handleCloseInviteModal}
+        />
+      )}
     </MobileLayout>
   );
 };

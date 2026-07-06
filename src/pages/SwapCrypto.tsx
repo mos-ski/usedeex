@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowDownUp, ChevronDown, Info } from "lucide-react";
+import { ArrowLeft, ArrowDownUp, ChevronDown, Info, Gift, Check } from "lucide-react";
+import { toast } from "sonner";
 import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
 import CryptoIcon from "@/components/CryptoIcon";
 import NewBadge from "@/components/NewBadge";
+import InviteCodeInput from "@/components/InviteCodeInput";
+import { useInviteCode } from "@/contexts/InviteCodeContext";
 
 const assets = [
   { symbol: "BTC", name: "Bitcoin", balance: "0.0234", rate: 97450 },
@@ -24,10 +27,20 @@ const SwapCrypto = () => {
   const [view, setView] = useState<View>("main");
   const [showFromPicker, setShowFromPicker] = useState(false);
   const [showToPicker, setShowToPicker] = useState(false);
+  const [showInviteCode, setShowInviteCode] = useState(false);
+  const { appliedCode, tradeCompleted, applyCode, completeTrade } = useInviteCode();
 
   const amtNum = parseFloat(amount) || 0;
   const toAmount = (amtNum * from.rate / to.rate).toFixed(to.rate >= 100 ? 6 : 2);
   const fee = (amtNum * 0.005).toFixed(6);
+
+  useEffect(() => {
+    if (view === "success" && appliedCode && !tradeCompleted) {
+      completeTrade();
+      toast.success(`You earned ${appliedCode.tradeReward} DeeXpoints for trading!`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view]);
 
   if (view === "success") {
     return (
@@ -100,6 +113,35 @@ const SwapCrypto = () => {
             <NewBadge />
           </div>
 
+          {/* Invite Code Banner */}
+          {!appliedCode && (
+            <div className="mb-4">
+              <button
+                onClick={() => setShowInviteCode(true)}
+                className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center gap-3"
+              >
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                  <Gift className="w-5 h-5 text-primary" />
+                </div>
+                <div className="text-left flex-1">
+                  <p className="text-sm font-semibold text-foreground">Have an invite code?</p>
+                  <p className="text-xs text-muted-foreground">Enter it to earn DeeXpoints on this trade</p>
+                </div>
+              </button>
+            </div>
+          )}
+
+          {appliedCode && !tradeCompleted && (
+            <div className="mb-4 bg-success/10 border border-success/20 rounded-xl p-3">
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-success" />
+                <p className="text-xs text-success font-medium">
+                  Invite code applied! Trade ${appliedCode.minTrade}+ to earn {appliedCode.tradeReward} pts
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* From */}
           <div className="bg-card border border-border rounded-xl p-4 mb-2">
             <div className="flex items-center justify-between mb-2">
@@ -157,6 +199,17 @@ const SwapCrypto = () => {
         <AssetPicker show={showFromPicker} onClose={() => setShowFromPicker(false)} onSelect={setFrom} exclude={to.symbol} />
         <AssetPicker show={showToPicker} onClose={() => setShowToPicker(false)} onSelect={setTo} exclude={from.symbol} />
       </PageTransition>
+
+      {/* Invite Code Modal */}
+      {showInviteCode && (
+        <InviteCodeInput
+          onApply={(code) => {
+            applyCode(code);
+            setShowInviteCode(false);
+          }}
+          onClose={() => setShowInviteCode(false)}
+        />
+      )}
     </MobileLayout>
   );
 };

@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Copy, Check, QrCode, ChevronDown, Shield } from "lucide-react";
+import { ArrowLeft, Copy, Check, QrCode, ChevronDown, Shield, Gift } from "lucide-react";
+import { toast } from "sonner";
 import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
+import InviteCodeInput from "@/components/InviteCodeInput";
+import { useInviteCode } from "@/contexts/InviteCodeContext";
 
 const cryptos = [
   { symbol: "BTC", name: "Bitcoin", address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh", networks: ["BEP-20", "Bitcoin Mainnet", "Lightning"], color: "bg-warning/20 text-warning" },
@@ -19,6 +22,8 @@ const Deposit = () => {
   const [selectedNetwork, setSelectedNetwork] = useState(cryptos[0].networks[0]);
   const [showNetworkDropdown, setShowNetworkDropdown] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showInviteCode, setShowInviteCode] = useState(false);
+  const { appliedCode, depositCompleted, applyCode, completeDeposit } = useInviteCode();
 
   const handleCopy = () => {
     navigator.clipboard.writeText(selectedCrypto.address);
@@ -47,6 +52,44 @@ const Deposit = () => {
 
           {step === "select" ? (
             <div>
+              {/* Invite Code Banner */}
+              {!appliedCode && (
+                <div className="mb-4">
+                  <button
+                    onClick={() => setShowInviteCode(true)}
+                    className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center gap-3"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                      <Gift className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="text-left flex-1">
+                      <p className="text-sm font-semibold text-foreground">Have an invite code?</p>
+                      <p className="text-xs text-muted-foreground">Enter it to earn DeeXpoints on this deposit</p>
+                    </div>
+                  </button>
+                </div>
+              )}
+
+              {appliedCode && !depositCompleted && (
+                <div className="mb-4 bg-success/10 border border-success/20 rounded-xl p-3">
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-success" />
+                    <p className="text-xs text-success font-medium">
+                      Invite code applied! Deposit ${appliedCode.minDeposit}+ to earn {appliedCode.depositReward} pts
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {appliedCode && depositCompleted && (
+                <div className="mb-4 bg-success/10 border border-success/20 rounded-xl p-3">
+                  <div className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-success" />
+                    <p className="text-xs text-success font-medium">Deposit reward already claimed for this invite code</p>
+                  </div>
+                </div>
+              )}
+
               <p className="text-sm text-muted-foreground mb-4">Select cryptocurrency to deposit</p>
               <div className="space-y-2">
                 {cryptos.map((c) => (
@@ -129,7 +172,13 @@ const Deposit = () => {
               </div>
 
               <button
-                onClick={() => navigate(-1)}
+                onClick={() => {
+                  if (appliedCode && !depositCompleted) {
+                    completeDeposit();
+                    toast.success(`You earned ${appliedCode.depositReward} DeeXpoints for your first deposit!`);
+                  }
+                  navigate(-1);
+                }}
                 className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold"
               >
                 Done
@@ -138,6 +187,17 @@ const Deposit = () => {
           )}
         </div>
       </PageTransition>
+
+      {/* Invite Code Modal */}
+      {showInviteCode && (
+        <InviteCodeInput
+          onApply={(code) => {
+            applyCode(code);
+            setShowInviteCode(false);
+          }}
+          onClose={() => setShowInviteCode(false)}
+        />
+      )}
     </MobileLayout>
   );
 };

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeeX — Get ₦5,000 Free on Your First Trade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0d12;
+    --bg2: #0f1319;
+    --card: #141a22;
+    --line: #232b36;
+    --crypto: #00e08f;
+    --crypto2: #00b4d8;
+    --naira: #ffb74d;
+    --text: #f3f6f9;
+    --muted: #828d9c;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Manrope', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--body);
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .wrap { position: relative; z-index: 1; max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+  .glow { position: fixed; border-radius: 50%; filter: blur(140px); opacity: 0.22; z-index: 0; pointer-events: none; }
+  .glow1 { width: 560px; height: 560px; background: var(--crypto); top: -260px; right: -180px; }
+  .glow2 { width: 460px; height: 460px; background: var(--naira); bottom: -220px; left: -200px; opacity: 0.14; }
+
+  /* TICKER */
+  .ticker-rail { position: relative; z-index: 1; border-bottom: 1px solid var(--line); background: rgba(20,26,34,0.6); overflow: hidden; white-space: nowrap; }
+  .ticker-track { display: inline-flex; gap: 36px; padding: 9px 0; animation: scroll 26s linear infinite; }
+  .ticker-track span { font-family: var(--mono); font-size: 12.5px; color: var(--muted); display: inline-flex; gap: 8px; align-items: center; letter-spacing: 0.2px; }
+  .ticker-track b { color: var(--text); font-weight: 600; }
+  .up { color: var(--crypto); } .down { color: #ff6b6b; }
+
+  /* COIN MARKS */
+  .coin { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 9.5px; font-weight: 700; color: #04121e; flex-shrink: 0; }
+  .coin-usdt { background: #26a17b; color: #fff; }
+  .coin-usdc { background: #2775ca; color: #fff; }
+  .coin-sol  { background: linear-gradient(135deg,#9945ff,#14f195); color: #fff; }
+  .coin-doge { background: #c2a633; }
+  .coin-tron { background: #ff060a; color: #fff; }
+  .coin-shib { background: #ffa409; }
+  .asset .coin, .step-asset .coin { width: 20px; height: 20px; font-size: 10.5px; }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+
+  /* NAV */
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  .logo { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 21px; letter-spacing: -0.3px; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, var(--crypto), var(--crypto2)); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; color: #04121e; font-family: var(--display); }
+  .nav-badge { font-size: 12px; color: var(--crypto); background: rgba(0,224,143,0.1); padding: 7px 13px; border-radius: 20px; font-weight: 600; border: 1px solid rgba(0,224,143,0.18); }
+  .nav-cta {
+    display: none; flex: 0 0 auto; white-space: nowrap; width: auto !important;
+    padding: 11px 20px; font-size: 14px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--crypto), var(--crypto2));
+    color: #04121e; font-weight: 800; text-decoration: none; cursor: pointer;
+  }
+
+  /* HERO */
+  .hero { padding: 28px 0 56px; display: grid; grid-template-columns: 1fr; gap: 36px; align-items: center; }
+  .hero-copy { text-align: center; }
+  .pill { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; background: rgba(0,180,255,0.08); color: var(--crypto2); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(0,180,255,0.2); margin-bottom: 22px; }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--crypto); animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0,224,143,0.6); } 70% { box-shadow: 0 0 0 8px rgba(0,224,143,0); } 100% { box-shadow: 0 0 0 0 rgba(0,224,143,0); } }
+
+  h1 { font-family: var(--display); font-size: 40px; line-height: 1.08; font-weight: 700; letter-spacing: -1px; margin-bottom: 18px; }
+  h1 .hl { color: var(--naira); }
+  .sub { font-size: 16.5px; color: var(--muted); line-height: 1.6; margin-bottom: 30px; max-width: 420px; margin-left: auto; margin-right: auto; }
+  .hero-actions { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+
+  /* OFFER CARD */
+  .offer { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 28px; position: relative; overflow: hidden; max-width: 420px; margin: 0 auto; }
+  .offer::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,224,143,0.1), transparent 60%); pointer-events: none; }
+  .offer-tag { font-family: var(--mono); font-size: 11.5px; font-weight: 600; color: var(--crypto); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; position: relative; }
+  .offer-amt { font-family: var(--display); font-size: 48px; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 8px; color: var(--naira); position: relative; }
+  .offer-amt span { font-family: var(--body); font-size: 20px; color: var(--muted); font-weight: 600; }
+  .offer-desc { font-size: 14px; color: var(--muted); position: relative; }
+  .offer-desc b { color: var(--text); }
+
+  /* CTA */
+  .cta { display: inline-block; width: 100%; padding: 18px; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--crypto), var(--crypto2)); color: #04121e; font-family: var(--body); font-size: 16.5px; font-weight: 800; cursor: pointer; text-decoration: none; text-align: center; box-shadow: 0 8px 30px rgba(0,224,143,0.25); transition: transform 0.15s, box-shadow 0.15s; }
+  .cta:hover { transform: translateY(-1px); box-shadow: 0 12px 36px rgba(0,224,143,0.32); }
+  .cta:active { transform: scale(0.98); }
+  .cta:focus-visible { outline: 2px solid var(--naira); outline-offset: 3px; }
+  .cta-wide { max-width: 420px; margin: 0 auto; }
+  .cta-note { font-size: 12px; color: var(--muted); text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+  /* TRUST ROW */
+  .trust { display: flex; justify-content: center; gap: 48px; margin: 8px 0 44px; padding: 24px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .trust-item { text-align: center; }
+  .trust-num { font-family: var(--display); font-size: 24px; font-weight: 700; color: var(--text); }
+  .trust-lbl { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+
+  /* SECTIONS */
+  .section-h { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1.4px; margin-bottom: 24px; text-align: center; }
+  .steps { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 48px; }
+  .step { display: flex; gap: 16px; align-items: flex-start; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+  .step-num { flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px; background: var(--bg2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 600; font-size: 14px; color: var(--crypto); }
+  .step-body h3 { font-size: 15.5px; font-weight: 700; margin-bottom: 4px; }
+  .step-body p { font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+
+  .assets { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; margin-bottom: 48px; }
+  .asset { font-family: var(--mono); font-size: 13px; font-weight: 600; padding: 8px 16px 8px 8px; background: var(--card); border: 1px solid var(--line); border-radius: 30px; color: var(--muted); display: inline-flex; align-items: center; gap: 9px; }
+  .asset b { color: var(--text); }
+
+  .feats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 48px; }
+  .feat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+  .feat-ic { font-size: 22px; margin-bottom: 10px; }
+  .feat h4 { font-size: 14.5px; font-weight: 700; margin-bottom: 5px; }
+  .feat p { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+  .final { text-align: center; padding: 48px 0 28px; }
+  .final h2 { font-family: var(--display); font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 10px; }
+  .final p { font-size: 14.5px; color: var(--muted); margin-bottom: 26px; }
+  .final .cta-wide { max-width: 360px; }
+
+  footer { text-align: center; padding: 36px 0; border-top: 1px solid var(--line); margin-top: 12px; }
+  .foot-links { display: flex; gap: 18px; justify-content: center; margin-bottom: 16px; }
+  .foot-links a { color: var(--muted); font-size: 12px; text-decoration: none; }
+  .foot-fine { font-size: 11px; color: #4a5266; line-height: 1.6; max-width: 420px; margin: 0 auto; }
+
+  /* MODAL / QUIZ */
+  .overlay { position: fixed; inset: 0; background: rgba(4,8,16,0.85); backdrop-filter: blur(6px); z-index: 100; display: none; align-items: flex-end; justify-content: center; }
+  .overlay.show { display: flex; animation: fadeIn 0.2s; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .sheet { background: var(--bg2); width: 100%; max-width: 460px; border-radius: 24px 24px 0 0; padding: 28px 22px calc(28px + env(safe-area-inset-bottom)); border: 1px solid var(--line); border-bottom: none; animation: slideUp 0.3s cubic-bezier(0.16,1,0.3,1); }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .sheet-handle { width: 40px; height: 4px; background: var(--line); border-radius: 4px; margin: 0 auto 22px; }
+  .quiz-progress { display: flex; gap: 6px; margin-bottom: 24px; }
+  .qp-bar { flex: 1; height: 4px; border-radius: 4px; background: var(--line); transition: background 0.3s; }
+  .qp-bar.active { background: var(--crypto); }
+  .quiz-q { font-family: var(--display); font-size: 21px; font-weight: 600; letter-spacing: -0.3px; margin-bottom: 6px; }
+  .quiz-hint { font-size: 13px; color: var(--muted); margin-bottom: 22px; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-opt { background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 16px 18px; font-size: 15px; font-weight: 600; color: var(--text); cursor: pointer; text-align: left; transition: all 0.15s; display: flex; align-items: center; justify-content: space-between; }
+  .quiz-opt:hover { border-color: rgba(0,224,143,0.4); }
+  .quiz-opt:active { transform: scale(0.99); }
+  .quiz-opt.selected { border-color: var(--crypto); background: rgba(0,224,143,0.08); }
+  .quiz-opt .check { opacity: 0; color: var(--crypto); font-weight: 800; }
+  .quiz-opt.selected .check { opacity: 1; }
+  .quiz-step { display: none; }
+  .quiz-step.active { display: block; }
+  .reward-ic { font-size: 50px; text-align: center; margin-bottom: 16px; }
+  .reward-h { font-family: var(--display); font-size: 23px; font-weight: 700; text-align: center; letter-spacing: -0.3px; margin-bottom: 8px; }
+  .reward-p { font-size: 14px; color: var(--muted); text-align: center; margin-bottom: 24px; line-height: 1.5; }
+  .reward-p b { color: var(--naira); }
+  .skip { display: block; text-align: center; margin-top: 16px; color: var(--muted); font-size: 13px; background: none; border: none; cursor: pointer; width: 100%; }
+  .skip:focus-visible, .quiz-opt:focus-visible, a:focus-visible { outline: 2px solid var(--naira); outline-offset: 2px; }
+
+  /* DESKTOP */
+  @media (min-width: 860px) {
+    .nav-cta { display: inline-block; }
+    .hero { grid-template-columns: 1.05fr 0.95fr; gap: 64px; padding: 56px 0 72px; text-align: left; }
+    .hero-copy { text-align: left; }
+    .hero-copy .sub { margin-left: 0; }
+    .hero-actions { align-items: flex-start; }
+    .pill { margin-left: 0; }
+    h1 { font-size: 54px; }
+    .offer, .cta-wide { margin: 0; max-width: 420px; }
+    .trust { gap: 64px; }
+    .steps { grid-template-columns: 1fr 1fr 1fr; }
+    .feats { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    .overlay { align-items: center; }
+    .sheet { border-radius: 24px; border-bottom: 1px solid var(--line); animation: fadeIn 0.2s; }
+    .final .cta-wide { margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+<div class="glow glow1"></div>
+<div class="glow glow2"></div>
+
+<div class="ticker-rail">
+  <div class="ticker-track" aria-hidden="true">
+    <span><span class="coin coin-usdt">T</span>USDT/NGN <b>₦1,652</b> <span class="up">▲ 0.4%</span></span>
+    <span><span class="coin coin-usdc">C</span>USDC/NGN <b>₦1,649</b> <span class="up">▲ 0.2%</span></span>
+    <span><span class="coin coin-sol">S</span>SOL/NGN <b>₦243,180</b> <span class="down">▼ 1.1%</span></span>
+    <span><span class="coin coin-doge">D</span>DOGE/NGN <b>₦182</b> <span class="up">▲ 2.6%</span></span>
+    <span><span class="coin coin-tron">T</span>TRON/NGN <b>₦198</b> <span class="up">▲ 0.8%</span></span>
+    <span><span class="coin coin-shib">S</span>SHIB/NGN <b>₦0.038</b> <span class="down">▼ 0.5%</span></span>
+    <span><span class="coin coin-usdt">T</span>USDT/NGN <b>₦1,652</b> <span class="up">▲ 0.4%</span></span>
+    <span><span class="coin coin-usdc">C</span>USDC/NGN <b>₦1,649</b> <span class="up">▲ 0.2%</span></span>
+    <span><span class="coin coin-sol">S</span>SOL/NGN <b>₦243,180</b> <span class="down">▼ 1.1%</span></span>
+    <span><span class="coin coin-doge">D</span>DOGE/NGN <b>₦182</b> <span class="up">▲ 2.6%</span></span>
+    <span><span class="coin coin-tron">T</span>TRON/NGN <b>₦198</b> <span class="up">▲ 0.8%</span></span>
+    <span><span class="coin coin-shib">S</span>SHIB/NGN <b>₦0.038</b> <span class="down">▼ 0.5%</span></span>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav>
+    <div class="logo"><div class="logo-mark">D</div>DeeX</div>
+    <a href="#" class="nav-cta" onclick="openQuiz();return false;">Claim ₦5,000</a>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="pill"><span class="live-dot"></span> Limited first-time offer</div>
+      <h1>Sell crypto.<br>Get <span class="hl">₦5,000 free.</span></h1>
+      <p class="sub">Join DeeX, complete one trade of $100, and we drop ₦5,000 straight into your wallet. Fast, secure, built for Nigeria.</p>
+      <div class="hero-actions">
+        <button class="cta cta-wide" onclick="openQuiz()">Claim my ₦5,000 →</button>
+        <div class="cta-note">🔒 Takes 30 seconds · No card needed to start</div>
+      </div>
+    </div>
+    <div class="offer">
+      <div class="offer-tag" id="offerTag">🎁 New user bonus</div>
+      <div class="offer-amt">₦5,000<span> free</span></div>
+      <div class="offer-desc" id="offerDesc">Sign up and complete <b>one trade of $100</b> to unlock your bonus. No catch.</div>
+    </div>
+  </section>
+
+  <div class="trust">
+    <div class="trust-item"><div class="trust-num">30s</div><div class="trust-lbl">Avg. payout</div></div>
+    <div class="trust-item"><div class="trust-num">6+</div><div class="trust-lbl">Assets</div></div>
+    <div class="trust-item"><div class="trust-num">0%</div><div class="trust-lbl">Hidden fees</div></div>
+  </div>
+
+  <div class="section-h">How it works</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-body"><h3>Download & sign up</h3><p>Get the DeeX app and create your account in under a minute.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-body"><h3>Sell crypto worth $100</h3><p>Sell USDT, USDC, SOL and more — straight to your bank, instantly.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-body"><h3>Get ₦5,000 free</h3><p>Your bonus lands in your wallet automatically. Yours to keep.</p></div>
+    </div>
+  </div>
+
+  <div class="section-h">Assets you can sell</div>
+  <div class="assets">
+    <div class="asset"><span class="coin coin-usdt">T</span><b>USDT</b></div>
+    <div class="asset"><span class="coin coin-usdc">C</span><b>USDC</b></div>
+    <div class="asset"><span class="coin coin-sol">S</span><b>SOL</b></div>
+    <div class="asset"><span class="coin coin-doge">D</span><b>DOGE</b></div>
+    <div class="asset"><span class="coin coin-tron">T</span><b>TRON</b></div>
+    <div class="asset"><span class="coin coin-shib">S</span><b>SHIB</b></div>
+  </div>
+
+  <div class="section-h">Why DeeX</div>
+  <div class="feats">
+    <div class="feat"><div class="feat-ic">⚡</div><h4>Instant payouts</h4><p>Cash hits your bank in seconds, not hours.</p></div>
+    <div class="feat"><div class="feat-ic">🔒</div><h4>Bank-grade security</h4><p>Your funds and data stay protected, always.</p></div>
+    <div class="feat"><div class="feat-ic">💸</div><h4>Best rates</h4><p>Transparent pricing with no hidden fees.</p></div>
+    <div class="feat"><div class="feat-ic">📱</div><h4>Built for you</h4><p>Simple enough for your first ever trade.</p></div>
+  </div>
+
+  <section class="final">
+    <h2>Your ₦5,000 is waiting.</h2>
+    <p>Offer ends soon — claim it before it's gone.</p>
+    <button class="cta cta-wide" onclick="openQuiz()">Claim my ₦5,000 →</button>
+  </section>
+
+  <footer>
+    <div class="foot-links"><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Support</a></div>
+    <div class="foot-fine">₦5,000 bonus credited after sign-up and one completed trade of $100. Offer for new users only and may end at any time. © DeeX 2025. deexoptions.com</div>
+  </footer>
+</div>
+
+<!-- QUIZ SHEET -->
+<div class="overlay" id="overlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+
+    <div class="quiz-progress">
+      <div class="qp-bar active" id="qp0"></div>
+      <div class="qp-bar" id="qp1"></div>
+      <div class="qp-bar" id="qp2"></div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="quiz-step active" id="step0">
+      <div class="quiz-q">Have you traded crypto before?</div>
+      <div class="quiz-hint">Helps us set you up the right way.</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="pick(0,this,'experience','new')">I'm brand new <span class="check">✓</span></button>
+        <button class="quiz-opt" onclick="pick(0,this,'experience','some')">A little <span class="check">✓</span></button>
+        <button class="quiz-opt" onclick="pick(0,this,'experience','pro')">I trade often <span class="check">✓</span></button>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-step" id="step1">
+      <div class="quiz-q">What do you mostly want to sell?</div>
+      <div class="quiz-hint">We'll show you the best rates for it.</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="pick(1,this,'asset','stables')"><span><span class="coin coin-usdt">T</span> <span class="coin coin-usdc">C</span> USDT / USDC</span> <span class="check">✓</span></button>
+        <button class="quiz-opt" onclick="pick(1,this,'asset','majors')"><span><span class="coin coin-sol">S</span> <span class="coin coin-doge">D</span> <span class="coin coin-tron">T</span> SOL / DOGE / TRON</span> <span class="check">✓</span></button>
+        <button class="quiz-opt" onclick="pick(1,this,'asset','mixed')">A bit of everything <span class="check">✓</span></button>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-step" id="step2">
+      <div class="quiz-q">How soon do you want to start?</div>
+      <div class="quiz-hint">Your ₦5,000 offer is ready now.</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="pick(2,this,'intent','now')">Right now <span class="check">✓</span></button>
+        <button class="quiz-opt" onclick="pick(2,this,'intent','today')">Later today <span class="check">✓</span></button>
+        <button class="quiz-opt" onclick="pick(2,this,'intent','soon')">This week <span class="check">✓</span></button>
+      </div>
+    </div>
+
+    <!-- Reward / Download -->
+    <div class="quiz-step" id="step3">
+      <div class="reward-ic">🎉</div>
+      <div class="reward-h">You're in! ₦5,000 locked.</div>
+      <div class="reward-p">Download DeeX, sign up, and complete <b>one $100 trade</b> to claim your bonus.</div>
+      <a href="#" class="cta" id="downloadBtn" onclick="goToStore(event)">Download DeeX & claim →</a>
+      <div class="cta-note" style="margin-top:12px">🔒 Your bonus is reserved for the next 24 hours</div>
+    </div>
+
+    <button class="skip" id="skipBtn" onclick="skipQuiz()">Skip — just take me to the app</button>
+  </div>
+</div>
+
+<script>
+  // ---- Smart store link (auto-detect device) ----
+  // Replace these with your real AppsFlyer OneLink / store URLs:
+  var STORE_LINKS = {
+    ios: "https://apps.apple.com/app/deex",          // TODO: real App Store URL
+    android: "https://play.google.com/store/apps/details?id=com.deex", // TODO: real Play Store URL
+    fallback: "https://deexoptions.com/app"          // OneLink smart URL ideal here
+  };
+
+  // ---- Invite code pre-fill (e.g. shared by an existing user: ?code=DX-WELCOME500) ----
+  var inviteCode = new URLSearchParams(location.search).get("code");
+
+  function withCode(url) {
+    if (!inviteCode) return url;
+    return url + (url.indexOf("?") === -1 ? "?" : "&") + "code=" + encodeURIComponent(inviteCode);
+  }
+
+  function detectStore() {
+    var ua = navigator.userAgent || navigator.vendor || window.opera;
+    var base;
+    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) base = STORE_LINKS.ios;
+    else if (/android/i.test(ua)) base = STORE_LINKS.android;
+    else base = STORE_LINKS.fallback;
+    return withCode(base);
+  }
+
+  if (inviteCode) {
+    var offerTag = document.getElementById("offerTag");
+    var offerDesc = document.getElementById("offerDesc");
+    if (offerTag) offerTag.textContent = "🎁 Invite code " + inviteCode + " applied";
+    if (offerDesc) offerDesc.innerHTML = "Sign up with code <b>" + inviteCode + "</b> and complete <b>one trade of $100</b> to unlock your bonus. No catch.";
+  }
+
+  // ---- Quiz state ----
+  var quizData = { experience: null, asset: null, intent: null };
+  var current = 0;
+
+  function openQuiz() {
+    document.getElementById('overlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    track('quiz_opened');
+  }
+
+  function pick(stepIndex, el, key, value) {
+    // visual select
+    var parent = el.parentElement;
+    [].forEach.call(parent.children, function(c){ c.classList.remove('selected'); });
+    el.classList.add('selected');
+    quizData[key] = value;
+    track('quiz_answer', { step: stepIndex, key: key, value: value });
+
+    // advance after short delay
+    setTimeout(function(){ nextStep(stepIndex + 1); }, 220);
+  }
+
+  function nextStep(n) {
+    document.getElementById('step' + current).classList.remove('active');
+    current = n;
+    document.getElementById('step' + current).classList.add('active');
+    // progress bars (only first 3)
+    for (var i = 0; i < 3; i++) {
+      document.getElementById('qp' + i).classList.toggle('active', i <= Math.min(current, 2));
+    }
+    // hide skip on reward screen
+    document.getElementById('skipBtn').style.display = (current === 3) ? 'none' : 'block';
+    if (current === 3) {
+      document.getElementById('downloadBtn').setAttribute('href', detectStore());
+      track('quiz_completed', quizData);
+    }
+  }
+
+  function skipQuiz() {
+    track('quiz_skipped', { at_step: current });
+    window.location.href = detectStore();
+  }
+
+  function goToStore(e) {
+    track('download_click', quizData);
+    // let the href navigate naturally; could also window.location for SPA tracking
+  }
+
+  // ---- Tracking hook (wire to AppsFlyer Web SDK / Meta / TikTok pixels) ----
+  function track(event, props) {
+    props = props || {};
+    // Example: window.AF && window.AF('pba','event',{eventType:'EVENT', eventName:event, eventValue:props});
+    // Example: window.fbq && fbq('trackCustom', event, props);
+    // Example: window.ttq && ttq.track(event, props);
+    console.log('[track]', event, props);
+  }
+
+  // Close sheet by tapping outside
+  document.getElementById('overlay').addEventListener('click', function(e){
+    if (e.target === this) { this.classList.remove('show'); document.body.style.overflow=''; }
+  });
+
+  // Fire page view
+  track('landing_view', { source: new URLSearchParams(location.search).get('utm_source') || 'direct' });
+</script>
+</body>
+</html>

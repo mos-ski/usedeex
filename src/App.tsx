@@ -38,7 +38,9 @@ import AdminPanel from "./pages/AdminPanel";
 import VirtualCards from "./pages/VirtualCards";
 import TradeStreak from "./pages/TradeStreak";
 import AdminUserDetail from "./pages/AdminUserDetail";
+import InviteEarn from "./pages/InviteEarn";
 import NotFound from "./pages/NotFound";
+import { InviteCodeProvider } from "./contexts/InviteCodeContext";
 
 const queryClient = new QueryClient();
 
@@ -47,48 +49,50 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/onboarding" replace />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/pin" element={<PinLock />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/wallet" element={<Wallet />} />
-          <Route path="/deposit" element={<Deposit />} />
-          <Route path="/sell-crypto" element={<SellCrypto />} />
-          <Route path="/swap-crypto" element={<SwapCrypto />} />
-          <Route path="/withdraw" element={<WithdrawCrypto />} />
-          <Route path="/send-money" element={<SendMoney />} />
-          <Route path="/asset/:symbol" element={<AssetDetail />} />
-          <Route path="/receipt" element={<Receipt />} />
-          <Route path="/transaction-detail" element={<TransactionDetail />} />
-          <Route path="/deex-pay" element={<DeexPay />} />
-          <Route path="/giftcards" element={<GiftCards />} />
-          <Route path="/bills/:type" element={<BillPayment />} />
-          <Route path="/naira-wallet" element={<NairaWallet />} />
-          <Route path="/activity" element={<Activity />} />
-          <Route path="/rewards" element={<Rewards />} />
-          <Route path="/referrals" element={<ReferralDashboard />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/edit-profile" element={<EditProfile />} />
-          <Route path="/generate-statement" element={<GenerateStatement />} />
-          <Route path="/about" element={<AboutDeeX />} />
-          <Route path="/security" element={<SecuritySettings />} />
-          <Route path="/bank-accounts" element={<BankAccounts />} />
-          <Route path="/kyc" element={<KycVerification />} />
-          <Route path="/support" element={<Support />} />
-          <Route path="/quick-action" element={<QuickAction />} />
-          <Route path="/virtual-cards" element={<VirtualCards />} />
-          <Route path="/trade-streak" element={<TradeStreak />} />
-          <Route path="/admin/users/:id" element={<AdminUserDetail />} />
-          <Route path="/admin" element={<AdminPanel />} />
-          <Route path="/admin" element={<AdminPanel />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <InviteCodeProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Navigate to="/onboarding" replace />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/pin" element={<PinLock />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/wallet" element={<Wallet />} />
+            <Route path="/deposit" element={<Deposit />} />
+            <Route path="/sell-crypto" element={<SellCrypto />} />
+            <Route path="/swap-crypto" element={<SwapCrypto />} />
+            <Route path="/withdraw" element={<WithdrawCrypto />} />
+            <Route path="/send-money" element={<SendMoney />} />
+            <Route path="/asset/:symbol" element={<AssetDetail />} />
+            <Route path="/receipt" element={<Receipt />} />
+            <Route path="/transaction-detail" element={<TransactionDetail />} />
+            <Route path="/deex-pay" element={<DeexPay />} />
+            <Route path="/giftcards" element={<GiftCards />} />
+            <Route path="/bills/:type" element={<BillPayment />} />
+            <Route path="/naira-wallet" element={<NairaWallet />} />
+            <Route path="/activity" element={<Activity />} />
+            <Route path="/rewards" element={<Rewards />} />
+            <Route path="/referrals" element={<ReferralDashboard />} />
+            <Route path="/invite-earn" element={<InviteEarn />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
+            <Route path="/generate-statement" element={<GenerateStatement />} />
+            <Route path="/about" element={<AboutDeeX />} />
+            <Route path="/security" element={<SecuritySettings />} />
+            <Route path="/bank-accounts" element={<BankAccounts />} />
+            <Route path="/kyc" element={<KycVerification />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/quick-action" element={<QuickAction />} />
+            <Route path="/virtual-cards" element={<VirtualCards />} />
+            <Route path="/trade-streak" element={<TradeStreak />} />
+            <Route path="/admin/users/:id" element={<AdminUserDetail />} />
+            <Route path="/admin" element={<AdminPanel />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </InviteCodeProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

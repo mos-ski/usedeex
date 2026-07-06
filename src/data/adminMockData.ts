@@ -654,3 +654,191 @@ export const billPaymentsList = [
   { id: "BP-024", user: "Olu Fashola", type: "Electricity", provider: "IBEDC", amount: "₦10,000.00", phone: "08278901234", status: "COMPLETED", date: "Mar 5th, 2026, 9:00 PM", txRef: "bill_69ac623210aef2d" },
   { id: "BP-025", user: "Hauwa Garba", type: "Airtime", provider: "Glo", amount: "₦2,000.00", phone: "08289012345", status: "COMPLETED", date: "Mar 5th, 2026, 7:45 PM", txRef: "bill_69ac523210aef2d" },
 ];
+
+// Invite Codes
+export type InviteCodeStatus = "active" | "used" | "expired" | "deactivated";
+
+export interface InviteCodeConditions {
+  minDepositAmount: number;
+  minTradeAmount: number;
+  requiredTradingPairs: string[];
+  tradeDeadlineDays: number | null;
+  depositDeadlineDays: number | null;
+}
+
+export interface InviteCode {
+  id: string;
+  code: string;
+  createdBy: string;
+  inviterId: string | null;
+  inviterName: string | null;
+  conditions: InviteCodeConditions;
+  depositReward: number;
+  tradeReward: number;
+  totalReward: number;
+  maxUses: number;
+  currentUses: number;
+  expiresAt: string | null;
+  status: InviteCodeStatus;
+  createdAt: string;
+  usedBy: string | null;
+  usedAt: string | null;
+}
+
+export const inviteCodesList: InviteCode[] = [
+  {
+    id: "IC-001",
+    code: "DX-WELCOME500",
+    createdBy: "Adedamola A.",
+    inviterId: null,
+    inviterName: null,
+    conditions: { minDepositAmount: 50, minTradeAmount: 100, requiredTradingPairs: [], tradeDeadlineDays: 30, depositDeadlineDays: 7 },
+    depositReward: 200,
+    tradeReward: 300,
+    totalReward: 500,
+    maxUses: 1,
+    currentUses: 1,
+    expiresAt: "Jun 30th, 2026",
+    status: "used",
+    createdAt: "Mar 1st, 2026",
+    usedBy: "Chidinma Obi",
+    usedAt: "Mar 5th, 2026",
+  },
+  {
+    id: "IC-002",
+    code: "DX-TRADE100",
+    createdBy: "Dawood K.",
+    inviterId: "user-001",
+    inviterName: "Ibrahim Abubakar",
+    conditions: { minDepositAmount: 20, minTradeAmount: 50, requiredTradingPairs: ["BTC/USDT"], tradeDeadlineDays: 14, depositDeadlineDays: 7 },
+    depositReward: 40,
+    tradeReward: 60,
+    totalReward: 100,
+    maxUses: 1,
+    currentUses: 0,
+    expiresAt: "Apr 30th, 2026",
+    status: "active",
+    createdAt: "Mar 10th, 2026",
+    usedBy: null,
+    usedAt: null,
+  },
+  {
+    id: "IC-003",
+    code: "DX-MEGA2000",
+    createdBy: "Adedamola A.",
+    inviterId: null,
+    inviterName: null,
+    conditions: { minDepositAmount: 200, minTradeAmount: 500, requiredTradingPairs: [], tradeDeadlineDays: 60, depositDeadlineDays: 14 },
+    depositReward: 800,
+    tradeReward: 1200,
+    totalReward: 2000,
+    maxUses: 1,
+    currentUses: 0,
+    expiresAt: null,
+    status: "active",
+    createdAt: "Mar 8th, 2026",
+    usedBy: null,
+    usedAt: null,
+  },
+  {
+    id: "IC-004",
+    code: "DX-BTC500",
+    createdBy: "Dawood K.",
+    inviterId: "user-003",
+    inviterName: "Divine Omajuwa",
+    conditions: { minDepositAmount: 100, minTradeAmount: 250, requiredTradingPairs: ["BTC/USDT", "ETH/USDT"], tradeDeadlineDays: 21, depositDeadlineDays: 7 },
+    depositReward: 200,
+    tradeReward: 300,
+    totalReward: 500,
+    maxUses: 1,
+    currentUses: 0,
+    expiresAt: "May 31st, 2026",
+    status: "active",
+    createdAt: "Mar 5th, 2026",
+    usedBy: null,
+    usedAt: null,
+  },
+  {
+    id: "IC-005",
+    code: "DX-SPRING100",
+    createdBy: "Adedamola A.",
+    inviterId: null,
+    inviterName: null,
+    conditions: { minDepositAmount: 10, minTradeAmount: 25, requiredTradingPairs: [], tradeDeadlineDays: 7, depositDeadlineDays: 3 },
+    depositReward: 40,
+    tradeReward: 60,
+    totalReward: 100,
+    maxUses: 1,
+    currentUses: 1,
+    expiresAt: "Mar 15th, 2026",
+    status: "expired",
+    createdAt: "Feb 15th, 2026",
+    usedBy: "Adewale Musa",
+    usedAt: "Mar 1st, 2026",
+  },
+  {
+    id: "IC-006",
+    code: "DX-NEWUSER75",
+    createdBy: "Dawood K.",
+    inviterId: null,
+    inviterName: null,
+    conditions: { minDepositAmount: 5, minTradeAmount: 15, requiredTradingPairs: [], tradeDeadlineDays: 14, depositDeadlineDays: 7 },
+    depositReward: 30,
+    tradeReward: 45,
+    totalReward: 75,
+    maxUses: 1,
+    currentUses: 0,
+    expiresAt: "Apr 15th, 2026",
+    status: "active",
+    createdAt: "Mar 12th, 2026",
+    usedBy: null,
+    usedAt: null,
+  },
+  {
+    id: "IC-007",
+    code: "DX-PROMO250",
+    createdBy: "Adedamola A.",
+    inviterId: "user-005",
+    inviterName: "Victor Odigili",
+    conditions: { minDepositAmount: 30, minTradeAmount: 75, requiredTradingPairs: ["SOL/USDT"], tradeDeadlineDays: 14, depositDeadlineDays: 5 },
+    depositReward: 100,
+    tradeReward: 150,
+    totalReward: 250,
+    maxUses: 1,
+    currentUses: 1,
+    expiresAt: "Mar 20th, 2026",
+    status: "used",
+    createdAt: "Feb 20th, 2026",
+    usedBy: "Grace Nwosu",
+    usedAt: "Mar 3rd, 2026",
+  },
+  {
+    id: "IC-008",
+    code: "DX-VIP1000",
+    createdBy: "Adedamola A.",
+    inviterId: null,
+    inviterName: null,
+    conditions: { minDepositAmount: 100, minTradeAmount: 300, requiredTradingPairs: [], tradeDeadlineDays: 30, depositDeadlineDays: 14 },
+    depositReward: 400,
+    tradeReward: 600,
+    totalReward: 1000,
+    maxUses: 1,
+    currentUses: 0,
+    expiresAt: null,
+    status: "active",
+    createdAt: "Mar 15th, 2026",
+    usedBy: null,
+    usedAt: null,
+  },
+];
+
+export const inviteCodeStats = {
+  totalCodes: 8,
+  activeCodes: 5,
+  usedCodes: 2,
+  expiredCodes: 1,
+  totalRedeemed: 2,
+  totalDeeXpointsAwarded: 750,
+  redemptionRate: "25%",
+  avgTimeToComplete: "4.5 days",
+};

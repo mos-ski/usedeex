@@ -1,11 +1,24 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Eye, EyeOff, Gift } from "lucide-react";
+import { toast } from "sonner";
 import MobileLayout from "@/components/layout/MobileLayout";
+import { useInviteCode } from "@/contexts/InviteCodeContext";
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
+  const [inviteCode, setInviteCode] = useState(searchParams.get("code")?.toUpperCase() || "");
+  const { applyCode } = useInviteCode();
+
+  const handleCreateAccount = () => {
+    if (inviteCode.trim()) {
+      applyCode(inviteCode.trim());
+      toast.success("Invite code applied! Complete conditions to earn rewards");
+    }
+    navigate("/dashboard");
+  };
 
   return (
     <MobileLayout hideNav>
@@ -41,8 +54,19 @@ const SignUp = () => {
               </button>
             </div>
           </div>
+          <div className="space-y-2">
+            <label className="text-sm text-muted-foreground flex items-center gap-1.5">
+              <Gift className="w-4 h-4 text-primary" /> Invite code (optional)
+            </label>
+            <input
+              value={inviteCode}
+              onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+              placeholder="e.g. DX-WELCOME500"
+              className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary uppercase tracking-wide"
+            />
+          </div>
 
-          <button onClick={() => navigate("/dashboard")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold text-base mt-4">
+          <button onClick={handleCreateAccount} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold text-base mt-4">
             Create Account
           </button>
 

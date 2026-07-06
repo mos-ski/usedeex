@@ -14,6 +14,7 @@ import AdminReports from "@/components/admin/AdminReports";
 import AdminSettings from "@/components/admin/AdminSettings";
 import AdminGiftCards from "@/components/admin/AdminGiftCards";
 import AdminBillPayments from "@/components/admin/AdminBillPayments";
+import AdminInviteCodes from "@/components/admin/AdminInviteCodes";
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
@@ -43,6 +44,7 @@ const AdminPanel = () => {
       {activeTab === "bill-payments" && <AdminBillPayments />}
       {activeTab === "audit-log" && <AdminAuditLog />}
       {activeTab === "rewards-admin" && <AdminRewards />}
+      {activeTab === "invite-codes" && <AdminInviteCodes />}
       {activeTab === "reports" && <AdminReports />}
       {activeTab === "settings" && <AdminSettings />}
     </AdminLayout>

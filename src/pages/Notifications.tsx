@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 
 const notifications = [
+  { id: 0, title: "You earned 200 DeeXpoints! 🎁", message: "Your first deposit unlocked the deposit reward from your invite code DX-WELCOME500.", time: "Today 3:12 PM", type: "reward" },
   { id: 1, title: "Login Notification", message: "You just successfully logged into your account. Happy trading!", time: "Today 1:43 PM", type: "login" },
   { id: 2, title: "Session Terminated", message: "Your previous session on device Galaxy S10 was terminated due to a new login from another device.", time: "Today 1:43 PM", type: "session" },
   { id: 3, title: "Login Notification", message: "You just successfully logged into your account. Happy trading!", time: "Today 1:43 PM", type: "login" },
@@ -31,7 +32,7 @@ const Notifications = () => {
           {notifications.map((n, i) => (
             <div key={n.id}>
               <div className="px-5 py-4">
-                <p className={`text-sm font-semibold mb-1 ${n.type === "promo" ? "text-warning" : "text-foreground"}`}>
+                <p className={`text-sm font-semibold mb-1 ${n.type === "promo" ? "text-warning" : n.type === "reward" ? "text-success" : "text-foreground"}`}>
                   {n.title}
                 </p>
                 <p className="text-sm text-muted-foreground leading-relaxed">{n.message}</p>

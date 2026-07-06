@@ -13,7 +13,7 @@ export type AdminTab =
   | "kyc-compliance" | "kyc-rules"
   | "compliance" | "compliance-alerts" | "compliance-rules" | "compliance-detail"
   | "reports" | "settings" | "audit-log" | "virtual-cards"
-  | "rewards-admin" | "giftcards" | "bill-payments";
+  | "rewards-admin" | "giftcards" | "bill-payments" | "invite-codes";
 
 type NavItem = {
   icon: typeof LayoutDashboard;
@@ -42,6 +42,7 @@ export const navItems: NavItem[] = [
   ]},
   { icon: FileText, label: "Audit Log", tab: "audit-log", isNew: true },
   { icon: Gift, label: "Rewards", tab: "rewards-admin", isNew: true },
+  { icon: Gift, label: "Invite Codes", tab: "invite-codes", isNew: true },
   { icon: BarChart3, label: "Reports", tab: "reports" },
   { icon: Settings, label: "Settings", tab: "settings" },
 ];

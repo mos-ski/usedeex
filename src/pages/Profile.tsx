@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Shield, FileText, BadgeCheck, Info, LogOut, ChevronRight, HelpCircle, BookOpen } from "lucide-react";
+import { ArrowLeft, Shield, FileText, BadgeCheck, Info, LogOut, ChevronRight, HelpCircle, BookOpen, Gift } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import NewBadge from "@/components/NewBadge";
 
 const settingsItems = [
+  { icon: Gift, label: "Invite Code", path: "/invite-earn", isNew: true },
   { icon: Shield, label: "Security", path: "/security", isNew: true },
   { icon: BookOpen, label: "Manage Beneficiaries", path: "/bank-accounts", isNew: true },
   { icon: FileText, label: "Generate Statement", path: "/generate-statement", isNew: true },

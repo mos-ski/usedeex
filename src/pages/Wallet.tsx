@@ -1,11 +1,13 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ChevronRight, Wallet as WalletIcon } from "lucide-react";
+import { Eye, EyeOff, ChevronRight, Wallet as WalletIcon, Gift } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
 import CryptoIcon from "@/components/CryptoIcon";
+import InviteCodeInput from "@/components/InviteCodeInput";
 import { nairaWalletBalance } from "@/data/nairaWalletData";
+import { useInviteCode } from "@/contexts/InviteCodeContext";
 
 const assets = [
   { symbol: "BTC", name: "Bitcoin", balance: "0.0234", value: "$2,280.12" },
@@ -21,7 +23,9 @@ const Wallet = () => {
   const navigate = useNavigate();
   const [showBalance, setShowBalance] = useState(true);
   const [cardIndex, setCardIndex] = useState(0);
+  const [showInviteCode, setShowInviteCode] = useState(false);
   const touchStartX = useRef(0);
+  const { appliedCode, applyCode } = useInviteCode();
 
   const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
   const handleTouchEnd = (e: React.TouchEvent) => {
@@ -34,6 +38,24 @@ const Wallet = () => {
       <PageTransition>
         <div className="px-4 pt-6">
           <h2 className="text-lg font-bold text-foreground mb-4">Wallet</h2>
+
+          {/* Invite Code Banner */}
+          {!appliedCode && (
+            <div className="mb-6">
+              <button
+                onClick={() => setShowInviteCode(true)}
+                className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center gap-3"
+              >
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                  <Gift className="w-5 h-5 text-primary" />
+                </div>
+                <div className="text-left flex-1">
+                  <p className="text-sm font-semibold text-foreground">Have an invite code?</p>
+                  <p className="text-xs text-muted-foreground">Enter it to earn rewards on your first deposit and trade</p>
+                </div>
+              </button>
+            </div>
+          )}
 
           <div className="bg-gradient-to-br from-primary/20 to-accent/10 rounded-2xl p-5 mb-6 border border-border overflow-hidden"
             onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
@@ -99,6 +121,17 @@ const Wallet = () => {
         </div>
       </PageTransition>
       <BottomNav />
+
+      {/* Invite Code Modal */}
+      {showInviteCode && (
+        <InviteCodeInput
+          onApply={(code) => {
+            applyCode(code);
+            setShowInviteCode(false);
+          }}
+          onClose={() => setShowInviteCode(false)}
+        />
+      )}
     </MobileLayout>
   );
 };
