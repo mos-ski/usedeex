@@ -841,5 +841,20 @@ export const inviteCodeStats = {
   totalRedeemed: 2,
   totalDeeXpointsAwarded: 750,
   redemptionRate: "25%",
+  depositCompletionRate: "75%",
+  tradeCompletionRate: "50%",
   avgTimeToComplete: "4.5 days",
 };
+
+export interface TopInviter {
+  inviterId: string;
+  inviterName: string;
+  successfulReferrals: number;
+  pointsEarned: number;
+}
+
+export const topInviters: TopInviter[] = [
+  { inviterId: "user-001", inviterName: "Ibrahim Abubakar", successfulReferrals: 6, pointsEarned: 1200 },
+  { inviterId: "user-003", inviterName: "Divine Omajuwa", successfulReferrals: 4, pointsEarned: 800 },
+  { inviterId: "user-005", inviterName: "Victor Odigili", successfulReferrals: 2, pointsEarned: 400 },
+];

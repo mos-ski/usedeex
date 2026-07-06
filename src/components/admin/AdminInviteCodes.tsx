@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Plus, Search, Copy, Check, X, Gift, Clock, Users, TrendingUp, ChevronDown, Trash2, Eye, Calendar } from "lucide-react";
-import { inviteCodesList, inviteCodeStats, type InviteCode, type InviteCodeStatus } from "@/data/adminMockData";
+import { Plus, Search, Copy, Check, X, Gift, Clock, Users, TrendingUp, ChevronDown, Trash2, Eye, Calendar, Trophy, Percent } from "lucide-react";
+import { inviteCodesList, inviteCodeStats, topInviters, type InviteCode, type InviteCodeStatus } from "@/data/adminMockData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -21,6 +21,7 @@ const AdminInviteCodes = () => {
 
   const [newCode, setNewCode] = useState({
     code: "",
+    quantity: 1,
     depositReward: 100,
     tradeReward: 100,
     minDeposit: 20,
@@ -29,6 +30,7 @@ const AdminInviteCodes = () => {
     depositDeadline: 7,
     tradeDeadline: 14,
     expiry: "",
+    inviterName: "",
   });
 
   const filtered = codes.filter(c => {
@@ -44,12 +46,16 @@ const AdminInviteCodes = () => {
   };
 
   const handleCreate = () => {
-    const created: InviteCode = {
-      id: `IC-${String(codes.length + 1).padStart(3, "0")}`,
-      code: newCode.code || `DX-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+    const quantity = Math.min(Math.max(newCode.quantity || 1, 1), 100);
+    const inviterName = newCode.inviterName.trim() || null;
+    const created: InviteCode[] = Array.from({ length: quantity }, (_, i) => ({
+      id: `IC-${String(codes.length + i + 1).padStart(3, "0")}`,
+      code: quantity > 1
+        ? `${newCode.code || "DX-BULK"}-${String(i + 1).padStart(2, "0")}`
+        : (newCode.code || `DX-${Math.random().toString(36).substring(2, 8).toUpperCase()}`),
       createdBy: "Admin",
-      inviterId: null,
-      inviterName: null,
+      inviterId: inviterName ? `user-${inviterName.toLowerCase().replace(/\s+/g, "-")}` : null,
+      inviterName,
       conditions: {
         minDepositAmount: newCode.minDeposit,
         minTradeAmount: newCode.minTrade,
@@ -67,10 +73,10 @@ const AdminInviteCodes = () => {
       createdAt: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
       usedBy: null,
       usedAt: null,
-    };
-    setCodes([created, ...codes]);
+    }));
+    setCodes([...created, ...codes]);
     setShowCreateModal(false);
-    setNewCode({ code: "", depositReward: 100, tradeReward: 100, minDeposit: 20, minTrade: 50, pairs: "", depositDeadline: 7, tradeDeadline: 14, expiry: "" });
+    setNewCode({ code: "", quantity: 1, depositReward: 100, tradeReward: 100, minDeposit: 20, minTrade: 50, pairs: "", depositDeadline: 7, tradeDeadline: 14, expiry: "", inviterName: "" });
   };
 
   const handleDeactivate = (id: string) => {
@@ -96,6 +102,46 @@ const AdminInviteCodes = () => {
             <p className="text-xs text-muted-foreground">{stat.label}</p>
           </div>
         ))}
+      </div>
+
+      {/* Analytics */}
+      <div className="bg-card border border-border rounded-xl p-4">
+        <h3 className="text-sm font-bold text-foreground mb-4">Invite Code Analytics</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+          {[
+            { label: "Redemption Rate", value: inviteCodeStats.redemptionRate, icon: Percent },
+            { label: "Deposit Completion", value: inviteCodeStats.depositCompletionRate, icon: TrendingUp },
+            { label: "Trade Completion", value: inviteCodeStats.tradeCompletionRate, icon: TrendingUp },
+            { label: "Avg. Time to Complete", value: inviteCodeStats.avgTimeToComplete, icon: Clock },
+          ].map((stat) => (
+            <div key={stat.label} className="bg-secondary rounded-lg p-3">
+              <div className="flex items-center gap-1.5 mb-1">
+                <stat.icon className="w-3.5 h-3.5 text-muted-foreground" />
+                <p className="text-[10px] text-muted-foreground">{stat.label}</p>
+              </div>
+              <p className="text-lg font-bold text-foreground">{stat.value}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 mb-3">
+          <Trophy className="w-4 h-4 text-warning" />
+          <p className="text-xs font-semibold text-foreground">Top Inviters by Successful Referrals</p>
+        </div>
+        <div className="space-y-2">
+          {topInviters.map((inviter, i) => (
+            <div key={inviter.inviterId} className="flex items-center justify-between bg-secondary rounded-lg px-3 py-2">
+              <div className="flex items-center gap-3">
+                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold ${i === 0 ? "bg-warning/20 text-warning" : "bg-muted text-muted-foreground"}`}>{i + 1}</span>
+                <p className="text-sm font-medium text-foreground">{inviter.inviterName}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-semibold text-foreground">{inviter.successfulReferrals} referrals</p>
+                <p className="text-[10px] text-muted-foreground">{inviter.pointsEarned} pts distributed</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Header */}
@@ -154,6 +200,7 @@ const AdminInviteCodes = () => {
                       </button>
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-0.5">Created by {code.createdBy}</p>
+                    {code.inviterName && <p className="text-[10px] text-primary mt-0.5">Inviter: {code.inviterName}</p>}
                   </td>
                   <td className="px-4 py-3">
                     <span className="text-sm font-semibold text-foreground">{code.totalReward} pts</span>
@@ -209,9 +256,22 @@ const AdminInviteCodes = () => {
               <button onClick={() => setShowCreateModal(false)} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
             </div>
             <div className="p-4 space-y-4">
+              <div className="grid grid-cols-3 gap-3">
+                <div className="col-span-2">
+                  <label className="text-xs font-medium text-muted-foreground">Code (auto-generated if empty)</label>
+                  <Input placeholder="e.g. DX-SUMMER100" value={newCode.code} onChange={e => setNewCode({ ...newCode, code: e.target.value })} className="mt-1" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">Quantity</label>
+                  <Input type="number" min={1} max={100} value={newCode.quantity} onChange={e => setNewCode({ ...newCode, quantity: Number(e.target.value) })} className="mt-1" />
+                </div>
+              </div>
+              {newCode.quantity > 1 && (
+                <p className="text-[10px] text-muted-foreground -mt-2">Generates {newCode.quantity} codes numbered {newCode.code || "DX-BULK"}-01 … {newCode.code || "DX-BULK"}-{String(newCode.quantity).padStart(2, "0")}</p>
+              )}
               <div>
-                <label className="text-xs font-medium text-muted-foreground">Code (auto-generated if empty)</label>
-                <Input placeholder="e.g. DX-SUMMER100" value={newCode.code} onChange={e => setNewCode({ ...newCode, code: e.target.value })} className="mt-1" />
+                <label className="text-xs font-medium text-muted-foreground">Assign to Inviter (optional)</label>
+                <Input placeholder="e.g. Ibrahim Abubakar" value={newCode.inviterName} onChange={e => setNewCode({ ...newCode, inviterName: e.target.value })} className="mt-1" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -252,7 +312,7 @@ const AdminInviteCodes = () => {
                 <Input type="date" value={newCode.expiry} onChange={e => setNewCode({ ...newCode, expiry: e.target.value })} className="mt-1" />
               </div>
               <div className="bg-secondary rounded-xl p-3">
-                <p className="text-xs font-medium text-muted-foreground mb-2">Total Reward Preview</p>
+                <p className="text-xs font-medium text-muted-foreground mb-2">Total Reward Preview{newCode.quantity > 1 ? ` (per code × ${newCode.quantity})` : ""}</p>
                 <p className="text-xl font-bold text-foreground">{newCode.depositReward + newCode.tradeReward} DeeXpoints</p>
               </div>
             </div>
@@ -290,6 +350,9 @@ const AdminInviteCodes = () => {
                 </div>
               </div>
               <div className="space-y-2">
+                {showDetailModal.inviterName && (
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Assigned Inviter</span><span className="font-medium text-foreground">{showDetailModal.inviterName}</span></div>
+                )}
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Deposit Reward</span><span className="font-medium text-foreground">{showDetailModal.depositReward} pts</span></div>
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Trade Reward</span><span className="font-medium text-foreground">{showDetailModal.tradeReward} pts</span></div>
                 <div className="h-px bg-border" />
