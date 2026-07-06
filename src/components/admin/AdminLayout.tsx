@@ -7,6 +7,7 @@ import {
 import { useState } from "react";
 import { NewBadge } from "./AdminUtils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import GlobalSearch from "./GlobalSearch";
 
 export type AdminTab =
   | "dashboard" | "wallets" | "orders" | "payouts" | "users" | "kyc"
@@ -180,8 +181,9 @@ const AdminLayout = ({ activeTab, onTabChange, children, headerTitle }: AdminLay
             <h1 className="text-sm md:text-base font-semibold truncate">{getHeaderTitle()}</h1>
           </div>
           <div className="flex items-center gap-3">
-            <Bell className="w-5 h-5 text-muted-foreground cursor-pointer" />
-            <div className="w-8 h-8 rounded-full bg-primary/30 flex items-center justify-center text-xs font-bold text-primary">AD</div>
+            <GlobalSearch />
+            <Bell className="w-5 h-5 text-muted-foreground cursor-pointer hidden sm:block" />
+            <div className="w-8 h-8 rounded-full bg-primary/30 flex items-center justify-center text-xs font-bold text-primary shrink-0">AD</div>
           </div>
         </header>
 

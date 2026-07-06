@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Upload, RotateCcw } from "lucide-react";
+import { Upload, RotateCcw, Search } from "lucide-react";
 import { toast } from "sonner";
 import { payoutsList } from "@/data/adminMockData";
 import { StatusBadge, CopyButton, AdminPagination, NewBadge } from "./AdminUtils";
@@ -11,11 +11,18 @@ type PayoutItem = typeof payoutsList[0];
 
 const AdminPayouts = () => {
   const [statusFilter, setStatusFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
 
-  const filtered = payoutsList.filter(p =>
-    statusFilter === "All" || p.status === statusFilter
-  );
+  const filtered = payoutsList.filter(p => {
+    const matchStatus = statusFilter === "All" || p.status === statusFilter;
+    const s = searchQuery.toLowerCase().trim();
+    const matchSearch = !s ||
+      p.name.toLowerCase().includes(s) ||
+      p.orderRef.toLowerCase().includes(s) ||
+      (p.bank || "").toLowerCase().includes(s);
+    return matchStatus && matchSearch;
+  });
 
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
   const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -26,6 +33,7 @@ const AdminPayouts = () => {
     PENDING: payoutsList.filter(p => p.status === "PENDING").length,
     FAILED: payoutsList.filter(p => p.status === "FAILED").length,
   };
+
 
   const columns: ResponsiveColumn<PayoutItem>[] = [
     { key: "sn", label: "S/N", render: (_, i) => <span className="text-xs text-muted-foreground">{i + 1}</span> },
@@ -55,9 +63,17 @@ const AdminPayouts = () => {
           <p className="text-xs font-semibold text-muted-foreground tracking-wider">PAYOUTS</p>
           <NewBadge />
         </div>
-        <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
-          <Upload className="w-3.5 h-3.5" /> Export
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+            <input value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setPage(1); }}
+              placeholder="Search name, ref, bank…"
+              className="h-8 w-48 bg-secondary rounded-lg pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground outline-none" />
+          </div>
+          <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+            <Upload className="w-3.5 h-3.5" /> Export
+          </button>
+        </div>
       </div>
 
       {/* Summary */}

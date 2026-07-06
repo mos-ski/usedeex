@@ -12,7 +12,7 @@ import {
   userRewards, userTasks, userReferrals, kycLevel1, kycLevel3, holdingBalance
 } from "@/data/adminMockData";
 
-type UserTab = "info" | "transactions" | "activities" | "rewards" | "task" | "referrals" | "kyc";
+type UserTab = "info" | "addresses" | "transactions" | "activities" | "rewards" | "task" | "referrals" | "kyc";
 type SummaryTab = "user-summary" | "holding-balance";
 type KycLevel = "level1" | "level2" | "level3";
 
@@ -44,6 +44,7 @@ const AdminUserDetail = () => {
 
   const userTabs: { key: UserTab; label: string }[] = [
     { key: "info", label: "Info" },
+    { key: "addresses", label: "Addresses" },
     { key: "transactions", label: "Transactions" },
     { key: "activities", label: "Activities" },
     { key: "rewards", label: "Rewards" },
@@ -51,6 +52,24 @@ const AdminUserDetail = () => {
     { key: "referrals", label: "Referrals" },
     { key: "kyc", label: "KYC" },
   ];
+
+  // Derive OTC addresses from transactions where channel === "order"
+  const otcAddresses = (() => {
+    const seen = new Set<string>();
+    const out: { asset: string; network: string; address: string; lastUsed: string; count: number }[] = [];
+    userTransactions.forEach(t => {
+      if (!t.walletAddress || t.channel !== "order") return;
+      const key = `${t.asset}-${t.network}-${t.walletAddress}`;
+      const existing = out.find(o => `${o.asset}-${o.network}-${o.address}` === key);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        seen.add(key);
+        out.push({ asset: t.asset, network: t.network || "—", address: t.walletAddress, lastUsed: t.date, count: 1 });
+      }
+    });
+    return out;
+  })();
 
   return (
     <AdminLayout activeTab="users" onTabChange={(tab) => navigate("/admin")} headerTitle="Users">
@@ -188,12 +207,82 @@ const AdminUserDetail = () => {
             </div>
           )}
 
+          {/* ADDRESSES TAB */}
+          {activeTab === "addresses" && (
+            <div className="space-y-8">
+              {/* Wallets */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-semibold text-foreground">Wallets <span className="text-xs text-muted-foreground font-normal">({holdingBalance.length} addresses)</span></p>
+                </div>
+                <div className="bg-card border border-border rounded-xl overflow-x-auto">
+                  <Table>
+                    <TableHeader><TableRow>
+                      {["Asset", "Network", "Wallet Address", "Balance"].map(h => <TableHead key={h}>{h}</TableHead>)}
+                    </TableRow></TableHeader>
+                    <TableBody>
+                      {holdingBalance.map((h, i) => (
+                        <TableRow key={i}>
+                          <TableCell><div className="flex items-center gap-2"><CryptoIcon symbol={h.symbol} size="sm" /><span className="text-sm font-medium text-foreground">{h.symbol}</span></div></TableCell>
+                          <TableCell><span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-secondary text-muted-foreground">{h.network}</span></TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <span className="text-xs text-muted-foreground font-mono break-all">{h.address}</span>
+                              <CopyButton text={h.address} label="Wallet address" />
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{h.amount}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              {/* OTC */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-semibold text-foreground">OTC Counterparty Addresses <span className="text-xs text-muted-foreground font-normal">({otcAddresses.length} addresses)</span></p>
+                </div>
+                <div className="bg-card border border-border rounded-xl overflow-x-auto">
+                  {otcAddresses.length === 0 ? (
+                    <div className="p-6 text-center text-xs text-muted-foreground">No OTC transactions yet for this user.</div>
+                  ) : (
+                    <Table>
+                      <TableHeader><TableRow>
+                        {["Asset", "Network", "Wallet Address", "Tx Count", "Last Used"].map(h => <TableHead key={h}>{h}</TableHead>)}
+                      </TableRow></TableHeader>
+                      <TableBody>
+                        {otcAddresses.map((a, i) => (
+                          <TableRow key={i}>
+                            <TableCell><div className="flex items-center gap-2"><CryptoIcon symbol={a.asset} size="sm" /><span className="text-sm font-medium text-foreground">{a.asset}</span></div></TableCell>
+                            <TableCell><span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-secondary text-muted-foreground">{a.network}</span></TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-1">
+                                <span className="text-xs text-muted-foreground font-mono break-all">{a.address}</span>
+                                <CopyButton text={a.address} label="Wallet address" />
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-xs text-foreground">{a.count}</TableCell>
+                            <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{a.lastUsed}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+
+
           {/* TRANSACTIONS TAB */}
           {activeTab === "transactions" && (
-            <div className="bg-card border border-border rounded-xl overflow-hidden">
+            <div className="bg-card border border-border rounded-xl overflow-x-auto">
               <Table>
                 <TableHeader><TableRow>
-                  {["Asset", "Type", "Channel", "C/D", "Amount", "Bal Before", "Bal After", "Trans ID", "Date", "Status"].map(h => <TableHead key={h}>{h}</TableHead>)}
+                  {["Asset", "Type", "Channel", "C/D", "Amount", "Wallet Address", "Bal Before", "Bal After", "Trans ID", "Date", "Status"].map(h => <TableHead key={h}>{h}</TableHead>)}
                 </TableRow></TableHeader>
                 <TableBody>
                   {userTransactions.map((t, i) => (
@@ -217,6 +306,17 @@ const AdminUserDetail = () => {
                         </span>
                       </TableCell>
                       <TableCell className="text-sm text-foreground whitespace-pre-line">{t.amount}</TableCell>
+                      <TableCell>
+                        {t.walletAddress ? (
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-secondary text-muted-foreground w-fit">{t.network}</span>
+                            <div className="flex items-center gap-1">
+                              <span className="text-xs text-muted-foreground font-mono">{t.walletAddress.slice(0, 8)}…{t.walletAddress.slice(-6)}</span>
+                              <CopyButton text={t.walletAddress} label="Wallet address" />
+                            </div>
+                          </div>
+                        ) : <span className="text-xs text-muted-foreground">—</span>}
+                      </TableCell>
                       <TableCell className="text-xs text-muted-foreground font-mono">{t.balanceBefore}</TableCell>
                       <TableCell className="text-xs text-muted-foreground font-mono">{t.balanceAfter}</TableCell>
                       <TableCell><div className="flex items-center gap-1"><span className="text-xs text-muted-foreground font-mono">{t.txId.slice(0, 12)}...</span><CopyButton text={t.txId} label="Trans ID" /></div></TableCell>
@@ -227,6 +327,7 @@ const AdminUserDetail = () => {
                 </TableBody>
               </Table>
             </div>
+
           )}
 
           {/* ACTIVITIES TAB */}
@@ -455,7 +556,7 @@ const AdminUserDetail = () => {
               <p className="text-2xl font-bold text-foreground">USDT</p>
             </div>
           </div>
-          <div className="bg-card border border-border rounded-xl overflow-hidden">
+          <div className="bg-card border border-border rounded-xl overflow-x-auto">
             <Table>
               <TableHeader><TableRow>
                 {["Asset", "Amount", "USD Value"].map(h => <TableHead key={h} className={h === "USD Value" ? "text-right" : ""}>{h}</TableHead>)}
@@ -463,7 +564,15 @@ const AdminUserDetail = () => {
               <TableBody>
                 {holdingBalance.map((h, i) => (
                   <TableRow key={i}>
-                    <TableCell><div className="flex items-center gap-2"><CryptoIcon symbol={h.symbol} size="sm" /><span className="text-sm font-medium text-foreground">{h.symbol}</span></div></TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <CryptoIcon symbol={h.symbol} size="sm" />
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{h.symbol}</p>
+                          <span className="text-[10px] text-muted-foreground">{h.network}</span>
+                        </div>
+                      </div>
+                    </TableCell>
                     <TableCell className="text-sm text-foreground">{h.amount}</TableCell>
                     <TableCell className="text-sm text-foreground text-right">{h.usd}</TableCell>
                   </TableRow>
@@ -471,6 +580,7 @@ const AdminUserDetail = () => {
               </TableBody>
             </Table>
           </div>
+
         </div>
       )}
 
