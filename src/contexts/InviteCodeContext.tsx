@@ -6,8 +6,6 @@ export interface AppliedInviteCode {
   tradeReward: number;
   minDeposit: number;
   minTrade: number;
-  depositDeadlineDays: number;
-  tradeDeadlineDays: number;
 }
 
 interface InviteCodeState {
@@ -32,8 +30,6 @@ export const mockInviteCode: AppliedInviteCode = {
   tradeReward: 300,
   minDeposit: 50,
   minTrade: 100,
-  depositDeadlineDays: 7,
-  tradeDeadlineDays: 30,
 };
 
 const defaultState: InviteCodeState = {

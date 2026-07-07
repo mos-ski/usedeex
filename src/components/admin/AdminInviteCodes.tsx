@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Plus, Search, Copy, Check, X, Gift, Clock, Users, TrendingUp, ChevronDown, Trash2, Eye, Calendar, Trophy, Percent } from "lucide-react";
-import { inviteCodesList, inviteCodeStats, topInviters, type InviteCode, type InviteCodeStatus } from "@/data/adminMockData";
+import { Plus, Search, Copy, Check, X, Gift, Clock, Users, TrendingUp, ChevronDown, Trash2, Eye, Calendar, Trophy, Percent, UserPlus, RotateCcw } from "lucide-react";
+import { inviteCodesList, inviteCodeStats, topInviters, type InviteCode, type InviteCodeStatus, type InviteCodeEligibility } from "@/data/adminMockData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -9,6 +9,18 @@ const statusColors: Record<InviteCodeStatus, string> = {
   used: "bg-[hsl(var(--deex-blue))]/20 text-[hsl(var(--deex-blue))]",
   expired: "bg-warning/20 text-warning",
   deactivated: "bg-destructive/20 text-destructive",
+};
+
+const eligibilityOptions: { value: InviteCodeEligibility; label: string; icon: typeof Users }[] = [
+  { value: "all", label: "All Users", icon: Users },
+  { value: "new", label: "New Users", icon: UserPlus },
+  { value: "existing", label: "Existing Users", icon: RotateCcw },
+];
+
+const eligibilityLabels: Record<InviteCodeEligibility, string> = {
+  all: "All Users",
+  new: "New Users",
+  existing: "Existing Users",
 };
 
 const AdminInviteCodes = () => {
@@ -27,10 +39,9 @@ const AdminInviteCodes = () => {
     minDeposit: 20,
     minTrade: 50,
     pairs: "",
-    depositDeadline: 7,
-    tradeDeadline: 14,
     expiry: "",
     inviterName: "",
+    eligibility: "all" as InviteCodeEligibility,
   });
 
   const filtered = codes.filter(c => {
@@ -60,8 +71,7 @@ const AdminInviteCodes = () => {
         minDepositAmount: newCode.minDeposit,
         minTradeAmount: newCode.minTrade,
         requiredTradingPairs: newCode.pairs ? newCode.pairs.split(",").map(p => p.trim()) : [],
-        tradeDeadlineDays: newCode.tradeDeadline,
-        depositDeadlineDays: newCode.depositDeadline,
+        eligibility: newCode.eligibility,
       },
       depositReward: newCode.depositReward,
       tradeReward: newCode.tradeReward,
@@ -76,7 +86,7 @@ const AdminInviteCodes = () => {
     }));
     setCodes([...created, ...codes]);
     setShowCreateModal(false);
-    setNewCode({ code: "", quantity: 1, depositReward: 100, tradeReward: 100, minDeposit: 20, minTrade: 50, pairs: "", depositDeadline: 7, tradeDeadline: 14, expiry: "", inviterName: "" });
+    setNewCode({ code: "", quantity: 1, depositReward: 100, tradeReward: 100, minDeposit: 20, minTrade: 50, pairs: "", expiry: "", inviterName: "", eligibility: "all" });
   };
 
   const handleDeactivate = (id: string) => {
@@ -212,6 +222,7 @@ const AdminInviteCodes = () => {
                     {code.conditions.requiredTradingPairs.length > 0 && (
                       <p className="text-[10px] text-muted-foreground">{code.conditions.requiredTradingPairs.join(", ")}</p>
                     )}
+                    <p className="text-[10px] text-primary mt-0.5">{eligibilityLabels[code.conditions.eligibility]}</p>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex px-2 py-1 rounded-full text-[10px] font-medium ${statusColors[code.status]}`}>
@@ -297,19 +308,30 @@ const AdminInviteCodes = () => {
                 <label className="text-xs font-medium text-muted-foreground">Required Trading Pairs (comma-separated, empty = any)</label>
                 <Input placeholder="e.g. BTC/USDT, ETH/USDT" value={newCode.pairs} onChange={e => setNewCode({ ...newCode, pairs: e.target.value })} className="mt-1" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground">Deposit Deadline (days)</label>
-                  <Input type="number" value={newCode.depositDeadline} onChange={e => setNewCode({ ...newCode, depositDeadline: Number(e.target.value) })} className="mt-1" />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground">Trade Deadline (days)</label>
-                  <Input type="number" value={newCode.tradeDeadline} onChange={e => setNewCode({ ...newCode, tradeDeadline: Number(e.target.value) })} className="mt-1" />
-                </div>
-              </div>
               <div>
                 <label className="text-xs font-medium text-muted-foreground">Expiry Date (optional)</label>
                 <Input type="date" value={newCode.expiry} onChange={e => setNewCode({ ...newCode, expiry: e.target.value })} className="mt-1" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground">Eligible Users</label>
+                <div className="grid grid-cols-3 gap-2 mt-1">
+                  {eligibilityOptions.map((opt) => {
+                    const checked = newCode.eligibility === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setNewCode({ ...newCode, eligibility: opt.value })}
+                        className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left transition-colors ${checked ? "border-primary bg-primary/10" : "border-border bg-secondary"}`}
+                      >
+                        <span className={`w-4 h-4 rounded shrink-0 flex items-center justify-center border ${checked ? "bg-primary border-primary" : "border-muted-foreground"}`}>
+                          {checked && <Check className="w-3 h-3 text-primary-foreground" />}
+                        </span>
+                        <span className="text-xs font-medium text-foreground">{opt.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
               <div className="bg-secondary rounded-xl p-3">
                 <p className="text-xs font-medium text-muted-foreground mb-2">Total Reward Preview{newCode.quantity > 1 ? ` (per code × ${newCode.quantity})` : ""}</p>
@@ -361,8 +383,7 @@ const AdminInviteCodes = () => {
                 {showDetailModal.conditions.requiredTradingPairs.length > 0 && (
                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Trading Pairs</span><span className="font-medium text-foreground">{showDetailModal.conditions.requiredTradingPairs.join(", ")}</span></div>
                 )}
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Deposit Deadline</span><span className="font-medium text-foreground">{showDetailModal.conditions.depositDeadlineDays} days</span></div>
-                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Trade Deadline</span><span className="font-medium text-foreground">{showDetailModal.conditions.tradeDeadlineDays} days</span></div>
+                <div className="flex justify-between text-sm"><span className="text-muted-foreground">Eligible Users</span><span className="font-medium text-foreground">{eligibilityLabels[showDetailModal.conditions.eligibility]}</span></div>
                 <div className="h-px bg-border" />
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Created</span><span className="font-medium text-foreground">{showDetailModal.createdAt}</span></div>
                 <div className="flex justify-between text-sm"><span className="text-muted-foreground">Expiry</span><span className="font-medium text-foreground">{showDetailModal.expiresAt || "Never"}</span></div>

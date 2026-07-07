@@ -658,13 +658,13 @@ export const billPaymentsList = [
 
 // Invite Codes
 export type InviteCodeStatus = "active" | "used" | "expired" | "deactivated";
+export type InviteCodeEligibility = "all" | "new" | "existing";
 
 export interface InviteCodeConditions {
   minDepositAmount: number;
   minTradeAmount: number;
   requiredTradingPairs: string[];
-  tradeDeadlineDays: number | null;
-  depositDeadlineDays: number | null;
+  eligibility: InviteCodeEligibility;
 }
 
 export interface InviteCode {
@@ -693,7 +693,7 @@ export const inviteCodesList: InviteCode[] = [
     createdBy: "Adedamola A.",
     inviterId: null,
     inviterName: null,
-    conditions: { minDepositAmount: 50, minTradeAmount: 100, requiredTradingPairs: [], tradeDeadlineDays: 30, depositDeadlineDays: 7 },
+    conditions: { minDepositAmount: 50, minTradeAmount: 100, requiredTradingPairs: [], eligibility: "new" },
     depositReward: 200,
     tradeReward: 300,
     totalReward: 500,
@@ -711,7 +711,7 @@ export const inviteCodesList: InviteCode[] = [
     createdBy: "Dawood K.",
     inviterId: "user-001",
     inviterName: "Ibrahim Abubakar",
-    conditions: { minDepositAmount: 20, minTradeAmount: 50, requiredTradingPairs: ["BTC/USDT"], tradeDeadlineDays: 14, depositDeadlineDays: 7 },
+    conditions: { minDepositAmount: 20, minTradeAmount: 50, requiredTradingPairs: ["BTC/USDT"], eligibility: "all" },
     depositReward: 40,
     tradeReward: 60,
     totalReward: 100,
@@ -729,7 +729,7 @@ export const inviteCodesList: InviteCode[] = [
     createdBy: "Adedamola A.",
     inviterId: null,
     inviterName: null,
-    conditions: { minDepositAmount: 200, minTradeAmount: 500, requiredTradingPairs: [], tradeDeadlineDays: 60, depositDeadlineDays: 14 },
+    conditions: { minDepositAmount: 200, minTradeAmount: 500, requiredTradingPairs: [], eligibility: "all" },
     depositReward: 800,
     tradeReward: 1200,
     totalReward: 2000,
@@ -747,7 +747,7 @@ export const inviteCodesList: InviteCode[] = [
     createdBy: "Dawood K.",
     inviterId: "user-003",
     inviterName: "Divine Omajuwa",
-    conditions: { minDepositAmount: 100, minTradeAmount: 250, requiredTradingPairs: ["BTC/USDT", "ETH/USDT"], tradeDeadlineDays: 21, depositDeadlineDays: 7 },
+    conditions: { minDepositAmount: 100, minTradeAmount: 250, requiredTradingPairs: ["BTC/USDT", "ETH/USDT"], eligibility: "existing" },
     depositReward: 200,
     tradeReward: 300,
     totalReward: 500,
@@ -765,7 +765,7 @@ export const inviteCodesList: InviteCode[] = [
     createdBy: "Adedamola A.",
     inviterId: null,
     inviterName: null,
-    conditions: { minDepositAmount: 10, minTradeAmount: 25, requiredTradingPairs: [], tradeDeadlineDays: 7, depositDeadlineDays: 3 },
+    conditions: { minDepositAmount: 10, minTradeAmount: 25, requiredTradingPairs: [], eligibility: "new" },
     depositReward: 40,
     tradeReward: 60,
     totalReward: 100,
@@ -783,7 +783,7 @@ export const inviteCodesList: InviteCode[] = [
     createdBy: "Dawood K.",
     inviterId: null,
     inviterName: null,
-    conditions: { minDepositAmount: 5, minTradeAmount: 15, requiredTradingPairs: [], tradeDeadlineDays: 14, depositDeadlineDays: 7 },
+    conditions: { minDepositAmount: 5, minTradeAmount: 15, requiredTradingPairs: [], eligibility: "new" },
     depositReward: 30,
     tradeReward: 45,
     totalReward: 75,
@@ -801,7 +801,7 @@ export const inviteCodesList: InviteCode[] = [
     createdBy: "Adedamola A.",
     inviterId: "user-005",
     inviterName: "Victor Odigili",
-    conditions: { minDepositAmount: 30, minTradeAmount: 75, requiredTradingPairs: ["SOL/USDT"], tradeDeadlineDays: 14, depositDeadlineDays: 5 },
+    conditions: { minDepositAmount: 30, minTradeAmount: 75, requiredTradingPairs: ["SOL/USDT"], eligibility: "existing" },
     depositReward: 100,
     tradeReward: 150,
     totalReward: 250,
@@ -819,7 +819,7 @@ export const inviteCodesList: InviteCode[] = [
     createdBy: "Adedamola A.",
     inviterId: null,
     inviterName: null,
-    conditions: { minDepositAmount: 100, minTradeAmount: 300, requiredTradingPairs: [], tradeDeadlineDays: 30, depositDeadlineDays: 14 },
+    conditions: { minDepositAmount: 100, minTradeAmount: 300, requiredTradingPairs: [], eligibility: "all" },
     depositReward: 400,
     tradeReward: 600,
     totalReward: 1000,

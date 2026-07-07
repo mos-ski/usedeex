@@ -8,8 +8,6 @@ interface InviteCodeProgressProps {
   minTrade: number;
   depositCompleted: boolean;
   tradeCompleted: boolean;
-  depositDeadlineDays: number;
-  tradeDeadlineDays: number;
 }
 
 const InviteCodeProgress = ({
@@ -20,8 +18,6 @@ const InviteCodeProgress = ({
   minTrade,
   depositCompleted,
   tradeCompleted,
-  depositDeadlineDays,
-  tradeDeadlineDays,
 }: InviteCodeProgressProps) => {
   const totalReward = depositReward + tradeReward;
   const earnedReward = (depositCompleted ? depositReward : 0) + (tradeCompleted ? tradeReward : 0);
@@ -86,7 +82,7 @@ const InviteCodeProgress = ({
               </span>
             </div>
             <p className="text-[10px] text-muted-foreground">
-              {depositCompleted ? "Bonus credited" : `Deposit min $${minDeposit} within ${depositDeadlineDays} days`}
+              {depositCompleted ? "Bonus credited" : `Deposit min $${minDeposit}`}
             </p>
           </div>
         </div>
@@ -104,7 +100,7 @@ const InviteCodeProgress = ({
               </span>
             </div>
             <p className="text-[10px] text-muted-foreground">
-              {tradeCompleted ? "Bonus credited" : `Trade min $${minTrade} within ${tradeDeadlineDays} days`}
+              {tradeCompleted ? "Bonus credited" : `Trade min $${minTrade}`}
             </p>
           </div>
         </div>

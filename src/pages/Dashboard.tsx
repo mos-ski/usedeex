@@ -124,8 +124,6 @@ const Dashboard = () => {
                 minTrade={appliedCode.minTrade}
                 depositCompleted={depositCompleted}
                 tradeCompleted={tradeCompleted}
-                depositDeadlineDays={appliedCode.depositDeadlineDays}
-                tradeDeadlineDays={appliedCode.tradeDeadlineDays}
               />
             </div>
           )}
