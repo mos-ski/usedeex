@@ -42,22 +42,6 @@ const navLinks = [
   { label: "Help Center", href: "#help" },
 ];
 
-const assetTabs = [
-  { label: "Digital Coins", active: false },
-  { label: "Giftcards", active: true },
-  { label: "Bills", active: false },
-  { label: "Merchants", active: false },
-];
-
-const supportedAssets = [
-  { icon: iconSteam, name: "Steam" },
-  { icon: iconAmex, name: "American Express" },
-  { icon: iconRazer, name: "Razer Gold" },
-  { icon: iconApple, name: "Apple" },
-  { icon: iconSephora, name: "Sephora" },
-  { icon: iconNordstrom, name: "Nordstorm" },
-];
-
 const features = ["Instant payouts", "Bank-grade security", "Best rates", "Built for you"];
 
 function Logo({ light = false }: { light?: boolean }) {
@@ -327,25 +311,12 @@ const LandingPage = () => {
           </motion.div>
 
           <motion.div {...fadeInUp} transition={{ duration: 0.5, delay: 0.1 }} className="flex flex-col justify-center gap-5 py-2 lg:gap-6">
-            <div className="flex flex-wrap gap-6 font-manrope text-sm">
-              {assetTabs.map((tab) => (
-                <span key={tab.label} className={tab.active ? "font-medium text-[#279DF3]" : "text-[#869AA9]"}>
-                  {tab.label}
-                </span>
-              ))}
-            </div>
             <h2 className="font-sora text-3xl font-bold tracking-tight text-[#273037] sm:text-4xl">
               Fast Payout, Top security and Best Rates
             </h2>
-            <p className="font-manrope text-base font-semibold text-[#191919]">Supported trading assets</p>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
-              {supportedAssets.map((asset) => (
-                <div key={asset.name} className="flex items-center gap-3">
-                  <img src={asset.icon} alt="" className="h-6 w-6 rounded-[3px] object-cover" />
-                  <span className="font-manrope text-sm text-[#1B1A1A]">{asset.name}</span>
-                </div>
-              ))}
-            </div>
+            <p className="font-manrope text-base text-[#6C757D]">
+              Trade with confidence using our secure platform
+            </p>
           </motion.div>
         </section>
 
