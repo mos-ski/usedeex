@@ -4,13 +4,13 @@ import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
-// Assets from /public (Figma exports)
-import phoneScreenHero from "../../public/Frame 1000003167.png";
-import buyCryptoInputs from "../../public/Buy Crypto inputs.png";
-import step1Download from "../../public/Frame 1000005086.png";
-import step2Deposit from "../../public/Frame 1000005088.png";
-import step3Bonus from "../../public/Frame 1000005089.png";
-import giftCardsImage from "../../public/Frame 1000005090.png";
+// Assets from /public (Figma exports) - use ?url for public directory assets
+const phoneScreenHero = "/Frame 1000003167.png";
+const buyCryptoInputs = "/Buy Crypto inputs.png";
+const step1Download = "/Frame 1000005086.png";
+const step2Deposit = "/Frame 1000005088.png";
+const step3Bonus = "/Frame 1000005089.png";
+const giftCardsImage = "/Frame 1000005090.png";
 
 // Local assets for icons, swooshes, etc.
 import phoneBody from "@/assets/landing/phone-body.png";
