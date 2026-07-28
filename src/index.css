@@ -80,3 +80,39 @@
   background: hsl(var(--muted));
   border-radius: 4px;
 }
+
+/* Float animations for phone mockups and UI elements */
+@keyframes floatPhoneCentered {
+  0%, 100% { transform: translateX(-50%) translateY(0px); }
+  50%       { transform: translateX(-50%) translateY(-14px); }
+}
+@keyframes floatPhoneDash {
+  0%, 100% { transform: translateX(-50%) translateY(0px); }
+  50%       { transform: translateX(-50%) translateY(-10px); }
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+@keyframes floatGiftCards {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-8px) rotate(1deg); }
+  66%       { transform: translateY(-4px) rotate(-0.5deg); }
+}
+
+.float-phone-centered {
+  animation: floatPhoneCentered 4s ease-in-out infinite;
+  animation-fill-mode: both;
+}
+.float-phone-dash {
+  animation: floatPhoneDash 3.8s ease-in-out infinite;
+  animation-fill-mode: both;
+}
+.float-y {
+  animation: floatY 4s ease-in-out infinite;
+  animation-fill-mode: both;
+}
+.float-gift-cards {
+  animation: floatGiftCards 5s ease-in-out infinite;
+  animation-fill-mode: both;
+}

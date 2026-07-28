@@ -90,6 +90,23 @@ const supportedAssets = [
   { icon: iconNordstrom, name: "Nordstorm" },
 ];
 
+// ─── Animation variants ────────────────────────────────────────────────────────
+
+const snap = [0.22, 1, 0.36, 1];
+const vp = { once: true, margin: "-60px" } as const;
+
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.12 } },
+};
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 22 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: snap } },
+};
+
+// ─── Sub-components ────────────────────────────────────────────────────────────
+
 function Logo({ light = false }: { light?: boolean }) {
   const wordmarkFill = light ? "#FFFFFF" : "#13181B";
   return (
@@ -149,18 +166,13 @@ function CardGlow({ src, className }: { src: string; className?: string }) {
   return <img src={src} alt="" aria-hidden className={cn("pointer-events-none absolute select-none", className)} />;
 }
 
+// ─── Page ──────────────────────────────────────────────────────────────────────
+
 const LandingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const fadeInUp = {
-    initial: { opacity: 0, y: 20 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.5 },
-  };
-
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" style={{ zoom: 0.9 }}>
       {/* Header Nav */}
       <header className="sticky top-0 z-50 border-b border-gray-100 bg-white">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 xl:px-16">
@@ -216,26 +228,47 @@ const LandingPage = () => {
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1400px] space-y-10 px-4 py-10 sm:px-6 lg:space-y-16 lg:px-10 lg:py-16 xl:px-16">
-        {/* Hero Section */}
+      <div className="mx-auto max-w-[1400px] space-y-[120px] px-4 py-[120px] sm:px-6 lg:space-y-[258px] lg:px-10 lg:py-[258px] xl:px-16">
+
+        {/* ── Hero Section ─────────────────────────────────────────────────────── */}
         <section className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_460px] lg:gap-8">
+
+          {/* Left: dark hero card */}
           <motion.div
-            {...fadeInUp}
+            initial={{ opacity: 0, y: 60, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.75, ease: snap }}
+            whileHover={{ scale: 1.01, transition: { duration: 0.25 } }}
             className="relative flex min-h-[440px] flex-col justify-between gap-10 overflow-hidden rounded-[24px] bg-[#042741] p-6 sm:p-10 lg:min-h-[560px] lg:p-14"
           >
             <CardGlow src={heroGlow} className="-left-10 -top-16 h-[115%] w-[115%] opacity-70 mix-blend-overlay" />
-            <div className="relative z-10 max-w-md space-y-6 text-white">
-              <h1 className="font-sora text-4xl font-bold leading-[1.05] sm:text-5xl lg:text-6xl xl:text-[72px]">
+
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              animate="visible"
+              className="relative z-10 max-w-md space-y-6 text-white"
+            >
+              <motion.h1
+                variants={staggerItem}
+                className="font-sora text-4xl font-bold leading-[1.05] sm:text-5xl lg:text-6xl xl:text-[72px]"
+              >
                 Sell crypto.
                 <br />
                 Get ₦2,000 free.
-              </h1>
-              <p className="max-w-sm font-manrope text-base text-white/85">
+              </motion.h1>
+              <motion.p variants={staggerItem} className="max-w-sm font-manrope text-base text-white/85">
                 Join DeeX, make your first deposit of just $10, and we drop ₦2,000 straight into your wallet. Fast,
                 secure, built for everyday trader.
-              </p>
-            </div>
-            <div className="relative z-10 inline-flex w-fit items-center gap-3 rounded-md border border-white/70 p-2">
+              </motion.p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.55, ease: snap }}
+              className="relative z-10 inline-flex w-fit items-center gap-3 rounded-md border border-white/70 p-2"
+            >
               <img src={iconGooglePlayBadge} alt="Google Play" className="h-9 w-9 shrink-0" />
               <img src={iconAppleBadge} alt="App Store" className="h-9 w-9 shrink-0" />
               <div className="pr-2">
@@ -244,59 +277,99 @@ const LandingPage = () => {
                   Available on Appstore and Playstore.
                 </p>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
 
+          {/* Right: phone receipt card */}
           <motion.div
-            {...fadeInUp}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="relative flex min-h-[440px] items-center justify-center overflow-hidden rounded-[24px] bg-[#E5F4FF] p-8 lg:min-h-[560px]"
+            initial={{ opacity: 0, x: 60 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: snap }}
+            className="relative min-h-[440px] overflow-hidden rounded-[24px] bg-[#E5F4FF] lg:min-h-[560px]"
           >
-            <CardGlow src={swoosh3} className="-left-1/3 -top-1/4 h-[180%] w-[180%] rotate-[-24deg] opacity-70" />
+            <CardGlow src={swoosh3} className="-left-[30%] -top-[15%] h-[145%] w-[165%] rotate-[-164deg] opacity-60" />
             <img
               src={phoneReceiptMockup}
               alt="DeeX receipt screen on a phone"
-              className="relative z-10 h-auto w-[210px] max-w-full sm:w-[260px]"
+              className="float-phone-centered absolute left-1/2 top-0 z-10 h-full w-auto"
+              style={{ animationDelay: "0.85s" }}
             />
           </motion.div>
         </section>
 
-        {/* How it Works — 3 step bento */}
+        {/* ── How it Works — 3 step bento ──────────────────────────────────────── */}
         <section id="how-it-works" className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+
+          {/* Left: Download & sign up */}
           <motion.div
-            {...fadeInUp}
-            className="relative flex min-h-[420px] flex-col overflow-hidden rounded-[24px] bg-[#FFF8F6] p-6 sm:p-8 lg:min-h-[560px] lg:p-10"
+            initial={{ opacity: 0, x: -60, scale: 0.96 }}
+            whileInView={{ opacity: 1, x: 0, scale: 1 }}
+            viewport={vp}
+            transition={{ duration: 0.75, ease: snap }}
+            whileHover={{ scale: 1.01, transition: { duration: 0.25 } }}
+            className="relative min-h-[520px] overflow-hidden rounded-[24px] bg-[#FFF8F6] p-6 sm:p-8 lg:min-h-[640px] lg:p-10"
           >
-            <CardGlow src={swoosh4} className="-right-1/3 -top-1/3 h-[160%] w-[160%] rotate-[18deg] opacity-70" />
-            <div className="relative z-10 max-w-xs space-y-2">
-              <h3 className="font-sora text-3xl font-bold tracking-tight text-[#F43500] sm:text-4xl">
+            <CardGlow src={swoosh4} className="-left-[20%] -top-[90%] h-[260%] w-[220%] rotate-[108deg] opacity-60" />
+
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={vp}
+              className="relative z-10 max-w-xs space-y-3 lg:max-w-sm"
+            >
+              <motion.h3
+                variants={staggerItem}
+                className="font-sora font-bold leading-[1.11] text-[#F43500]"
+                style={{ fontSize: "clamp(40px, 7.5vw, 64px)", letterSpacing: "-0.05em" }}
+              >
                 Download &amp; sign up
-              </h3>
-              <p className="font-manrope text-sm text-[#191919]">
+              </motion.h3>
+              <motion.p variants={staggerItem} className="font-manrope text-base text-[#191919]">
                 Get the DeeX app and create your account in under a minute.
-              </p>
-            </div>
+              </motion.p>
+            </motion.div>
+
             <img
               src={phoneDashboardMockup}
               alt="DeeX dashboard screen on a phone"
-              className="relative z-10 mx-auto mt-6 h-auto w-full max-w-[240px]"
+              className="float-phone-dash absolute bottom-0 left-1/2 z-10 w-[78%] max-w-[480px]"
+              style={{ animationDelay: "0.85s" }}
             />
           </motion.div>
 
+          {/* Right column: Deposit + Get free */}
           <div className="flex flex-col gap-6 lg:gap-8">
+
+            {/* Deposit just $10 */}
             <motion.div
-              {...fadeInUp}
-              transition={{ duration: 0.5, delay: 0.05 }}
+              initial={{ opacity: 0, x: 60, scale: 0.96 }}
+              whileInView={{ opacity: 1, x: 0, scale: 1 }}
+              viewport={vp}
+              transition={{ duration: 0.7, ease: snap }}
+              whileHover={{ scale: 1.01, transition: { duration: 0.25 } }}
               className="relative min-h-[220px] overflow-hidden rounded-[24px] bg-[#FFFEFA] p-6 sm:p-8"
             >
               <CardGlow src={swoosh5} className="-right-1/4 -top-1/2 h-[220%] w-[220%] rotate-[-10deg] opacity-70" />
               <div className="relative z-10 flex h-full flex-col justify-between gap-6 sm:flex-row sm:items-center">
-                <div className="max-w-[220px] space-y-2">
-                  <h3 className="font-sora text-3xl font-bold tracking-tight text-[#FFAA00]">Deposit just $10</h3>
-                  <p className="font-manrope text-sm text-[#191919]">
+                <motion.div
+                  variants={stagger}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={vp}
+                  className="flex-1 space-y-2"
+                >
+                  <motion.h3
+                    variants={staggerItem}
+                    className="font-sora font-bold leading-[1.11] text-[#FFAA00]"
+                    style={{ fontSize: "clamp(32px, 5vw, 64px)", letterSpacing: "-0.05em" }}
+                  >
+                    Deposit<br />just $10
+                  </motion.h3>
+                  <motion.p variants={staggerItem} className="font-manrope text-sm text-[#191919]">
                     Fund your wallet with $10 in USDT, USDC, SOL and more — quick and secure.
-                  </p>
-                </div>
+                  </motion.p>
+                </motion.div>
                 <img
                   src={depositQr}
                   alt="Deposit QR code"
@@ -305,43 +378,52 @@ const LandingPage = () => {
               </div>
             </motion.div>
 
+            {/* Get ₦2,000 free */}
             <motion.div
-              {...fadeInUp}
-              transition={{ duration: 0.5, delay: 0.1 }}
+              initial={{ opacity: 0, x: 60, scale: 0.96 }}
+              whileInView={{ opacity: 1, x: 0, scale: 1 }}
+              viewport={vp}
+              transition={{ duration: 0.7, delay: 0.08, ease: snap }}
+              whileHover={{ scale: 1.01, transition: { duration: 0.25 } }}
               className="relative min-h-[340px] overflow-hidden rounded-[24px] bg-[#F4FFF7] p-6 sm:p-8"
             >
               <CardGlow src={swoosh6} className="-left-1/4 -top-1/3 h-[200%] w-[200%] rotate-[22deg] opacity-70" />
-              <div className="relative z-10 max-w-xs space-y-1.5">
-                <h3 className="font-sora text-2xl font-bold tracking-tight text-[#009F23] sm:text-3xl">
-                  Get ₦2,000 free
-                </h3>
-                <p className="font-manrope text-sm text-[#191919]">
+              <motion.div
+                variants={stagger}
+                initial="hidden"
+                whileInView="visible"
+                viewport={vp}
+                className="relative z-10 max-w-sm space-y-1.5"
+              >
+                <motion.h3
+                  variants={staggerItem}
+                  className="font-sora font-bold leading-[1.11] text-[#009F23]"
+                  style={{ fontSize: "clamp(32px, 5vw, 64px)", letterSpacing: "-0.05em" }}
+                >
+                  Get ₦2,000<br />free
+                </motion.h3>
+                <motion.p variants={staggerItem} className="font-manrope text-sm text-[#191919]">
                   Your bonus lands in your wallet automatically. Yours to keep.
-                </p>
-              </div>
-              <div className="absolute -bottom-8 -right-6 w-[110%] max-w-[380px] rotate-[8deg] space-y-2 sm:-right-10">
-                {buyOptions.map((option) => (
-                  <div
-                    key={option.title}
-                    className="flex items-center gap-3 rounded-lg border border-[#E7EBEE] bg-white px-3.5 py-2.5 shadow-md"
-                  >
-                    <img src={option.icon} alt="" className="h-5 w-5 shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-manrope text-sm font-medium text-[#13181B]">{option.title}</p>
-                      <p className="truncate font-manrope text-xs text-[#617889]">{option.description}</p>
-                    </div>
-                    <img src={option.arrow} alt="" className="h-4 w-4 shrink-0" />
-                  </div>
-                ))}
-              </div>
+                </motion.p>
+              </motion.div>
+              <img
+                src="/bank-account-snippet.png"
+                alt="Bank account withdraw option"
+                className="absolute bottom-0 right-0 z-10 w-[85%] max-w-[380px]"
+              />
             </motion.div>
           </div>
         </section>
 
-        {/* Gift Cards promo + supported assets */}
+        {/* ── Gift Cards promo + supported assets ──────────────────────────────── */}
         <section className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
+
+          {/* Left: gift card graphic */}
           <motion.div
-            {...fadeInUp}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={vp}
+            transition={{ duration: 0.75, ease: snap }}
             className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-[24px] bg-[#FFEAEA] p-8 lg:min-h-[420px]"
           >
             <CardGlow src={swoosh305} className="left-1/2 top-1/2 h-[70%] w-[130%] -translate-x-1/2 -translate-y-1/2 opacity-70" />
@@ -351,52 +433,99 @@ const LandingPage = () => {
             <img
               src={giftCardsComposite}
               alt="Google Play and iTunes gift cards"
-              className="relative z-10 w-full max-w-[320px]"
+              className="float-gift-cards relative z-10 w-full max-w-[520px]"
+              style={{ animationDelay: "0.8s" }}
             />
           </motion.div>
 
-          <motion.div {...fadeInUp} transition={{ duration: 0.5, delay: 0.1 }} className="flex flex-col justify-center gap-5 py-2 lg:gap-6">
-            <div className="flex flex-wrap gap-6 font-manrope text-sm">
+          {/* Right: asset tabs + heading + list */}
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={vp}
+            className="flex flex-col justify-center gap-6 p-8 lg:gap-8 lg:p-14"
+          >
+            <motion.div variants={staggerItem} className="flex flex-wrap gap-6 font-manrope text-sm">
               {assetTabs.map((tab) => (
                 <span key={tab.label} className={tab.active ? "font-medium text-[#279DF3]" : "text-[#869AA9]"}>
                   {tab.label}
                 </span>
               ))}
-            </div>
-            <h2 className="font-sora text-3xl font-bold tracking-tight text-[#273037] sm:text-4xl">
+            </motion.div>
+
+            <motion.h2
+              variants={staggerItem}
+              className="font-sora font-bold leading-[1.11] text-[#273037]"
+              style={{ fontSize: "clamp(40px, 7.5vw, 64px)", letterSpacing: "-0.05em" }}
+            >
               Fast Payout, Top security and Best Rates
-            </h2>
-            <p className="font-manrope text-base font-semibold text-[#191919]">Supported trading assets</p>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
-              {supportedAssets.map((asset) => (
-                <div key={asset.name} className="flex items-center gap-3">
-                  <img src={asset.icon} alt="" className="h-6 w-6 rounded-[3px] object-cover" />
+            </motion.h2>
+
+            <motion.p variants={staggerItem} className="font-manrope text-base font-semibold text-[#191919]">
+              Supported trading assets
+            </motion.p>
+
+            <div className="flex flex-col gap-3">
+              {supportedAssets.map((asset, i) => (
+                <motion.div
+                  key={asset.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={vp}
+                  transition={{ duration: 0.4, delay: i * 0.06, ease: snap }}
+                  className="flex items-center gap-3"
+                >
+                  <img src={asset.icon} alt="" className="h-6 w-6 shrink-0 rounded-[3px] object-cover" />
                   <span className="font-manrope text-sm text-[#1B1A1A]">{asset.name}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
         </section>
 
-        {/* Features list + Buy Crypto widget */}
+        {/* ── Features list + Buy Crypto widget ───────────────────────────────── */}
         <section className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
-          <motion.div {...fadeInUp} className="flex flex-col justify-center gap-6 py-2 lg:gap-8">
-            <h2 className="font-sora text-3xl font-bold tracking-tight text-[#273037] sm:text-4xl">
+
+          {/* Left: heading + feature list */}
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={vp}
+            className="flex flex-col justify-center gap-6 p-8 lg:gap-8 lg:p-14"
+          >
+            <motion.h2
+              variants={staggerItem}
+              className="font-sora font-bold leading-[1.11] text-[#273037]"
+              style={{ fontSize: "clamp(40px, 7.5vw, 64px)", letterSpacing: "-0.05em" }}
+            >
               Fast Payout, Top security and Best Rates
-            </h2>
+            </motion.h2>
+
             <ul className="space-y-4">
-              {features.map((feature) => (
-                <li key={feature} className="flex items-center gap-4">
+              {features.map((feature, i) => (
+                <motion.li
+                  key={feature}
+                  initial={{ opacity: 0, x: -24 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={vp}
+                  transition={{ duration: 0.45, delay: i * 0.07 + 0.15, ease: snap }}
+                  className="flex items-center gap-4"
+                >
                   <img src={checkIcon} alt="" className="h-4 w-4 shrink-0" />
                   <span className="font-manrope text-base text-[#001124]">{feature}</span>
-                </li>
+                </motion.li>
               ))}
             </ul>
           </motion.div>
 
+          {/* Right: buy crypto widget */}
           <motion.div
-            {...fadeInUp}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={vp}
+            transition={{ duration: 0.75, ease: snap }}
             className="relative flex min-h-[440px] items-center justify-center overflow-hidden rounded-[24px] bg-[#D0EBFF] p-6 sm:p-8 lg:min-h-[560px]"
           >
             <CardGlow src={swoosh306} className="-right-1/3 -top-1/3 h-[170%] w-[170%] opacity-60" />
@@ -407,130 +536,87 @@ const LandingPage = () => {
             <img
               src={buyCryptoWidget}
               alt="Buy Crypto interface"
-              className="relative z-10 w-full max-w-[380px] rounded-xl shadow-2xl"
+              className="float-y relative z-10 w-full max-w-[380px] rounded-xl shadow-2xl"
+              style={{ animationDelay: "0.8s" }}
             />
           </motion.div>
         </section>
 
-        {/* Bottom CTA banner */}
+        {/* ── Bottom CTA banner ────────────────────────────────────────────────── */}
         <motion.section
-          {...fadeInUp}
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={vp}
+          transition={{ duration: 0.75, ease: snap }}
           className="relative overflow-hidden rounded-[24px] bg-[#001124] px-6 py-10 sm:px-10 lg:px-14 lg:py-14"
         >
           <CardGlow src={swoosh306} className="-right-1/4 -top-1/2 h-[240%] w-[70%] opacity-40" />
           <CardGlow src={swoosh309} className="right-1/4 -top-1/2 h-[180%] w-[80%] opacity-30" />
           <CardGlow src={ellipse6} className="right-10 top-0 h-[70%] w-[20%] -rotate-[54deg] opacity-40" />
-          <img
-            src={portraitMan}
-            alt=""
-            className="pointer-events-none absolute right-8 top-0 hidden h-full w-auto select-none object-cover lg:block xl:right-24"
-          />
 
+          {/* Three-part flex: text | portrait | button */}
           <div className="relative z-10 flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
-            <div className="max-w-xl space-y-3">
-              <h2 className="font-sora text-3xl font-bold tracking-tight text-white sm:text-4xl">
+
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={vp}
+              className="max-w-[480px] space-y-3"
+            >
+              <motion.h2
+                variants={staggerItem}
+                className="font-sora font-bold text-white"
+                style={{ fontSize: "48px", letterSpacing: "-0.04em", lineHeight: 1.4 }}
+              >
                 Your ₦2,000 is waiting.
-              </h2>
-              <p className="font-manrope text-base text-[#EAE7E7]">
+              </motion.h2>
+              <motion.p
+                variants={staggerItem}
+                className="font-manrope text-base text-[#EAE7E7]"
+                style={{ lineHeight: 1.6 }}
+              >
                 Sign up and make one deposit of $10 to unlock your bonus.
-              </p>
-              <div className="flex items-center gap-2">
+              </motion.p>
+              <motion.div variants={staggerItem} className="flex items-center gap-2">
                 <img src={checkIcon} alt="" className="h-4 w-4" />
-                <p className="font-manrope text-sm text-[#279DF3]">
+                <p className="font-manrope text-base text-[#279DF3]">
                   <span className="font-bold">Promo code </span>
                   <span className="font-extrabold">TRADEOFF2</span>
                   <span className="font-bold"> applied</span>
                 </p>
-              </div>
-            </div>
-            <Button className="h-auto gap-3 rounded-lg bg-[#0B75C2] px-8 py-3.5 font-manrope text-base font-bold text-[#F7F8F9] hover:bg-[#095a96]">
-              Claim my Cash Now
-              <img src={iconArrowRight4} alt="" className="h-6 w-6" />
-            </Button>
+              </motion.div>
+            </motion.div>
+
+            {/* Portrait man — sits between text and button */}
+            <motion.img
+              src={portraitMan}
+              alt=""
+              className="pointer-events-none hidden h-[210px] w-auto shrink-0 select-none object-contain lg:block"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={vp}
+              transition={{ duration: 0.65, delay: 0.3, ease: snap }}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={vp}
+              transition={{ duration: 0.5, delay: 0.45, ease: snap }}
+            >
+              <Button
+                className="h-auto shrink-0 gap-3 rounded-lg bg-[#0B75C2] font-manrope text-lg font-bold text-[#F7F8F9] hover:bg-[#095a96]"
+                style={{ padding: "15px 38px" }}
+              >
+                Claim my Cash Now
+                <img src={iconArrowRight4} alt="" className="h-6 w-6" />
+              </Button>
+            </motion.div>
           </div>
         </motion.section>
+
       </div>
-
-      {/* Footer */}
-      <footer className="bg-[#001124] py-12 text-white">
-        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 xl:px-16">
-          <div className="grid gap-8 md:grid-cols-4">
-            <div className="space-y-4">
-              <Logo light />
-              <p className="font-manrope text-sm text-white/60">
-                The smartest way to trade and earn cashback rewards.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="mb-4 font-manrope font-bold">Product</h4>
-              <ul className="space-y-2 font-manrope text-sm text-white/60">
-                <li>
-                  <a href="#" className="transition-colors hover:text-white">
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="transition-colors hover:text-white">
-                    Pricing
-                  </a>
-                </li>
-                <li>
-                  <a href="#merchant" className="transition-colors hover:text-white">
-                    Merchant
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="mb-4 font-manrope font-bold">Support</h4>
-              <ul className="space-y-2 font-manrope text-sm text-white/60">
-                <li>
-                  <a href="#help" className="transition-colors hover:text-white">
-                    Help Center
-                  </a>
-                </li>
-                <li>
-                  <a href="#faq" className="transition-colors hover:text-white">
-                    FAQ
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="transition-colors hover:text-white">
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="mb-4 font-manrope font-bold">Legal</h4>
-              <ul className="space-y-2 font-manrope text-sm text-white/60">
-                <li>
-                  <a href="#" className="transition-colors hover:text-white">
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="transition-colors hover:text-white">
-                    Terms of Service
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="transition-colors hover:text-white">
-                    Cookie Policy
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-8 border-t border-white/10 pt-8 text-center font-manrope text-sm text-white/60">
-            <p>&copy; 2026 DeeXoptions. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
