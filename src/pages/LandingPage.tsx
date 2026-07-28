@@ -352,15 +352,18 @@ const LandingPage = () => {
                 Get the DeeX app and create your account in under a minute.
               </motion.p>
             </motion.div>
-            {/* Parallax wrapper for phone */}
-            <motion.div className="absolute bottom-0 left-1/2 z-10 w-[78%] max-w-[480px] -translate-x-1/2" style={{ x: dashPhoneP.springX, y: dashPhoneP.springY }}>
-              <img
-                src={phoneDashboardMockup}
-                alt="DeeX dashboard screen on a phone"
-                className="float-phone-dash w-full"
-                style={{ marginTop: "-12px", animationDelay: "0.85s" }}
-              />
-            </motion.div>
+            {/* Plain div for centering — Framer Motion cannot override -translate-x-1/2 here */}
+            <div className="absolute bottom-0 left-1/2 z-10 w-[78%] max-w-[480px] -translate-x-1/2">
+              {/* Nested motion.div for parallax only */}
+              <motion.div style={{ x: dashPhoneP.springX, y: dashPhoneP.springY }}>
+                <img
+                  src={phoneDashboardMockup}
+                  alt="DeeX dashboard screen on a phone"
+                  className="float-phone-dash w-full"
+                  style={{ marginTop: "-12px", animationDelay: "0.85s" }}
+                />
+              </motion.div>
+            </div>
           </motion.div>
 
           {/* Right column */}
@@ -457,7 +460,7 @@ const LandingPage = () => {
             className="flex flex-col justify-center gap-6 p-8 lg:gap-8 lg:p-14"
           >
             {/* Interactive tab pills */}
-            <motion.div variants={staggerItem} className="flex flex-wrap gap-6">
+            <motion.div variants={staggerItem} className="flex gap-5 overflow-x-auto pb-1 lg:gap-6">
               {TAB_ORDER.map((tab) => (
                 <button
                   key={tab}

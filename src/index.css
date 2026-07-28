@@ -87,8 +87,8 @@
   50%       { transform: translateX(-50%) translateY(12px); }
 }
 @keyframes floatPhoneDash {
-  0%, 100% { transform: translateX(-50%) translateY(0px); }
-  50%       { transform: translateX(-50%) translateY(12px); }
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(12px); }
 }
 @keyframes floatY {
   0%, 100% { transform: translateY(0px); }
