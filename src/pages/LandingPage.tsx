@@ -7,31 +7,17 @@ import { useState } from "react";
 // Assets from /public (Figma exports)
 import phoneScreenHero from "/Frame 1000003167.png";
 import buyCryptoInputs from "/Buy Crypto inputs.png";
+import step1Download from "/Frame 1000005086.png";
+import step2Deposit from "/Frame 1000005088.png";
+import step3Bonus from "/Frame 1000005089.png";
+import giftCardsImage from "/Frame 1000005090.png";
 
 // Local assets for icons, swooshes, etc.
 import phoneBody from "@/assets/landing/phone-body.png";
-import phoneScreenSignup from "@/assets/landing/phone-screen-signup.png";
 import heroGlow from "@/assets/landing/ellipse-5.png";
-import barcodeImg from "@/assets/landing/barcode.jpg";
-import itunesCard from "@/assets/landing/itunes-card.png";
-import googlePlayCard from "@/assets/landing/google-play-card.png";
-import iconSteam from "@/assets/landing/asset-icon-steam.png";
-import iconAmex from "@/assets/landing/asset-icon-amex.png";
-import iconRazer from "@/assets/landing/asset-icon-razer.png";
-import iconApple from "@/assets/landing/asset-icon-apple.png";
-import iconSephora from "@/assets/landing/asset-icon-sephora.png";
-import iconNordstrom from "@/assets/landing/asset-icon-nordstrom.png";
 import portraitMan from "@/assets/landing/portrait-man.png";
 import iconGooglePlayBadge from "@/assets/landing/icon-google-play.svg";
 import iconAppleBadge from "@/assets/landing/icon-apple.svg";
-import iconBtc from "@/assets/landing/icon-btc.svg";
-import iconBtc2 from "@/assets/landing/icon-btc-2.svg";
-import iconUserOctagon from "@/assets/landing/icon-user-octagon.svg";
-import iconArrowRight from "@/assets/landing/icon-arrow-right.svg";
-import iconWalletAdd from "@/assets/landing/icon-wallet-add.svg";
-import iconArrowRight2 from "@/assets/landing/icon-arrow-right-2.svg";
-import iconBank from "@/assets/landing/icon-bank.svg";
-import iconArrowRight3 from "@/assets/landing/icon-arrow-right-3.svg";
 import iconArrowRight4 from "@/assets/landing/icon-arrow-right-4.svg";
 import iconArrowDown from "@/assets/landing/arrow-down.svg";
 import iconArrowUp from "@/assets/landing/icon-arrow-up.svg";
@@ -54,27 +40,6 @@ const navLinks = [
   { label: "How it Works", href: "#how-it-works" },
   { label: "FAQ", href: "#faq" },
   { label: "Help Center", href: "#help" },
-];
-
-const buyOptions = [
-  {
-    icon: iconUserOctagon,
-    arrow: iconArrowRight,
-    title: "Send to DeeX User",
-    description: "Send crypto to other users for free",
-  },
-  {
-    icon: iconWalletAdd,
-    arrow: iconArrowRight2,
-    title: "External Wallet",
-    description: "Send crypto to other wallet",
-  },
-  {
-    icon: iconBank,
-    arrow: iconArrowRight3,
-    title: "Bank account",
-    description: "Withdraw crypto to your local bank",
-  },
 ];
 
 const assetTabs = [
@@ -291,9 +256,10 @@ const LandingPage = () => {
                 Get the DeeX app and create your account in under a minute.
               </p>
             </div>
-            <PhoneMockup
-              screenshot={phoneScreenSignup}
-              className="relative z-10 mx-auto mt-6 w-[180px] sm:w-[220px]"
+            <img
+              src={step1Download}
+              alt="Download and sign up"
+              className="relative z-10 mx-auto mt-6 w-full max-w-[280px] rounded-2xl"
             />
           </motion.div>
 
@@ -311,14 +277,11 @@ const LandingPage = () => {
                     Fund your wallet with $10 in USDT, USDC, SOL and more — quick and secure.
                   </p>
                 </div>
-                <div className="relative mx-auto h-28 w-28 shrink-0 sm:h-32 sm:w-32">
-                  <img src={barcodeImg} alt="Deposit QR code" className="h-full w-full rounded-lg object-cover shadow-md" />
-                  <img
-                    src={iconBtc}
-                    alt="Bitcoin"
-                    className="absolute -right-3 -top-3 h-9 w-9 rounded-full shadow-md"
-                  />
-                </div>
+                <img
+                  src={step2Deposit}
+                  alt="Deposit QR code"
+                  className="relative z-10 mx-auto h-auto w-full max-w-[200px] rounded-2xl"
+                />
               </div>
             </motion.div>
 
@@ -337,21 +300,11 @@ const LandingPage = () => {
                     Your bonus lands in your wallet automatically. Yours to keep.
                   </p>
                 </div>
-                <div className="space-y-2">
-                  {buyOptions.map((option) => (
-                    <div
-                      key={option.title}
-                      className="flex items-center gap-3 rounded-lg border border-[#E7EBEE] bg-white px-3.5 py-2.5 shadow-sm"
-                    >
-                      <img src={option.icon} alt="" className="h-5 w-5 shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-manrope text-sm font-medium text-[#13181B]">{option.title}</p>
-                        <p className="truncate font-manrope text-xs text-[#617889]">{option.description}</p>
-                      </div>
-                      <img src={option.arrow} alt="" className="h-4 w-4 shrink-0" />
-                    </div>
-                  ))}
-                </div>
+                <img
+                  src={step3Bonus}
+                  alt="Get bonus"
+                  className="relative z-10 w-full max-w-[320px] rounded-2xl"
+                />
               </div>
             </motion.div>
           </div>
@@ -366,18 +319,11 @@ const LandingPage = () => {
             <CardGlow src={swoosh305} className="left-1/2 top-1/2 h-[70%] w-[130%] -translate-x-1/2 -translate-y-1/2 opacity-70" />
             <CardGlow src={swoosh307} className="-left-4 top-1/3 h-[90%] w-[160%] opacity-50" />
             <CardGlow src={ellipse4} className="left-1/2 top-6 h-[60%] w-[45%] -rotate-[54deg] opacity-60" />
-            <div className="relative z-10 flex items-center">
-              <img
-                src={itunesCard}
-                alt="iTunes gift card"
-                className="h-36 w-36 rotate-[16deg] rounded-2xl object-cover shadow-xl sm:h-44 sm:w-44"
-              />
-              <img
-                src={googlePlayCard}
-                alt="Google Play gift card"
-                className="-ml-10 h-40 -rotate-[10deg] rounded-2xl object-cover shadow-xl sm:h-52"
-              />
-            </div>
+            <img
+              src={giftCardsImage}
+              alt="Gift cards"
+              className="relative z-10 w-full max-w-[320px] rounded-2xl"
+            />
           </motion.div>
 
           <motion.div {...fadeInUp} transition={{ duration: 0.5, delay: 0.1 }} className="flex flex-col justify-center gap-5 py-2 lg:gap-6">
