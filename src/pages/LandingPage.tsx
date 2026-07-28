@@ -322,8 +322,8 @@ const LandingPage = () => {
               <img
                 src={phoneReceiptMockup}
                 alt="DeeX receipt screen on a phone"
-                className="float-phone-centered absolute left-1/2 top-0 h-full w-auto"
-                style={{ animationDelay: "0.85s" }}
+                className="float-phone-centered absolute left-1/2 w-auto"
+                style={{ top: "-12px", height: "calc(100% + 24px)", animationDelay: "0.85s" }}
               />
             </motion.div>
           </motion.div>
