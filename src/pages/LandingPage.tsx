@@ -591,11 +591,26 @@ const LandingPage = () => {
           <CardGlow src={swoosh309} className="right-1/4 -top-1/2 h-[180%] w-[80%] opacity-30" />
           <CardGlow src={ellipse6} className="right-10 top-0 h-[70%] w-[20%] -rotate-[54deg] opacity-40" />
 
-          {/* Three-part flex: text | portrait | button */}
-          <div className="relative z-10 flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
+          {/* Portrait man — absolute, feet on the bottom border */}
+          <motion.img
+            src={portraitMan}
+            alt=""
+            className="pointer-events-none absolute bottom-0 right-16 hidden h-[105%] w-auto select-none object-contain object-bottom lg:block xl:right-28"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={vp}
+            transition={{ duration: 0.65, delay: 0.3, ease: snap }}
+          />
 
-            <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={vp} className="max-w-[480px] space-y-3">
-              <motion.h2 variants={staggerItem} className="font-sora font-bold text-white" style={{ fontSize: "48px", letterSpacing: "-0.04em", lineHeight: 1.4 }}>
+          {/* Text + button — padded right so they don't overlap the portrait */}
+          <div className="relative z-10 flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between lg:pr-[300px] xl:pr-[360px]">
+
+            <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={vp} className="space-y-3">
+              <motion.h2
+                variants={staggerItem}
+                className="whitespace-nowrap font-sora font-bold text-white"
+                style={{ fontSize: "clamp(28px, 3.2vw, 48px)", letterSpacing: "-0.04em", lineHeight: 1.3 }}
+              >
                 Your ₦2,000 is waiting.
               </motion.h2>
               <motion.p variants={staggerItem} className="font-manrope text-base text-[#EAE7E7]" style={{ lineHeight: 1.6 }}>
@@ -610,17 +625,6 @@ const LandingPage = () => {
                 </p>
               </motion.div>
             </motion.div>
-
-            {/* Portrait man — flex child between text and button */}
-            <motion.img
-              src={portraitMan}
-              alt=""
-              className="pointer-events-none hidden h-[210px] w-auto shrink-0 select-none object-contain lg:block"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={vp}
-              transition={{ duration: 0.65, delay: 0.3, ease: snap }}
-            />
 
             <motion.div
               initial={{ opacity: 0, scale: 0.85 }}
