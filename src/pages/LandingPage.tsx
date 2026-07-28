@@ -270,7 +270,7 @@ const LandingPage = () => {
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1400px] space-y-[120px] px-4 py-[120px] sm:px-6 lg:space-y-[258px] lg:px-10 lg:py-[258px] xl:px-16">
+      <div className="mx-auto max-w-[1400px] space-y-[120px] px-4 pb-[120px] pt-[48px] sm:px-6 lg:space-y-[258px] lg:px-10 lg:pb-[258px] lg:pt-[80px] xl:px-16">
 
         {/* ── Hero ──────────────────────────────────────────────────────────────── */}
         <section className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_460px] lg:gap-8">
