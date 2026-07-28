@@ -4,23 +4,20 @@ import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
-// Assets from /public (Figma exports) - use ?url for public directory assets
-const phoneScreenHero = "/Frame 1000003167.png";
-const buyCryptoInputs = "/Buy Crypto inputs.png";
-const step1Download = "/Frame 1000005086.png";
-const step2Deposit = "/Frame 1000005088.png";
-const step3Bonus = "/Frame 1000005089.png";
-const giftCardsImage = "/Frame 1000005090.png";
+// Flattened Figma exports from /public — each is a fully composited graphic (device
+// frame + screenshot, or card art already baked together), named for what they show.
+const phoneReceiptMockup = "/phone-receipt.png"; // hero card (node 3433:1357)
+const phoneDashboardMockup = "/phone-dashboard.png"; // "Download & sign up" card (node 3435:1364)
+const depositQr = "/deposit-qr.png"; // "Deposit just $10" card (node 3446:1151)
+const giftCardsComposite = "/gift-cards.png"; // gift card promo card (node 3446:1082)
+const buyCryptoWidget = "/buy-crypto-widget.png"; // Buy Crypto widget card (node 3446:1398)
 
 // Local assets for icons, swooshes, etc.
-import phoneBody from "@/assets/landing/phone-body.png";
 import heroGlow from "@/assets/landing/ellipse-5.png";
 import portraitMan from "@/assets/landing/portrait-man.png";
 import iconGooglePlayBadge from "@/assets/landing/icon-google-play.svg";
 import iconAppleBadge from "@/assets/landing/icon-apple.svg";
 import iconArrowRight4 from "@/assets/landing/icon-arrow-right-4.svg";
-import iconArrowDown from "@/assets/landing/arrow-down.svg";
-import iconArrowUp from "@/assets/landing/icon-arrow-up.svg";
 import checkIcon from "@/assets/landing/check-icon.svg";
 import swoosh3 from "@/assets/landing/vector-swoosh-3.svg";
 import swoosh4 from "@/assets/landing/vector-swoosh-4.svg";
@@ -34,6 +31,18 @@ import swoosh309 from "@/assets/landing/swoosh-309.svg";
 import swoosh310 from "@/assets/landing/swoosh-310.svg";
 import ellipse4 from "@/assets/landing/ellipse-4.svg";
 import ellipse6 from "@/assets/landing/ellipse-6.svg";
+import iconUserOctagon from "@/assets/landing/icon-user-octagon.svg";
+import iconArrowRight from "@/assets/landing/icon-arrow-right.svg";
+import iconWalletAdd from "@/assets/landing/icon-wallet-add.svg";
+import iconArrowRight2 from "@/assets/landing/icon-arrow-right-2.svg";
+import iconBank from "@/assets/landing/icon-bank.svg";
+import iconArrowRight3 from "@/assets/landing/icon-arrow-right-3.svg";
+import iconSteam from "@/assets/landing/asset-icon-steam.png";
+import iconAmex from "@/assets/landing/asset-icon-amex.png";
+import iconRazer from "@/assets/landing/asset-icon-razer.png";
+import iconApple from "@/assets/landing/asset-icon-apple.png";
+import iconSephora from "@/assets/landing/asset-icon-sephora.png";
+import iconNordstrom from "@/assets/landing/asset-icon-nordstrom.png";
 
 const navLinks = [
   { label: "Merchant", href: "#merchant" },
@@ -43,6 +52,43 @@ const navLinks = [
 ];
 
 const features = ["Instant payouts", "Bank-grade security", "Best rates", "Built for you"];
+
+const buyOptions = [
+  {
+    icon: iconUserOctagon,
+    arrow: iconArrowRight,
+    title: "Send to DeeX User",
+    description: "Send crypto to other users for free",
+  },
+  {
+    icon: iconWalletAdd,
+    arrow: iconArrowRight2,
+    title: "External Wallet",
+    description: "Send crypto to other wallet",
+  },
+  {
+    icon: iconBank,
+    arrow: iconArrowRight3,
+    title: "Bank account",
+    description: "Withdraw crypto to your local bank",
+  },
+];
+
+const assetTabs = [
+  { label: "Digital Coins", active: false },
+  { label: "Giftcards", active: true },
+  { label: "Bills", active: false },
+  { label: "Merchants", active: false },
+];
+
+const supportedAssets = [
+  { icon: iconSteam, name: "Steam" },
+  { icon: iconAmex, name: "American Express" },
+  { icon: iconRazer, name: "Razer Gold" },
+  { icon: iconApple, name: "Apple" },
+  { icon: iconSephora, name: "Sephora" },
+  { icon: iconNordstrom, name: "Nordstorm" },
+];
 
 function Logo({ light = false }: { light?: boolean }) {
   const wordmarkFill = light ? "#FFFFFF" : "#13181B";
@@ -95,20 +141,6 @@ function Logo({ light = false }: { light?: boolean }) {
           fill={wordmarkFill}
         />
       </svg>
-    </div>
-  );
-}
-
-function PhoneMockup({ screenshot, className }: { screenshot: string; className?: string }) {
-  return (
-    <div className={cn("relative aspect-square w-full", className)}>
-      <img src={phoneBody} alt="" className="absolute inset-0 h-full w-full select-none pointer-events-none" />
-      <div
-        className="absolute overflow-hidden rounded-[11%]"
-        style={{ left: "29.1%", top: "5.5%", width: "41.2%", height: "88.9%" }}
-      >
-        <img src={screenshot} alt="DeeX app screen" className="h-full w-full object-cover object-top" />
-      </div>
     </div>
   );
 }
@@ -191,7 +223,7 @@ const LandingPage = () => {
             {...fadeInUp}
             className="relative flex min-h-[440px] flex-col justify-between gap-10 overflow-hidden rounded-[24px] bg-[#042741] p-6 sm:p-10 lg:min-h-[560px] lg:p-14"
           >
-            <CardGlow src={heroGlow} className="-left-1/4 -top-10 h-[170%] w-[170%] opacity-40 mix-blend-overlay" />
+            <CardGlow src={heroGlow} className="-left-10 -top-16 h-[115%] w-[115%] opacity-70 mix-blend-overlay" />
             <div className="relative z-10 max-w-md space-y-6 text-white">
               <h1 className="font-sora text-4xl font-bold leading-[1.05] sm:text-5xl lg:text-6xl xl:text-[72px]">
                 Sell crypto.
@@ -221,7 +253,11 @@ const LandingPage = () => {
             className="relative flex min-h-[440px] items-center justify-center overflow-hidden rounded-[24px] bg-[#E5F4FF] p-8 lg:min-h-[560px]"
           >
             <CardGlow src={swoosh3} className="-left-1/3 -top-1/4 h-[180%] w-[180%] rotate-[-24deg] opacity-70" />
-            <PhoneMockup screenshot={phoneScreenHero} className="relative z-10 w-[190px] sm:w-[230px]" />
+            <img
+              src={phoneReceiptMockup}
+              alt="DeeX receipt screen on a phone"
+              className="relative z-10 h-auto w-[210px] max-w-full sm:w-[260px]"
+            />
           </motion.div>
         </section>
 
@@ -229,7 +265,7 @@ const LandingPage = () => {
         <section id="how-it-works" className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
           <motion.div
             {...fadeInUp}
-            className="relative flex min-h-[420px] flex-col overflow-hidden rounded-[24px] bg-[rgba(255,230,223,0.4)] p-6 sm:p-8 lg:min-h-[560px] lg:p-10"
+            className="relative flex min-h-[420px] flex-col overflow-hidden rounded-[24px] bg-[#FFF8F6] p-6 sm:p-8 lg:min-h-[560px] lg:p-10"
           >
             <CardGlow src={swoosh4} className="-right-1/3 -top-1/3 h-[160%] w-[160%] rotate-[18deg] opacity-70" />
             <div className="relative z-10 max-w-xs space-y-2">
@@ -241,9 +277,9 @@ const LandingPage = () => {
               </p>
             </div>
             <img
-              src={step1Download}
-              alt="Download and sign up"
-              className="relative z-10 mx-auto mt-6 w-full max-w-[280px] rounded-2xl"
+              src={phoneDashboardMockup}
+              alt="DeeX dashboard screen on a phone"
+              className="relative z-10 mx-auto mt-6 h-auto w-full max-w-[240px]"
             />
           </motion.div>
 
@@ -251,7 +287,7 @@ const LandingPage = () => {
             <motion.div
               {...fadeInUp}
               transition={{ duration: 0.5, delay: 0.05 }}
-              className="relative min-h-[220px] overflow-hidden rounded-[24px] bg-[rgba(255,249,237,0.5)] p-6 sm:p-8"
+              className="relative min-h-[220px] overflow-hidden rounded-[24px] bg-[#FFFEFA] p-6 sm:p-8"
             >
               <CardGlow src={swoosh5} className="-right-1/4 -top-1/2 h-[220%] w-[220%] rotate-[-10deg] opacity-70" />
               <div className="relative z-10 flex h-full flex-col justify-between gap-6 sm:flex-row sm:items-center">
@@ -262,9 +298,9 @@ const LandingPage = () => {
                   </p>
                 </div>
                 <img
-                  src={step2Deposit}
+                  src={depositQr}
                   alt="Deposit QR code"
-                  className="relative z-10 mx-auto h-auto w-full max-w-[200px] rounded-2xl"
+                  className="relative z-10 mx-auto h-auto w-full max-w-[160px] shrink-0"
                 />
               </div>
             </motion.div>
@@ -272,23 +308,31 @@ const LandingPage = () => {
             <motion.div
               {...fadeInUp}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="relative min-h-[300px] overflow-hidden rounded-[24px] bg-[rgba(218,255,226,0.5)] p-6 sm:p-8"
+              className="relative min-h-[340px] overflow-hidden rounded-[24px] bg-[#F4FFF7] p-6 sm:p-8"
             >
               <CardGlow src={swoosh6} className="-left-1/4 -top-1/3 h-[200%] w-[200%] rotate-[22deg] opacity-70" />
-              <div className="relative z-10 flex flex-col gap-4">
-                <div className="max-w-xs space-y-1.5">
-                  <h3 className="font-sora text-2xl font-bold tracking-tight text-[#009F23] sm:text-3xl">
-                    Get ₦2,000 free
-                  </h3>
-                  <p className="font-manrope text-sm text-[#191919]">
-                    Your bonus lands in your wallet automatically. Yours to keep.
-                  </p>
-                </div>
-                <img
-                  src={step3Bonus}
-                  alt="Get bonus"
-                  className="relative z-10 w-full max-w-[320px] rounded-2xl"
-                />
+              <div className="relative z-10 max-w-xs space-y-1.5">
+                <h3 className="font-sora text-2xl font-bold tracking-tight text-[#009F23] sm:text-3xl">
+                  Get ₦2,000 free
+                </h3>
+                <p className="font-manrope text-sm text-[#191919]">
+                  Your bonus lands in your wallet automatically. Yours to keep.
+                </p>
+              </div>
+              <div className="absolute -bottom-8 -right-6 w-[110%] max-w-[380px] rotate-[8deg] space-y-2 sm:-right-10">
+                {buyOptions.map((option) => (
+                  <div
+                    key={option.title}
+                    className="flex items-center gap-3 rounded-lg border border-[#E7EBEE] bg-white px-3.5 py-2.5 shadow-md"
+                  >
+                    <img src={option.icon} alt="" className="h-5 w-5 shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-manrope text-sm font-medium text-[#13181B]">{option.title}</p>
+                      <p className="truncate font-manrope text-xs text-[#617889]">{option.description}</p>
+                    </div>
+                    <img src={option.arrow} alt="" className="h-4 w-4 shrink-0" />
+                  </div>
+                ))}
               </div>
             </motion.div>
           </div>
@@ -302,21 +346,35 @@ const LandingPage = () => {
           >
             <CardGlow src={swoosh305} className="left-1/2 top-1/2 h-[70%] w-[130%] -translate-x-1/2 -translate-y-1/2 opacity-70" />
             <CardGlow src={swoosh307} className="-left-4 top-1/3 h-[90%] w-[160%] opacity-50" />
+            <CardGlow src={swoosh308} className="-left-1/4 top-1/3 h-[110%] w-[160%] -rotate-[31deg] opacity-40" />
             <CardGlow src={ellipse4} className="left-1/2 top-6 h-[60%] w-[45%] -rotate-[54deg] opacity-60" />
             <img
-              src={giftCardsImage}
-              alt="Gift cards"
-              className="relative z-10 w-full max-w-[320px] rounded-2xl"
+              src={giftCardsComposite}
+              alt="Google Play and iTunes gift cards"
+              className="relative z-10 w-full max-w-[320px]"
             />
           </motion.div>
 
           <motion.div {...fadeInUp} transition={{ duration: 0.5, delay: 0.1 }} className="flex flex-col justify-center gap-5 py-2 lg:gap-6">
+            <div className="flex flex-wrap gap-6 font-manrope text-sm">
+              {assetTabs.map((tab) => (
+                <span key={tab.label} className={tab.active ? "font-medium text-[#279DF3]" : "text-[#869AA9]"}>
+                  {tab.label}
+                </span>
+              ))}
+            </div>
             <h2 className="font-sora text-3xl font-bold tracking-tight text-[#273037] sm:text-4xl">
               Fast Payout, Top security and Best Rates
             </h2>
-            <p className="font-manrope text-base text-[#6C757D]">
-              Trade with confidence using our secure platform
-            </p>
+            <p className="font-manrope text-base font-semibold text-[#191919]">Supported trading assets</p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+              {supportedAssets.map((asset) => (
+                <div key={asset.name} className="flex items-center gap-3">
+                  <img src={asset.icon} alt="" className="h-6 w-6 rounded-[3px] object-cover" />
+                  <span className="font-manrope text-sm text-[#1B1A1A]">{asset.name}</span>
+                </div>
+              ))}
+            </div>
           </motion.div>
         </section>
 
@@ -343,10 +401,11 @@ const LandingPage = () => {
           >
             <CardGlow src={swoosh306} className="-right-1/3 -top-1/3 h-[170%] w-[170%] opacity-60" />
             <CardGlow src={swoosh309} className="-left-1/4 top-1/2 h-[130%] w-[170%] opacity-50" />
+            <CardGlow src={swoosh310} className="-right-1/4 top-1/3 h-[110%] w-[160%] rotate-[31deg] opacity-40" />
             <CardGlow src={ellipse6} className="left-1/2 top-8 h-[55%] w-[40%] -rotate-[54deg] opacity-60" />
 
             <img
-              src={buyCryptoInputs}
+              src={buyCryptoWidget}
               alt="Buy Crypto interface"
               className="relative z-10 w-full max-w-[380px] rounded-xl shadow-2xl"
             />
