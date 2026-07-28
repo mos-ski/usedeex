@@ -4,8 +4,12 @@ import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
+// Assets from /public (Figma exports)
+import phoneScreenHero from "/Frame 1000003167.png";
+import buyCryptoInputs from "/Buy Crypto inputs.png";
+
+// Local assets for icons, swooshes, etc.
 import phoneBody from "@/assets/landing/phone-body.png";
-import phoneScreenHero from "@/assets/landing/phone-screen-hero.png";
 import phoneScreenSignup from "@/assets/landing/phone-screen-signup.png";
 import heroGlow from "@/assets/landing/ellipse-5.png";
 import barcodeImg from "@/assets/landing/barcode.jpg";
@@ -424,41 +428,11 @@ const LandingPage = () => {
             <CardGlow src={swoosh309} className="-left-1/4 top-1/2 h-[130%] w-[170%] opacity-50" />
             <CardGlow src={ellipse6} className="left-1/2 top-8 h-[55%] w-[40%] -rotate-[54deg] opacity-60" />
 
-            <div className="relative z-10 w-full max-w-[380px] space-y-6 rounded-xl bg-white p-6 shadow-xl">
-              <div className="flex flex-col items-center gap-3 text-center">
-                <img src={iconBtc2} alt="Bitcoin" className="h-11 w-11" />
-                <div>
-                  <p className="font-manrope text-xs text-[#4E606E]">Current BTC Price</p>
-                  <p className="font-sora text-2xl font-bold text-[#13181B]">$16,899.00</p>
-                  <div className="mt-1 flex items-center justify-center gap-1 font-manrope text-[11px] font-medium">
-                    <img src={iconArrowUp} alt="" className="h-3 w-3" />
-                    <span className="text-[#0D851D]">2.3% ($56.99)</span>
-                    <span className="text-[#617889]">(24h)</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <p className="font-manrope text-sm text-[#13181B]">Coin Type</p>
-                <div className="flex items-center gap-2 rounded-lg border border-[#EDEDED] bg-white px-4 py-3">
-                  <span className="flex-1 font-manrope text-sm text-[#4E606E]">Bitcoin</span>
-                  <img src={iconArrowDown} alt="" className="h-5 w-5" />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <p className="font-manrope text-sm text-[#13181B]">Select Account</p>
-                <div className="flex items-center gap-2 rounded-lg border border-[#EDEDED] bg-white px-4 py-3">
-                  <span className="flex-1 font-manrope text-sm text-[#4E606E]">123456789 Opay</span>
-                  <img src={iconArrowDown} alt="" className="h-5 w-5" />
-                </div>
-              </div>
-
-              <Button className="h-auto w-full gap-3 rounded-lg bg-[#0B75C2] py-3.5 font-manrope text-base font-medium text-[#F7F8F9] hover:bg-[#095a96]">
-                Fetch Rates
-                <img src={iconArrowRight4} alt="" className="h-6 w-6" />
-              </Button>
-            </div>
+            <img
+              src={buyCryptoInputs}
+              alt="Buy Crypto interface"
+              className="relative z-10 w-full max-w-[380px] rounded-xl shadow-2xl"
+            />
           </motion.div>
         </section>
 
