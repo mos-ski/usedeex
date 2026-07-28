@@ -358,7 +358,7 @@ const LandingPage = () => {
                 src={phoneDashboardMockup}
                 alt="DeeX dashboard screen on a phone"
                 className="float-phone-dash w-full"
-                style={{ animationDelay: "0.85s" }}
+                style={{ marginTop: "-12px", animationDelay: "0.85s" }}
               />
             </motion.div>
           </motion.div>
