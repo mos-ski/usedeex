@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
 import Onboarding from "./pages/Onboarding";
 import Login from "./pages/Login";
 import PinLock from "./pages/PinLock";
@@ -52,7 +53,8 @@ const App = () => (
       <InviteCodeProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Navigate to="/onboarding" replace />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/ad-2000-offer" element={<LandingPage />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/login" element={<Login />} />
             <Route path="/pin" element={<PinLock />} />

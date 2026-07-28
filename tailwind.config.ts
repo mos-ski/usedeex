@@ -15,6 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sora: ["Sora", "sans-serif"],
+        manrope: ["Manrope", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

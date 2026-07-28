@@ -1,0 +1,588 @@
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
+
+import phoneBody from "@/assets/landing/phone-body.png";
+import phoneScreenHero from "@/assets/landing/phone-screen-hero.png";
+import phoneScreenSignup from "@/assets/landing/phone-screen-signup.png";
+import heroGlow from "@/assets/landing/ellipse-5.png";
+import barcodeImg from "@/assets/landing/barcode.jpg";
+import itunesCard from "@/assets/landing/itunes-card.png";
+import googlePlayCard from "@/assets/landing/google-play-card.png";
+import iconSteam from "@/assets/landing/asset-icon-steam.png";
+import iconAmex from "@/assets/landing/asset-icon-amex.png";
+import iconRazer from "@/assets/landing/asset-icon-razer.png";
+import iconApple from "@/assets/landing/asset-icon-apple.png";
+import iconSephora from "@/assets/landing/asset-icon-sephora.png";
+import iconNordstrom from "@/assets/landing/asset-icon-nordstrom.png";
+import portraitMan from "@/assets/landing/portrait-man.png";
+import iconGooglePlayBadge from "@/assets/landing/icon-google-play.svg";
+import iconAppleBadge from "@/assets/landing/icon-apple.svg";
+import iconBtc from "@/assets/landing/icon-btc.svg";
+import iconBtc2 from "@/assets/landing/icon-btc-2.svg";
+import iconUserOctagon from "@/assets/landing/icon-user-octagon.svg";
+import iconArrowRight from "@/assets/landing/icon-arrow-right.svg";
+import iconWalletAdd from "@/assets/landing/icon-wallet-add.svg";
+import iconArrowRight2 from "@/assets/landing/icon-arrow-right-2.svg";
+import iconBank from "@/assets/landing/icon-bank.svg";
+import iconArrowRight3 from "@/assets/landing/icon-arrow-right-3.svg";
+import iconArrowRight4 from "@/assets/landing/icon-arrow-right-4.svg";
+import iconArrowDown from "@/assets/landing/arrow-down.svg";
+import iconArrowUp from "@/assets/landing/icon-arrow-up.svg";
+import checkIcon from "@/assets/landing/check-icon.svg";
+import swoosh3 from "@/assets/landing/vector-swoosh-3.svg";
+import swoosh4 from "@/assets/landing/vector-swoosh-4.svg";
+import swoosh5 from "@/assets/landing/vector-swoosh-5.svg";
+import swoosh6 from "@/assets/landing/vector-swoosh-6.svg";
+import swoosh305 from "@/assets/landing/swoosh-305.svg";
+import swoosh306 from "@/assets/landing/swoosh-306.svg";
+import swoosh307 from "@/assets/landing/swoosh-307.svg";
+import swoosh308 from "@/assets/landing/swoosh-308.svg";
+import swoosh309 from "@/assets/landing/swoosh-309.svg";
+import swoosh310 from "@/assets/landing/swoosh-310.svg";
+import ellipse4 from "@/assets/landing/ellipse-4.svg";
+import ellipse6 from "@/assets/landing/ellipse-6.svg";
+
+const navLinks = [
+  { label: "Merchant", href: "#merchant" },
+  { label: "How it Works", href: "#how-it-works" },
+  { label: "FAQ", href: "#faq" },
+  { label: "Help Center", href: "#help" },
+];
+
+const buyOptions = [
+  {
+    icon: iconUserOctagon,
+    arrow: iconArrowRight,
+    title: "Send to DeeX User",
+    description: "Send crypto to other users for free",
+  },
+  {
+    icon: iconWalletAdd,
+    arrow: iconArrowRight2,
+    title: "External Wallet",
+    description: "Send crypto to other wallet",
+  },
+  {
+    icon: iconBank,
+    arrow: iconArrowRight3,
+    title: "Bank account",
+    description: "Withdraw crypto to your local bank",
+  },
+];
+
+const assetTabs = [
+  { label: "Digital Coins", active: false },
+  { label: "Giftcards", active: true },
+  { label: "Bills", active: false },
+  { label: "Merchants", active: false },
+];
+
+const supportedAssets = [
+  { icon: iconSteam, name: "Steam" },
+  { icon: iconAmex, name: "American Express" },
+  { icon: iconRazer, name: "Razer Gold" },
+  { icon: iconApple, name: "Apple" },
+  { icon: iconSephora, name: "Sephora" },
+  { icon: iconNordstrom, name: "Nordstorm" },
+];
+
+const features = ["Instant payouts", "Bank-grade security", "Best rates", "Built for you"];
+
+function Logo({ light = false }: { light?: boolean }) {
+  const wordmarkFill = light ? "#FFFFFF" : "#13181B";
+  return (
+    <div className="flex items-center gap-3">
+      <svg
+        width="45"
+        height="38"
+        viewBox="0 0 45.19 37.567"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-8 w-auto shrink-0"
+      >
+        <path
+          d="M16.6705 18.8021L11.2377 28.2112L8.89606 32.2618L0 27.1241L4.81615 18.7835L0 10.443L8.89872 5.31585L11.134 9.17515L16.6678 18.7623C16.6674 18.7756 16.6683 18.789 16.6705 18.8021V18.8021Z"
+          fill="url(#logoGradA)"
+        />
+        <path
+          d="M45.19 18.7862C45.19 21.2527 44.7041 23.6951 43.7601 25.9739C42.8162 28.2527 41.4325 30.3232 39.6883 32.0672C37.944 33.8112 35.8733 35.1945 33.5944 36.1382C31.3155 37.0819 28.873 37.5674 26.4065 37.567H12.0537L13.5262 35.0261L17.4068 28.3015H26.4065C27.6696 28.3226 28.9243 28.0921 30.0974 27.6233C31.2705 27.1545 32.3386 26.4569 33.2393 25.5711C34.14 24.6853 34.8554 23.6291 35.3437 22.4639C35.8321 21.2988 36.0835 20.0482 36.0835 18.7849C36.0835 17.5215 35.8321 16.2709 35.3437 15.1058C34.8554 13.9406 34.14 12.8844 33.2393 11.9986C32.3386 11.1128 31.2705 10.4152 30.0974 9.94639C28.9243 9.47761 27.6696 9.24706 26.4065 9.26817H17.3031L13.5262 2.72703L11.9527 0H26.4065C28.8734 -2.46975e-08 31.3161 0.485938 33.5952 1.43006C35.8743 2.37419 37.9451 3.75801 39.6894 5.50251C41.4336 7.247 42.8172 9.31799 43.761 11.5972C44.7048 13.8764 45.1904 16.3193 45.19 18.7862V18.7862Z"
+          fill="url(#logoGradB)"
+        />
+        <defs>
+          <linearGradient id="logoGradA" x1="0" y1="18.7835" x2="16.6705" y2="18.7835" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#FFAF26" />
+            <stop offset="1" stopColor="#F85D31" />
+          </linearGradient>
+          <linearGradient id="logoGradB" x1="11.9527" y1="18.7835" x2="45.19" y2="18.7835" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#0EB4E7" />
+            <stop offset="1" stopColor="#0B75C2" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <svg
+        width="82"
+        height="18"
+        viewBox="0 0 82 18.1686"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="hidden h-[18px] w-auto sm:block"
+      >
+        <path
+          d="M0 0H6.2417C11.4679 0 14.7742 2.91218 14.7742 7.55868C14.7742 12.2052 11.491 15.0292 6.2417 15.0292H0V0ZM6.2417 12.2423C9.59442 12.2423 11.6997 10.4152 11.6997 7.52158C11.6997 4.62795 9.57123 2.78233 6.2417 2.78233H2.88899V12.2423H6.2417Z"
+          fill={wordmarkFill}
+        />
+        <path d="M18.5906 0H32.8593V2.78233H21.4842V5.88H31.6119V8.66233H21.4842V12.2005L32.8593 12.2237V15.0061H18.5906V0Z" fill={wordmarkFill} />
+        <path d="M37.4828 0H51.7515V2.78233H40.3764V5.88H50.5041V8.66233H40.3764V12.2005L51.7515 12.2237V15.0061H37.4828V0Z" fill={wordmarkFill} />
+        <path d="M54.8536 15.3863H65.0973V18.1686H54.8536V15.3863Z" fill={wordmarkFill} />
+        <path
+          d="M72.5864 7.41956L67.1099 0H70.9217L74.4135 4.73924L77.7198 0H81.5363L76.171 7.12278L82 15.0061H78.1836L74.3208 9.75672L70.6666 15.0061H66.8548L72.5864 7.41956Z"
+          fill={wordmarkFill}
+        />
+      </svg>
+    </div>
+  );
+}
+
+function PhoneMockup({ screenshot, className }: { screenshot: string; className?: string }) {
+  return (
+    <div className={cn("relative aspect-square w-full", className)}>
+      <img src={phoneBody} alt="" className="absolute inset-0 h-full w-full select-none pointer-events-none" />
+      <div
+        className="absolute overflow-hidden rounded-[11%]"
+        style={{ left: "29.1%", top: "5.5%", width: "41.2%", height: "88.9%" }}
+      >
+        <img src={screenshot} alt="DeeX app screen" className="h-full w-full object-cover object-top" />
+      </div>
+    </div>
+  );
+}
+
+function CardGlow({ src, className }: { src: string; className?: string }) {
+  return <img src={src} alt="" aria-hidden className={cn("pointer-events-none absolute select-none", className)} />;
+}
+
+const LandingPage = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.5 },
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Header Nav */}
+      <header className="sticky top-0 z-50 border-b border-gray-100 bg-white">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 xl:px-16">
+          <div className="flex h-20 items-center justify-between">
+            <Logo />
+
+            <nav className="hidden items-center gap-6 md:flex">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="font-manrope text-sm font-bold text-[#13181B] transition-colors hover:text-[#0B75C2]"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+
+            <div className="hidden md:block">
+              <Button className="h-auto rounded-lg bg-[#F28A0F] px-8 py-3 font-manrope text-base font-medium text-white hover:bg-[#d97a0d]">
+                Sign Up
+              </Button>
+            </div>
+
+            <button
+              className="p-2 md:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
+
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="border-t border-gray-100 py-4 md:hidden"
+            >
+              <nav className="flex flex-col gap-4">
+                {navLinks.map((link) => (
+                  <a key={link.label} href={link.href} className="font-manrope text-sm font-bold text-[#13181B]">
+                    {link.label}
+                  </a>
+                ))}
+                <Button className="h-auto w-full rounded-lg bg-[#F28A0F] px-8 py-3 font-manrope text-base font-medium text-white hover:bg-[#d97a0d]">
+                  Sign Up
+                </Button>
+              </nav>
+            </motion.div>
+          )}
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-[1400px] space-y-10 px-4 py-10 sm:px-6 lg:space-y-16 lg:px-10 lg:py-16 xl:px-16">
+        {/* Hero Section */}
+        <section className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_460px] lg:gap-8">
+          <motion.div
+            {...fadeInUp}
+            className="relative flex min-h-[440px] flex-col justify-between gap-10 overflow-hidden rounded-[24px] bg-[#042741] p-6 sm:p-10 lg:min-h-[560px] lg:p-14"
+          >
+            <CardGlow src={heroGlow} className="-left-1/4 -top-10 h-[170%] w-[170%] opacity-40 mix-blend-overlay" />
+            <div className="relative z-10 max-w-md space-y-6 text-white">
+              <h1 className="font-sora text-4xl font-bold leading-[1.05] sm:text-5xl lg:text-6xl xl:text-[72px]">
+                Sell crypto.
+                <br />
+                Get ₦2,000 free.
+              </h1>
+              <p className="max-w-sm font-manrope text-base text-white/85">
+                Join DeeX, make your first deposit of just $10, and we drop ₦2,000 straight into your wallet. Fast,
+                secure, built for everyday trader.
+              </p>
+            </div>
+            <div className="relative z-10 inline-flex w-fit items-center gap-3 rounded-md border border-white/70 p-2">
+              <img src={iconGooglePlayBadge} alt="Google Play" className="h-9 w-9 shrink-0" />
+              <img src={iconAppleBadge} alt="App Store" className="h-9 w-9 shrink-0" />
+              <div className="pr-2">
+                <p className="font-manrope text-[10px] text-white/90">Click to download app.</p>
+                <p className="max-w-[160px] font-manrope text-sm font-bold leading-snug text-white">
+                  Available on Appstore and Playstore.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            {...fadeInUp}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="relative flex min-h-[440px] items-center justify-center overflow-hidden rounded-[24px] bg-[#E5F4FF] p-8 lg:min-h-[560px]"
+          >
+            <CardGlow src={swoosh3} className="-left-1/3 -top-1/4 h-[180%] w-[180%] rotate-[-24deg] opacity-70" />
+            <PhoneMockup screenshot={phoneScreenHero} className="relative z-10 w-[190px] sm:w-[230px]" />
+          </motion.div>
+        </section>
+
+        {/* How it Works — 3 step bento */}
+        <section id="how-it-works" className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
+          <motion.div
+            {...fadeInUp}
+            className="relative flex min-h-[420px] flex-col overflow-hidden rounded-[24px] bg-[rgba(255,230,223,0.4)] p-6 sm:p-8 lg:min-h-[560px] lg:p-10"
+          >
+            <CardGlow src={swoosh4} className="-right-1/3 -top-1/3 h-[160%] w-[160%] rotate-[18deg] opacity-70" />
+            <div className="relative z-10 max-w-xs space-y-2">
+              <h3 className="font-sora text-3xl font-bold tracking-tight text-[#F43500] sm:text-4xl">
+                Download &amp; sign up
+              </h3>
+              <p className="font-manrope text-sm text-[#191919]">
+                Get the DeeX app and create your account in under a minute.
+              </p>
+            </div>
+            <PhoneMockup
+              screenshot={phoneScreenSignup}
+              className="relative z-10 mx-auto mt-6 w-[180px] sm:w-[220px]"
+            />
+          </motion.div>
+
+          <div className="flex flex-col gap-6 lg:gap-8">
+            <motion.div
+              {...fadeInUp}
+              transition={{ duration: 0.5, delay: 0.05 }}
+              className="relative min-h-[220px] overflow-hidden rounded-[24px] bg-[rgba(255,249,237,0.5)] p-6 sm:p-8"
+            >
+              <CardGlow src={swoosh5} className="-right-1/4 -top-1/2 h-[220%] w-[220%] rotate-[-10deg] opacity-70" />
+              <div className="relative z-10 flex h-full flex-col justify-between gap-6 sm:flex-row sm:items-center">
+                <div className="max-w-[220px] space-y-2">
+                  <h3 className="font-sora text-3xl font-bold tracking-tight text-[#FFAA00]">Deposit just $10</h3>
+                  <p className="font-manrope text-sm text-[#191919]">
+                    Fund your wallet with $10 in USDT, USDC, SOL and more — quick and secure.
+                  </p>
+                </div>
+                <div className="relative mx-auto h-28 w-28 shrink-0 sm:h-32 sm:w-32">
+                  <img src={barcodeImg} alt="Deposit QR code" className="h-full w-full rounded-lg object-cover shadow-md" />
+                  <img
+                    src={iconBtc}
+                    alt="Bitcoin"
+                    className="absolute -right-3 -top-3 h-9 w-9 rounded-full shadow-md"
+                  />
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              {...fadeInUp}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="relative min-h-[300px] overflow-hidden rounded-[24px] bg-[rgba(218,255,226,0.5)] p-6 sm:p-8"
+            >
+              <CardGlow src={swoosh6} className="-left-1/4 -top-1/3 h-[200%] w-[200%] rotate-[22deg] opacity-70" />
+              <div className="relative z-10 flex flex-col gap-4">
+                <div className="max-w-xs space-y-1.5">
+                  <h3 className="font-sora text-2xl font-bold tracking-tight text-[#009F23] sm:text-3xl">
+                    Get ₦2,000 free
+                  </h3>
+                  <p className="font-manrope text-sm text-[#191919]">
+                    Your bonus lands in your wallet automatically. Yours to keep.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  {buyOptions.map((option) => (
+                    <div
+                      key={option.title}
+                      className="flex items-center gap-3 rounded-lg border border-[#E7EBEE] bg-white px-3.5 py-2.5 shadow-sm"
+                    >
+                      <img src={option.icon} alt="" className="h-5 w-5 shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-manrope text-sm font-medium text-[#13181B]">{option.title}</p>
+                        <p className="truncate font-manrope text-xs text-[#617889]">{option.description}</p>
+                      </div>
+                      <img src={option.arrow} alt="" className="h-4 w-4 shrink-0" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Gift Cards promo + supported assets */}
+        <section className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
+          <motion.div
+            {...fadeInUp}
+            className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-[24px] bg-[#FFEAEA] p-8 lg:min-h-[420px]"
+          >
+            <CardGlow src={swoosh305} className="left-1/2 top-1/2 h-[70%] w-[130%] -translate-x-1/2 -translate-y-1/2 opacity-70" />
+            <CardGlow src={swoosh307} className="-left-4 top-1/3 h-[90%] w-[160%] opacity-50" />
+            <CardGlow src={ellipse4} className="left-1/2 top-6 h-[60%] w-[45%] -rotate-[54deg] opacity-60" />
+            <div className="relative z-10 flex items-center">
+              <img
+                src={itunesCard}
+                alt="iTunes gift card"
+                className="h-36 w-36 rotate-[16deg] rounded-2xl object-cover shadow-xl sm:h-44 sm:w-44"
+              />
+              <img
+                src={googlePlayCard}
+                alt="Google Play gift card"
+                className="-ml-10 h-40 -rotate-[10deg] rounded-2xl object-cover shadow-xl sm:h-52"
+              />
+            </div>
+          </motion.div>
+
+          <motion.div {...fadeInUp} transition={{ duration: 0.5, delay: 0.1 }} className="flex flex-col justify-center gap-5 py-2 lg:gap-6">
+            <div className="flex flex-wrap gap-6 font-manrope text-sm">
+              {assetTabs.map((tab) => (
+                <span key={tab.label} className={tab.active ? "font-medium text-[#279DF3]" : "text-[#869AA9]"}>
+                  {tab.label}
+                </span>
+              ))}
+            </div>
+            <h2 className="font-sora text-3xl font-bold tracking-tight text-[#273037] sm:text-4xl">
+              Fast Payout, Top security and Best Rates
+            </h2>
+            <p className="font-manrope text-base font-semibold text-[#191919]">Supported trading assets</p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+              {supportedAssets.map((asset) => (
+                <div key={asset.name} className="flex items-center gap-3">
+                  <img src={asset.icon} alt="" className="h-6 w-6 rounded-[3px] object-cover" />
+                  <span className="font-manrope text-sm text-[#1B1A1A]">{asset.name}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Features list + Buy Crypto widget */}
+        <section className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
+          <motion.div {...fadeInUp} className="flex flex-col justify-center gap-6 py-2 lg:gap-8">
+            <h2 className="font-sora text-3xl font-bold tracking-tight text-[#273037] sm:text-4xl">
+              Fast Payout, Top security and Best Rates
+            </h2>
+            <ul className="space-y-4">
+              {features.map((feature) => (
+                <li key={feature} className="flex items-center gap-4">
+                  <img src={checkIcon} alt="" className="h-4 w-4 shrink-0" />
+                  <span className="font-manrope text-base text-[#001124]">{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <motion.div
+            {...fadeInUp}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="relative flex min-h-[440px] items-center justify-center overflow-hidden rounded-[24px] bg-[#D0EBFF] p-6 sm:p-8 lg:min-h-[560px]"
+          >
+            <CardGlow src={swoosh306} className="-right-1/3 -top-1/3 h-[170%] w-[170%] opacity-60" />
+            <CardGlow src={swoosh309} className="-left-1/4 top-1/2 h-[130%] w-[170%] opacity-50" />
+            <CardGlow src={ellipse6} className="left-1/2 top-8 h-[55%] w-[40%] -rotate-[54deg] opacity-60" />
+
+            <div className="relative z-10 w-full max-w-[380px] space-y-6 rounded-xl bg-white p-6 shadow-xl">
+              <div className="flex flex-col items-center gap-3 text-center">
+                <img src={iconBtc2} alt="Bitcoin" className="h-11 w-11" />
+                <div>
+                  <p className="font-manrope text-xs text-[#4E606E]">Current BTC Price</p>
+                  <p className="font-sora text-2xl font-bold text-[#13181B]">$16,899.00</p>
+                  <div className="mt-1 flex items-center justify-center gap-1 font-manrope text-[11px] font-medium">
+                    <img src={iconArrowUp} alt="" className="h-3 w-3" />
+                    <span className="text-[#0D851D]">2.3% ($56.99)</span>
+                    <span className="text-[#617889]">(24h)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <p className="font-manrope text-sm text-[#13181B]">Coin Type</p>
+                <div className="flex items-center gap-2 rounded-lg border border-[#EDEDED] bg-white px-4 py-3">
+                  <span className="flex-1 font-manrope text-sm text-[#4E606E]">Bitcoin</span>
+                  <img src={iconArrowDown} alt="" className="h-5 w-5" />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <p className="font-manrope text-sm text-[#13181B]">Select Account</p>
+                <div className="flex items-center gap-2 rounded-lg border border-[#EDEDED] bg-white px-4 py-3">
+                  <span className="flex-1 font-manrope text-sm text-[#4E606E]">123456789 Opay</span>
+                  <img src={iconArrowDown} alt="" className="h-5 w-5" />
+                </div>
+              </div>
+
+              <Button className="h-auto w-full gap-3 rounded-lg bg-[#0B75C2] py-3.5 font-manrope text-base font-medium text-[#F7F8F9] hover:bg-[#095a96]">
+                Fetch Rates
+                <img src={iconArrowRight4} alt="" className="h-6 w-6" />
+              </Button>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Bottom CTA banner */}
+        <motion.section
+          {...fadeInUp}
+          className="relative overflow-hidden rounded-[24px] bg-[#001124] px-6 py-10 sm:px-10 lg:px-14 lg:py-14"
+        >
+          <CardGlow src={swoosh306} className="-right-1/4 -top-1/2 h-[240%] w-[70%] opacity-40" />
+          <CardGlow src={swoosh309} className="right-1/4 -top-1/2 h-[180%] w-[80%] opacity-30" />
+          <CardGlow src={ellipse6} className="right-10 top-0 h-[70%] w-[20%] -rotate-[54deg] opacity-40" />
+          <img
+            src={portraitMan}
+            alt=""
+            className="pointer-events-none absolute right-8 top-0 hidden h-full w-auto select-none object-cover lg:block xl:right-24"
+          />
+
+          <div className="relative z-10 flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-xl space-y-3">
+              <h2 className="font-sora text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                Your ₦2,000 is waiting.
+              </h2>
+              <p className="font-manrope text-base text-[#EAE7E7]">
+                Sign up and make one deposit of $10 to unlock your bonus.
+              </p>
+              <div className="flex items-center gap-2">
+                <img src={checkIcon} alt="" className="h-4 w-4" />
+                <p className="font-manrope text-sm text-[#279DF3]">
+                  <span className="font-bold">Promo code </span>
+                  <span className="font-extrabold">TRADEOFF2</span>
+                  <span className="font-bold"> applied</span>
+                </p>
+              </div>
+            </div>
+            <Button className="h-auto gap-3 rounded-lg bg-[#0B75C2] px-8 py-3.5 font-manrope text-base font-bold text-[#F7F8F9] hover:bg-[#095a96]">
+              Claim my Cash Now
+              <img src={iconArrowRight4} alt="" className="h-6 w-6" />
+            </Button>
+          </div>
+        </motion.section>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-[#001124] py-12 text-white">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10 xl:px-16">
+          <div className="grid gap-8 md:grid-cols-4">
+            <div className="space-y-4">
+              <Logo light />
+              <p className="font-manrope text-sm text-white/60">
+                The smartest way to trade and earn cashback rewards.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="mb-4 font-manrope font-bold">Product</h4>
+              <ul className="space-y-2 font-manrope text-sm text-white/60">
+                <li>
+                  <a href="#" className="transition-colors hover:text-white">
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="transition-colors hover:text-white">
+                    Pricing
+                  </a>
+                </li>
+                <li>
+                  <a href="#merchant" className="transition-colors hover:text-white">
+                    Merchant
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="mb-4 font-manrope font-bold">Support</h4>
+              <ul className="space-y-2 font-manrope text-sm text-white/60">
+                <li>
+                  <a href="#help" className="transition-colors hover:text-white">
+                    Help Center
+                  </a>
+                </li>
+                <li>
+                  <a href="#faq" className="transition-colors hover:text-white">
+                    FAQ
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="transition-colors hover:text-white">
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="mb-4 font-manrope font-bold">Legal</h4>
+              <ul className="space-y-2 font-manrope text-sm text-white/60">
+                <li>
+                  <a href="#" className="transition-colors hover:text-white">
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="transition-colors hover:text-white">
+                    Terms of Service
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="transition-colors hover:text-white">
+                    Cookie Policy
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-8 border-t border-white/10 pt-8 text-center font-manrope text-sm text-white/60">
+            <p>&copy; 2026 DeeXoptions. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default LandingPage;
