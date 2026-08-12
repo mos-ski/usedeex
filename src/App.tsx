@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
+import AdOffer2000 from "./pages/AdOffer2000";
 import Onboarding from "./pages/Onboarding";
 import Login from "./pages/Login";
 import PinLock from "./pages/PinLock";
@@ -54,7 +55,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/ad-2000-offer" element={<LandingPage />} />
+            <Route path="/ad-2000-offer" element={<AdOffer2000 />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/login" element={<Login />} />
             <Route path="/pin" element={<PinLock />} />

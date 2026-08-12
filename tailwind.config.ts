@@ -16,6 +16,8 @@ export default {
       fontFamily: {
         sora: ["Sora", "sans-serif"],
         manrope: ["Manrope", "sans-serif"],
+        gasoek: ["'Gasoek One'", "sans-serif"],
+        roboto: ["Roboto", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -63,6 +65,29 @@ export default {
           orange: "hsl(var(--deex-orange))",
           purple: "hsl(var(--deex-purple))",
           red: "hsl(var(--deex-red))",
+        },
+        // Brand rebrand palette — from the "New-DeeX" Figma file (node 1:127)
+        brand: {
+          navy: "#004D85",
+          amber: "#FFAF26",
+          amberHighlight: "#F28A0F",
+          ink: "#13181B",
+          sky: "#D0EBFF",
+          blue500: "#0B75C2",
+          blue400: "#279DF3",
+          purple: "#6047DF",
+          lime: "#E2F327",
+          blush: "#FFEAEA",
+          nearBlack: "#010D16",
+          grey900: "#13181B",
+          grey600: "#4E606E",
+          grey500: "#617889",
+          grey400: "#869AA9",
+          grey300: "#AEBCC6",
+          grey100: "#E7EBEE",
+          grey50: "#F7F8F9",
+          success: "#0D851D",
+          amberBrown: "#BE6B0A",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
