@@ -255,6 +255,39 @@ export const CheckCircleIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+export const MinusIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path d="M6 12H18" {...strokeProps} />
+  </svg>
+);
+
+/** vuesax/bold/document-upload, used by the gift-card upload zone. */
+export const DocumentUploadIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 64 64" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M54.6667 27.1733H46.96C40.64 27.1733 35.4933 22.0267 35.4933 15.7067V8C35.4933 6.53333 34.2933 5.33333 32.8267 5.33333H21.52C13.3067 5.33333 6.66667 10.6667 6.66667 20.1867V43.8133C6.66667 53.3333 13.3067 58.6667 21.52 58.6667H42.48C50.6933 58.6667 57.3333 53.3333 57.3333 43.8133V29.84C57.3333 28.3733 56.1333 27.1733 54.6667 27.1733ZM30.7467 36.08C30.3467 36.48 29.84 36.6667 29.3333 36.6667C28.8267 36.6667 28.32 36.48 27.92 36.08L26 34.16V45.3333C26 46.4267 25.0933 47.3333 24 47.3333C22.9067 47.3333 22 46.4267 22 45.3333V34.16L20.08 36.08C19.3067 36.8533 18.0267 36.8533 17.2533 36.08C16.48 35.3067 16.48 34.0267 17.2533 33.2533L22.5867 27.92C22.7733 27.76 22.96 27.6267 23.1733 27.52C23.2267 27.4933 23.3067 27.4667 23.36 27.44C23.52 27.3867 23.68 27.36 23.8667 27.3333C23.9467 27.3333 24 27.3333 24.08 27.3333C24.2933 27.3333 24.5067 27.3867 24.72 27.4667C24.7467 27.4667 24.7467 27.4667 24.7733 27.4667C24.9867 27.5467 25.2 27.7067 25.36 27.8667C25.3867 27.8933 25.4133 27.8933 25.4133 27.92L30.7467 33.2533C31.52 34.0267 31.52 35.3067 30.7467 36.08Z"
+      fill="currentColor"
+    />
+    <path
+      d="M46.48 23.4933C49.0133 23.52 52.5333 23.52 55.5467 23.52C57.0667 23.52 57.8667 21.7333 56.8 20.6667C52.96 16.8 46.08 9.84 42.1333 5.89333C41.04 4.8 39.1467 5.54667 39.1467 7.06667V16.3733C39.1467 20.2667 42.4533 23.4933 46.48 23.4933Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
+/** vuesax/linear/arrow-swap-horizontal, used by the Sell Gift Card action. */
+export const SwapHorizontalIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 16 16" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M13.6667 9.99333L10.3267 13.34M2.33333 9.99333H13.6667M2.33333 6.00667L5.67333 2.66M13.6667 6.00667H2.33333"
+      stroke="currentColor"
+      strokeMiterlimit="10"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const ArrowLeftIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
     <path d="M19 12H5M12 19l-7-7 7-7" {...strokeProps} />

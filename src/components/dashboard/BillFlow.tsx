@@ -24,8 +24,6 @@ export type BillConfig = {
   /** Digits only (phone/meter) vs free text (betting user IDs). */
   numericIdentifier?: boolean;
   providers: string[];
-  /** Icon shown in the blue circle on the recipient row. */
-  Icon: (props: { className?: string }) => JSX.Element;
   /** Chips beside the balance — fixed top-ups, or data bundles. */
   shortcuts: { label: string; value: number }[];
   beneficiaries: Beneficiary[];
@@ -274,9 +272,7 @@ export const BillFlow = ({ config }: { config: BillConfig }) => {
         footer={
           <>
             <div className="flex items-center gap-4 border-b border-brand-grey100 py-3">
-              <span className="flex size-[30px] shrink-0 items-center justify-center rounded-full bg-brand-blue500 text-white">
-                <config.Icon className="size-4" />
-              </span>
+              <AssetMark symbol={provider} className="size-[30px]" />
               <button
                 type="button"
                 onClick={() => setStep("recipient")}

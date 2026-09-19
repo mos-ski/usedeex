@@ -245,12 +245,6 @@ const Receipt = () => {
   /* ---------------- Receipt (Figma 269:7465) ---------------- */
   const status = fields.find((f) => f.label === "Status")?.value ?? "Completed";
   const settled = ["Completed", "Confirmed", "Success"].includes(status);
-  const statusColor = settled
-    ? "text-brand-successText"
-    : status === "Processing"
-      ? "text-brand-blue500"
-      : "text-brand-warning400";
-
   // Headline prefers the settled value (payout) over the amount sent.
   const headline =
     ["Payout", "Cash value", "Amount", "Amount sold", "To"]
@@ -297,7 +291,6 @@ const Receipt = () => {
                 )}
               </p>
             </div>
-            <p className={cn("w-full text-center text-[15px] font-semibold leading-[1.4]", statusColor)}>{status}</p>
           </SectionCard>
 
           {/* Status rail */}

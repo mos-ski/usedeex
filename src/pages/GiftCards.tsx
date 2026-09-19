@@ -1,241 +1,461 @@
-import { useState, useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Upload, CheckCircle, Clock, Bell } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
+import { Trash2 } from "lucide-react";
 import PageTransition from "@/components/PageTransition";
-import ProviderIcon from "@/components/ProviderIcon";
-import { giftcardStore, getRate, calcPayout, GiftCardBrand, GiftCardOrder } from "@/data/giftcardData";
+import { AppShell, PageHeader, PrimaryButton } from "@/components/dashboard/AppShell";
+import { AmountEntry, AmountShortcuts, parseAmount } from "@/components/dashboard/AmountEntry";
+import AssetMark from "@/components/dashboard/AssetMark";
+import SuccessScreen from "@/components/dashboard/SuccessScreen";
+import {
+  ArrowRightIcon,
+  CaretDownIcon,
+  DocumentUploadIcon,
+  MinusIcon,
+  PlusIcon,
+} from "@/components/dashboard/icons";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
+import { nairaWalletBalance } from "@/data/nairaWalletData";
+import { formatNgn } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
-const cardTypes = ["Physical Card", "E-Code"] as const;
-type Step = "brand" | "type" | "value" | "upload" | "review" | "status";
+const countries = [
+  { code: "US", flag: "🇺🇸", name: "United States" },
+  { code: "GB", flag: "🇬🇧", name: "United Kingdom" },
+  { code: "CA", flag: "🇨🇦", name: "Canada" },
+  { code: "DE", flag: "🇩🇪", name: "Germany" },
+];
+
+const brands = ["Amazon", "Apple", "Google Play", "Steam", "Walmart", "Nike", "Sephora", "iTunes", "Nordstrom"];
+
+/** Denominations for the picked brand, with the rate DeeX pays per dollar. */
+type Denomination = { id: string; label: string; rate: number; usd: number };
+
+const denominations: Denomination[] = [
+  { id: "d10", label: "$10", rate: 200, usd: 10 },
+  { id: "d25", label: "$25", rate: 210, usd: 25 },
+  { id: "d50", label: "$50 - $100", rate: 230, usd: 50 },
+  { id: "d100", label: "$100", rate: 240, usd: 100 },
+  { id: "d500", label: "$500", rate: 240, usd: 500 },
+];
+
+const cashShortcuts = [
+  { label: "₦200", value: 200 },
+  { label: "₦500", value: 500 },
+  { label: "₦1,000", value: 1000 },
+  { label: "₦5,000", value: 5000 },
+];
+
+const RANGE = { min: 1200, max: 4000 };
+const DEEX_FEE = 50;
+
+type Step = "brand" | "amount" | "pending";
+type CardType = "physical" | "ecode";
 
 const GiftCards = () => {
   const navigate = useNavigate();
-  const brands = useMemo(() => giftcardStore.getBrands().filter(b => b.enabled), []);
-
   const [step, setStep] = useState<Step>("brand");
-  const [selectedBrand, setSelectedBrand] = useState<GiftCardBrand | null>(null);
-  const [country, setCountry] = useState("USA");
-  const [cardType, setCardType] = useState<"Physical Card" | "E-Code">("Physical Card");
-  const [value, setValue] = useState("");
-  const [uploaded, setUploaded] = useState(false);
-  const [cardCode, setCardCode] = useState("");
 
-  const amount = parseFloat(value) || 0;
-  const rate = selectedBrand ? getRate(selectedBrand, country, amount) : 0;
-  const payout = selectedBrand ? calcPayout(selectedBrand, country, amount) : 0;
-  const payoutFormatted = payout.toLocaleString("en-NG");
+  const [country, setCountry] = useState(countries[0]);
+  const [search, setSearch] = useState("");
+  const [cardType, setCardType] = useState<CardType>("physical");
+  const [brand, setBrand] = useState("");
 
-  // Show the best rate for listing (first tier of USA or first country)
-  const getBestRate = (brand: GiftCardBrand) => {
-    const firstCountry = brand.countries[0] || "USA";
-    const tiers = brand.rates[firstCountry];
-    return tiers?.[0]?.rate || 0;
+  const [raw, setRaw] = useState("");
+  const [counts, setCounts] = useState<Record<string, number>>({});
+  const [notes, setNotes] = useState("");
+  const [images, setImages] = useState<{ id: string; url: string }[]>([]);
+
+  const [denomOpen, setDenomOpen] = useState(false);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
+
+  const visibleBrands = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return brands.filter((b) => !q || b.toLowerCase().includes(q));
+  }, [search]);
+
+  /** Card value and payout derived from the denomination counts. */
+  const totalUsd = denominations.reduce((sum, d) => sum + (counts[d.id] ?? 0) * d.usd, 0);
+  const totalNgn = denominations.reduce((sum, d) => sum + (counts[d.id] ?? 0) * d.usd * d.rate, 0);
+
+  const amount = parseAmount(raw);
+  const payout = totalNgn || amount;
+  const typeLabel = cardType === "physical" ? "Physical" : "e-Code";
+  const title = brand ? `${country.flag} ${brand} - ${typeLabel}` : "Sell Giftcard";
+
+  const step2 = (id: string, delta: number) =>
+    setCounts((c) => ({ ...c, [id]: Math.max(0, (c[id] ?? 0) + delta) }));
+
+  const addImages = (files: FileList | null) => {
+    if (!files) return;
+    const next = [...files].map((file) => ({ id: `${file.name}-${file.size}-${Math.random()}`, url: URL.createObjectURL(file) }));
+    setImages((prev) => [...prev, ...next]);
   };
 
-  const goBack = () => {
-    const flow: Step[] = ["brand", "type", "value", "upload", "review", "status"];
-    const idx = flow.indexOf(step);
-    if (idx <= 0) navigate(-1);
-    else setStep(flow[idx - 1]);
-  };
+  const removeImage = (id: string) =>
+    setImages((prev) => {
+      const target = prev.find((i) => i.id === id);
+      if (target) URL.revokeObjectURL(target.url);
+      return prev.filter((i) => i.id !== id);
+    });
 
-  const handleSubmit = () => {
-    if (!selectedBrand) return;
-    const order: GiftCardOrder = {
-      id: `gc_${Date.now()}`,
-      userId: "current-user",
-      userName: "You",
-      brandId: selectedBrand.id,
-      brandName: selectedBrand.name,
-      country,
-      cardType,
-      amount,
-      currency: "USD",
-      rate,
-      ngnPayout: payout,
-      status: "pending",
-      cardCode: cardCode || undefined,
-      createdAt: new Date().toISOString(),
-    };
-    giftcardStore.addOrder(order);
-    setStep("status");
-  };
-
-  if (step === "status") {
+  /* ---------------- Pending (Figma 293:16742) ---------------- */
+  if (step === "pending") {
     return (
-      <MobileLayout hideNav>
-        <PageTransition>
-          <div className="min-h-screen flex flex-col items-center justify-center px-6">
-            <div className="relative mb-6">
-              <Clock className="w-20 h-20 text-warning" />
-              <div className="absolute -top-1 -right-1 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                <Bell className="w-4 h-4 text-primary-foreground" />
-              </div>
-            </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Trade Submitted!</h2>
-            <p className="text-muted-foreground text-center mb-4">{selectedBrand?.name} Gift Card - ${value}</p>
-            
-            <div className="w-full bg-card border border-border rounded-xl p-4 mb-4 space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Brand</span>
-                <div className="flex items-center gap-2"><ProviderIcon name={selectedBrand?.name || ""} size="sm" /><span className="text-sm text-foreground">{selectedBrand?.name}</span></div>
-              </div>
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Country</span><span className="text-sm text-foreground">{country}</span></div>
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Type</span><span className="text-sm text-foreground">{cardType}</span></div>
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Value</span><span className="text-sm text-foreground">${value}</span></div>
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Rate</span><span className="text-sm text-foreground">₦{rate}/$</span></div>
-              <div className="h-px bg-border" />
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Payout</span><span className="text-sm font-bold text-success">₦{payoutFormatted}</span></div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Status</span>
-                <span className="text-xs px-3 py-1 rounded-full bg-primary/20 text-primary font-medium">Notified Admin</span>
-              </div>
-            </div>
-
-            <p className="text-xs text-muted-foreground text-center mb-6">Admin has been notified and will review your card. Processing usually takes 5-15 minutes.</p>
-            <button onClick={() => navigate("/receipt", { state: { type: "giftcard", data: { brand: selectedBrand?.name, amount: `$${value}`, payout: `₦${payoutFormatted}`, status: "Pending" } } })}
-              className="w-full h-12 bg-secondary rounded-xl text-foreground font-semibold mb-3">View Receipt</button>
-            <button onClick={() => navigate("/dashboard")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">Back to Home</button>
-          </div>
-        </PageTransition>
-      </MobileLayout>
+      <SuccessScreen
+        tone="pending"
+        title="Pending..."
+        message="The trader has successfully received your cards. Funds will be sent as soon as the transaction is confirmed."
+        primaryLabel="Go Home"
+        onPrimary={() => navigate("/dashboard")}
+        secondaryLabel="Help Center"
+        onSecondary={() => navigate("/support")}
+      />
     );
   }
 
-  return (
-    <MobileLayout hideNav>
-      <PageTransition>
-        <div className="px-4 pt-4">
-          <div className="flex items-center gap-3 mb-6">
-            <button onClick={goBack} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-              <ArrowLeft className="w-5 h-5 text-foreground" />
-            </button>
-            <h2 className="text-lg font-bold text-foreground">Sell Gift Card</h2>
+  /* ---------------- Brand picker (Figma 291:15235) ---------------- */
+  if (step === "brand") {
+    return (
+      <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+        <PageTransition>
+          <PageHeader title="Sell Giftcard" onBack={() => navigate(-1)} />
+
+          <div className="flex flex-col gap-3 px-4">
+            <div className="flex justify-center">
+              <Popover>
+                <PopoverTrigger
+                  aria-label="Choose country"
+                  className="flex shrink-0 items-center gap-1 rounded border border-[#F0F0F0] bg-[#F8F8F8] px-2 py-1.5"
+                >
+                  <CaretDownIcon className="size-3 text-[#191919]" />
+                  <span className="text-base leading-none">{country.flag}</span>
+                  <span className="text-xs font-semibold leading-[1.4] text-[#191919]">
+                    {country.code === "US" ? "Select Country" : country.name}
+                  </span>
+                </PopoverTrigger>
+                <PopoverContent align="center" className="w-52 border-brand-grey100 bg-white p-1">
+                  {countries.map((c) => (
+                    <button
+                      key={c.code}
+                      type="button"
+                      onClick={() => setCountry(c)}
+                      className={cn(
+                        "flex w-full items-center gap-2 rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50",
+                        country.code === c.code && "bg-brand-tint",
+                      )}
+                    >
+                      <span className="text-base leading-none">{c.flag}</span>
+                      <span className="text-xs font-semibold text-brand-grey900">{c.name}</span>
+                    </button>
+                  ))}
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search"
+              aria-label="Search gift cards"
+              className="w-full border-b border-brand-grey100 bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
+            />
+
+            <div role="tablist" aria-label="Card type" className="flex items-center gap-3 rounded bg-brand-barBg p-0.5">
+              {(
+                [
+                  { key: "physical", label: "Physical card" },
+                  { key: "ecode", label: "e-Code" },
+                ] as const
+              ).map(({ key, label }) => (
+                <button
+                  key={key}
+                  role="tab"
+                  type="button"
+                  aria-selected={cardType === key}
+                  onClick={() => setCardType(key)}
+                  className={cn(
+                    "shrink-0 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
+                    cardType === key ? "bg-white text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-3 gap-px border border-brand-grey100 bg-brand-grey100">
+              {visibleBrands.map((b) => (
+                <button
+                  key={b}
+                  type="button"
+                  onClick={() => setBrand(b)}
+                  aria-pressed={brand === b}
+                  className={cn(
+                    "flex h-20 flex-col items-center justify-center gap-1 p-3 transition-colors",
+                    brand === b ? "bg-brand-tint" : "bg-white hover:bg-brand-grey50",
+                  )}
+                >
+                  <AssetMark symbol={b} className="size-8" />
+                  <span className="text-center text-[10px] leading-[1.6] text-black">{b}</span>
+                </button>
+              ))}
+            </div>
+
+            <p className="px-4 pt-4 text-center text-xs leading-[1.6] text-brand-bodyText">
+              Note: Total denomination should match the value amount you wish to sell.
+            </p>
+
+            <PrimaryButton disabled={!brand} onClick={() => setStep("amount")}>
+              Done
+            </PrimaryButton>
           </div>
+        </PageTransition>
+      </AppShell>
+    );
+  }
 
-          {step === "brand" && (
-            <div>
-              <p className="text-sm text-muted-foreground mb-4">Select gift card brand</p>
-              <div className="grid grid-cols-2 gap-3">
-                {brands.map((b) => (
-                  <button key={b.id} onClick={() => { setSelectedBrand(b); setCountry(b.countries[0] || "USA"); setStep("type"); }}
-                    className="bg-secondary rounded-xl p-4 flex items-center gap-3">
-                    <ProviderIcon name={b.name} size="md" />
-                    <div className="text-left">
-                      <span className="text-sm font-medium text-foreground block">{b.name}</span>
-                      <span className="text-[10px] text-muted-foreground">₦{getBestRate(b)}/$</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
+  /* ---------------- Amount (Figma 291:15459) ---------------- */
+  const reviewRows: [string, string, string?][] = [
+    ["Amount", totalUsd ? `$${totalUsd.toFixed(2)}` : `${raw || "0"} NGN`],
+    ["Wallet", "Naira Wallet"],
+    ["Rate", `${formatNgn(denominations[0].rate)}/USD`],
+    ["Expected Payout", formatNgn(payout)],
+    ["Bank Details", "8103674006 - PalmPay", "Precious Isioma"],
+    ["DeeX Fee", formatNgn(DEEX_FEE)],
+  ];
+
+  return (
+    <>
+      <AmountEntry
+        title={title}
+        onBack={() => setStep("brand")}
+        value={raw}
+        onValueChange={setRaw}
+        fromSymbol="NGN"
+        fromOptions={[{ symbol: "NGN", hint: "Naira Wallet" }]}
+        onFromChange={() => undefined}
+        toSymbol="NGN"
+        convertedText={payout ? Math.round(payout).toLocaleString("en-US") : "0"}
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setDenomOpen(true)}
+              className="flex w-full items-center gap-2 py-2 text-left"
+            >
+              <span className="min-w-0 flex-1 truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                Range ₦{RANGE.min.toLocaleString("en-US")} - ₦{RANGE.max.toLocaleString("en-US")}
+              </span>
+              <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+            </button>
+            <AmountShortcuts
+              balanceLabel={totalUsd ? `Card value: $${totalUsd.toFixed(2)}` : `Bal: ${formatNgn(nairaWalletBalance)}`}
+              options={cashShortcuts}
+              onPick={(value) => setRaw(value.toLocaleString("en-US"))}
+            />
+          </>
+        }
+        submitDisabled={payout <= 0}
+        onSubmit={() => setReviewOpen(true)}
+      />
+
+      {/* Denominations (Figma 291:16320) */}
+      <Drawer open={denomOpen} onOpenChange={setDenomOpen}>
+        <DrawerContent className="border-brand-grey100 bg-white font-roboto">
+          <DrawerTitle className="sr-only">Choose card denominations</DrawerTitle>
+          <div className="mx-auto flex w-full max-w-[560px] flex-col">
+            <div className="bg-brand-grey50 px-4 py-6">
+              <p className="text-[19px] font-bold leading-[1.4] text-brand-grey900">
+                Total card value: ${totalUsd.toFixed(2)}
+              </p>
+              <p className="text-xs leading-[1.3] text-brand-bodyText">
+                Naira equivalent: {Math.round(totalNgn).toLocaleString("en-US")} NGN
+              </p>
             </div>
-          )}
 
-          {step === "type" && selectedBrand && (
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <ProviderIcon name={selectedBrand.name} size="md" />
-                <p className="text-sm text-muted-foreground">{selectedBrand.name} - Select card details</p>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-xs text-muted-foreground mb-2 block">Country</label>
-                  <div className="flex gap-2 flex-wrap">
-                    {selectedBrand.countries.map((c) => (
-                      <button key={c} onClick={() => setCountry(c)} className={`px-4 py-2 rounded-full text-sm ${country === c ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"}`}>{c}</button>
-                    ))}
+            <div className="flex max-h-[45vh] flex-col gap-6 overflow-y-auto px-4 py-6">
+              {denominations.map((d) => (
+                <div key={d.id} className="flex items-center gap-4">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">{d.label}</p>
+                    <p className="text-xs leading-[1.3] text-brand-bodyText">{d.rate} NGN/USD</p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => step2(d.id, -1)}
+                      aria-label={`Remove one ${d.label}`}
+                      className="flex size-11 items-center justify-center rounded-lg bg-brand-grey100 text-brand-grey900 transition-opacity hover:opacity-80"
+                    >
+                      <MinusIcon className="size-6" />
+                    </button>
+                    <span className="flex size-11 items-center justify-center text-base font-semibold leading-[1.4] text-brand-grey900">
+                      {counts[d.id] ?? 0}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => step2(d.id, 1)}
+                      aria-label={`Add one ${d.label}`}
+                      className="flex size-11 items-center justify-center rounded-lg bg-brand-grey100 text-brand-grey900 transition-opacity hover:opacity-80"
+                    >
+                      <PlusIcon className="size-6" />
+                    </button>
                   </div>
                 </div>
-                <div>
-                  <label className="text-xs text-muted-foreground mb-2 block">Card Type</label>
-                  <div className="flex gap-2">
-                    {selectedBrand.cardTypes.map((t) => (
-                      <button key={t} onClick={() => setCardType(t)} className={`px-4 py-2 rounded-full text-sm ${cardType === t ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"}`}>{t}</button>
-                    ))}
-                  </div>
-                </div>
-                {/* Rate tiers info */}
-                <div className="bg-card border border-border rounded-xl p-3">
-                  <p className="text-xs text-muted-foreground mb-2">Rate tiers for {country}</p>
-                  <div className="space-y-1">
-                    {(selectedBrand.rates[country] || []).map((tier, i) => (
-                      <div key={i} className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">${tier.min} – ${tier.max}</span>
-                        <span className="text-foreground font-medium">₦{tier.rate}/$</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <button onClick={() => setStep("value")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold mt-4">Continue</button>
-              </div>
+              ))}
             </div>
-          )}
 
-          {step === "value" && selectedBrand && (
-            <div>
-              <p className="text-sm text-muted-foreground mb-4">Enter card value (USD)</p>
-              {/* Quick denomination buttons */}
-              <div className="flex gap-2 flex-wrap mb-4">
-                {selectedBrand.denominations.map(d => (
-                  <button
-                    key={d}
-                    onClick={() => setValue(d.toString())}
-                    className={`px-4 py-2 rounded-full text-sm ${value === d.toString() ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"}`}
-                  >
-                    ${d}
-                  </button>
-                ))}
-              </div>
-              <input type="number" value={value} onChange={(e) => setValue(e.target.value)} placeholder="0"
-                className="w-full h-14 bg-secondary rounded-xl px-4 text-2xl text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary text-center mb-2" />
-              <p className="text-center text-sm text-muted-foreground mb-1">Rate: ₦{rate}/$</p>
-              <p className="text-center text-sm text-success mb-6">You'll receive: ₦{payoutFormatted}</p>
-              <button onClick={() => setStep("upload")} disabled={amount <= 0} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold disabled:opacity-50">Continue</button>
+            <div className="px-4 pb-8 pt-6">
+              <PrimaryButton className="font-bold" onClick={() => setDenomOpen(false)}>
+                Confirm
+              </PrimaryButton>
             </div>
-          )}
+          </div>
+        </DrawerContent>
+      </Drawer>
 
-          {step === "upload" && (
-            <div>
-              <p className="text-sm text-muted-foreground mb-4">Upload card image or enter code</p>
-              <button onClick={() => setUploaded(true)} className="w-full h-40 bg-secondary rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center gap-2 mb-4">
-                {uploaded ? (
-                  <><CheckCircle className="w-10 h-10 text-success" /><span className="text-sm text-success">Image uploaded</span></>
-                ) : (
-                  <><Upload className="w-10 h-10 text-muted-foreground" /><span className="text-sm text-muted-foreground">Tap to upload card image</span></>
-                )}
-              </button>
+      {/* Review (Figma 291:15628) */}
+      <Drawer open={reviewOpen} onOpenChange={setReviewOpen}>
+        <DrawerContent className="border-brand-grey100 bg-white font-roboto">
+          <DrawerTitle className="sr-only">Review sale</DrawerTitle>
+          <div className="mx-auto w-full max-w-[560px] px-4 pb-8">
+            <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Review</p>
+            <div className="flex flex-col">
+              {reviewRows.map(([label, value, extra]) => (
+                <div key={label} className="flex flex-col border-b border-brand-grey100 py-1.5">
+                  <span className="text-xs leading-[1.3] text-brand-bodyText">{label}</span>
+                  <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">{value}</span>
+                  {extra && <span className="text-xs leading-[1.3] text-brand-amberBrown">{extra}</span>}
+                </div>
+              ))}
+            </div>
+            <div className="pt-6">
+              <PrimaryButton
+                className="font-bold"
+                onClick={() => {
+                  setReviewOpen(false);
+                  setUploadOpen(true);
+                }}
+              >
+                Confirm
+              </PrimaryButton>
+            </div>
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Upload cards (Figma 291:15850 / 291:16090) */}
+      <Drawer open={uploadOpen} onOpenChange={setUploadOpen}>
+        <DrawerContent className="border-brand-grey100 bg-white font-roboto">
+          <DrawerTitle className="sr-only">Upload gift cards</DrawerTitle>
+          <div className="mx-auto w-full max-w-[560px] px-4 pb-8">
+            <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Review</p>
+
+            <div className="flex flex-col items-center gap-6 pt-2">
+              <p className="text-center font-manrope text-[13px] leading-[1.6] text-brand-grey500">
+                Please upload the Gift card you want to sell. Make sure the photo is clear and all necessary details are
+                displayed. You can upload multiple cards.
+              </p>
+
               <input
-                value={cardCode}
-                onChange={e => setCardCode(e.target.value)}
-                placeholder="Or enter gift card code"
-                className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary mb-4"
+                ref={fileInput}
+                type="file"
+                accept="image/*"
+                multiple
+                hidden
+                onChange={(e) => {
+                  addImages(e.target.files);
+                  e.target.value = "";
+                }}
               />
-              <button onClick={() => setStep("review")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">Continue</button>
-            </div>
-          )}
 
-          {step === "review" && selectedBrand && (
-            <div>
-              <p className="text-sm text-muted-foreground mb-4">Review your trade</p>
-              <div className="bg-secondary rounded-xl p-4 space-y-3 mb-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Brand</span>
-                  <div className="flex items-center gap-2"><ProviderIcon name={selectedBrand.name} size="sm" /><span className="text-sm text-foreground">{selectedBrand.name}</span></div>
+              {images.length === 0 ? (
+                <button
+                  type="button"
+                  onClick={() => fileInput.current?.click()}
+                  className="flex size-[163px] flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-brand-grey500"
+                >
+                  <DocumentUploadIcon className="size-16 text-brand-grey400" />
+                  <span className="rounded-lg bg-brand-primary100 px-2.5 py-[5px] text-center font-manrope text-base font-medium leading-[1.6] text-brand-blue500">
+                    Upload cards
+                  </span>
+                </button>
+              ) : (
+                <div className="flex w-full flex-col items-center gap-3">
+                  <div className="relative">
+                    <img
+                      src={images[0].url}
+                      alt="Uploaded gift card"
+                      className="h-[170px] w-[140px] rounded-lg object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(images[0].id)}
+                      aria-label="Remove card"
+                      className="absolute -right-3 -top-3 flex size-9 items-center justify-center rounded-full bg-white shadow-md"
+                    >
+                      <Trash2 className="size-5 text-brand-danger" />
+                    </button>
+                  </div>
+
+                  <div className="flex w-full flex-wrap items-center gap-2">
+                    {images.map((img, i) => (
+                      <img
+                        key={img.id}
+                        src={img.url}
+                        alt=""
+                        className={cn(
+                          "size-[72px] rounded-lg object-cover",
+                          i === 0 && "ring-2 ring-brand-blue500",
+                        )}
+                      />
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => fileInput.current?.click()}
+                      aria-label="Add another card"
+                      className="flex size-[72px] items-center justify-center rounded-lg border border-dashed border-brand-blue500 text-brand-blue500"
+                    >
+                      <PlusIcon className="size-6" />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex justify-between"><span className="text-sm text-muted-foreground">Country</span><span className="text-sm text-foreground">{country}</span></div>
-                <div className="flex justify-between"><span className="text-sm text-muted-foreground">Type</span><span className="text-sm text-foreground">{cardType}</span></div>
-                <div className="flex justify-between"><span className="text-sm text-muted-foreground">Value</span><span className="text-sm text-foreground">${value}</span></div>
-                <div className="flex justify-between"><span className="text-sm text-muted-foreground">Rate</span><span className="text-sm text-foreground">₦{rate}/$</span></div>
-                <div className="h-px bg-border" />
-                <div className="flex justify-between"><span className="text-sm text-muted-foreground">Payout</span><span className="text-sm font-bold text-success">₦{payoutFormatted}</span></div>
-              </div>
-              <button onClick={handleSubmit} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">Submit Trade</button>
+              )}
+
+              <label className="flex w-full flex-col gap-1 border-b border-brand-grey100 p-3">
+                <span className="text-xs leading-[1.3] text-brand-bodyText">Add Notes</span>
+                <input
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Optional"
+                  className="bg-transparent text-[15px] leading-[1.4] text-brand-grey900 outline-none placeholder:text-[#C9C9C9]"
+                />
+              </label>
+
+              <p className="w-full rounded bg-[#FBF7F2] px-2 py-0.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
+                Card denomination wrongly uploaded will be sold at its specific rate value
+              </p>
             </div>
-          )}
-        </div>
-      </PageTransition>
-    </MobileLayout>
+
+            <div className="pt-6">
+              <PrimaryButton
+                className="font-bold"
+                disabled={images.length === 0}
+                onClick={() => {
+                  setUploadOpen(false);
+                  setStep("pending");
+                }}
+              >
+                {images.length === 0 ? "Confirm" : "Submit"}
+              </PrimaryButton>
+            </div>
+          </div>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 };
 

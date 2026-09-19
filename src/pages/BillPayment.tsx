@@ -1,6 +1,5 @@
 import { Navigate, useParams } from "react-router-dom";
 import BillFlow, { BillConfig } from "@/components/dashboard/BillFlow";
-import { PhoneCallIcon, PhoneDeviceIcon, SignalIcon, WebcamIcon } from "@/components/dashboard/icons";
 
 /** Naira top-ups shared by airtime, electricity and betting. */
 const cashShortcuts = [
@@ -31,7 +30,6 @@ export const billConfigs: Record<string, BillConfig> = {
     identifierPlaceholder: "Enter Phone Number",
     identifierLabel: "Phone number",
     providers: ["MTN", "Glo", "Airtel", "9mobile"],
-    Icon: PhoneCallIcon,
     shortcuts: cashShortcuts,
     beneficiaries: phoneBeneficiaries,
   },
@@ -40,7 +38,6 @@ export const billConfigs: Record<string, BillConfig> = {
     identifierPlaceholder: "Enter Phone Number",
     identifierLabel: "Phone number",
     providers: ["MTN", "Glo", "Airtel", "9mobile"],
-    Icon: PhoneDeviceIcon,
     shortcuts: dataBundles,
     beneficiaries: phoneBeneficiaries,
   },
@@ -49,7 +46,6 @@ export const billConfigs: Record<string, BillConfig> = {
     identifierPlaceholder: "Enter Meter Number",
     identifierLabel: "Meter number",
     providers: ["IKEDC", "EKEDC", "AEDC", "PHED", "BEDC"],
-    Icon: SignalIcon,
     shortcuts: cashShortcuts,
     beneficiaries: [
       { id: "m1", identifier: "45123456789", name: "Home", provider: "IKEDC", kind: "recent" },
@@ -62,7 +58,6 @@ export const billConfigs: Record<string, BillConfig> = {
     identifierLabel: "User ID",
     numericIdentifier: false,
     providers: ["Bet9ja", "SportyBet", "1xBet", "BetKing", "MSport"],
-    Icon: WebcamIcon,
     shortcuts: cashShortcuts,
     beneficiaries: [
       { id: "b1", identifier: "BET9JA_1234", name: "Main", provider: "Bet9ja", kind: "recent" },

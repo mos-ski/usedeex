@@ -14,6 +14,7 @@ import {
   PhoneCallIcon,
   PlusIcon,
   SendIcon,
+  SwapHorizontalIcon,
   SwapIcon,
 } from "@/components/dashboard/icons";
 import { cn } from "@/lib/utils";
@@ -86,7 +87,8 @@ const Dashboard = () => {
     }
   }, [appliedCode, hasSeenDashboardModal]);
 
-  const transactions = activeTab === "crypto" ? cryptoTxns : giftCardTxns;
+  const isGiftCards = activeTab === "giftcards";
+  const transactions = isGiftCards ? giftCardTxns : cryptoTxns;
 
   return (
     <AppShell>
@@ -121,7 +123,7 @@ const Dashboard = () => {
                     : "font-bold text-brand-grey500 hover:text-brand-grey600",
                 )}
               >
-                {tab === "crypto" ? "Crypto" : "Gift cards"}
+                {tab === "crypto" ? "Crypto" : "Gift Card"}
               </button>
             ))}
           </div>
@@ -161,6 +163,17 @@ const Dashboard = () => {
                   See rates
                 </button>
               </div>
+
+              {isGiftCards && (
+                <button
+                  type="button"
+                  onClick={() => navigate("/giftcards")}
+                  className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#095B97] p-3 font-manrope text-[11px] font-semibold leading-[1.6] text-[#E8F3FC] transition-opacity hover:opacity-90"
+                >
+                  <SwapHorizontalIcon className="size-4" />
+                  Sell Gift Card
+                </button>
+              )}
             </SectionCard>
 
             {/* Invite code progress (only once a code is applied) */}
@@ -179,6 +192,7 @@ const Dashboard = () => {
             )}
 
             {/* Quick actions */}
+            {!isGiftCards && (
             <SectionCard>
               <SectionHeader title="Quick Actions" />
               <div className="grid grid-cols-4 gap-1 lg:gap-2">
@@ -192,9 +206,10 @@ const Dashboard = () => {
                 ))}
               </div>
             </SectionCard>
+            )}
 
             {/* Invite code prompt */}
-            {!appliedCode && (
+            {!appliedCode && !isGiftCards && (
               <SectionCard>
                 <button
                   type="button"
@@ -228,6 +243,7 @@ const Dashboard = () => {
 
           <div className="flex flex-col gap-3 lg:gap-5">
             {/* Bills for you */}
+            {!isGiftCards && (
             <SectionCard>
               <SectionHeader title="Bills for you" onAction={() => setShowBillPicker(true)} />
               <div className="grid grid-cols-3 gap-px overflow-hidden border border-brand-hairline bg-brand-hairline">
@@ -244,6 +260,7 @@ const Dashboard = () => {
                 ))}
               </div>
             </SectionCard>
+            )}
 
             {/* Transactions */}
             <SectionCard>
@@ -253,7 +270,22 @@ const Dashboard = () => {
                   <button
                     key={tx.id}
                     type="button"
-                    onClick={() => navigate("/transaction-detail", { state: { tx } })}
+                    onClick={() =>
+                      navigate("/receipt", {
+                        state: {
+                          type: activeTab === "crypto" ? "sell" : "giftcard",
+                          data: {
+                            type: tx.type,
+                            symbol: tx.symbol,
+                            brand: tx.symbol,
+                            amount: tx.amount,
+                            amountCrypto: tx.amount,
+                            date: tx.date,
+                            status: tx.status,
+                          },
+                        },
+                      })
+                    }
                     className={cn(
                       "flex items-center gap-3 py-3 text-left transition-colors hover:bg-brand-grey50",
                       i < transactions.length - 1 && "border-b border-brand-hairline",
