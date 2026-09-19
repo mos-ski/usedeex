@@ -355,7 +355,7 @@ const GiftCards = () => {
             <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Review</p>
 
             <div className="flex flex-col items-center gap-6 pt-2">
-              <p className="text-center font-manrope text-[13px] leading-[1.6] text-brand-grey500">
+              <p className="w-full text-xs leading-[1.3] text-brand-bodyText">
                 Please upload the Gift card you want to sell. Make sure the photo is clear and all necessary details are
                 displayed. You can upload multiple cards.
               </p>
