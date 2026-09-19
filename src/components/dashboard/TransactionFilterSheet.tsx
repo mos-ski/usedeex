@@ -28,16 +28,16 @@ const actionOptions: { label: string; value: TransactionActionFilter }[] = [
 
 const statusOptions: { label: string; value: TransactionStatusFilter }[] = [
   { label: "All", value: "all" },
+  { label: "In Progress", value: "pending" },
   { label: "Completed", value: "completed" },
-  { label: "Pending", value: "pending" },
   { label: "Failed", value: "failed" },
 ];
 
 const dateOptions: { label: string; value: TransactionDateFilter }[] = [
-  { label: "All time", value: "all-time" },
-  { label: "Last week", value: "last-week" },
-  { label: "Last month", value: "last-month" },
-  { label: "Last 3 months", value: "last-3-months" },
+  { label: "All Time", value: "all-time" },
+  { label: "Last Week", value: "last-week" },
+  { label: "Last Month", value: "last-month" },
+  { label: "Last 3 Months", value: "last-3-months" },
   { label: "Custom", value: "custom" },
 ];
 
@@ -59,9 +59,9 @@ const PillGroup = <T extends string>({
   value: T;
   onChange: (value: T) => void;
 }) => (
-  <fieldset>
-    <legend className="mb-3 text-sm font-medium text-brand-grey500">{label}</legend>
-    <div className="flex flex-wrap gap-2.5">
+  <fieldset className="border-b border-brand-grey100 py-1.5">
+    <legend className="text-xs font-normal leading-[1.3] text-brand-bodyText">{label}</legend>
+    <div className="mt-1 flex flex-wrap gap-1">
       {options.map((option) => {
         const selected = option.value === value;
         return (
@@ -71,10 +71,10 @@ const PillGroup = <T extends string>({
             aria-pressed={selected}
             onClick={() => onChange(option.value)}
             className={cn(
-              "rounded-full px-5 py-2.5 text-sm font-medium transition-colors",
+              "rounded px-1 text-[15px] font-semibold leading-[1.4] text-brand-blue500 transition-colors",
               selected
-                ? "bg-brand-blue500 text-white"
-                : "bg-brand-primary100/60 text-brand-blue500 hover:bg-brand-primary100",
+                ? "bg-[#c7e2f5] ring-1 ring-inset ring-brand-blue500/20"
+                : "bg-[#daebf7] hover:bg-brand-primary100",
             )}
           >
             {option.label}
@@ -96,18 +96,19 @@ export const TransactionFilterSheet = ({ open, onOpenChange, value, onApply }: T
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[88dvh] border-brand-grey100 bg-white font-roboto">
-        <div className="mx-auto w-full max-w-[560px] overflow-y-auto px-6 pb-[max(24px,env(safe-area-inset-bottom))]">
-          <DrawerTitle className="pb-6 pt-4 text-xl font-bold text-brand-grey900">Filter transactions</DrawerTitle>
+      <DrawerContent className="max-h-[88dvh] rounded-t-lg border-brand-grey100 bg-white p-3 font-roboto [&>div:first-child]:mt-0 [&>div:first-child]:h-1 [&>div:first-child]:w-12 [&>div:first-child]:bg-[#d9d9d9]">
+        <div className="mx-auto w-full max-w-[375px] overflow-y-auto pb-[max(0px,env(safe-area-inset-bottom))]">
+          <div className="h-9" aria-hidden="true" />
+          <DrawerTitle className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Filter Transaction</DrawerTitle>
 
-          <div className="space-y-8">
+          <div>
             <PillGroup label="Category" options={actionOptions} value={draft.action} onChange={(action) => setDraft((current) => ({ ...current, action }))} />
             <PillGroup label="Status" options={statusOptions} value={draft.status} onChange={(status) => setDraft((current) => ({ ...current, status }))} />
-            <PillGroup label="Date range" options={dateOptions} value={draft.dateRange} onChange={(dateRange) => setDraft((current) => ({ ...current, dateRange }))} />
+            <PillGroup label="Date Range" options={dateOptions} value={draft.dateRange} onChange={(dateRange) => setDraft((current) => ({ ...current, dateRange }))} />
           </div>
 
-          <div className="mt-10 grid grid-cols-2 gap-3">
-            <button type="button" onClick={reset} className="h-[52px] rounded-xl border-2 border-brand-blue500 bg-white text-base font-bold text-brand-blue500 transition-colors hover:bg-brand-tint">
+          <div className="grid grid-cols-2 gap-2 pt-6">
+            <button type="button" onClick={reset} className="h-12 rounded-lg bg-[#f2f2f2] px-4 py-[11px] font-manrope text-base font-medium leading-[1.6] text-[#202020] transition-colors hover:bg-brand-grey100">
               Reset
             </button>
             <button
@@ -116,7 +117,7 @@ export const TransactionFilterSheet = ({ open, onOpenChange, value, onApply }: T
                 onApply(draft);
                 onOpenChange(false);
               }}
-              className="h-[52px] rounded-xl bg-brand-blue500 text-base font-bold text-white transition-colors hover:bg-brand-navy"
+              className="h-12 rounded-lg bg-brand-blue500 px-4 py-[11px] font-manrope text-base font-bold leading-[1.6] text-brand-grey50 transition-colors hover:bg-brand-navy"
             >
               Apply
             </button>
