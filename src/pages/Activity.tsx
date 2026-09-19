@@ -12,67 +12,30 @@ import TransactionFilterSheet, {
 } from "@/components/dashboard/TransactionFilterSheet";
 import { NGN_PER_USD, formatNgn, formatUsd, splitUsdForDisplay } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import {
+  activityTransactions,
+  type ActivityCategory,
+  type ActivityTransaction,
+} from "@/data/activityTransactions";
 
-type Category = "crypto" | "giftcards" | "bills" | "payouts";
-type Status = "Success" | "Pending" | "Failed";
-type TransactionAction = "sell" | "deposit" | "swap" | "withdraw";
-
-type Txn = {
-  id: number;
-  /** "BTC - Sell" — symbol then action, per the Figma rows. */
-  title: string;
-  symbol: string;
-  date: string;
-  month: string;
-  status: Status;
-  /** Naira value of the transaction; drives both amount columns. */
-  ngn: number;
-  /** Shown instead of the USD equivalent when the row settles in coin. */
-  secondaryOverride?: string;
-  category: Category;
-  action: TransactionAction;
-  occurredAt: string;
-  receiptType: string;
-  hashId?: string;
-  destination?: string;
-  phone?: string;
-};
-
-const transactions: Txn[] = [
-  { id: 1, title: "BTC - Sell", symbol: "BTC", date: "March 8th, 2026", month: "March 2026", status: "Success", ngn: 450000, category: "crypto", action: "sell", occurredAt: "2026-03-08", receiptType: "sell", hashId: "TXN-8F3A21", destination: "8103674006 - PalmPay" },
-  { id: 2, title: "Apple - Giftcard", symbol: "Apple", date: "March 8th, 2026", month: "March 2026", status: "Success", ngn: 75000, category: "giftcards", action: "sell", occurredAt: "2026-03-08", receiptType: "giftcard" },
-  { id: 3, title: "MTN - Airtime", symbol: "MTN", date: "March 7th, 2026", month: "March 2026", status: "Success", ngn: 2000, category: "bills", action: "withdraw", occurredAt: "2026-03-07", receiptType: "airtime", phone: "08103674006" },
-  { id: 4, title: "ETH - Sell", symbol: "ETH", date: "March 6th, 2026", month: "March 2026", status: "Pending", ngn: 125000, secondaryOverride: "0.15 ETH", category: "crypto", action: "sell", occurredAt: "2026-03-06", receiptType: "sell", hashId: "TXN-4B2C99", destination: "9012345678 - Opay" },
-  { id: 5, title: "Payout - PalmPay", symbol: "NGN", date: "March 6th, 2026", month: "March 2026", status: "Success", ngn: 450000, category: "payouts", action: "withdraw", occurredAt: "2026-03-06", receiptType: "payout", destination: "8103674006 - PalmPay" },
-  { id: 6, title: "Google Play - Giftcard", symbol: "Google Play", date: "March 5th, 2026", month: "March 2026", status: "Pending", ngn: 25000, category: "giftcards", action: "sell", occurredAt: "2026-03-05", receiptType: "giftcard" },
-  { id: 7, title: "IKEDC - Electricity", symbol: "IKEDC", date: "March 4th, 2026", month: "March 2026", status: "Success", ngn: 15000, category: "bills", action: "withdraw", occurredAt: "2026-03-04", receiptType: "electricity" },
-  { id: 8, title: "USDT - Sell", symbol: "USDT", date: "February 28th, 2026", month: "February 2026", status: "Success", ngn: 780000, secondaryOverride: "508.14 USDT", category: "crypto", action: "sell", occurredAt: "2026-02-28", receiptType: "sell", hashId: "TXN-7D5E12", destination: "8103674006 - PalmPay" },
-  { id: 9, title: "Payout - Opay", symbol: "NGN", date: "February 26th, 2026", month: "February 2026", status: "Success", ngn: 780000, category: "payouts", action: "withdraw", occurredAt: "2026-02-26", receiptType: "payout", destination: "9012345678 - Opay" },
-  { id: 10, title: "Amazon - Giftcard", symbol: "Amazon", date: "February 25th, 2026", month: "February 2026", status: "Success", ngn: 120000, category: "giftcards", action: "sell", occurredAt: "2026-02-25", receiptType: "giftcard" },
-];
-
-const tabs: { key: Category; label: string }[] = [
+const tabs: { key: ActivityCategory; label: string }[] = [
   { key: "crypto", label: "Crypto" },
   { key: "giftcards", label: "Giftcards" },
   { key: "bills", label: "Bills" },
   { key: "payouts", label: "Payouts" },
 ];
 
-/** Rows shown per month before the group's "See all" appears. */
-const GROUP_PREVIEW = 5;
-
 const ActivityPage = () => {
   const navigate = useNavigate();
-  const [tab, setTab] = useState<Category>("crypto");
+  const [tab, setTab] = useState<ActivityCategory>("crypto");
   const [filters, setFilters] = useState<TransactionFilters>(defaultTransactionFilters);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const filtered = useMemo(
     () =>
-      transactions.filter((tx) => {
+      activityTransactions.filter((tx) => {
         const matchTab = tx.category === tab;
         const matchAction = filters.action === "all" || tx.action === filters.action;
         const matchStatus = filters.status === "all"
@@ -93,7 +56,7 @@ const ActivityPage = () => {
 
   const grouped = useMemo(
     () =>
-      filtered.reduce<Record<string, Txn[]>>((acc, tx) => {
+      filtered.reduce<Record<string, ActivityTransaction[]>>((acc, tx) => {
         (acc[tx.month] = acc[tx.month] || []).push(tx);
         return acc;
       }, {}),
@@ -201,28 +164,16 @@ const ActivityPage = () => {
                 />
               ) : (
                 Object.entries(grouped).map(([month, txns]) => {
-                  const isExpanded = expanded[month];
-                  const visible = isExpanded ? txns : txns.slice(0, GROUP_PREVIEW);
-
                   return (
                     <div key={month}>
                       <div className="flex items-start gap-[18px] py-1.5">
                         <h2 className="min-w-0 flex-1 text-xs font-semibold leading-[1.4] text-brand-grey900 lg:text-sm">
                           {month}
                         </h2>
-                        {txns.length > GROUP_PREVIEW && (
-                          <button
-                            type="button"
-                            onClick={() => setExpanded((e) => ({ ...e, [month]: !isExpanded }))}
-                            className="whitespace-nowrap text-xs font-medium leading-[1.6] text-brand-blue500 transition-opacity hover:opacity-70 lg:text-sm"
-                          >
-                            {isExpanded ? "Show less" : "See all"}
-                          </button>
-                        )}
                       </div>
 
                       <div className="flex flex-col">
-                        {visible.map((tx) => (
+                        {txns.map((tx) => (
                           <button
                             key={tx.id}
                             type="button"
