@@ -7,6 +7,10 @@ import logoSpottybet from "@/assets/dashboard/bill-spottybet.png";
 import logoAmazon from "@/assets/dashboard/bill-amazon.png";
 import logoApple from "@/assets/dashboard/bill-apple.png";
 import logoGooglePlay from "@/assets/dashboard/bill-googleplay.png";
+import logoUba from "@/assets/banks/uba.png";
+import logoAccess from "@/assets/banks/access.png";
+import logoGtbank from "@/assets/banks/gtbank.png";
+import logoZenith from "@/assets/banks/zenith.png";
 
 export const providerLogos: Record<string, string> = {
   MTN: logoMtn,
@@ -15,6 +19,10 @@ export const providerLogos: Record<string, string> = {
   Amazon: logoAmazon,
   Apple: logoApple,
   "Google Play": logoGooglePlay,
+  UBA: logoUba,
+  "Access Bank": logoAccess,
+  GTBank: logoGtbank,
+  "Zenith Bank": logoZenith,
 };
 
 /**

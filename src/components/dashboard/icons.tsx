@@ -232,6 +232,16 @@ export const CopyIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+/** Face ID bracket glyph used on the biometric confirm step. */
+export const FaceIdIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M3 8V5.5A2.5 2.5 0 0 1 5.5 3H8M16 3h2.5A2.5 2.5 0 0 1 21 5.5V8M21 16v2.5a2.5 2.5 0 0 1-2.5 2.5H16M8 21H5.5A2.5 2.5 0 0 1 3 18.5V16M8.5 9.5v1.5M15.5 9.5v1.5M12 9.5v4H10.8M8.75 16.25a4.6 4.6 0 0 0 6.5 0"
+      {...strokeProps}
+    />
+  </svg>
+);
+
 export const ArrowLeftIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
     <path d="M19 12H5M12 19l-7-7 7-7" {...strokeProps} />
