@@ -15,7 +15,7 @@ const Onboarding = () => {
 
   const next = () => {
     if (current < slides.length - 1) setCurrent(current + 1);
-    else { localStorage.setItem("deex_onboarded", "1"); navigate("/login"); }
+    else { localStorage.setItem("deex_onboarded", "1"); navigate("/dashboard"); }
   };
 
   return (
@@ -41,7 +41,7 @@ const Onboarding = () => {
         </div>
 
         {current < slides.length - 1 && (
-          <button onClick={() => { localStorage.setItem("deex_onboarded", "1"); navigate("/login"); }} className="text-muted-foreground text-sm mt-4 text-center">
+          <button onClick={() => { localStorage.setItem("deex_onboarded", "1"); navigate("/dashboard"); }} className="text-muted-foreground text-sm mt-4 text-center">
             Skip
           </button>
         )}

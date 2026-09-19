@@ -82,33 +82,36 @@ const NairaWallet = () => {
     return (
       <MobileLayout hideNav>
         <PageTransition>
-          <div className="px-4 pt-4 pb-8">
-            <div className="flex items-center gap-3 mb-6">
-              <button onClick={goBack} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-                <ArrowLeft className="w-5 h-5 text-foreground" />
+          <div className="min-h-screen bg-brand-canvas px-4 pb-8 pt-4 font-roboto text-brand-grey900">
+            <header className="mb-5 flex items-center gap-3">
+              <button type="button" onClick={goBack} aria-label="Go back" className="flex size-10 items-center justify-center rounded-full bg-white text-brand-grey900 shadow-sm transition-colors hover:bg-brand-grey50">
+                <ArrowLeft className="size-5" />
               </button>
-              <h2 className="text-lg font-bold text-foreground">Create Naira Wallet</h2>
-            </div>
-
-            <div className="bg-gradient-to-br from-primary/15 to-success/10 border border-primary/20 rounded-2xl p-5 mb-6">
-              <div className="w-11 h-11 rounded-full bg-primary/15 flex items-center justify-center mb-4">
-                <ShieldCheck className="w-6 h-6 text-primary" />
+              <div>
+                <h1 className="text-xl font-bold leading-tight">Create Naira Wallet</h1>
+                <p className="mt-0.5 text-xs text-brand-grey500">Set up your wallet in a minute</p>
               </div>
-              <p className="text-xl font-bold text-foreground mb-2">Complete your profile</p>
-              <p className="text-sm text-muted-foreground leading-6">
-                We need a few missing details before opening your Naira Wallet. These requirements can change based on compliance rules.
-              </p>
-            </div>
+            </header>
 
-            <div className="space-y-4 mb-6">
+            <section className="mb-4 rounded-2xl bg-brand-deepNavy p-5 text-white shadow-sm">
+              <div className="mb-4 flex size-11 items-center justify-center rounded-full bg-white/10">
+                <ShieldCheck className="size-6 text-brand-sky" />
+              </div>
+              <h2 className="mb-2 text-xl font-bold">Complete your profile</h2>
+              <p className="text-sm leading-6 text-white/75">
+                Add the details below so we can create your secure Naira Wallet.
+              </p>
+            </section>
+
+            <section className="mb-4 space-y-4 rounded-2xl bg-white p-4 shadow-sm">
               {oldUserNairaWalletRequirements.map((field) => (
                 <div key={field.key}>
-                  <label className="text-sm text-muted-foreground mb-2 block">{field.label}</label>
+                  <label className="mb-2 block text-sm font-medium text-brand-grey900">{field.label}</label>
                   {field.type === "select" ? (
                     <select
                       value={requirements[field.key] || ""}
                       onChange={(event) => updateRequirement(field.key, event.target.value)}
-                      className={`w-full h-12 bg-secondary rounded-xl px-4 text-sm outline-none focus:ring-2 focus:ring-primary ${requirements[field.key] ? "text-foreground" : "text-muted-foreground"}`}
+                      className={`h-12 w-full rounded-xl border border-brand-grey100 bg-brand-grey50 px-4 text-sm outline-none focus:border-brand-blue500 focus:ring-2 focus:ring-brand-primary100 ${requirements[field.key] ? "text-brand-grey900" : "text-brand-grey500"}`}
                     >
                       <option value="">{field.placeholder}</option>
                       {field.options?.map((option) => (
@@ -121,26 +124,28 @@ const NairaWallet = () => {
                       value={requirements[field.key] || ""}
                       onChange={(event) => updateRequirement(field.key, event.target.value)}
                       placeholder={field.placeholder}
-                      className="w-full h-12 bg-secondary rounded-xl px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary"
+                      className="h-12 w-full rounded-xl border border-brand-grey100 bg-brand-grey50 px-4 text-sm text-brand-grey900 outline-none placeholder:text-brand-grey400 focus:border-brand-blue500 focus:ring-2 focus:ring-brand-primary100"
                     />
                   )}
                 </div>
               ))}
-            </div>
+            </section>
 
-            <div className="bg-card border border-border rounded-xl p-4 mb-6">
+            <div className="mb-6 rounded-2xl border border-brand-primary100 bg-brand-tint p-4">
               <div className="flex items-start gap-3">
-                <Wallet className="w-5 h-5 text-primary mt-0.5" />
+                <ShieldCheck className="mt-0.5 size-5 shrink-0 text-brand-blue500" />
                 <div>
-                  <p className="text-sm font-semibold text-foreground mb-1">What happens next?</p>
-                  <p className="text-xs text-muted-foreground leading-5">Your Naira Wallet will be created instantly in this mock flow. In production, the backend will return the exact fields old users still need to complete.</p>
+                  <p className="mb-1 text-sm font-semibold text-brand-grey900">Your details are protected</p>
+                  <p className="text-xs leading-5 text-brand-grey500">We use this information to meet verification requirements and keep your account secure.</p>
                 </div>
               </div>
             </div>
 
             <button
+              type="button"
               onClick={createWallet}
-              className={`w-full h-14 rounded-xl font-semibold ${requiredFieldsComplete ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+              disabled={!requiredFieldsComplete}
+              className="h-14 w-full rounded-xl bg-brand-blue500 text-base font-bold text-white transition-colors hover:bg-brand-navy disabled:cursor-not-allowed disabled:bg-brand-grey300"
             >
               Create Naira Wallet
             </button>

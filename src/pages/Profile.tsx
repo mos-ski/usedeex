@@ -50,7 +50,7 @@ const Profile = () => {
           ))}
         </div>
 
-        <button onClick={() => navigate("/login")} className="w-full flex items-center justify-center gap-2 h-12 border border-destructive rounded-xl text-destructive font-medium">
+        <button onClick={() => navigate("/dashboard")} className="w-full flex items-center justify-center gap-2 h-12 border border-destructive rounded-xl text-destructive font-medium">
           <LogOut className="w-5 h-5" /> Log Out
         </button>
       </div>

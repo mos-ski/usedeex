@@ -6,12 +6,16 @@ import { AppShell, SectionCard } from "@/components/dashboard/AppShell";
 import FloatingNav from "@/components/dashboard/FloatingNav";
 import AssetMark from "@/components/dashboard/AssetMark";
 import { FilterLinesIcon, SearchIcon } from "@/components/dashboard/icons";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import TransactionFilterSheet, {
+  defaultTransactionFilters,
+  type TransactionFilters,
+} from "@/components/dashboard/TransactionFilterSheet";
 import { NGN_PER_USD, formatNgn, formatUsd, splitUsdForDisplay } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 type Category = "crypto" | "giftcards" | "bills" | "payouts";
-type Status = "Success" | "Pending";
+type Status = "Success" | "Pending" | "Failed";
+type TransactionAction = "sell" | "deposit" | "swap" | "withdraw";
 
 type Txn = {
   id: number;
@@ -26,6 +30,8 @@ type Txn = {
   /** Shown instead of the USD equivalent when the row settles in coin. */
   secondaryOverride?: string;
   category: Category;
+  action: TransactionAction;
+  occurredAt: string;
   receiptType: string;
   hashId?: string;
   destination?: string;
@@ -33,16 +39,16 @@ type Txn = {
 };
 
 const transactions: Txn[] = [
-  { id: 1, title: "BTC - Sell", symbol: "BTC", date: "March 8th, 2026", month: "March 2026", status: "Success", ngn: 450000, category: "crypto", receiptType: "sell", hashId: "TXN-8F3A21", destination: "8103674006 - PalmPay" },
-  { id: 2, title: "Apple - Giftcard", symbol: "Apple", date: "March 8th, 2026", month: "March 2026", status: "Success", ngn: 75000, category: "giftcards", receiptType: "giftcard" },
-  { id: 3, title: "MTN - Airtime", symbol: "MTN", date: "March 7th, 2026", month: "March 2026", status: "Success", ngn: 2000, category: "bills", receiptType: "airtime", phone: "08103674006" },
-  { id: 4, title: "ETH - Sell", symbol: "ETH", date: "March 6th, 2026", month: "March 2026", status: "Pending", ngn: 125000, secondaryOverride: "0.15 ETH", category: "crypto", receiptType: "sell", hashId: "TXN-4B2C99", destination: "9012345678 - Opay" },
-  { id: 5, title: "Payout - PalmPay", symbol: "NGN", date: "March 6th, 2026", month: "March 2026", status: "Success", ngn: 450000, category: "payouts", receiptType: "payout", destination: "8103674006 - PalmPay" },
-  { id: 6, title: "Google Play - Giftcard", symbol: "Google Play", date: "March 5th, 2026", month: "March 2026", status: "Pending", ngn: 25000, category: "giftcards", receiptType: "giftcard" },
-  { id: 7, title: "IKEDC - Electricity", symbol: "IKEDC", date: "March 4th, 2026", month: "March 2026", status: "Success", ngn: 15000, category: "bills", receiptType: "electricity" },
-  { id: 8, title: "USDT - Sell", symbol: "USDT", date: "February 28th, 2026", month: "February 2026", status: "Success", ngn: 780000, secondaryOverride: "508.14 USDT", category: "crypto", receiptType: "sell", hashId: "TXN-7D5E12", destination: "8103674006 - PalmPay" },
-  { id: 9, title: "Payout - Opay", symbol: "NGN", date: "February 26th, 2026", month: "February 2026", status: "Success", ngn: 780000, category: "payouts", receiptType: "payout", destination: "9012345678 - Opay" },
-  { id: 10, title: "Amazon - Giftcard", symbol: "Amazon", date: "February 25th, 2026", month: "February 2026", status: "Success", ngn: 120000, category: "giftcards", receiptType: "giftcard" },
+  { id: 1, title: "BTC - Sell", symbol: "BTC", date: "March 8th, 2026", month: "March 2026", status: "Success", ngn: 450000, category: "crypto", action: "sell", occurredAt: "2026-03-08", receiptType: "sell", hashId: "TXN-8F3A21", destination: "8103674006 - PalmPay" },
+  { id: 2, title: "Apple - Giftcard", symbol: "Apple", date: "March 8th, 2026", month: "March 2026", status: "Success", ngn: 75000, category: "giftcards", action: "sell", occurredAt: "2026-03-08", receiptType: "giftcard" },
+  { id: 3, title: "MTN - Airtime", symbol: "MTN", date: "March 7th, 2026", month: "March 2026", status: "Success", ngn: 2000, category: "bills", action: "withdraw", occurredAt: "2026-03-07", receiptType: "airtime", phone: "08103674006" },
+  { id: 4, title: "ETH - Sell", symbol: "ETH", date: "March 6th, 2026", month: "March 2026", status: "Pending", ngn: 125000, secondaryOverride: "0.15 ETH", category: "crypto", action: "sell", occurredAt: "2026-03-06", receiptType: "sell", hashId: "TXN-4B2C99", destination: "9012345678 - Opay" },
+  { id: 5, title: "Payout - PalmPay", symbol: "NGN", date: "March 6th, 2026", month: "March 2026", status: "Success", ngn: 450000, category: "payouts", action: "withdraw", occurredAt: "2026-03-06", receiptType: "payout", destination: "8103674006 - PalmPay" },
+  { id: 6, title: "Google Play - Giftcard", symbol: "Google Play", date: "March 5th, 2026", month: "March 2026", status: "Pending", ngn: 25000, category: "giftcards", action: "sell", occurredAt: "2026-03-05", receiptType: "giftcard" },
+  { id: 7, title: "IKEDC - Electricity", symbol: "IKEDC", date: "March 4th, 2026", month: "March 2026", status: "Success", ngn: 15000, category: "bills", action: "withdraw", occurredAt: "2026-03-04", receiptType: "electricity" },
+  { id: 8, title: "USDT - Sell", symbol: "USDT", date: "February 28th, 2026", month: "February 2026", status: "Success", ngn: 780000, secondaryOverride: "508.14 USDT", category: "crypto", action: "sell", occurredAt: "2026-02-28", receiptType: "sell", hashId: "TXN-7D5E12", destination: "8103674006 - PalmPay" },
+  { id: 9, title: "Payout - Opay", symbol: "NGN", date: "February 26th, 2026", month: "February 2026", status: "Success", ngn: 780000, category: "payouts", action: "withdraw", occurredAt: "2026-02-26", receiptType: "payout", destination: "9012345678 - Opay" },
+  { id: 10, title: "Amazon - Giftcard", symbol: "Amazon", date: "February 25th, 2026", month: "February 2026", status: "Success", ngn: 120000, category: "giftcards", action: "sell", occurredAt: "2026-02-25", receiptType: "giftcard" },
 ];
 
 const tabs: { key: Category; label: string }[] = [
@@ -52,15 +58,14 @@ const tabs: { key: Category; label: string }[] = [
   { key: "payouts", label: "Payouts" },
 ];
 
-const statusFilters = ["All", "Success", "Pending"] as const;
-
 /** Rows shown per month before the group's "See all" appears. */
 const GROUP_PREVIEW = 5;
 
 const ActivityPage = () => {
   const navigate = useNavigate();
   const [tab, setTab] = useState<Category>("crypto");
-  const [status, setStatus] = useState<(typeof statusFilters)[number]>("All");
+  const [filters, setFilters] = useState<TransactionFilters>(defaultTransactionFilters);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -69,13 +74,21 @@ const ActivityPage = () => {
     () =>
       transactions.filter((tx) => {
         const matchTab = tx.category === tab;
-        const matchStatus = status === "All" || tx.status === status;
+        const matchAction = filters.action === "all" || tx.action === filters.action;
+        const matchStatus = filters.status === "all"
+          || (filters.status === "completed" && tx.status === "Success")
+          || (filters.status === "pending" && tx.status === "Pending")
+          || (filters.status === "failed" && tx.status === "Failed");
+        const transactionDate = new Date(`${tx.occurredAt}T00:00:00`);
+        const now = new Date();
+        const rangeDays = filters.dateRange === "last-week" ? 7 : filters.dateRange === "last-month" ? 30 : filters.dateRange === "last-3-months" ? 90 : null;
+        const matchDate = rangeDays === null || transactionDate >= new Date(now.getTime() - rangeDays * 86_400_000);
         const q = query.trim().toLowerCase();
         const matchQuery =
           !q || tx.hashId?.toLowerCase().includes(q) || tx.title.toLowerCase().includes(q);
-        return matchTab && matchStatus && matchQuery;
+        return matchTab && matchAction && matchStatus && matchDate && matchQuery;
       }),
-    [tab, status, query],
+    [tab, filters, query],
   );
 
   const grouped = useMemo(
@@ -89,6 +102,7 @@ const ActivityPage = () => {
 
   const total = splitUsdForDisplay(filtered.reduce((sum, tx) => sum + tx.ngn, 0) / NGN_PER_USD);
   const activeLabel = tabs.find((t) => t.key === tab)?.label ?? "";
+  const hasActiveFilters = filters.action !== "all" || filters.status !== "all" || filters.dateRange !== "all-time";
 
   return (
     // Mobile mirrors the Figma: navy summary flush against the white list, which
@@ -104,7 +118,7 @@ const ActivityPage = () => {
 
             <div className="flex flex-col items-center gap-1 px-6 py-[18px] lg:py-8">
               <p className="text-center text-[10px] font-bold uppercase leading-[1.6] text-brand-grey600 lg:text-xs">
-                Total • {activeLabel} ({status === "All" ? "all" : status.toLowerCase()})
+                Total • {activeLabel} ({filters.status === "all" ? "all" : filters.status})
               </p>
               <p className="whitespace-nowrap font-gasoek leading-[1.4]">
                 <span className="text-[33px] lg:text-[42px]">{total.lead}</span>
@@ -164,32 +178,18 @@ const ActivityPage = () => {
                   ))}
                 </div>
 
-                <Popover>
-                  <PopoverTrigger
-                    aria-label="Filter by status"
-                    className={cn(
-                      "flex shrink-0 items-center rounded p-2 transition-colors hover:bg-brand-grey50",
-                      status !== "All" ? "text-brand-blue500" : "text-brand-blue500",
-                    )}
-                  >
-                    <FilterLinesIcon className="size-[18px]" />
-                  </PopoverTrigger>
-                  <PopoverContent align="end" className="w-40 border-brand-grey100 bg-white p-1">
-                    {statusFilters.map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => setStatus(s)}
-                        className={cn(
-                          "flex w-full items-center rounded px-2 py-1.5 text-left text-xs font-medium transition-colors hover:bg-brand-grey50",
-                          status === s ? "text-brand-blue500" : "text-brand-grey900",
-                        )}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </PopoverContent>
-                </Popover>
+                <button
+                  type="button"
+                  aria-label="Filter transactions"
+                  aria-expanded={filtersOpen}
+                  onClick={() => setFiltersOpen(true)}
+                  className={cn(
+                    "flex shrink-0 items-center rounded p-2 text-brand-blue500 transition-colors hover:bg-brand-grey50",
+                    hasActiveFilters && "bg-brand-primary100/50",
+                  )}
+                >
+                  <FilterLinesIcon className="size-[18px]" />
+                </button>
               </div>
             </SectionCard>
 
@@ -268,6 +268,7 @@ const ActivityPage = () => {
       </PageTransition>
 
       <FloatingNav />
+      <TransactionFilterSheet open={filtersOpen} onOpenChange={setFiltersOpen} value={filters} onApply={setFilters} />
     </AppShell>
   );
 };

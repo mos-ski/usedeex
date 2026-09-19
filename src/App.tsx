@@ -6,9 +6,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import AdOffer2000 from "./pages/AdOffer2000";
 import Onboarding from "./pages/Onboarding";
-import Login from "./pages/Login";
-import PinLock from "./pages/PinLock";
-import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import Wallet from "./pages/Wallet";
 import Deposit from "./pages/Deposit";
@@ -59,9 +56,9 @@ const App = () => (
             <Route path="/" element={<LandingPage />} />
             <Route path="/ad-2000-offer" element={<AdOffer2000 />} />
             <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/pin" element={<PinLock />} />
-            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/pin" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/signup" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/wallet" element={<Wallet />} />
             <Route path="/deposit" element={<Deposit />} />

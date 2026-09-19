@@ -145,7 +145,7 @@ const AdminLayout = ({ activeTab, onTabChange, children, headerTitle }: AdminLay
 
       <div className="p-2 border-t border-border">
         <button
-          onClick={() => navigate("/login")}
+          onClick={() => navigate("/dashboard")}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <LogOut className="w-[18px] h-[18px]" /> Logout

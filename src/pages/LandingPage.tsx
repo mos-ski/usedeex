@@ -221,11 +221,11 @@ const LandingPage = () => {
                 </Link>
               )
             )}
-            <Link to="/login" className="hover:text-brand-blue500 transition-colors">
+            <Link to="/dashboard" className="hover:text-brand-blue500 transition-colors">
               Login
             </Link>
             <Button asChild className="rounded-full bg-brand-navy hover:bg-brand-navy/90">
-              <Link to="/signup">Sign Up</Link>
+              <Link to="/dashboard">Sign Up</Link>
             </Button>
           </nav>
           <button
@@ -249,11 +249,11 @@ const LandingPage = () => {
                 </Link>
               )
             )}
-            <Link to="/login" className="py-3">
+            <Link to="/dashboard" className="py-3">
               Login
             </Link>
             <Button asChild className="mt-2 rounded-full bg-brand-navy hover:bg-brand-navy/90 w-full">
-              <Link to="/signup">Sign Up</Link>
+              <Link to="/dashboard">Sign Up</Link>
             </Button>
           </nav>
         )}
@@ -276,7 +276,7 @@ const LandingPage = () => {
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg" className="rounded-full bg-white text-brand-ink hover:bg-white/90 px-8 py-6 text-base font-bold">
-                <Link to="/signup">Create a Free Account</Link>
+                <Link to="/dashboard">Create a Free Account</Link>
               </Button>
               <Button
                 asChild
@@ -552,7 +552,7 @@ const LandingPage = () => {
               and watch the money land in your wallet or straight to your bank.
             </p>
             <Button asChild size="lg" className="rounded-full bg-brand-navy hover:bg-brand-navy/90 px-8 py-6 text-base font-bold">
-              <Link to="/signup">Create Merchant Account</Link>
+              <Link to="/dashboard">Create Merchant Account</Link>
             </Button>
           </Reveal>
           <Reveal className="relative mt-16 block">
