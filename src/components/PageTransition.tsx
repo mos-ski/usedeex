@@ -3,11 +3,13 @@ import { motion } from "framer-motion";
 
 interface PageTransitionProps {
   children: ReactNode;
+  className?: string;
 }
 
-const PageTransition = ({ children }: PageTransitionProps) => {
+const PageTransition = ({ children, className }: PageTransitionProps) => {
   return (
     <motion.div
+      className={className}
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12 }}

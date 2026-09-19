@@ -1,110 +1,274 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Search, ArrowDownLeft, ArrowUpRight, ArrowLeftRight } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
-import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
 import EmptyState from "@/components/EmptyState";
-import CryptoIcon from "@/components/CryptoIcon";
-import ProviderIcon from "@/components/ProviderIcon";
+import { AppShell, SectionCard } from "@/components/dashboard/AppShell";
+import FloatingNav from "@/components/dashboard/FloatingNav";
+import AssetMark from "@/components/dashboard/AssetMark";
+import { FilterLinesIcon, SearchIcon } from "@/components/dashboard/icons";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { NGN_PER_USD, formatNgn, formatUsd, splitUsdForDisplay } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
-const transactions = [
-  { id: 1, type: "Sold BTC", date: "Mar 8, 2:30 PM", status: "Completed", amount: "₦450,000", category: "crypto", month: "March 2026", symbol: "BTC", icon: "sell", hashId: "TXN-8F3A21", destination: "8103674006 - PalmPay" },
-  { id: 2, type: "Apple Gift Card", date: "Mar 8, 1:00 PM", status: "Completed", amount: "₦75,000", category: "giftcards", month: "March 2026", symbol: "Apple", icon: "giftcard" },
-  { id: 3, type: "Airtime - MTN", date: "Mar 7, 11:15 AM", status: "Completed", amount: "₦2,000", category: "crypto", month: "March 2026", symbol: "MTN", icon: "bill", phone: "08103674006" },
-  { id: 4, type: "Sold ETH", date: "Mar 6, 4:20 PM", status: "Pending", amount: "₦125,000", category: "crypto", month: "March 2026", symbol: "ETH", icon: "sell", hashId: "TXN-4B2C99", destination: "9012345678 - Opay" },
-  { id: 5, type: "Google Play Card", date: "Mar 5", status: "Pending", amount: "₦25,000", category: "giftcards", month: "March 2026", symbol: "Google Play", icon: "giftcard" },
-  { id: 6, type: "Electricity - IKEDC", date: "Mar 4", status: "Completed", amount: "₦15,000", category: "crypto", month: "March 2026", symbol: "IKEDC", icon: "bill" },
-  { id: 7, type: "Sold USDT", date: "Feb 28", status: "Completed", amount: "₦780,000", category: "crypto", month: "February 2026", symbol: "USDT", icon: "sell", hashId: "TXN-7D5E12", destination: "8103674006 - PalmPay" },
-  { id: 8, type: "Amazon Gift Card", date: "Feb 25", status: "Completed", amount: "₦120,000", category: "giftcards", month: "February 2026", symbol: "Amazon", icon: "giftcard" },
+type Category = "crypto" | "giftcards" | "bills" | "payouts";
+type Status = "Success" | "Pending";
+
+type Txn = {
+  id: number;
+  /** "BTC - Sell" — symbol then action, per the Figma rows. */
+  title: string;
+  symbol: string;
+  date: string;
+  month: string;
+  status: Status;
+  /** Naira value of the transaction; drives both amount columns. */
+  ngn: number;
+  /** Shown instead of the USD equivalent when the row settles in coin. */
+  secondaryOverride?: string;
+  category: Category;
+  receiptType: string;
+  hashId?: string;
+  destination?: string;
+  phone?: string;
+};
+
+const transactions: Txn[] = [
+  { id: 1, title: "BTC - Sell", symbol: "BTC", date: "March 8th, 2026", month: "March 2026", status: "Success", ngn: 450000, category: "crypto", receiptType: "sell", hashId: "TXN-8F3A21", destination: "8103674006 - PalmPay" },
+  { id: 2, title: "Apple - Giftcard", symbol: "Apple", date: "March 8th, 2026", month: "March 2026", status: "Success", ngn: 75000, category: "giftcards", receiptType: "giftcard" },
+  { id: 3, title: "MTN - Airtime", symbol: "MTN", date: "March 7th, 2026", month: "March 2026", status: "Success", ngn: 2000, category: "bills", receiptType: "airtime", phone: "08103674006" },
+  { id: 4, title: "ETH - Sell", symbol: "ETH", date: "March 6th, 2026", month: "March 2026", status: "Pending", ngn: 125000, secondaryOverride: "0.15 ETH", category: "crypto", receiptType: "sell", hashId: "TXN-4B2C99", destination: "9012345678 - Opay" },
+  { id: 5, title: "Payout - PalmPay", symbol: "NGN", date: "March 6th, 2026", month: "March 2026", status: "Success", ngn: 450000, category: "payouts", receiptType: "payout", destination: "8103674006 - PalmPay" },
+  { id: 6, title: "Google Play - Giftcard", symbol: "Google Play", date: "March 5th, 2026", month: "March 2026", status: "Pending", ngn: 25000, category: "giftcards", receiptType: "giftcard" },
+  { id: 7, title: "IKEDC - Electricity", symbol: "IKEDC", date: "March 4th, 2026", month: "March 2026", status: "Success", ngn: 15000, category: "bills", receiptType: "electricity" },
+  { id: 8, title: "USDT - Sell", symbol: "USDT", date: "February 28th, 2026", month: "February 2026", status: "Success", ngn: 780000, secondaryOverride: "508.14 USDT", category: "crypto", receiptType: "sell", hashId: "TXN-7D5E12", destination: "8103674006 - PalmPay" },
+  { id: 9, title: "Payout - Opay", symbol: "NGN", date: "February 26th, 2026", month: "February 2026", status: "Success", ngn: 780000, category: "payouts", receiptType: "payout", destination: "9012345678 - Opay" },
+  { id: 10, title: "Amazon - Giftcard", symbol: "Amazon", date: "February 25th, 2026", month: "February 2026", status: "Success", ngn: 120000, category: "giftcards", receiptType: "giftcard" },
 ];
 
-const TxIcon = ({ tx }: { tx: typeof transactions[0] }) => {
-  if (tx.icon === "sell") return <CryptoIcon symbol={tx.symbol} />;
-  if (tx.icon === "giftcard") return <ProviderIcon name={tx.symbol} />;
-  return <ProviderIcon name={tx.symbol} />;
-};
+const tabs: { key: Category; label: string }[] = [
+  { key: "crypto", label: "Crypto" },
+  { key: "giftcards", label: "Giftcards" },
+  { key: "bills", label: "Bills" },
+  { key: "payouts", label: "Payouts" },
+];
+
+const statusFilters = ["All", "Success", "Pending"] as const;
+
+/** Rows shown per month before the group's "See all" appears. */
+const GROUP_PREVIEW = 5;
 
 const ActivityPage = () => {
   const navigate = useNavigate();
-  const [showBalance, setShowBalance] = useState(true);
-  const [filter, setFilter] = useState<"all" | "crypto" | "giftcards">("all");
-  const [hashSearch, setHashSearch] = useState("");
+  const [tab, setTab] = useState<Category>("crypto");
+  const [status, setStatus] = useState<(typeof statusFilters)[number]>("All");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
-  const filtered = transactions.filter((tx) => {
-    const matchFilter = filter === "all" || tx.category === filter;
-    const matchSearch = !hashSearch || tx.hashId?.toLowerCase().includes(hashSearch.toLowerCase()) || tx.type.toLowerCase().includes(hashSearch.toLowerCase());
-    return matchFilter && matchSearch;
-  });
-  const grouped = filtered.reduce<Record<string, typeof transactions>>((acc, tx) => {
-    (acc[tx.month] = acc[tx.month] || []).push(tx);
-    return acc;
-  }, {});
+  const filtered = useMemo(
+    () =>
+      transactions.filter((tx) => {
+        const matchTab = tx.category === tab;
+        const matchStatus = status === "All" || tx.status === status;
+        const q = query.trim().toLowerCase();
+        const matchQuery =
+          !q || tx.hashId?.toLowerCase().includes(q) || tx.title.toLowerCase().includes(q);
+        return matchTab && matchStatus && matchQuery;
+      }),
+    [tab, status, query],
+  );
+
+  const grouped = useMemo(
+    () =>
+      filtered.reduce<Record<string, Txn[]>>((acc, tx) => {
+        (acc[tx.month] = acc[tx.month] || []).push(tx);
+        return acc;
+      }, {}),
+    [filtered],
+  );
+
+  const total = splitUsdForDisplay(filtered.reduce((sum, tx) => sum + tx.ngn, 0) / NGN_PER_USD);
+  const activeLabel = tabs.find((t) => t.key === tab)?.label ?? "";
 
   return (
-    <MobileLayout>
-      <PageTransition>
-        <div className="px-4 pt-6">
-          <h2 className="text-lg font-bold text-foreground mb-4">Activity</h2>
+    // Mobile mirrors the Figma: navy summary flush against the white list, which
+    // runs to the bottom edge. From `sm` up both become cards in the shell.
+    <AppShell innerClassName="flex min-h-[100dvh] flex-col pb-0 sm:block sm:min-h-0 sm:pb-36">
+      <PageTransition className="flex flex-1 flex-col">
+        <div className="flex flex-1 flex-col sm:gap-3 lg:grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:gap-5 lg:pt-6">
+          {/* Summary */}
+          <section className="bg-brand-deepNavy text-white sm:mt-4 sm:rounded-2xl lg:sticky lg:top-6 lg:mt-0">
+            <header className="flex h-14 items-center gap-3 px-4 lg:px-6">
+              <h1 className="min-w-0 flex-1 truncate text-[19px] font-bold leading-[1.4] lg:text-2xl">Activity</h1>
+            </header>
 
-          <div className="bg-gradient-to-br from-primary/20 to-accent/10 rounded-2xl p-5 mb-4 border border-border">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-sm text-muted-foreground">Total Payout</span>
-              <button onClick={() => setShowBalance(!showBalance)}>
-                {showBalance ? <Eye className="w-4 h-4 text-muted-foreground" /> : <EyeOff className="w-4 h-4 text-muted-foreground" />}
-              </button>
+            <div className="flex flex-col items-center gap-1 px-6 py-[18px] lg:py-8">
+              <p className="text-center text-[10px] font-bold uppercase leading-[1.6] text-brand-grey600 lg:text-xs">
+                Total • {activeLabel} ({status === "All" ? "all" : status.toLowerCase()})
+              </p>
+              <p className="whitespace-nowrap font-gasoek leading-[1.4]">
+                <span className="text-[33px] lg:text-[42px]">{total.lead}</span>
+                <span className="text-[17px] lg:text-[22px]">{total.cents}</span>
+              </p>
             </div>
-            <p className="text-3xl font-bold text-foreground">{showBalance ? "₦1,592,000" : "••••••"}</p>
-          </div>
 
-          {/* Search */}
-          <div className="relative mb-4">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input value={hashSearch} onChange={(e) => setHashSearch(e.target.value)} placeholder="Search by Hash ID or name"
-              className="w-full h-12 bg-secondary rounded-xl pl-10 pr-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary" />
-          </div>
+            <div className="flex flex-col gap-3 px-4 py-3 lg:px-6">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-[10px] font-semibold leading-[1.4]">Missing or pending transactions?</p>
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen((v) => !v)}
+                  aria-expanded={searchOpen}
+                  className="flex shrink-0 items-center gap-1 text-[10px] font-semibold leading-[1.4] text-brand-blue500 transition-opacity hover:opacity-80"
+                >
+                  <SearchIcon className="size-[13.5px]" />
+                  Find with Hash ID
+                </button>
+              </div>
 
-          <div className="flex gap-2 mb-4">
-            {(["all", "crypto", "giftcards"] as const).map((f) => (
-              <button key={f} onClick={() => setFilter(f)} className={`px-4 py-1.5 rounded-full text-sm capitalize ${filter === f ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
-                {f === "giftcards" ? "Gift Cards" : f === "all" ? "All" : "Crypto"}
-              </button>
-            ))}
-          </div>
+              {searchOpen && (
+                <input
+                  autoFocus
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Enter a hash ID or transaction name"
+                  className="h-10 w-full rounded-lg border border-white/15 bg-white/10 px-3 text-xs text-white outline-none placeholder:text-white/40 focus:border-brand-blue500"
+                />
+              )}
+            </div>
+          </section>
 
-          {Object.keys(grouped).length === 0 ? (
-            <EmptyState title="No transactions yet" description="Your transactions will appear here once you start trading" />
-          ) : (
-            <div className="space-y-4 mb-4">
-              {Object.entries(grouped).map(([month, txns]) => (
-                <div key={month}>
-                  <p className="text-xs text-muted-foreground mb-2 font-medium">{month}</p>
-                  <div className="space-y-2">
-                    {txns.map((tx) => (
-                      <button key={tx.id} onClick={() => navigate("/receipt", { state: { type: tx.icon === "sell" ? "sell" : tx.icon === "giftcard" ? "giftcard" : "airtime", data: { ...tx, type: tx.type } } })}
-                        className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <TxIcon tx={tx} />
-                          <div className="text-left">
-                            <p className="text-sm font-medium text-foreground">{tx.type}</p>
-                            <p className="text-xs text-muted-foreground">{tx.date}{tx.hashId && ` • ${tx.hashId}`}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-semibold text-foreground">{tx.amount}</p>
-                          <p className={`text-xs ${tx.status === "Completed" ? "text-success" : "text-warning"}`}>{tx.status}</p>
-                        </div>
+          {/* Filters + list */}
+          <div className="flex flex-1 flex-col sm:gap-3 lg:gap-5">
+            <SectionCard className="px-4 py-3">
+              <div className="flex items-center gap-2">
+                <div
+                  role="tablist"
+                  aria-label="Transaction type"
+                  className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto rounded bg-brand-barBg p-0.5"
+                >
+                  {tabs.map(({ key, label }) => (
+                    <button
+                      key={key}
+                      role="tab"
+                      type="button"
+                      aria-selected={tab === key}
+                      onClick={() => setTab(key)}
+                      className={cn(
+                        "shrink-0 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
+                        tab === key ? "bg-white text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                      )}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+
+                <Popover>
+                  <PopoverTrigger
+                    aria-label="Filter by status"
+                    className={cn(
+                      "flex shrink-0 items-center rounded p-2 transition-colors hover:bg-brand-grey50",
+                      status !== "All" ? "text-brand-blue500" : "text-brand-blue500",
+                    )}
+                  >
+                    <FilterLinesIcon className="size-[18px]" />
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-40 border-brand-grey100 bg-white p-1">
+                    {statusFilters.map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => setStatus(s)}
+                        className={cn(
+                          "flex w-full items-center rounded px-2 py-1.5 text-left text-xs font-medium transition-colors hover:bg-brand-grey50",
+                          status === s ? "text-brand-blue500" : "text-brand-grey900",
+                        )}
+                      >
+                        {s}
                       </button>
                     ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </SectionCard>
+
+            <SectionCard className="flex-1 px-4 pb-28 sm:pb-3 lg:pb-5">
+              {Object.keys(grouped).length === 0 ? (
+                <EmptyState
+                  title="No transactions yet"
+                  description="Transactions in this category will appear here once you start trading"
+                />
+              ) : (
+                Object.entries(grouped).map(([month, txns]) => {
+                  const isExpanded = expanded[month];
+                  const visible = isExpanded ? txns : txns.slice(0, GROUP_PREVIEW);
+
+                  return (
+                    <div key={month}>
+                      <div className="flex items-start gap-[18px] py-1.5">
+                        <h2 className="min-w-0 flex-1 text-xs font-semibold leading-[1.4] text-brand-grey900 lg:text-sm">
+                          {month}
+                        </h2>
+                        {txns.length > GROUP_PREVIEW && (
+                          <button
+                            type="button"
+                            onClick={() => setExpanded((e) => ({ ...e, [month]: !isExpanded }))}
+                            className="whitespace-nowrap text-xs font-medium leading-[1.6] text-brand-blue500 transition-opacity hover:opacity-70 lg:text-sm"
+                          >
+                            {isExpanded ? "Show less" : "See all"}
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="flex flex-col">
+                        {visible.map((tx) => (
+                          <button
+                            key={tx.id}
+                            type="button"
+                            onClick={() =>
+                              navigate("/receipt", { state: { type: tx.receiptType, data: tx } })
+                            }
+                            className="flex items-center gap-4 border-b border-brand-grey100 py-3 text-left transition-colors hover:bg-brand-grey50"
+                          >
+                            <AssetMark symbol={tx.symbol} />
+                            <span className="flex min-w-0 flex-1 flex-col">
+                              <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                                {tx.title}
+                              </span>
+                              <span className="truncate text-xs leading-[1.3] text-brand-bodyText">
+                                {tx.date} •{" "}
+                                <span
+                                  className={
+                                    tx.status === "Success" ? "text-brand-successText" : "text-brand-warning400"
+                                  }
+                                >
+                                  {tx.status}
+                                </span>
+                              </span>
+                            </span>
+                            <span className="flex shrink-0 flex-col items-end">
+                              <span className="whitespace-nowrap text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                                {formatNgn(tx.ngn)}
+                              </span>
+                              <span className="whitespace-nowrap text-xs leading-[1.3] text-brand-bodyText">
+                                {tx.secondaryOverride ?? formatUsd(tx.ngn / NGN_PER_USD)}
+                              </span>
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </SectionCard>
+          </div>
         </div>
       </PageTransition>
-      <BottomNav />
-    </MobileLayout>
+
+      <FloatingNav />
+    </AppShell>
   );
 };
 

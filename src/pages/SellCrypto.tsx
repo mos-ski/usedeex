@@ -1,378 +1,240 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, ChevronDown, Copy, Check, QrCode, Shield, Clock, Wallet, Globe } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
+import { Check, Copy, QrCode, Shield } from "lucide-react";
 import PageTransition from "@/components/PageTransition";
-import CryptoIcon from "@/components/CryptoIcon";
-import NewBadge from "@/components/NewBadge";
+import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
+import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
+import AssetMark from "@/components/dashboard/AssetMark";
+import { ArrowRightIcon, BankIcon } from "@/components/dashboard/icons";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { NGN_PER_USD, formatNgn } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 const assets = [
-  { symbol: "BTC", name: "Bitcoin", network: "BEP-20", rate: "₦97,450,000/BTC", address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh", minDeposit: "0.0001 BTC", maxDeposit: "10 BTC" },
-  { symbol: "ETH", name: "Ethereum", network: "ERC-20", rate: "₦5,830,000/ETH", address: "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD68", minDeposit: "0.001 ETH", maxDeposit: "100 ETH" },
-  { symbol: "USDT", name: "Tether USD", network: "BEP-20", rate: "₦1,535/USDT", address: "0xD31f1Ec12bd7AaBA45...7D46d6cc", minDeposit: "10 USDT", maxDeposit: "100,000 USDT" },
-  { symbol: "USDC", name: "USD Coin", network: "ERC-20", rate: "₦1,530/USDC", address: "0x892d35Cc6634C0532925a3b844Bc9e7595f2bD12", minDeposit: "10 USDC", maxDeposit: "100,000 USDC" },
+  { symbol: "BTC", name: "Bitcoin", usdPrice: 67378.3, balance: 0.0234, network: "BEP-20", address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" },
+  { symbol: "ETH", name: "Ethereum", usdPrice: 3250.5, balance: 0.15, network: "ERC-20", address: "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD68" },
+  { symbol: "USDT", name: "Tether", usdPrice: 1, balance: 5420, network: "BEP-20", address: "0xD31f1Ec12bd7AaBA453Ff6d1a2b90c7D46d6cc11" },
+  { symbol: "USDC", name: "US Dollar Coin", usdPrice: 1, balance: 2100, network: "ERC-20", address: "0x892d35Cc6634C0532925a3b844Bc9e7595f2bD12" },
+  { symbol: "TRX", name: "Tron", usdPrice: 0.14, balance: 1200, network: "TRC-20", address: "TJmVQ7xk2vGZ4pW8sN1cRb3dLh9fUyE6aQ" },
 ];
 
 const banks = [
-  { name: "PalmPay", account: "8103674006" },
-  { name: "Opay", account: "9012345678" },
-  { name: "GTBank", account: "0123456789" },
+  { id: "palmpay", name: "PalmPay", account: "8103674006" },
+  { id: "opay", name: "Opay", account: "9012345678" },
+  { id: "gtb", name: "GTBank", account: "0123456789" },
 ];
 
-const networks = ["BEP-20", "ERC-20", "TRC-20"];
-type Step = "source" | "form" | "review" | "deposit-address" | "external-address" | "pending";
+/** Payouts above this are split into batches — surfaced as a hint on the row. */
+const BATCH_THRESHOLD = 5_000_000;
+
+const trimZeros = (value: string) => value.replace(/\.?0+$/, "") || "0";
+
+type Step = "amount" | "review" | "deposit" | "pending";
 
 const SellCrypto = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<Step>("source");
-  const [sellSource, setSellSource] = useState<"wallet" | "external" | "">("");
-  const [selectedAsset, setSelectedAsset] = useState(assets[2]);
-  const [selectedBank, setSelectedBank] = useState(banks[0]);
-  const [selectedNetwork, setSelectedNetwork] = useState(networks[0]);
-  const [amount, setAmount] = useState("");
-  const [showAssetDropdown, setShowAssetDropdown] = useState(false);
-  const [showBankDropdown, setShowBankDropdown] = useState(false);
-  const [showNetworkDropdown, setShowNetworkDropdown] = useState(false);
+  const [step, setStep] = useState<Step>("amount");
+  const [symbol, setSymbol] = useState("USDT");
+  const [bank, setBank] = useState(banks[0]);
+  const [raw, setRaw] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const ngnAmount = amount ? (parseFloat(amount) * 1535).toLocaleString() : "0";
+  const asset = assets.find((a) => a.symbol === symbol) ?? assets[0];
+  const amount = parseAmount(raw);
+  const ngn = amount * asset.usdPrice * NGN_PER_USD;
+  const ready = amount > 0;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(selectedAsset.address);
+    navigator.clipboard.writeText(asset.address);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  /* ---------------- Pending ---------------- */
   if (step === "pending") {
     return (
-      <MobileLayout hideNav>
-        <PageTransition>
-          <div className="min-h-screen flex flex-col items-center justify-center px-6">
-            <Clock className="w-20 h-20 text-warning mb-6" />
-            <h2 className="text-2xl font-bold text-foreground mb-2">Awaiting Deposit</h2>
-            <p className="text-muted-foreground text-center mb-2">
-              {sellSource === "external" 
-                ? `Send ${selectedAsset.symbol} to the address provided` 
-                : `Send ${amount} ${selectedAsset.symbol} to the address provided`}
+      <AppShell innerClassName="flex min-h-[100dvh] flex-col pb-0 lg:max-w-[480px] lg:px-4">
+        <PageTransition className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 text-center">
+            <span className="mb-4 flex size-20 items-center justify-center rounded-full bg-brand-warning400/15 text-4xl">
+              ⏳
+            </span>
+            <h2 className="text-2xl font-bold text-brand-grey900">Awaiting deposit</h2>
+            <p className="text-sm text-brand-bodyText">
+              Send {trimZeros(amount.toFixed(8))} {asset.symbol} to the address provided
             </p>
-            {sellSource === "wallet" && (
-              <>
-                <p className="text-sm text-muted-foreground mb-1">You'll receive</p>
-                <p className="text-lg font-semibold text-success mb-8">≈ ₦{ngnAmount}</p>
-              </>
-            )}
-            {sellSource === "external" && (
-              <p className="text-sm text-muted-foreground mb-8">We'll credit your account based on the amount received</p>
-            )}
-            <p className="text-xs text-warning mb-4">We'll process your trade once the deposit is confirmed</p>
-            <button onClick={() => navigate("/dashboard")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">Back to Home</button>
+            <p className="text-xs text-brand-bodyText">You&apos;ll receive</p>
+            <p className="text-lg font-semibold text-brand-successText">{formatNgn(ngn)}</p>
+            <p className="mt-4 rounded bg-[#FBF7F2] px-2 py-1.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
+              We&apos;ll process your trade once the deposit is confirmed
+            </p>
+            <PrimaryButton className="mt-6 max-w-[343px]" onClick={() => navigate("/dashboard")}>
+              Back to Home
+            </PrimaryButton>
           </div>
         </PageTransition>
-      </MobileLayout>
+      </AppShell>
     );
   }
 
-  // External wallet: deposit address + rate info, no amount needed
-  if (step === "external-address") {
+  /* ---------------- Deposit address ---------------- */
+  if (step === "deposit") {
     return (
-      <MobileLayout hideNav>
+      <AppShell innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
         <PageTransition>
-          <div className="px-4 pt-4">
-            <div className="flex items-center mb-6">
-              <button onClick={() => setStep("source")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-              <h2 className="text-lg font-bold text-foreground w-full text-center">Sell from External Wallet</h2>
-            </div>
+          <PageHeader title={`Deposit ${asset.symbol}`} onBack={() => setStep("review")} />
 
-            {/* Asset & Bank selectors */}
-            <div className="mb-4">
-              <label className="text-sm text-foreground mb-2 block">I want to sell</label>
-              <div className="relative">
-                <button onClick={() => { setShowAssetDropdown(!showAssetDropdown); setShowBankDropdown(false); setShowNetworkDropdown(false); }}
-                  className="w-full bg-secondary border border-border rounded-xl px-4 py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <CryptoIcon symbol={selectedAsset.symbol} />
-                    <div className="text-left"><p className="text-sm font-medium text-foreground">{selectedAsset.name}</p><p className="text-xs text-muted-foreground">{selectedAsset.network}</p></div>
-                  </div>
-                  <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                </button>
-                {showAssetDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl overflow-hidden z-10">
-                    {assets.map((a) => (
-                      <button key={a.symbol} onClick={() => { setSelectedAsset(a); setShowAssetDropdown(false); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-secondary transition-colors">
-                        <CryptoIcon symbol={a.symbol} /><p className="text-sm text-foreground">{a.name}</p>
-                      </button>
-                    ))}
-                  </div>
+          <SectionCard className="px-4">
+            {([
+              ["Selling", `${trimZeros(amount.toFixed(8))} ${asset.symbol}`],
+              ["You'll receive", formatNgn(ngn)],
+              ["Destination", `${bank.account} · ${bank.name}`],
+            ] as [string, string][]).map(([label, value], i) => (
+              <div
+                key={label}
+                className={cn("flex items-center justify-between gap-4 py-3", i < 2 && "border-b border-brand-grey100")}
+              >
+                <span className="text-sm text-brand-bodyText">{label}</span>
+                <span className="text-right text-sm font-semibold text-brand-grey900">{value}</span>
+              </div>
+            ))}
+          </SectionCard>
+
+          <SectionCard className="mt-3 flex flex-col items-center px-4 py-6">
+            <AssetMark symbol={asset.symbol} className="mb-4 size-12" />
+            <div className="mb-4 flex size-52 items-center justify-center rounded-2xl border-4 border-brand-primary100 bg-brand-grey900">
+              <QrCode className="size-36 text-white" />
+            </div>
+            <p className="mb-3 text-sm text-brand-bodyText">Your {asset.symbol} address</p>
+            <div className="mb-4 flex w-full items-center justify-between gap-3 rounded-lg border border-brand-grey100 bg-brand-grey50 px-4 py-3.5">
+              <p className="truncate font-mono text-sm text-brand-grey900">{asset.address}</p>
+              <button type="button" onClick={handleCopy} aria-label="Copy address" className="shrink-0">
+                {copied ? (
+                  <Check className="size-5 text-brand-successText" />
+                ) : (
+                  <Copy className="size-5 text-brand-blue500" />
                 )}
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <label className="text-sm text-foreground mb-2 block">Destination</label>
-              <div className="relative">
-                <button onClick={() => { setShowBankDropdown(!showBankDropdown); setShowAssetDropdown(false); setShowNetworkDropdown(false); }}
-                  className="w-full bg-card border border-border rounded-xl px-4 py-4 flex items-center justify-between">
-                  <p className="text-sm text-foreground">{selectedBank.account} - {selectedBank.name}</p>
-                  <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                </button>
-                {showBankDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl overflow-hidden z-10">
-                    {banks.map((b) => (
-                      <button key={b.name} onClick={() => { setSelectedBank(b); setShowBankDropdown(false); }} className="w-full px-4 py-3 text-left hover:bg-secondary transition-colors text-sm text-foreground">{b.account} - {b.name}</button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <label className="text-sm text-foreground mb-2 block">Network</label>
-              <div className="relative">
-                <button onClick={() => { setShowNetworkDropdown(!showNetworkDropdown); setShowAssetDropdown(false); setShowBankDropdown(false); }}
-                  className="w-full bg-card border border-border rounded-xl px-4 py-4 flex items-center justify-between">
-                  <p className="text-sm text-foreground">{selectedNetwork}</p>
-                  <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                </button>
-                {showNetworkDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl overflow-hidden z-10">
-                    {networks.map((n) => (
-                      <button key={n} onClick={() => { setSelectedNetwork(n); setShowNetworkDropdown(false); }} className="w-full px-4 py-3 text-left hover:bg-secondary transition-colors text-sm text-foreground">{n}</button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Rate & limits info */}
-            <div className="bg-card border border-border rounded-xl p-4 mb-4 space-y-2">
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Current Rate</span><span className="text-sm font-semibold text-success">{selectedAsset.rate}</span></div>
-              <div className="h-px bg-border" />
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Min Deposit</span><span className="text-sm text-foreground">{selectedAsset.minDeposit}</span></div>
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Max Deposit</span><span className="text-sm text-foreground">{selectedAsset.maxDeposit}</span></div>
-            </div>
-
-            <p className="text-center text-xs text-muted-foreground mb-4">Send any amount — we'll pay based on what we receive</p>
-
-            {/* QR + Address */}
-            <div className="flex flex-col items-center">
-              <CryptoIcon symbol={selectedAsset.symbol} size="lg" className="mb-4" />
-              <div className="w-44 h-44 bg-foreground rounded-2xl flex items-center justify-center mb-4 border-4 border-primary/30">
-                <QrCode className="w-32 h-32 text-background" />
-              </div>
-              <p className="text-sm text-muted-foreground mb-3">Your {selectedAsset.symbol} Address</p>
-              <div className="w-full bg-card border border-border rounded-xl px-4 py-3.5 flex items-center justify-between mb-4">
-                <p className="text-sm text-foreground font-mono truncate mr-3">{selectedAsset.address}</p>
-                <button onClick={handleCopy} className="shrink-0">{copied ? <Check className="w-5 h-5 text-success" /> : <Copy className="w-5 h-5 text-primary" />}</button>
-              </div>
-              <div className="w-full bg-foreground/5 border border-border rounded-xl p-4 flex gap-3 mb-6">
-                <Shield className="w-8 h-8 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm text-foreground leading-relaxed">Only send <span className="font-bold">{selectedAsset.symbol}</span> on the <span className="font-bold">{selectedNetwork} Network</span>.</p>
-                  <p className="text-sm text-muted-foreground mt-1">Sending other coins may result in permanent loss.</p>
-                </div>
-              </div>
-              <button onClick={() => setStep("pending")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">I've Sent the Crypto</button>
-            </div>
-          </div>
-        </PageTransition>
-      </MobileLayout>
-    );
-  }
-
-  if (step === "deposit-address") {
-    return (
-      <MobileLayout hideNav>
-        <PageTransition>
-          <div className="px-4 pt-4">
-            <div className="flex items-center mb-6">
-              <button onClick={() => setStep("review")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-              <h2 className="text-lg font-bold text-foreground w-full text-center">Deposit {selectedAsset.symbol}</h2>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-full bg-card border border-border rounded-xl p-4 mb-6">
-                <div className="flex justify-between mb-2"><span className="text-sm text-muted-foreground">Selling</span><span className="text-sm text-foreground font-medium">{amount} {selectedAsset.symbol}</span></div>
-                <div className="flex justify-between mb-2"><span className="text-sm text-muted-foreground">You'll receive</span><span className="text-sm font-bold text-success">₦{ngnAmount}</span></div>
-                <div className="flex justify-between"><span className="text-sm text-muted-foreground">Destination</span><span className="text-sm text-foreground">{selectedBank.account} - {selectedBank.name}</span></div>
-              </div>
-              <CryptoIcon symbol={selectedAsset.symbol} size="lg" className="mb-4" />
-              <div className="w-52 h-52 bg-foreground rounded-2xl flex items-center justify-center mb-4 border-4 border-primary/30">
-                <QrCode className="w-36 h-36 text-background" />
-              </div>
-              <p className="text-sm text-muted-foreground mb-3">Your {selectedAsset.symbol} Address</p>
-              <div className="w-full bg-card border border-border rounded-xl px-4 py-3.5 flex items-center justify-between mb-4">
-                <p className="text-sm text-foreground font-mono truncate mr-3">{selectedAsset.address}</p>
-                <button onClick={handleCopy} className="shrink-0">{copied ? <Check className="w-5 h-5 text-success" /> : <Copy className="w-5 h-5 text-primary" />}</button>
-              </div>
-              <div className="flex items-center gap-1.5 bg-card border border-border rounded-full px-4 py-2 mb-6">
-                <span className="text-sm text-muted-foreground">Network:</span>
-                <span className="text-sm text-warning font-medium">{selectedNetwork}</span>
-              </div>
-              <div className="w-full bg-foreground/5 border border-border rounded-xl p-4 flex gap-3 mb-6">
-                <Shield className="w-8 h-8 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm text-foreground leading-relaxed">Only send <span className="font-bold">{selectedAsset.symbol}</span> on the <span className="font-bold">{selectedNetwork} Network</span>.</p>
-                  <p className="text-sm text-muted-foreground mt-1">Sending other coins may result in permanent loss.</p>
-                </div>
-              </div>
-              <button onClick={() => setStep("pending")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">I've Sent the Crypto</button>
-            </div>
-          </div>
-        </PageTransition>
-      </MobileLayout>
-    );
-  }
-
-  if (step === "review") {
-    return (
-      <MobileLayout hideNav>
-        <PageTransition>
-          <div className="px-4 pt-4">
-            <div className="flex items-center mb-6">
-              <button onClick={() => setStep("form")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-              <h2 className="text-lg font-bold text-foreground w-full text-center">Confirm Trade</h2>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-5 space-y-4 mb-6">
-              <div className="flex justify-between items-center"><span className="text-sm text-muted-foreground">Asset</span><div className="flex items-center gap-2"><CryptoIcon symbol={selectedAsset.symbol} size="sm" /><span className="text-sm text-foreground">{selectedAsset.name}</span></div></div>
-              <div className="h-px bg-border" />
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Network</span><span className="text-sm text-foreground">{selectedNetwork}</span></div>
-              <div className="h-px bg-border" />
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Amount</span><span className="text-sm text-foreground">{amount} {selectedAsset.symbol}</span></div>
-              <div className="h-px bg-border" />
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Destination</span><span className="text-sm text-foreground">{selectedBank.account} - {selectedBank.name}</span></div>
-              <div className="h-px bg-border" />
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Rate</span><span className="text-sm text-foreground">{selectedAsset.rate}</span></div>
-              <div className="h-px bg-border" />
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">You'll receive</span><span className="text-sm font-bold text-success">₦{ngnAmount}</span></div>
-            </div>
-            <button onClick={() => setStep("deposit-address")} className="w-full h-14 bg-primary rounded-xl text-primary-foreground font-semibold flex items-center justify-center gap-2">
-              Proceed to Deposit <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
-        </PageTransition>
-      </MobileLayout>
-    );
-  }
-
-  if (step === "form") {
-    return (
-      <MobileLayout hideNav>
-        <PageTransition>
-          <div className="px-4 pt-4">
-            <div className="flex items-center mb-8">
-              <button onClick={() => setStep("source")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-              <h2 className="text-lg font-bold text-foreground w-full text-center">Sell from Wallet</h2>
-            </div>
-
-            <div className="mb-6">
-              <label className="text-sm text-foreground mb-2 block">I want to sell</label>
-              <div className="relative">
-                <button onClick={() => { setShowAssetDropdown(!showAssetDropdown); setShowBankDropdown(false); setShowNetworkDropdown(false); }}
-                  className="w-full bg-secondary border border-border rounded-xl px-4 py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3"><CryptoIcon symbol={selectedAsset.symbol} /><div className="text-left"><p className="text-sm font-medium text-foreground">{selectedAsset.name}</p><p className="text-xs text-muted-foreground">{selectedAsset.network}</p></div></div>
-                  <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                </button>
-                {showAssetDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl overflow-hidden z-10">
-                    {assets.map((a) => (
-                      <button key={a.symbol} onClick={() => { setSelectedAsset(a); setShowAssetDropdown(false); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-secondary transition-colors"><CryptoIcon symbol={a.symbol} /><p className="text-sm text-foreground">{a.name}</p></button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <label className="text-sm text-foreground mb-2 block">Destination</label>
-              <div className="relative">
-                <button onClick={() => { setShowBankDropdown(!showBankDropdown); setShowAssetDropdown(false); setShowNetworkDropdown(false); }}
-                  className="w-full bg-card border border-border rounded-xl px-4 py-4 flex items-center justify-between">
-                  <p className="text-sm text-foreground">{selectedBank.account} - {selectedBank.name}</p>
-                  <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                </button>
-                {showBankDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl overflow-hidden z-10">
-                    {banks.map((b) => (
-                      <button key={b.name} onClick={() => { setSelectedBank(b); setShowBankDropdown(false); }} className="w-full px-4 py-3 text-left hover:bg-secondary transition-colors text-sm text-foreground">{b.account} - {b.name}</button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <label className="text-sm text-foreground mb-2 block">Select network</label>
-              <div className="relative">
-                <button onClick={() => { setShowNetworkDropdown(!showNetworkDropdown); setShowAssetDropdown(false); setShowBankDropdown(false); }}
-                  className="w-full bg-card border border-border rounded-xl px-4 py-4 flex items-center justify-between">
-                  <p className="text-sm text-foreground">{selectedNetwork}</p>
-                  <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                </button>
-                {showNetworkDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl overflow-hidden z-10">
-                    {networks.map((n) => (
-                      <button key={n} onClick={() => { setSelectedNetwork(n); setShowNetworkDropdown(false); }} className="w-full px-4 py-3 text-left hover:bg-secondary transition-colors text-sm text-foreground">{n}</button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <p className="text-center text-sm text-warning mb-6">$1 ~ ₦1,535</p>
-            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Enter amount"
-              className="w-full h-14 bg-card border border-border rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary mb-4 text-center" />
-            {amount && <p className="text-center text-sm text-muted-foreground mb-6">≈ ₦{ngnAmount}</p>}
-            <div className="mt-8">
-              <button onClick={() => amount && setStep("review")}
-                className={`w-full h-14 rounded-xl font-semibold flex items-center justify-center gap-2 ${amount ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-                Proceed <ArrowRight className="w-5 h-5" />
               </button>
             </div>
-          </div>
+            <div className="mb-6 flex w-full gap-3 rounded-lg bg-brand-tint p-4">
+              <Shield className="mt-0.5 size-8 shrink-0 text-brand-navy" />
+              <div>
+                <p className="text-sm leading-relaxed text-brand-grey900">
+                  Only send <span className="font-bold">{asset.symbol}</span> on the{" "}
+                  <span className="font-bold">{asset.network}</span> network.
+                </p>
+                <p className="mt-1 text-sm text-brand-bodyText">
+                  Sending other coins may result in permanent loss.
+                </p>
+              </div>
+            </div>
+            <PrimaryButton onClick={() => setStep("pending")}>I&apos;ve sent the crypto</PrimaryButton>
+          </SectionCard>
         </PageTransition>
-      </MobileLayout>
+      </AppShell>
     );
   }
 
-  // Source selection step
+  /* ---------------- Review ---------------- */
+  if (step === "review") {
+    const rows: [string, string][] = [
+      ["Asset", asset.name],
+      ["Network", asset.network],
+      ["Amount", `${trimZeros(amount.toFixed(8))} ${asset.symbol}`],
+      ["Destination", `${bank.account} · ${bank.name}`],
+      ["Rate", `${formatNgn(asset.usdPrice * NGN_PER_USD)}/${asset.symbol}`],
+      ["You'll receive", formatNgn(ngn)],
+    ];
+
+    return (
+      <AppShell innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
+        <PageTransition>
+          <PageHeader title="Confirm trade" onBack={() => setStep("amount")} />
+          <SectionCard className="px-4">
+            {rows.map(([label, value], i) => (
+              <div
+                key={label}
+                className={cn(
+                  "flex items-center justify-between gap-4 py-3.5",
+                  i < rows.length - 1 && "border-b border-brand-grey100",
+                )}
+              >
+                <span className="text-sm text-brand-bodyText">{label}</span>
+                <span className="text-right text-sm font-semibold text-brand-grey900">{value}</span>
+              </div>
+            ))}
+          </SectionCard>
+          <div className="px-4 pt-4 sm:px-0">
+            <PrimaryButton onClick={() => setStep("deposit")}>
+              Proceed to deposit <ArrowRightIcon className="size-5" />
+            </PrimaryButton>
+          </div>
+        </PageTransition>
+      </AppShell>
+    );
+  }
+
+  /* ---------------- Amount entry (Figma 269:6883) ---------------- */
   return (
-    <MobileLayout hideNav>
-      <PageTransition>
-        <div className="px-4 pt-4">
-          <div className="flex items-center mb-8">
-            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-            <h2 className="text-lg font-bold text-foreground w-full text-center">Sell Crypto</h2>
-          </div>
-
-          <p className="text-sm text-muted-foreground text-center mb-6">Where are you selling from?</p>
-
-          <div className="space-y-3">
-            <button onClick={() => { setSellSource("wallet"); setStep("form"); }}
-              className="w-full bg-card border border-border rounded-xl p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center">
-                <Wallet className="w-6 h-6 text-primary" />
-              </div>
-              <div className="text-left flex-1">
-                <p className="text-sm font-semibold text-foreground">DeeX Wallet</p>
-                <p className="text-xs text-muted-foreground">Sell from your DeeX balance</p>
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground" />
+    <AmountEntry
+      title="Sell"
+      onBack={() => navigate(-1)}
+      value={raw}
+      onValueChange={setRaw}
+      fromSymbol={symbol}
+      fromOptions={assets.map((a) => ({ symbol: a.symbol, hint: `${a.balance.toLocaleString("en-US")} available` }))}
+      onFromChange={setSymbol}
+      toSymbol="NGN"
+      convertedText={ngn ? Math.round(ngn).toLocaleString("en-US") : "0"}
+      footer={
+        <Popover>
+          <PopoverTrigger className="w-full border-b border-brand-grey100 py-3 text-left">
+            <span className="flex items-center gap-4">
+              <span className="flex size-[30px] shrink-0 items-center justify-center rounded-full bg-brand-blue500 text-white">
+                <BankIcon className="size-3" />
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate text-xs leading-[1.3] text-brand-bodyText">{bank.name}</span>
+                <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                  {bank.account}
+                </span>
+              </span>
+              <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+            </span>
+            {ngn > BATCH_THRESHOLD && (
+              <span className="mt-0.5 inline-block rounded bg-[#FBF7F2] px-2 py-0.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
+                Payout more than 5M will be paid in batches
+              </span>
+            )}
+          </PopoverTrigger>
+          <PopoverContent align="start" className="w-64 border-brand-grey100 bg-white p-1">
+            {banks.map((b) => (
+              <button
+                key={b.id}
+                type="button"
+                onClick={() => setBank(b)}
+                className={cn(
+                  "flex w-full flex-col rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50",
+                  bank.id === b.id && "bg-brand-tint",
+                )}
+              >
+                <span className="text-[10px] text-brand-bodyText">{b.name}</span>
+                <span className="text-xs font-semibold text-brand-grey900">{b.account}</span>
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => navigate("/bank-accounts")}
+              className="w-full rounded px-2 py-2 text-left text-xs font-medium text-brand-blue500 hover:bg-brand-grey50"
+            >
+              Manage accounts
             </button>
-
-            <button onClick={() => { setSellSource("external"); setStep("external-address"); }}
-              className="w-full bg-card border border-border rounded-xl p-5 flex items-center gap-4 relative">
-              <div className="w-12 h-12 rounded-full bg-accent/15 flex items-center justify-center">
-                <Globe className="w-6 h-6 text-accent" />
-              </div>
-              <div className="text-left flex-1">
-                <p className="text-sm font-semibold text-foreground flex items-center gap-2">External Wallet <NewBadge /></p>
-                <p className="text-xs text-muted-foreground">Send from any wallet — we pay what you send</p>
-              </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground" />
-            </button>
-          </div>
-        </div>
-      </PageTransition>
-    </MobileLayout>
+          </PopoverContent>
+        </Popover>
+      }
+      submitDisabled={!ready}
+      onSubmit={() => setStep("review")}
+    />
   );
 };
 

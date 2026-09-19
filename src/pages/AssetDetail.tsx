@@ -1,280 +1,402 @@
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Info, Plus, ArrowUpRight, ArrowLeftRight, X, User, Clock } from "lucide-react";
-import { LineChart, Line, XAxis, ResponsiveContainer } from "recharts";
-import { useState } from "react";
-import MobileLayout from "@/components/layout/MobileLayout";
+import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
 import PageTransition from "@/components/PageTransition";
-import CryptoIcon from "@/components/CryptoIcon";
-import NewBadge from "@/components/NewBadge";
+import { ActionTile, AppShell, PageHeader, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
+import AssetMark from "@/components/dashboard/AssetMark";
+import { PlusIcon, SendIcon, SwapIcon } from "@/components/dashboard/icons";
+import SendTo, { Destination } from "@/components/dashboard/SendTo";
+import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
+import { NGN_PER_USD } from "@/lib/format";
+import { splitUsdForDisplay } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
-const chartDataByAsset: Record<string, number[]> = {
-  BTC: [67800, 67200, 66800, 67100, 66500, 66900, 66200, 66600, 65800, 66100, 66800, 67400, 67100, 67500, 67378],
-  ETH: [3180, 3210, 3195, 3240, 3220, 3260, 3235, 3250, 3270, 3245, 3280, 3260, 3250, 3255, 3250],
-  USDT: [1.000, 1.001, 0.999, 1.000, 1.001, 1.000, 0.999, 1.000, 1.001, 1.000, 1.000, 1.001, 1.000, 1.000, 1.000],
-  USDC: [1.000, 1.000, 1.001, 1.000, 0.999, 1.000, 1.000, 1.001, 1.000, 1.000, 1.000, 1.000, 1.001, 1.000, 1.000],
-  SOL: [142, 144, 143, 146, 148, 147, 149, 150, 148, 151, 149, 152, 150, 151, 150],
-  TRX: [0.128, 0.130, 0.129, 0.131, 0.132, 0.130, 0.133, 0.135, 0.134, 0.136, 0.135, 0.137, 0.136, 0.140, 0.140],
-  DOGE: [0.230, 0.232, 0.228, 0.235, 0.233, 0.238, 0.236, 0.240, 0.237, 0.242, 0.240, 0.238, 0.241, 0.240, 0.240],
+type Asset = {
+  name: string;
+  price: number;
+  /** 24h move in dollars; sign drives the colour. */
+  changeUsd: number;
+  changePct: number;
+  /** Coin holdings, e.g. "0.02340000 BTC". */
+  holdings: string;
+  /** Dollar value of those holdings — matches the Wallet list. */
+  usdBalance: number;
+  todayUsd: number;
 };
 
-const assetData: Record<string, { name: string; symbol: string; price: string; change: string; changeUsd: string; balance: string; chartColor: string }> = {
-  BTC: { name: "Bitcoin", symbol: "BTC", price: "$ 67,378.3", change: "-0.90%", changeUsd: "$ -611.49", balance: "0.02340000 BTC", chartColor: "#EAB308" },
-  ETH: { name: "Ethereum", symbol: "ETH", price: "$ 3,250.5", change: "+1.20%", changeUsd: "$ +38.50", balance: "0.15000000 ETH", chartColor: "#3B82F6" },
-  USDT: { name: "Tether USD", symbol: "USDT", price: "$ 1.00", change: "+0.01%", changeUsd: "$ +0.01", balance: "5,420.00 USDT", chartColor: "#22C55E" },
-  USDC: { name: "USD Coin", symbol: "USDC", price: "$ 1.00", change: "+0.00%", changeUsd: "$ +0.00", balance: "2,100.00 USDC", chartColor: "#3B82F6" },
-  SOL: { name: "Solana", symbol: "SOL", price: "$ 150.2", change: "+3.50%", changeUsd: "$ +5.08", balance: "12.50000000 SOL", chartColor: "#8B5CF6" },
-  TRX: { name: "Tron", symbol: "TRX", price: "$ 0.140", change: "+1.10%", changeUsd: "$ +0.002", balance: "1,200.00 TRX", chartColor: "#EF4444" },
-  DOGE: { name: "Dogecoin", symbol: "DOGE", price: "$ 0.240", change: "+2.30%", changeUsd: "$ +0.005", balance: "500.00 DOGE", chartColor: "#F59E0B" },
+const assetData: Record<string, Asset> = {
+  BTC: { name: "Bitcoin", price: 67378.3, changeUsd: -611.49, changePct: -0.9, holdings: "0.02340000 BTC", usdBalance: 2280.12, todayUsd: 22.43 },
+  ETH: { name: "Ethereum", price: 3250.5, changeUsd: 38.5, changePct: 1.2, holdings: "0.15000000 ETH", usdBalance: 487.5, todayUsd: 5.78 },
+  USDT: { name: "Tether", price: 1.0, changeUsd: 0.01, changePct: 0.01, holdings: "5,420.00 USDT", usdBalance: 5420, todayUsd: 0.54 },
+  USDC: { name: "US Dollar Coin", price: 1.0, changeUsd: 0.0, changePct: 0.0, holdings: "2,100.00 USDC", usdBalance: 2100, todayUsd: 0.21 },
+  SOL: { name: "Solana", price: 150.2, changeUsd: 5.08, changePct: 3.5, holdings: "12.50000000 SOL", usdBalance: 1875, todayUsd: 63.5 },
+  TRX: { name: "Tron", price: 0.14, changeUsd: 0.002, changePct: 1.1, holdings: "1,200.00 TRX", usdBalance: 168, todayUsd: 1.83 },
+  DOGE: { name: "Dogecoin", price: 0.24, changeUsd: 0.005, changePct: 2.3, holdings: "500.00 DOGE", usdBalance: 120.18, todayUsd: 2.7 },
 };
 
 const recentTxns = [
-  { type: "BTC to USDT", date: "Apr 25th, 2024", status: "Completed", amount: "0.00001535 BTC", value: "$0.95" },
-  { type: "USDT to BTC", date: "Apr 20th, 2024", status: "Completed", amount: "1.00 USDT", value: "$1.00" },
+  { type: "BTC to USDT", date: "Apr 25th, 2024", status: "Success", amount: "0.00001535 BTC", value: "$0.95" },
+  { type: "USDT to BTC", date: "Apr 20th, 2024", status: "Success", amount: "1.00 USDT", value: "$1.00" },
 ];
 
-const pastAddresses = [
-  { label: "Main Wallet", address: "0x742d35Cc...f2bD68", full: "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD68" },
-  { label: "Trading Wallet", address: "bc1qxy2kg...0wlh", full: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" },
+/** Saved send destinations — addresses and DeeX usernames in one list. */
+const destinations: Destination[] = [
+  { id: "a1", value: "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD68", display: "0x742d35Cc66......7595f2bD68", label: "My Personal wallet", symbol: "BTC", network: "BTC (ERC)", kind: "recent" },
+  { id: "a2", value: "0x9eFe6AfA0912bC5a1f4d0e3D2910833744a", display: "0x9eFe6AfA09......3D2910833744a", label: "My Personal wallet", symbol: "ETH", network: "ETH (ERC)", kind: "recent" },
+  { id: "a3", value: "0xD31f1Ec12bd7AaBA453Ff6d1a2b90c7D46d6cc11", display: "0xD31f1Ec12b......7D46d6cc11", label: "Trading wallet", symbol: "USDT", network: "USDT (ERC)", kind: "recent" },
+  { id: "u1", value: "@adebayo", display: "@adebayo", label: "Adebayo Ogunlesi", symbol: "USDC", network: "DeeX username", kind: "beneficiary" },
+  { id: "u2", value: "@chioma_d", display: "@chioma_d", label: "Chioma Daniels", symbol: "TRX", network: "DeeX username", kind: "beneficiary" },
 ];
 
-const pastUsernames = [
-  { label: "@adebayo", name: "Adebayo Ogunlesi" },
-  { label: "@chioma_d", name: "Chioma Daniels" },
-];
+const timeframes = ["1D", "1W", "1M", "1Y", "All"] as const;
+const pointsPerTimeframe: Record<(typeof timeframes)[number], number> = { "1D": 48, "1W": 56, "1M": 64, "1Y": 78, All: 96 };
 
-const timeframes = ["1D", "1W", "1M", "1Y", "All"];
 const tourSteps = [
   { title: "Deposit", description: "Tap the Deposit button to receive crypto into your wallet. Select the network carefully." },
   { title: "Withdraw", description: "Send crypto to a DeeX user by username, or to an external wallet address. Past beneficiaries are saved." },
   { title: "Swap", description: "Instantly convert one crypto to another. Rates update in real time." },
 ];
 
-type WithdrawView = "none" | "choose" | "username" | "address";
+/**
+ * Deterministic random walk so a given symbol + timeframe always draws the same
+ * line (no reshuffling on re-render) while each timeframe looks distinct.
+ */
+const buildSeries = (symbol: string, timeframe: string, price: number) => {
+  const count = pointsPerTimeframe[timeframe as (typeof timeframes)[number]] ?? 48;
+  let seed = [...`${symbol}${timeframe}`].reduce((acc, c) => acc + c.charCodeAt(0), 0) || 1;
+  const rand = () => {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  };
+
+  const values: number[] = [];
+  let level = price * 0.94;
+  const drift = (price * 0.12) / count;
+  for (let i = 0; i < count; i += 1) {
+    level += drift + (rand() - 0.45) * price * 0.012;
+    values.push(level);
+  }
+  return values;
+};
+
+/** Axis labels drop the cents on large numbers, matching the Figma. */
+const formatAxis = (value: number) =>
+  value >= 100
+    ? `$${Math.round(value).toLocaleString("en-US")}`
+    : `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`;
+
+const formatPrice = (value: number) =>
+  `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: value >= 1 ? 2 : 4 })}`;
+
+type WithdrawView = "none" | "sendTo" | "amount";
 
 const AssetDetail = () => {
   const navigate = useNavigate();
   const { symbol } = useParams<{ symbol: string }>();
-  const [activeTimeframe, setActiveTimeframe] = useState("1D");
+  const [timeframe, setTimeframe] = useState<string>("1D");
   const [showTour, setShowTour] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [withdrawView, setWithdrawView] = useState<WithdrawView>("none");
-  const [withdrawAddress, setWithdrawAddress] = useState("");
-  const [withdrawUsername, setWithdrawUsername] = useState("");
+  const [destination, setDestination] = useState<Destination | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState("");
 
   const key = symbol?.toUpperCase() || "BTC";
   const asset = assetData[key] || assetData.BTC;
-  const isNegative = asset.change.startsWith("-");
-  const rawData = chartDataByAsset[key] || chartDataByAsset.BTC;
-  const chartData = rawData.map((v, i) => ({ t: String(i + 1), v }));
+  const isNegative = asset.changeUsd < 0;
 
-  // Withdraw modal
-  const WithdrawSheet = () => {
-    if (withdrawView === "none") return null;
+  const values = useMemo(() => buildSeries(key, timeframe, asset.price), [key, timeframe, asset.price]);
+  const chartData = values.map((v, i) => ({ i, v }));
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const minIdx = values.indexOf(min);
+  const maxIdx = values.indexOf(max);
 
-    if (withdrawView === "choose") {
-      return (
-        <div className="fixed inset-0 bg-background/80 z-50 flex items-end justify-center" onClick={() => setWithdrawView("none")}>
-          <div className="w-full max-w-[430px] bg-card rounded-t-2xl p-4 pb-8 border-t border-border" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-foreground">Withdraw {key}</h3>
-              <button onClick={() => setWithdrawView("none")} className="text-muted-foreground text-sm">Close</button>
-            </div>
-            <div className="space-y-2">
-              <button onClick={() => setWithdrawView("username")} className="w-full flex items-center gap-3 bg-secondary rounded-xl px-4 py-3.5">
-                <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center"><User className="w-5 h-5 text-primary" /></div>
-                <div className="text-left"><p className="text-sm font-medium text-foreground">To DeeX Username</p><p className="text-xs text-muted-foreground">Send to a DeeX user instantly</p></div>
-              </button>
-              <button onClick={() => setWithdrawView("address")} className="w-full flex items-center gap-3 bg-secondary rounded-xl px-4 py-3.5">
-                <div className="w-10 h-10 rounded-full bg-accent/15 flex items-center justify-center"><ArrowUpRight className="w-5 h-5 text-accent" /></div>
-                <div className="text-left"><p className="text-sm font-medium text-foreground">To Wallet Address</p><p className="text-xs text-muted-foreground">Send to an external crypto wallet</p></div>
-              </button>
-            </div>
+  /**
+   * Places a min/max label just below its point, clamped inside the plot so it
+   * never rides up into the price row or down over the timeframe tabs.
+   */
+  const labelStyle = (idx: number) => ({
+    left: `${Math.min(86, Math.max(14, (idx / (values.length - 1)) * 100))}%`,
+    top: `${Math.min(76, Math.max(10, (1 - (values[idx] - min) / (max - min || 1)) * 100))}%`,
+  });
+
+  const balance = splitUsdForDisplay(asset.usdBalance);
+
+  /* ---- Withdraw: pick a destination, then an amount (Figma 269:5828 / 269:7302) ---- */
+  if (withdrawView === "sendTo") {
+    return (
+      <SendTo
+        onBack={() => setWithdrawView("none")}
+        destinations={destinations}
+        onSelect={(d) => {
+          setDestination(d);
+          setWithdrawAmount("");
+          setWithdrawView("amount");
+        }}
+      />
+    );
+  }
+
+  if (withdrawView === "amount" && destination) {
+    const sending = parseAmount(withdrawAmount);
+    const ngnValue = sending * asset.price * NGN_PER_USD;
+
+    return (
+      <AmountEntry
+        title={`Send ${key}`}
+        onBack={() => setWithdrawView("sendTo")}
+        value={withdrawAmount}
+        onValueChange={setWithdrawAmount}
+        fromSymbol={key}
+        fromOptions={[{ symbol: key, hint: asset.holdings }]}
+        onFromChange={() => undefined}
+        toSymbol="NGN"
+        convertedText={ngnValue ? Math.round(ngnValue).toLocaleString("en-US") : "0"}
+        footer={
+          <div className="border-b border-brand-grey100 py-3">
+            <p className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+              {destination.display}
+            </p>
+            <p className="truncate text-xs leading-[1.3] text-brand-bodyText">
+              {destination.label} • {destination.network}
+            </p>
           </div>
-        </div>
-      );
-    }
+        }
+        submitDisabled={sending <= 0}
+        onSubmit={() => {
+          setWithdrawView("none");
+          navigate("/receipt", {
+            state: {
+              type: "sell",
+              data: {
+                type: `Sent ${key}`,
+                amount: `${withdrawAmount} ${key}`,
+                destination: destination.display,
+                status: "Processing",
+              },
+            },
+          });
+        }}
+      />
+    );
+  }
 
-    if (withdrawView === "username") {
-      return (
-        <div className="fixed inset-0 bg-background/80 z-50 flex items-end justify-center" onClick={() => setWithdrawView("none")}>
-          <div className="w-full max-w-[430px] bg-card rounded-t-2xl p-4 pb-8 border-t border-border" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center gap-3 mb-4">
-              <button onClick={() => setWithdrawView("choose")} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-4 h-4 text-foreground" /></button>
-              <h3 className="text-sm font-semibold text-foreground">Send to Username</h3>
-            </div>
-            {pastUsernames.length > 0 && (
-              <div className="mb-4">
-                <p className="text-xs text-muted-foreground mb-2">Recent</p>
-                <div className="flex gap-2">
-                  {pastUsernames.map(u => (
-                    <button key={u.label} onClick={() => setWithdrawUsername(u.label)} className={`bg-secondary rounded-xl px-3 py-2 ${withdrawUsername === u.label ? "border border-primary" : "border border-transparent"}`}>
-                      <p className="text-xs font-medium text-foreground">{u.label}</p>
-                      <p className="text-[10px] text-muted-foreground">{u.name}</p>
-                    </button>
-                  ))}
+  return (
+    <AppShell innerClassName="pb-10 sm:pb-12">
+      <PageTransition>
+        <PageHeader title={key} onBack={() => navigate(-1)} />
+
+        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-start lg:gap-5">
+          <div className="flex flex-col gap-3 lg:gap-5">
+            {/* Today's price + chart */}
+            <SectionCard className="px-0 pb-0 pt-3">
+              <div className="px-4">
+                <p className="text-xs font-semibold leading-[1.4] text-brand-grey900 lg:text-sm">Today&apos;s Price</p>
+                <div className="flex items-center gap-4 py-3">
+                  <AssetMark symbol={key} />
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">{key}</span>
+                    <span className="truncate text-xs leading-[1.3] text-brand-bodyText">{asset.name}</span>
+                  </span>
+                  <span className="flex shrink-0 flex-col items-end">
+                    <span className="whitespace-nowrap text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                      {formatPrice(asset.price)}
+                    </span>
+                    <span
+                      className={cn(
+                        "whitespace-nowrap text-xs leading-[1.3]",
+                        isNegative ? "text-[#D92D20]" : "text-brand-successText",
+                      )}
+                    >
+                      {isNegative ? "" : "+"}
+                      {asset.changeUsd} ({asset.changePct}%)
+                    </span>
+                  </span>
                 </div>
               </div>
-            )}
-            <input value={withdrawUsername} onChange={e => setWithdrawUsername(e.target.value)} placeholder="@username"
-              className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary mb-3 text-sm" />
-            <input value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)} placeholder="Amount" type="number"
-              className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary mb-4 text-sm" />
-            <button onClick={() => { if (withdrawUsername && withdrawAmount) { setWithdrawView("none"); navigate("/receipt", { state: { type: "sell", data: { type: `Sent ${key}`, amount: `${withdrawAmount} ${key}`, destination: withdrawUsername, status: "Completed" } } }); } }}
-              className={`w-full h-12 rounded-xl font-semibold ${withdrawUsername && withdrawAmount ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-              Send {key}
-            </button>
-          </div>
-        </div>
-      );
-    }
 
-    // address view
-    return (
-      <div className="fixed inset-0 bg-background/80 z-50 flex items-end justify-center" onClick={() => setWithdrawView("none")}>
-        <div className="w-full max-w-[430px] bg-card rounded-t-2xl p-4 pb-8 border-t border-border" onClick={e => e.stopPropagation()}>
-          <div className="flex items-center gap-3 mb-4">
-            <button onClick={() => setWithdrawView("choose")} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-4 h-4 text-foreground" /></button>
-            <h3 className="text-sm font-semibold text-foreground">Send to Address</h3>
-          </div>
-          {pastAddresses.length > 0 && (
-            <div className="mb-4">
-              <p className="text-xs text-muted-foreground mb-2">Past Addresses</p>
-              <div className="space-y-1.5">
-                {pastAddresses.map(a => (
-                  <button key={a.full} onClick={() => setWithdrawAddress(a.full)} className={`w-full bg-secondary rounded-xl px-3 py-2 text-left ${withdrawAddress === a.full ? "border border-primary" : "border border-transparent"}`}>
-                    <p className="text-xs font-medium text-foreground">{a.label}</p>
-                    <p className="text-[10px] text-muted-foreground font-mono">{a.address}</p>
+              {/* Chart */}
+              <div className="relative h-[120px] w-full lg:h-[180px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartData} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
+                    <defs>
+                      <linearGradient id="assetArea" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#9AD1F9" />
+                        <stop offset="100%" stopColor="#E8F3FC" stopOpacity={0.2} />
+                      </linearGradient>
+                    </defs>
+                    <YAxis hide domain={["dataMin", "dataMax"]} />
+                    <Area
+                      type="linear"
+                      dataKey="v"
+                      stroke="#0B75C2"
+                      strokeWidth={1}
+                      fill="url(#assetArea)"
+                      dot={false}
+                      isAnimationActive={false}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+
+                <span
+                  className="pointer-events-none absolute -translate-x-1/2 translate-y-1.5 whitespace-nowrap font-manrope text-[11px] font-medium leading-[1.6] text-brand-grey500"
+                  style={labelStyle(minIdx)}
+                >
+                  {formatAxis(min)}
+                </span>
+                <span
+                  className="pointer-events-none absolute -translate-x-1/2 translate-y-1.5 whitespace-nowrap font-manrope text-[11px] font-medium leading-[1.6] text-brand-grey500"
+                  style={labelStyle(maxIdx)}
+                >
+                  {formatAxis(max)}
+                </span>
+              </div>
+
+              {/* Timeframes */}
+              <div role="tablist" aria-label="Chart range" className="flex items-center gap-2.5 px-4 py-3">
+                {timeframes.map((tf) => (
+                  <button
+                    key={tf}
+                    role="tab"
+                    type="button"
+                    aria-selected={timeframe === tf}
+                    onClick={() => setTimeframe(tf)}
+                    className={cn(
+                      "relative min-w-0 flex-1 py-1 text-center font-manrope text-[13px] font-semibold leading-[1.6] transition-colors",
+                      timeframe === tf ? "text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                    )}
+                  >
+                    {tf}
+                    {timeframe === tf && (
+                      <span className="absolute inset-x-0 -bottom-1.5 mx-auto h-0.5 w-14 rounded-lg bg-brand-blue500" />
+                    )}
                   </button>
                 ))}
               </div>
-            </div>
-          )}
-          <input value={withdrawAddress} onChange={e => setWithdrawAddress(e.target.value)} placeholder="Paste wallet address"
-            className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary mb-3 text-sm font-mono" />
-          <input value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)} placeholder="Amount" type="number"
-            className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary mb-4 text-sm" />
-          <button onClick={() => { if (withdrawAddress && withdrawAmount) { setWithdrawView("none"); navigate("/receipt", { state: { type: "sell", data: { type: `Withdrew ${key}`, amount: `${withdrawAmount} ${key}`, destination: withdrawAddress.slice(0, 20) + "...", status: "Processing" } } }); } }}
-            className={`w-full h-12 rounded-xl font-semibold ${withdrawAddress && withdrawAmount ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-            Withdraw {key}
-          </button>
-        </div>
-      </div>
-    );
-  };
+            </SectionCard>
 
-  return (
-    <MobileLayout hideNav>
-      <PageTransition>
-        <div className="pt-4">
-          <div className="px-4 flex items-center justify-between mb-6">
-            <button onClick={() => navigate(-1)}><ArrowLeft className="w-6 h-6 text-foreground" /></button>
-            <h2 className="text-lg font-bold text-foreground">{asset.symbol}</h2>
-            <button onClick={() => { setShowTour(true); setTourStep(0); }}><Info className="w-6 h-6 text-muted-foreground" /></button>
+            {/* Balance */}
+            <SectionCard className="flex flex-col items-center gap-1 py-[18px] lg:py-8">
+              <p className="text-[10px] uppercase leading-[1.6] text-brand-grey600 lg:text-xs">Your Balance</p>
+              <p className="whitespace-nowrap font-gasoek leading-[1.4] text-brand-grey900">
+                <span className="text-[33px] lg:text-[46px]">{balance.lead}</span>
+                <span className="text-[17px] lg:text-[24px]">{balance.cents}</span>
+              </p>
+              <div className="flex items-center gap-2 text-[10px] uppercase text-brand-amberBrown lg:text-xs">
+                <p className="leading-[1.6]">
+                  <span className="font-semibold">${asset.todayUsd} </span>
+                  <span className="font-medium">today</span>
+                </p>
+                <span className="font-semibold leading-[1.6]">•</span>
+                <button
+                  type="button"
+                  onClick={() => setShowTour(true)}
+                  className="font-semibold leading-[1.6] underline-offset-2 hover:underline"
+                >
+                  See rates
+                </button>
+              </div>
+              <p className="pt-1 text-xs text-brand-bodyText">{asset.holdings}</p>
+            </SectionCard>
           </div>
 
-          <div className="flex flex-col items-center mb-4 px-4">
-            <CryptoIcon symbol={key} size="lg" className="mb-3" />
-            <p className="text-sm text-muted-foreground">Current {asset.symbol} Price</p>
-            <p className="text-3xl font-bold text-foreground">{asset.price}</p>
-            <p className={`text-sm ${isNegative ? "text-destructive" : "text-success"}`}>
-              {isNegative ? "▼" : "▲"} {asset.change} ({asset.changeUsd}) (24h)
-            </p>
-          </div>
+          <div className="flex flex-col gap-3 lg:gap-5">
+            {/* Quick actions */}
+            <SectionCard className="px-4">
+              <SectionHeader title="Quick Actions" />
+              <div className="grid grid-cols-3 gap-1 lg:gap-2">
+                <ActionTile label="Deposit" Icon={PlusIcon} onClick={() => navigate("/deposit")} />
+                <ActionTile label="Withdraw" Icon={SendIcon} onClick={() => setWithdrawView("sendTo")} />
+                <ActionTile label="Swap" Icon={SwapIcon} onClick={() => navigate("/swap-crypto")} />
+              </div>
+            </SectionCard>
 
-          <div className="w-full h-48 mb-2">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <Line type="monotone" dataKey="v" stroke={asset.chartColor} strokeWidth={2} dot={false} />
-                <XAxis dataKey="t" hide />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="flex justify-around px-4 mb-8">
-            {timeframes.map((tf) => (
-              <button key={tf} onClick={() => setActiveTimeframe(tf)}
-                className={`text-sm px-3 py-1 ${activeTimeframe === tf ? "text-primary border-b-2 border-primary font-medium" : "text-muted-foreground"}`}>
-                {tf}
-              </button>
-            ))}
-          </div>
-
-          <div className="mx-4 bg-card border border-border rounded-2xl p-5 mb-6">
-            <p className="text-sm text-muted-foreground text-center mb-1">Total {asset.symbol} Balance</p>
-            <p className="text-2xl font-bold text-foreground text-center mb-4">{asset.balance}</p>
-            <div className="flex gap-3">
-              <button onClick={() => navigate("/deposit")} className="flex-1 bg-primary/10 border border-primary/20 rounded-xl py-3 flex items-center justify-center gap-2">
-                <Plus className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-medium">Deposit</span>
-              </button>
-              <button onClick={() => setWithdrawView("choose")} className="flex-1 bg-primary/10 border border-primary/20 rounded-xl py-3 flex items-center justify-center gap-2 relative">
-                <ArrowUpRight className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-medium">Withdraw</span>
-                <NewBadge className="absolute -top-1 -right-1" />
-              </button>
-              <button onClick={() => navigate("/swap-crypto")} className="flex-1 bg-primary/10 border border-primary/20 rounded-xl py-3 flex items-center justify-center gap-2">
-                <ArrowLeftRight className="w-4 h-4 text-primary" /><span className="text-sm text-primary font-medium">Swap</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="px-4 mb-8">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-foreground">Recent transactions</h3>
-              <button onClick={() => navigate("/activity")} className="text-xs text-primary">See all</button>
-            </div>
-            <div className="bg-card border border-border rounded-2xl overflow-hidden">
-              {recentTxns.map((tx, i) => (
-                <div key={i}>
-                  <button onClick={() => navigate("/receipt", { state: { type: "swap", data: tx } })} className="w-full flex items-center justify-between px-4 py-3.5">
-                    <div className="flex items-center gap-3">
-                      <CryptoIcon symbol={key} />
-                      <div className="text-left">
-                        <p className="text-sm font-medium text-foreground">{tx.type}</p>
-                        <p className="text-xs text-muted-foreground">{tx.date} • <span className="text-success">{tx.status}</span></p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-foreground">{tx.amount}</p>
-                      <p className="text-xs text-muted-foreground">{tx.value}</p>
-                    </div>
+            {/* Transactions */}
+            <SectionCard className="px-4">
+              <SectionHeader title="Transactions" onAction={() => navigate("/activity")} />
+              <div className="flex flex-col">
+                {recentTxns.map((tx, i) => (
+                  <button
+                    key={tx.type}
+                    type="button"
+                    onClick={() => navigate("/receipt", { state: { type: "swap", data: tx } })}
+                    className={cn(
+                      "flex items-center gap-4 py-3 text-left transition-colors hover:bg-brand-grey50",
+                      i < recentTxns.length - 1 && "border-b border-brand-grey100",
+                    )}
+                  >
+                    <AssetMark symbol={key} />
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                        {tx.type}
+                      </span>
+                      <span className="truncate text-xs leading-[1.3] text-brand-bodyText">
+                        {tx.date} • <span className="text-brand-successText">{tx.status}</span>
+                      </span>
+                    </span>
+                    <span className="flex shrink-0 flex-col items-end">
+                      <span className="whitespace-nowrap text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                        {tx.amount}
+                      </span>
+                      <span className="whitespace-nowrap text-xs leading-[1.3] text-brand-bodyText">{tx.value}</span>
+                    </span>
                   </button>
-                  {i < recentTxns.length - 1 && <div className="mx-4 h-px bg-border" />}
-                </div>
+                ))}
+              </div>
+            </SectionCard>
+          </div>
+        </div>
+      </PageTransition>
+
+      {showTour && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-brand-grey900/40 px-6 backdrop-blur-sm"
+          onClick={() => setShowTour(false)}
+        >
+          <div
+            className="w-full max-w-[380px] rounded-2xl bg-white p-6 font-roboto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <span className="text-xs text-brand-grey500">
+                Step {tourStep + 1} of {tourSteps.length}
+              </span>
+              <button type="button" onClick={() => setShowTour(false)} className="text-sm text-brand-grey500">
+                Close
+              </button>
+            </div>
+            <h3 className="mb-2 text-lg font-bold text-brand-grey900">{tourSteps[tourStep].title}</h3>
+            <p className="mb-6 text-sm text-brand-bodyText">{tourSteps[tourStep].description}</p>
+            <div className="flex gap-3">
+              {tourStep > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setTourStep(tourStep - 1)}
+                  className="h-10 flex-1 rounded-lg border border-brand-grey100 text-sm font-medium text-brand-grey900"
+                >
+                  Back
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => (tourStep < tourSteps.length - 1 ? setTourStep(tourStep + 1) : setShowTour(false))}
+                className="h-10 flex-1 rounded-lg bg-brand-blue500 text-sm font-semibold text-white"
+              >
+                {tourStep < tourSteps.length - 1 ? "Next" : "Got it!"}
+              </button>
+            </div>
+            <div className="mt-4 flex justify-center gap-1">
+              {tourSteps.map((step, i) => (
+                <span
+                  key={step.title}
+                  className={cn("size-2 rounded-full", i === tourStep ? "bg-brand-blue500" : "bg-brand-grey100")}
+                />
               ))}
             </div>
           </div>
         </div>
-
-        <WithdrawSheet />
-
-        {showTour && (
-          <div className="fixed inset-0 bg-background/80 z-50 flex items-center justify-center px-6" onClick={() => setShowTour(false)}>
-            <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-[380px]" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs text-muted-foreground">Step {tourStep + 1} of {tourSteps.length}</span>
-                <button onClick={() => setShowTour(false)}><X className="w-5 h-5 text-muted-foreground" /></button>
-              </div>
-              <h3 className="text-lg font-bold text-foreground mb-2">{tourSteps[tourStep].title}</h3>
-              <p className="text-sm text-muted-foreground mb-6">{tourSteps[tourStep].description}</p>
-              <div className="flex gap-3">
-                {tourStep > 0 && (
-                  <button onClick={() => setTourStep(tourStep - 1)} className="flex-1 h-10 border border-border rounded-xl text-foreground text-sm font-medium">Back</button>
-                )}
-                <button onClick={() => tourStep < tourSteps.length - 1 ? setTourStep(tourStep + 1) : setShowTour(false)}
-                  className="flex-1 h-10 bg-primary rounded-xl text-primary-foreground text-sm font-semibold">
-                  {tourStep < tourSteps.length - 1 ? "Next" : "Got it!"}
-                </button>
-              </div>
-              <div className="flex gap-1 justify-center mt-4">
-                {tourSteps.map((_, i) => (
-                  <div key={i} className={`w-2 h-2 rounded-full ${i === tourStep ? "bg-primary" : "bg-muted"}`} />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </PageTransition>
-    </MobileLayout>
+      )}
+    </AppShell>
   );
 };
 

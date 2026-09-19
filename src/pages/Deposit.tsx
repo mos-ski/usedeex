@@ -1,194 +1,208 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Copy, Check, QrCode, ChevronDown, Shield, Gift } from "lucide-react";
+import { Check, Copy, Info } from "lucide-react";
 import { toast } from "sonner";
-import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
 import InviteCodeInput from "@/components/InviteCodeInput";
 import { useInviteCode } from "@/contexts/InviteCodeContext";
+import { AppShell, PageHeader } from "@/components/dashboard/AppShell";
+import AssetMark from "@/components/dashboard/AssetMark";
+import { CaretDownIcon } from "@/components/dashboard/icons";
+import CoinPicker from "@/components/dashboard/CoinPicker";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import qrCode from "@/assets/landing-v2/qr-code.png";
+import { cn } from "@/lib/utils";
 
 const cryptos = [
-  { symbol: "BTC", name: "Bitcoin", address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh", networks: ["BEP-20", "Bitcoin Mainnet", "Lightning"], color: "bg-warning/20 text-warning" },
-  { symbol: "ETH", name: "Ethereum", address: "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD68", networks: ["ERC-20", "BEP-20", "Arbitrum"], color: "bg-deex-blue/20 text-deex-blue" },
-  { symbol: "USDT", name: "Tether USD", address: "0xD31f1Ec12bd7AaBA45...7D46d6cc", networks: ["BEP-20", "ERC-20", "TRC-20", "Solana"], color: "bg-success/20 text-success" },
-  { symbol: "USDC", name: "USD Coin", address: "0x892d35Cc6634C0532925a3b844Bc9e7595f2bD12", networks: ["ERC-20", "BEP-20", "Solana", "Arbitrum"], color: "bg-primary/20 text-primary" },
-  { symbol: "SOL", name: "Solana", address: "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU", networks: ["Solana"], color: "bg-deex-purple/20 text-deex-purple" },
+  { symbol: "BTC", name: "Bitcoin", address: "0x4867a91f8b622c9d1a5e0f3b87fa3c3a0f40f8", networks: ["BEP20", "Bitcoin Mainnet", "Lightning"] },
+  { symbol: "ETH", name: "Ethereum", address: "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD68", networks: ["ERC20", "BEP20", "Arbitrum"] },
+  { symbol: "USDT", name: "Tether", address: "0xD31f1Ec12bd7AaBA453Ff6d1a2b90c7D46d6cc11", networks: ["BEP20", "ERC20", "TRC20", "Solana"] },
+  { symbol: "USDC", name: "US Dollar Coin", address: "0x892d35Cc6634C0532925a3b844Bc9e7595f2bD12", networks: ["ERC20", "BEP20", "Solana"] },
+  { symbol: "TRX", name: "Tron", address: "TJmVQ7xk2vGZ4pW8sN1cRb3dLh9fUyE6aQ", networks: ["TRC20"] },
 ];
+
+/** Middle-truncates an address the way the Figma row shows it. */
+const shorten = (address: string) => `${address.slice(0, 14)}......${address.slice(-14)}`;
 
 const Deposit = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<"select" | "address">("select");
-  const [selectedCrypto, setSelectedCrypto] = useState(cryptos[0]);
-  const [selectedNetwork, setSelectedNetwork] = useState(cryptos[0].networks[0]);
-  const [showNetworkDropdown, setShowNetworkDropdown] = useState(false);
+  // The flow opens on the coin picker (Figma 259:1739) before showing the QR.
+  const [step, setStep] = useState<"select" | "receive">("select");
+  const [crypto, setCrypto] = useState(cryptos[0]);
+  const [network, setNetwork] = useState(cryptos[0].networks[0]);
   const [copied, setCopied] = useState(false);
   const [showInviteCode, setShowInviteCode] = useState(false);
   const { appliedCode, depositCompleted, applyCode, completeDeposit } = useInviteCode();
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(selectedCrypto.address);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const pickCrypto = (symbol: string) => {
+    const next = cryptos.find((c) => c.symbol === symbol) ?? cryptos[0];
+    setCrypto(next);
+    setNetwork(next.networks[0]);
   };
 
-  const handleSelectCrypto = (c: typeof cryptos[0]) => {
-    setSelectedCrypto(c);
-    setSelectedNetwork(c.networks[0]);
-    setStep("address");
+  const handleCopy = () => {
+    navigator.clipboard.writeText(crypto.address);
+    setCopied(true);
+    toast.success("Address copied");
+    setTimeout(() => setCopied(false), 2000);
+    // First deposit completes the invite-code reward.
+    if (appliedCode && !depositCompleted) completeDeposit();
   };
+
+  const handleShare = async () => {
+    const payload = { title: `My ${crypto.symbol} address`, text: crypto.address };
+    if (navigator.share) {
+      try {
+        await navigator.share(payload);
+        return;
+      } catch {
+        // Share sheet dismissed — fall through to copying.
+      }
+    }
+    handleCopy();
+  };
+
+  if (step === "select") {
+    return (
+      <CoinPicker
+        coins={cryptos}
+        onBack={() => navigate(-1)}
+        onSelect={(symbol, selectedNetwork) => {
+          setCrypto(cryptos.find((c) => c.symbol === symbol) ?? cryptos[0]);
+          setNetwork(selectedNetwork);
+          setStep("receive");
+        }}
+      />
+    );
+  }
 
   return (
-    <MobileLayout hideNav>
+    <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
       <PageTransition>
-        <div className="px-4 pt-4">
-          <div className="flex items-center mb-6">
-            <button onClick={() => step === "address" ? setStep("select") : navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-              <ArrowLeft className="w-5 h-5 text-foreground" />
-            </button>
-            <h2 className="text-lg font-bold text-foreground w-full text-center">
-              {step === "select" ? "Deposit" : `Receive ${selectedCrypto.name}`}
-            </h2>
-          </div>
+        <PageHeader title="Receive" onBack={() => setStep("select")} />
 
-          {step === "select" ? (
-            <div>
-              {/* Invite Code Banner */}
-              {!appliedCode && (
-                <div className="mb-4">
-                  <button
-                    onClick={() => setShowInviteCode(true)}
-                    className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center gap-3"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                      <Gift className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="text-left flex-1">
-                      <p className="text-sm font-semibold text-foreground">Have an invite code?</p>
-                      <p className="text-xs text-muted-foreground">Enter it to earn DeeXpoints on this deposit</p>
-                    </div>
-                  </button>
-                </div>
-              )}
-
-              {appliedCode && !depositCompleted && (
-                <div className="mb-4 bg-success/10 border border-success/20 rounded-xl p-3">
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-success" />
-                    <p className="text-xs text-success font-medium">
-                      Invite code applied! Deposit ${appliedCode.minDeposit}+ to earn {appliedCode.depositReward} pts
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {appliedCode && depositCompleted && (
-                <div className="mb-4 bg-success/10 border border-success/20 rounded-xl p-3">
-                  <div className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-success" />
-                    <p className="text-xs text-success font-medium">Deposit reward already claimed for this invite code</p>
-                  </div>
-                </div>
-              )}
-
-              <p className="text-sm text-muted-foreground mb-4">Select cryptocurrency to deposit</p>
-              <div className="space-y-2">
+        <div className="flex flex-col items-center px-4">
+          {/* Asset + network selector */}
+          <div className="flex items-stretch">
+            <Popover>
+              <PopoverTrigger
+                aria-label="Choose asset"
+                className="flex items-center gap-1 rounded-l border border-[#F0F0F0] bg-[#F8F8F8] px-2 py-1"
+              >
+                <AssetMark symbol={crypto.symbol} className="size-4" />
+                <span className="text-xs font-semibold leading-[1.4] text-[#191919]">{crypto.symbol}</span>
+              </PopoverTrigger>
+              <PopoverContent align="center" className="w-52 border-brand-grey100 bg-white p-1">
                 {cryptos.map((c) => (
                   <button
                     key={c.symbol}
-                    onClick={() => handleSelectCrypto(c)}
-                    className="w-full flex items-center gap-3 bg-secondary rounded-xl px-4 py-3.5"
+                    type="button"
+                    onClick={() => pickCrypto(c.symbol)}
+                    className={cn(
+                      "flex w-full items-center gap-3 rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50",
+                      crypto.symbol === c.symbol && "bg-brand-tint",
+                    )}
                   >
-                    <div className={`w-10 h-10 rounded-full ${c.color} flex items-center justify-center text-xs font-bold`}>
-                      {c.symbol.substring(0, 2)}
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-medium text-foreground">{c.name}</p>
-                      <p className="text-xs text-muted-foreground">{c.networks[0]}</p>
-                    </div>
+                    <AssetMark symbol={c.symbol} className="size-6" />
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate text-xs font-semibold text-brand-grey900">{c.symbol}</span>
+                      <span className="truncate text-[10px] text-brand-bodyText">{c.name}</span>
+                    </span>
                   </button>
                 ))}
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center">
-              <div className={`w-16 h-16 rounded-full ${selectedCrypto.color} flex items-center justify-center text-lg font-bold mb-4`}>
-                {selectedCrypto.symbol.substring(0, 2)}
-              </div>
+              </PopoverContent>
+            </Popover>
 
-              {/* QR Code */}
-              <div className="w-56 h-56 bg-foreground rounded-2xl flex items-center justify-center mb-4 border-4 border-primary/30">
-                <QrCode className="w-40 h-40 text-background" />
-              </div>
-
-              <p className="text-sm text-muted-foreground mb-3">Your {selectedCrypto.symbol} Address</p>
-
-              {/* Address with copy */}
-              <div className="w-full bg-card border border-border rounded-xl px-4 py-3.5 flex items-center justify-between mb-4">
-                <p className="text-sm text-foreground font-mono truncate mr-3">{selectedCrypto.address}</p>
-                <button onClick={handleCopy} className="shrink-0">
-                  {copied ? <Check className="w-5 h-5 text-success" /> : <Copy className="w-5 h-5 text-primary" />}
-                </button>
-              </div>
-
-              {/* Network selector dropdown */}
-              <div className="relative mb-6">
-                <button
-                  onClick={() => setShowNetworkDropdown(!showNetworkDropdown)}
-                  className="flex items-center gap-1.5 bg-card border border-border rounded-full px-4 py-2"
-                >
-                  <span className="text-sm text-muted-foreground">Network:</span>
-                  <span className="text-sm text-warning font-medium">{selectedNetwork}</span>
-                  <ChevronDown className={`w-4 h-4 text-warning transition-transform ${showNetworkDropdown ? "rotate-180" : ""}`} />
-                </button>
-                {showNetworkDropdown && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-card border border-border rounded-xl overflow-hidden z-20 min-w-[200px] shadow-lg">
-                    {selectedCrypto.networks.map((n) => (
-                      <button
-                        key={n}
-                        onClick={() => { setSelectedNetwork(n); setShowNetworkDropdown(false); }}
-                        className={`w-full px-4 py-3 text-left text-sm transition-colors ${n === selectedNetwork ? "bg-primary/10 text-primary font-medium" : "text-foreground hover:bg-secondary"}`}
-                      >
-                        {n}
-                        {n === selectedNetwork && <span className="ml-2">✓</span>}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Warning */}
-              <div className="w-full bg-foreground/5 border border-border rounded-xl p-4 flex gap-3 mb-6">
-                <Shield className="w-8 h-8 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm text-foreground leading-relaxed">
-                    Only send <span className="font-bold">{selectedCrypto.symbol}</span> to this address and on the{" "}
-                    <span className="font-bold">{selectedNetwork} Network</span>.
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                    Sending coins other than <span className="font-bold text-foreground">{selectedCrypto.symbol}</span> or coin from a different network other than{" "}
-                    <span className="font-bold text-foreground">{selectedNetwork} Network</span> may result in loss.
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                  if (appliedCode && !depositCompleted) {
-                    completeDeposit();
-                    toast.success(`You earned ${appliedCode.depositReward} DeeXpoints for your first deposit!`);
-                  }
-                  navigate(-1);
-                }}
-                className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold"
+            <Popover>
+              <PopoverTrigger
+                aria-label="Choose network"
+                className="flex items-center gap-1 rounded-r border-y border-r border-[#F0F0F0] bg-[#F8F8F8] px-2 py-1"
               >
-                Done
-              </button>
-            </div>
-          )}
+                <span className="whitespace-nowrap font-manrope text-[11px] leading-[1.6]">
+                  <span className="font-medium text-brand-grey600">Network:</span>{" "}
+                  <span className="font-bold text-brand-amberBrown">{network}</span>
+                </span>
+                <CaretDownIcon className="size-3 text-[#191919]" />
+              </PopoverTrigger>
+              <PopoverContent align="center" className="w-48 border-brand-grey100 bg-white p-1">
+                {crypto.networks.map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setNetwork(n)}
+                    className={cn(
+                      "w-full rounded px-2 py-2 text-left text-xs font-semibold transition-colors hover:bg-brand-grey50",
+                      network === n ? "bg-brand-tint text-brand-blue500" : "text-brand-grey900",
+                    )}
+                  >
+                    {n}
+                  </button>
+                ))}
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          {/* QR — branded DeeX code, 240x240 per the Figma */}
+          <img
+            src={qrCode}
+            alt={`${crypto.symbol} deposit address QR code`}
+            className="mt-3 size-60 max-w-full object-contain"
+          />
+
+          {/* Address */}
+          <div className="mt-3 flex w-full items-center gap-2 rounded bg-brand-tint px-2 py-1.5">
+            <p className="min-w-0 flex-1 truncate text-center text-[15px] font-semibold leading-[1.4] text-brand-blue500">
+              {shorten(crypto.address)}
+            </p>
+            <button type="button" onClick={handleCopy} aria-label="Copy address" className="shrink-0">
+              {copied ? (
+                <Check className="size-6 text-brand-successText" />
+              ) : (
+                <Copy className="size-6 text-brand-blue500" />
+              )}
+            </button>
+          </div>
+
+          {/* Warnings */}
+          <div className="mt-3 flex w-full flex-col gap-3 rounded-lg bg-brand-grey50 p-3">
+            <p className="flex gap-2 text-xs leading-[1.5] text-brand-bodyText">
+              <Info className="mt-0.5 size-4 shrink-0 text-brand-blue500" />
+              <span>
+                Only send <span className="font-bold text-brand-grey900">{crypto.symbol}</span> to this address and on
+                the <span className="font-bold text-brand-grey900">{network}</span> network.
+              </span>
+            </p>
+            <p className="flex gap-2 text-xs leading-[1.5] text-brand-bodyText">
+              <Info className="mt-0.5 size-4 shrink-0 text-brand-blue500" />
+              <span>
+                Sending coins other than <span className="font-bold text-brand-grey900">{crypto.symbol}</span> or coins
+                for a different network other than <span className="font-bold text-brand-grey900">{network}</span> may
+                result in loss.
+              </span>
+            </p>
+          </div>
+
+          {/* Actions */}
+          <div className="mt-4 flex w-full items-start gap-2">
+            <button
+              type="button"
+              onClick={handleShare}
+              className="flex min-w-0 flex-1 items-center justify-center rounded-lg bg-[#F2F2F2] px-4 py-[11px] font-manrope text-base font-medium leading-[1.6] text-[#202020] transition-colors hover:bg-brand-grey100"
+            >
+              Share
+            </button>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="flex min-w-0 flex-1 items-center justify-center gap-3 rounded-lg bg-brand-blue500 px-4 py-[11px] font-manrope text-base font-medium leading-[1.6] text-brand-grey50 transition-opacity hover:opacity-90"
+            >
+              <Copy className="size-6" />
+              Copy
+            </button>
+          </div>
         </div>
       </PageTransition>
 
-      {/* Invite Code Modal */}
       {showInviteCode && (
         <InviteCodeInput
           onApply={(code) => {
@@ -198,7 +212,7 @@ const Deposit = () => {
           onClose={() => setShowInviteCode(false)}
         />
       )}
-    </MobileLayout>
+    </AppShell>
   );
 };
 

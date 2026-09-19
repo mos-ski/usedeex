@@ -1,11 +1,12 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Copy, Check, AlertTriangle, ChevronRight, Download, FileText, Image } from "lucide-react";
+import { AlertTriangle, Check, ChevronRight, Copy, FileText, Image } from "lucide-react";
 import { useState, useMemo } from "react";
-import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
-import CryptoIcon from "@/components/CryptoIcon";
-import ProviderIcon from "@/components/ProviderIcon";
-import NewBadge from "@/components/NewBadge";
+import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
+import AssetMark from "@/components/dashboard/AssetMark";
+import { ArrowDownIcon } from "@/components/dashboard/icons";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 const receiptTemplates: Record<string, (d: any) => { label: string; value: string; color?: string; isBadge?: boolean }[]> = {
@@ -14,7 +15,7 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
     { label: "Asset", value: d?.symbol || d?.type || "BTC" },
     { label: "Amount sold", value: d?.amountCrypto || "0.005 BTC" },
     { label: "Rate", value: d?.rate || "₦97,450,000/BTC" },
-    { label: "Payout", value: d?.amount || "₦450,000", color: "text-success" },
+    { label: "Payout", value: d?.amount || "₦450,000", color: "text-brand-successText" },
     { label: "Destination", value: d?.destination || "8103674006 - PalmPay" },
     { label: "Hash ID", value: d?.hashId || `TXN-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
     { label: "Status", value: d?.status || "Completed", isBadge: true },
@@ -23,7 +24,7 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
   deposit: (d) => [
     { label: "Transaction type", value: "Deposit" },
     { label: "Asset", value: d?.asset || "USDT" },
-    { label: "Amount", value: d?.amount || "500 USDT", color: "text-primary" },
+    { label: "Amount", value: d?.amount || "500 USDT", color: "text-brand-blue500" },
     { label: "Network", value: d?.network || "BEP-20" },
     { label: "Deposit ID", value: d?.depositId || `DEP-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
     { label: "Status", value: d?.status || "Confirmed", isBadge: true },
@@ -31,8 +32,8 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
   ],
   swap: (d) => [
     { label: "Transaction type", value: "Swap" },
-    { label: "From", value: d?.from || "16.89 TRX", color: "text-primary" },
-    { label: "To", value: d?.to || "0.00 USDT", color: "text-primary" },
+    { label: "From", value: d?.from || "16.89 TRX", color: "text-brand-blue500" },
+    { label: "To", value: d?.to || "0.00 USDT", color: "text-brand-blue500" },
     { label: "Hash ID", value: d?.hashId || `SWP-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
     { label: "Status", value: d?.status || "Pending", isBadge: true },
     { label: "Timestamp", value: d?.date || "Apr 10th, 2025 | 9:57 AM" },
@@ -41,7 +42,7 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
     { label: "Transaction type", value: "Airtime Purchase" },
     { label: "Provider", value: d?.provider || "MTN" },
     { label: "Phone Number", value: d?.phone || "08103674006" },
-    { label: "Amount", value: `₦${d?.amount || "2,000"}`, color: "text-primary" },
+    { label: "Amount", value: `₦${d?.amount || "2,000"}`, color: "text-brand-blue500" },
     { label: "Payment Method", value: d?.paymentMethod || "Naira Wallet" },
     { label: "Hash ID", value: `AIR-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
     { label: "Status", value: d?.status || "Completed", isBadge: true },
@@ -61,7 +62,7 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
     { label: "Transaction type", value: "Electricity" },
     { label: "Provider", value: d?.provider || "IKEDC" },
     { label: "Meter Number", value: d?.meter || "45123456789" },
-    { label: "Amount", value: `₦${d?.amount || "15,000"}`, color: "text-primary" },
+    { label: "Amount", value: `₦${d?.amount || "15,000"}`, color: "text-brand-blue500" },
     { label: "Token", value: d?.token || "1234-5678-9012-3456" },
     { label: "Payment Method", value: d?.paymentMethod || "Naira Wallet" },
     { label: "Hash ID", value: `ELC-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
@@ -72,7 +73,7 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
     { label: "Transaction type", value: "Betting Funding" },
     { label: "Platform", value: d?.provider || "Bet9ja" },
     { label: "User ID", value: d?.userId || "BET9JA_1234" },
-    { label: "Amount", value: `₦${d?.amount || "5,000"}`, color: "text-primary" },
+    { label: "Amount", value: `₦${d?.amount || "5,000"}`, color: "text-brand-blue500" },
     { label: "Payment Method", value: d?.paymentMethod || "Naira Wallet" },
     { label: "Hash ID", value: `BET-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
     { label: "Status", value: d?.status || "Completed", isBadge: true },
@@ -81,8 +82,8 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
   giftcard: (d) => [
     { label: "Transaction type", value: "Gift Card Sale" },
     { label: "Brand", value: d?.brand || "Apple" },
-    { label: "Card Value", value: d?.amount || "$100.00", color: "text-primary" },
-    { label: "Payout", value: d?.payout || "₦145,000", color: "text-success" },
+    { label: "Card Value", value: d?.amount || "$100.00", color: "text-brand-blue500" },
+    { label: "Payout", value: d?.payout || "₦145,000", color: "text-brand-successText" },
     { label: "Admin Review", value: "Notified Admin" },
     { label: "Hash ID", value: `GC-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
     { label: "Status", value: d?.status || "Pending", isBadge: true },
@@ -90,8 +91,8 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
   ],
   reward: (d) => [
     { label: "Transaction type", value: "Reward Redemption" },
-    { label: "Points redeemed", value: d?.points || "500 pts", color: "text-primary" },
-    { label: "Cash value", value: d?.cash || "₦5,000", color: "text-success" },
+    { label: "Points redeemed", value: d?.points || "500 pts", color: "text-brand-blue500" },
+    { label: "Cash value", value: d?.cash || "₦5,000", color: "text-brand-successText" },
     { label: "Credit to", value: d?.account || "8103674006 - PalmPay" },
     { label: "Admin Approval", value: d?.adminStatus || "Processing" },
     { label: "Hash ID", value: `RWD-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
@@ -101,7 +102,7 @@ const receiptTemplates: Record<string, (d: any) => { label: string; value: strin
   receive: (d) => [
     { label: "Transaction type", value: "Receive Crypto" },
     { label: "Asset", value: d?.asset || "BTC" },
-    { label: "Amount", value: d?.amount || "0.005 BTC", color: "text-primary" },
+    { label: "Amount", value: d?.amount || "0.005 BTC", color: "text-brand-blue500" },
     { label: "From", value: d?.from || "External Wallet" },
     { label: "Network", value: d?.network || "BEP-20" },
     { label: "Deposit ID", value: d?.depositId || `DEP-${Math.random().toString(36).substring(2, 8).toUpperCase()}` },
@@ -159,181 +160,207 @@ const Receipt = () => {
   // Report submitted view
   if (reportView === "submitted") {
     return (
-      <MobileLayout hideNav>
+      <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <div className="min-h-screen flex flex-col items-center justify-center px-6">
-            <div className="w-20 h-20 rounded-full bg-success/20 flex items-center justify-center mb-6">
-              <Check className="w-10 h-10 text-success" />
+            <div className="w-20 h-20 rounded-full bg-brand-successText/10 flex items-center justify-center mb-6">
+              <Check className="w-10 h-10 text-brand-successText" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Report Submitted</h2>
-            <p className="text-muted-foreground text-center mb-2">We've received your report and will investigate.</p>
-            <div className="bg-card border border-border rounded-xl p-4 w-full mb-6">
-              <div className="flex justify-between mb-2"><span className="text-sm text-muted-foreground">Ticket ID</span><span className="text-sm font-mono text-primary">{ticketId}</span></div>
-              <div className="flex justify-between mb-2"><span className="text-sm text-muted-foreground">Reason</span><span className="text-sm text-foreground">{selectedReason}</span></div>
-              <div className="flex justify-between"><span className="text-sm text-muted-foreground">Transaction</span><span className="text-sm font-mono text-foreground">{txId.slice(0, 16)}...</span></div>
+            <h2 className="text-2xl font-bold text-brand-grey900 mb-2">Report Submitted</h2>
+            <p className="text-brand-bodyText text-center mb-2">We've received your report and will investigate.</p>
+            <div className="border border-brand-grey100 bg-white rounded-lg p-4 w-full mb-6">
+              <div className="flex justify-between mb-2"><span className="text-sm text-brand-bodyText">Ticket ID</span><span className="text-sm font-mono text-brand-blue500">{ticketId}</span></div>
+              <div className="flex justify-between mb-2"><span className="text-sm text-brand-bodyText">Reason</span><span className="text-sm text-brand-grey900">{selectedReason}</span></div>
+              <div className="flex justify-between"><span className="text-sm text-brand-bodyText">Transaction</span><span className="text-sm font-mono text-brand-grey900">{txId.slice(0, 16)}...</span></div>
             </div>
-            <p className="text-xs text-muted-foreground text-center mb-8">Our team will review this within 24 hours. You'll be notified via email and in-app.</p>
-            <button onClick={() => navigate("/dashboard")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">Back to Home</button>
+            <p className="text-xs text-brand-bodyText text-center mb-8">Our team will review this within 24 hours. You'll be notified via email and in-app.</p>
+            <button onClick={() => navigate("/dashboard")} className="w-full h-12 bg-primary rounded-lg text-brand-blue500-foreground font-semibold">Back to Home</button>
           </div>
         </PageTransition>
-      </MobileLayout>
+      </AppShell>
     );
   }
 
   // Report detail view
   if (reportView === "detail") {
     return (
-      <MobileLayout hideNav>
+      <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <div className="px-4 pt-4">
-            <div className="flex items-center gap-3 mb-6">
-              <button onClick={() => setReportView("select")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-              <h2 className="text-lg font-bold text-foreground">Report Details</h2>
-            </div>
+            <PageHeader title="Report Details" onBack={() => setReportView("select")} />
 
-            <div className="bg-card border border-border rounded-xl p-4 mb-4">
-              <p className="text-sm text-muted-foreground mb-1">Selected issue</p>
-              <p className="text-sm font-medium text-foreground">{selectedReason}</p>
+            <div className="border border-brand-grey100 bg-white rounded-lg p-4 mb-4">
+              <p className="text-sm text-brand-bodyText mb-1">Selected issue</p>
+              <p className="text-sm font-medium text-brand-grey900">{selectedReason}</p>
             </div>
 
             <div className="mb-4">
-              <label className="text-sm text-muted-foreground mb-2 block">Additional details (optional)</label>
+              <label className="text-sm text-brand-bodyText mb-2 block">Additional details (optional)</label>
               <textarea value={reportNote} onChange={e => setReportNote(e.target.value)} placeholder="Describe the issue in more detail..."
-                className="w-full h-28 bg-secondary rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary resize-none text-sm" />
+                className="w-full h-28 bg-brand-grey50 rounded-lg px-4 py-3 text-brand-grey900 placeholder:text-brand-bodyText outline-none focus:ring-2 focus:border-brand-blue500 resize-none text-sm" />
             </div>
 
-            <div className="bg-warning/10 border border-warning/20 rounded-xl p-3 flex items-start gap-2 mb-6">
-              <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-              <p className="text-xs text-muted-foreground">Reports are reviewed by our team. False reports may affect your account standing.</p>
+            <div className="bg-warning/10 border border-warning/20 rounded-lg p-3 flex items-start gap-2 mb-6">
+              <AlertTriangle className="w-5 h-5 text-brand-warning400 shrink-0 mt-0.5" />
+              <p className="text-xs text-brand-bodyText">Reports are reviewed by our team. False reports may affect your account standing.</p>
             </div>
 
-            <button onClick={() => setReportView("submitted")} className="w-full h-14 bg-primary rounded-xl text-primary-foreground font-semibold">
+            <button onClick={() => setReportView("submitted")} className="w-full h-14 bg-primary rounded-lg text-brand-blue500-foreground font-semibold">
               Submit Report
             </button>
           </div>
         </PageTransition>
-      </MobileLayout>
+      </AppShell>
     );
   }
 
   // Report reason selection
   if (reportView === "select") {
     return (
-      <MobileLayout hideNav>
+      <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <div className="px-4 pt-4">
-            <div className="flex items-center gap-3 mb-6">
-              <button onClick={() => setReportView("none")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-              <h2 className="text-lg font-bold text-foreground">Report Transaction</h2>
-              <NewBadge />
-            </div>
+            <PageHeader title="Report Transaction" onBack={() => setReportView("none")} />
 
-            <p className="text-sm text-muted-foreground mb-4">What's the issue with this transaction?</p>
+            <p className="text-sm text-brand-bodyText mb-4">What's the issue with this transaction?</p>
 
             <div className="space-y-2 mb-6">
               {reportReasons.map((reason) => (
                 <button key={reason} onClick={() => { setSelectedReason(reason); setReportView("detail"); }}
-                  className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3.5">
+                  className="w-full flex items-center justify-between bg-brand-grey50 rounded-lg px-4 py-3.5">
                   <div className="flex items-center gap-3">
-                    <AlertTriangle className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-medium text-foreground">{reason}</span>
+                    <AlertTriangle className="w-4 h-4 text-brand-bodyText" />
+                    <span className="text-sm font-medium text-brand-grey900">{reason}</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                  <ChevronRight className="w-4 h-4 text-brand-bodyText" />
                 </button>
               ))}
             </div>
           </div>
         </PageTransition>
-      </MobileLayout>
+      </AppShell>
     );
   }
 
+  /* ---------------- Receipt (Figma 269:7465) ---------------- */
+  const status = fields.find((f) => f.label === "Status")?.value ?? "Completed";
+  const statusColor =
+    status === "Completed" || status === "Confirmed" || status === "Success"
+      ? "text-brand-successText"
+      : status === "Processing"
+        ? "text-brand-blue500"
+        : "text-brand-warning400";
+
+  // Headline prefers the settled value (payout) over the amount sent.
+  const headline =
+    ["Payout", "Cash value", "Amount", "Amount sold", "To"]
+      .map((label) => fields.find((f) => f.label === label)?.value)
+      .find(Boolean) ?? "";
+  const headlineParts = /^([^\d]*[\d,]+)\.(\d{2})$/.exec(headline);
+
+  const detailRows = fields.filter((f) => f.label !== "Status");
+  const isCopyable = (label: string) => /Hash|ID$/.test(label);
+
   return (
-    <MobileLayout hideNav>
+    <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
       <PageTransition>
-        <div className="px-4 pt-4">
-          <div className="flex items-center mb-8">
-            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-            <h2 className="text-lg font-bold text-foreground w-full text-center">Receipt</h2>
+        <PageHeader title="Receipt" onBack={() => navigate(-1)} />
+
+        <div className="px-4">
+          <div className="flex flex-col items-center gap-2 py-3">
+            <div className="flex items-center gap-2.5">
+              {assetSymbol && <AssetMark symbol={assetSymbol} className="size-12" />}
+              <p className="whitespace-nowrap font-gasoek leading-[1.4] text-brand-grey900">
+                {headlineParts ? (
+                  <>
+                    <span className="text-[33px]">{headlineParts[1]}.</span>
+                    <span className="text-[17px]">{headlineParts[2]}</span>
+                  </>
+                ) : (
+                  <span className="text-[33px]">{headline || "\u2014"}</span>
+                )}
+              </p>
+            </div>
+            <p className={cn("w-full text-center text-[15px] font-semibold leading-[1.4]", statusColor)}>{status}</p>
           </div>
 
-          <div className="flex justify-center mb-6">
-            {isCrypto ? (
-              <CryptoIcon symbol={assetSymbol} size="lg" />
-            ) : assetSymbol ? (
-              <ProviderIcon name={assetSymbol} size="lg" />
-            ) : (
-              <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
-                <span className="text-lg font-bold text-primary">{txType.charAt(0).toUpperCase()}</span>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-0">
-            {fields.map((f, i) => (
-              <div key={i}>
-                <div className="py-4">
-                  <p className="text-sm text-muted-foreground mb-1">{f.label}</p>
-                  {f.isBadge ? (
-                    <span className={`text-sm px-3 py-1 rounded-full ${
-                      f.value === "Completed" || f.value === "Confirmed" ? "bg-success/20 text-success" :
-                      f.value === "Processing" ? "bg-primary/20 text-primary" :
-                      "bg-warning/20 text-warning"
-                    }`}>{f.value}</span>
-                  ) : f.label.includes("Hash") || f.label.includes("Deposit ID") ? (
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-primary font-mono">{f.value}</p>
-                      <button onClick={() => handleCopy(f.value)}>
-                        {copied === f.value ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4 text-primary" />}
-                      </button>
-                    </div>
-                  ) : f.label === "Admin Review" || f.label === "Admin Approval" ? (
-                    <span className={`text-sm px-3 py-1 rounded-full ${f.value === "Notified Admin" ? "bg-primary/20 text-primary" : f.value === "Approved" ? "bg-success/20 text-success" : "bg-warning/20 text-warning"}`}>
-                      {f.value}
-                    </span>
-                  ) : (
-                    <p className={`text-lg font-semibold ${f.color || "text-foreground"}`}>{f.value}</p>
-                  )}
+          <div className="flex flex-col">
+            {detailRows.map((f) => (
+              <div key={f.label} className="flex items-center gap-4 border-b border-brand-grey100 py-1.5">
+                <div className="min-w-0 flex-1 py-1.5">
+                  <p className="truncate text-xs leading-[1.3] text-brand-bodyText">{f.label}</p>
+                  <p
+                    className={cn(
+                      "truncate text-[15px] font-semibold leading-[1.4]",
+                      isCopyable(f.label) ? "text-brand-blue500" : "text-brand-grey900",
+                    )}
+                  >
+                    {f.value}
+                  </p>
                 </div>
-                <div className="h-px bg-border" />
+                {isCopyable(f.label) && (
+                  <button type="button" onClick={() => handleCopy(f.value)} aria-label={`Copy ${f.label}`}>
+                    {copied === f.value ? (
+                      <Check className="size-5 text-brand-successText" />
+                    ) : (
+                      <Copy className="size-5 text-brand-blue500" />
+                    )}
+                  </button>
+                )}
               </div>
             ))}
 
-            <div className="py-4">
-              <p className="text-sm text-muted-foreground mb-1">Transaction ID</p>
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-primary font-medium font-mono">{txId}</p>
-                <button onClick={() => handleCopy(txId)}>
-                  {copied === txId ? <Check className="w-5 h-5 text-success" /> : <Copy className="w-5 h-5 text-primary" />}
-                </button>
+            <div className="flex items-center gap-4 border-b border-brand-grey100 py-1.5">
+              <div className="min-w-0 flex-1 py-1.5">
+                <p className="text-xs leading-[1.3] text-brand-bodyText">Transaction ID</p>
+                <p className="truncate text-[15px] font-semibold leading-[1.4] text-brand-blue500">{txId}</p>
               </div>
+              <button type="button" onClick={() => handleCopy(txId)} aria-label="Copy transaction ID">
+                {copied === txId ? (
+                  <Check className="size-5 text-brand-successText" />
+                ) : (
+                  <Copy className="size-5 text-brand-blue500" />
+                )}
+              </button>
             </div>
           </div>
 
-          <div className="flex gap-3 mt-8 mb-2">
-            <div className="flex-1 relative">
-              <button onClick={() => setShowDownloadOptions(!showDownloadOptions)} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold flex items-center justify-center gap-2">
-                <Download className="w-4 h-4" /> Download
-              </button>
-              {showDownloadOptions && (
-                <div className="absolute bottom-full left-0 right-0 mb-2 bg-card border border-border rounded-xl overflow-hidden z-20 shadow-lg">
-                  <button onClick={() => handleDownload("pdf")} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-secondary transition-colors">
-                    <FileText className="w-4 h-4 text-destructive" />
-                    <span className="text-sm text-foreground">PDF</span>
-                  </button>
-                  <div className="mx-4 h-px bg-border" />
-                  <button onClick={() => handleDownload("image")} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-secondary transition-colors">
-                    <Image className="w-4 h-4 text-primary" />
-                    <span className="text-sm text-foreground">Image</span>
-                  </button>
-                </div>
-              )}
-            </div>
-            <button onClick={() => setReportView("select")} className="flex-1 h-12 border border-destructive/50 rounded-xl text-destructive font-semibold">Report</button>
+          <div className="flex items-start gap-2 pt-6">
+            <button
+              type="button"
+              onClick={() => setReportView("select")}
+              className="flex min-w-0 flex-1 items-center justify-center rounded-lg border border-brand-danger bg-white px-4 py-[11px] font-manrope text-base font-medium leading-[1.6] text-brand-danger transition-colors hover:bg-brand-danger/5"
+            >
+              Report
+            </button>
+            <Popover open={showDownloadOptions} onOpenChange={setShowDownloadOptions}>
+              <PopoverTrigger className="flex min-w-0 flex-1 items-center justify-center gap-3 rounded-lg bg-brand-blue500 px-4 py-[11px] font-manrope text-base font-medium leading-[1.6] text-brand-grey50 transition-opacity hover:opacity-90">
+                <ArrowDownIcon className="size-6" />
+                Download
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-44 border-brand-grey100 bg-white p-1">
+                <button
+                  type="button"
+                  onClick={() => handleDownload("pdf")}
+                  className="flex w-full items-center gap-3 rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50"
+                >
+                  <FileText className="size-4 text-brand-danger" />
+                  <span className="text-sm text-brand-grey900">PDF</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDownload("image")}
+                  className="flex w-full items-center gap-3 rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50"
+                >
+                  <Image className="size-4 text-brand-blue500" />
+                  <span className="text-sm text-brand-grey900">Image</span>
+                </button>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </PageTransition>
-    </MobileLayout>
+    </AppShell>
   );
 };
 

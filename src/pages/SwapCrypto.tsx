@@ -1,38 +1,45 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowDownUp, ChevronDown, Info, Gift, Check } from "lucide-react";
 import { toast } from "sonner";
-import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
-import CryptoIcon from "@/components/CryptoIcon";
-import NewBadge from "@/components/NewBadge";
 import InviteCodeInput from "@/components/InviteCodeInput";
 import { useInviteCode } from "@/contexts/InviteCodeContext";
+import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
+import { AmountEntry, BalanceShortcuts, parseAmount } from "@/components/dashboard/AmountEntry";
+import SuccessScreen from "@/components/dashboard/SuccessScreen";
+import { cn } from "@/lib/utils";
 
+/** `rate` is the asset's USD price; swaps convert through it. */
 const assets = [
-  { symbol: "BTC", name: "Bitcoin", balance: "0.0234", rate: 97450 },
-  { symbol: "ETH", name: "Ethereum", balance: "0.15", rate: 5830 },
-  { symbol: "USDT", name: "Tether", balance: "5,420.00", rate: 1 },
-  { symbol: "SOL", name: "Solana", balance: "12.50", rate: 231 },
-  { symbol: "USDC", name: "USD Coin", balance: "2,100.00", rate: 1 },
+  { symbol: "BTC", name: "Bitcoin", balance: 0.0234, rate: 67378.3 },
+  { symbol: "ETH", name: "Ethereum", balance: 0.15, rate: 3250.5 },
+  { symbol: "USDT", name: "Tether", balance: 5420, rate: 1 },
+  { symbol: "USDC", name: "US Dollar Coin", balance: 2100, rate: 1 },
+  { symbol: "TRX", name: "Tron", balance: 1200, rate: 0.14 },
 ];
 
-type View = "main" | "confirm" | "success";
+const bySymbol = (symbol: string) => assets.find((a) => a.symbol === symbol) ?? assets[0];
+
+const trimZeros = (value: string) => value.replace(/\.?0+$/, "") || "0";
+
+type View = "amount" | "confirm" | "success";
 
 const SwapCrypto = () => {
   const navigate = useNavigate();
-  const [from, setFrom] = useState(assets[0]);
-  const [to, setTo] = useState(assets[2]);
-  const [amount, setAmount] = useState("");
-  const [view, setView] = useState<View>("main");
-  const [showFromPicker, setShowFromPicker] = useState(false);
-  const [showToPicker, setShowToPicker] = useState(false);
+  const [view, setView] = useState<View>("amount");
+  const [fromSymbol, setFromSymbol] = useState("BTC");
+  const [toSymbol, setToSymbol] = useState("USDT");
+  const [raw, setRaw] = useState("");
   const [showInviteCode, setShowInviteCode] = useState(false);
   const { appliedCode, tradeCompleted, applyCode, completeTrade } = useInviteCode();
 
-  const amtNum = parseFloat(amount) || 0;
-  const toAmount = (amtNum * from.rate / to.rate).toFixed(to.rate >= 100 ? 6 : 2);
-  const fee = (amtNum * 0.005).toFixed(6);
+  const from = bySymbol(fromSymbol);
+  const to = bySymbol(toSymbol);
+  const amount = parseAmount(raw);
+  const received = (amount * from.rate) / to.rate;
+  const fee = amount * 0.005;
+  const exceedsBalance = amount > from.balance;
+  const ready = amount > 0 && !exceedsBalance;
 
   useEffect(() => {
     if (view === "success" && appliedCode && !tradeCompleted) {
@@ -42,165 +49,87 @@ const SwapCrypto = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view]);
 
+  /** Picking the same asset on both sides swaps them instead of duplicating. */
+  const pickFrom = (symbol: string) => {
+    if (symbol === toSymbol) setToSymbol(fromSymbol);
+    setFromSymbol(symbol);
+  };
+  const pickTo = (symbol: string) => {
+    if (symbol === fromSymbol) setFromSymbol(toSymbol);
+    setToSymbol(symbol);
+  };
+
   if (view === "success") {
     return (
-      <MobileLayout hideNav><PageTransition>
-        <div className="min-h-screen flex flex-col items-center justify-center px-6">
-          <div className="w-20 h-20 rounded-full bg-success/20 flex items-center justify-center mb-6"><ArrowDownUp className="w-10 h-10 text-success" /></div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">Swap Successful!</h2>
-          <p className="text-muted-foreground text-center mb-6">{amount} {from.symbol} → {toAmount} {to.symbol}</p>
-          <button onClick={() => navigate("/wallet")} className="w-full h-14 bg-primary rounded-xl text-primary-foreground font-semibold">Back to Wallet</button>
-        </div>
-      </PageTransition></MobileLayout>
+      <SuccessScreen
+        title="Swap completed!"
+        message={`You have successfully swapped ${trimZeros(amount.toFixed(8))} ${from.symbol} for ${trimZeros(received.toFixed(6))} ${to.symbol}.`}
+        onPrimary={() => navigate("/wallet")}
+        onSecondary={() => navigate("/activity")}
+        secondaryLabel="View history"
+      />
     );
   }
 
   if (view === "confirm") {
+    const rows: [string, string][] = [
+      ["You pay", `${trimZeros(amount.toFixed(8))} ${from.symbol}`],
+      ["You receive", `${trimZeros(received.toFixed(6))} ${to.symbol}`],
+      ["Rate", `1 ${from.symbol} = ${trimZeros((from.rate / to.rate).toFixed(6))} ${to.symbol}`],
+      ["Fee (0.5%)", `${trimZeros(fee.toFixed(8))} ${from.symbol}`],
+    ];
+
     return (
-      <MobileLayout hideNav><PageTransition>
-        <div className="px-4 pt-4">
-          <div className="flex items-center gap-3 mb-6">
-            <button onClick={() => setView("main")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-            <h2 className="text-lg font-bold text-foreground">Confirm Swap</h2>
+      <AppShell innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
+        <PageTransition>
+          <PageHeader title="Confirm swap" onBack={() => setView("amount")} />
+          <SectionCard className="px-4">
+            {rows.map(([label, value], i) => (
+              <div
+                key={label}
+                className={cn(
+                  "flex items-center justify-between gap-4 py-3.5",
+                  i < rows.length - 1 && "border-b border-brand-grey100",
+                )}
+              >
+                <span className="text-sm text-brand-bodyText">{label}</span>
+                <span className="text-right text-sm font-semibold text-brand-grey900">{value}</span>
+              </div>
+            ))}
+          </SectionCard>
+          <div className="px-4 pt-4 sm:px-0">
+            <PrimaryButton onClick={() => setView("success")}>Confirm swap</PrimaryButton>
           </div>
-          <div className="bg-card border border-border rounded-xl p-5 space-y-4 mb-6">
-            <div className="flex justify-between"><span className="text-sm text-muted-foreground">From</span><span className="text-sm text-foreground">{amount} {from.symbol}</span></div>
-            <div className="h-px bg-border" />
-            <div className="flex justify-between"><span className="text-sm text-muted-foreground">To</span><span className="text-sm text-foreground">{toAmount} {to.symbol}</span></div>
-            <div className="h-px bg-border" />
-            <div className="flex justify-between"><span className="text-sm text-muted-foreground">Rate</span><span className="text-sm text-foreground">1 {from.symbol} = {(from.rate / to.rate).toFixed(to.rate >= 100 ? 4 : 2)} {to.symbol}</span></div>
-            <div className="h-px bg-border" />
-            <div className="flex justify-between"><span className="text-sm text-muted-foreground">Fee (0.5%)</span><span className="text-sm text-foreground">{fee} {from.symbol}</span></div>
-            <div className="h-px bg-border" />
-            <div className="flex justify-between"><span className="text-sm text-muted-foreground">You receive</span><span className="text-sm font-bold text-success">{toAmount} {to.symbol}</span></div>
-          </div>
-          <div className="flex items-center gap-2 mb-6 text-xs text-muted-foreground"><Info className="w-4 h-4" /> Rate may change slightly at execution</div>
-          <button onClick={() => setView("success")} className="w-full h-14 bg-primary rounded-xl text-primary-foreground font-semibold">Swap Now</button>
-        </div>
-      </PageTransition></MobileLayout>
+        </PageTransition>
+      </AppShell>
     );
   }
 
-  const AssetPicker = ({ show, onClose, onSelect, exclude }: { show: boolean; onClose: () => void; onSelect: (a: typeof assets[0]) => void; exclude: string }) => {
-    if (!show) return null;
-    return (
-      <div className="fixed inset-0 bg-background/80 z-50 flex items-end justify-center">
-        <div className="w-full max-w-[430px] bg-card rounded-t-2xl p-4 pb-8 border-t border-border">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-foreground">Select Asset</h3>
-            <button onClick={onClose} className="text-muted-foreground text-sm">Close</button>
-          </div>
-          <div className="space-y-2">
-            {assets.filter(a => a.symbol !== exclude).map(a => (
-              <button key={a.symbol} onClick={() => { onSelect(a); onClose(); }} className="w-full flex items-center gap-3 bg-secondary rounded-xl px-4 py-3">
-                <CryptoIcon symbol={a.symbol} size="sm" />
-                <div className="text-left"><p className="text-sm font-medium text-foreground">{a.name}</p><p className="text-xs text-muted-foreground">Bal: {a.balance}</p></div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
-    <MobileLayout hideNav>
-      <PageTransition>
-        <div className="px-4 pt-4">
-          <div className="flex items-center gap-3 mb-6">
-            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-            <h2 className="text-lg font-bold text-foreground">Swap Crypto</h2>
-            <NewBadge />
-          </div>
+    <>
+      <AmountEntry
+        title="Swap"
+        onBack={() => navigate(-1)}
+        value={raw}
+        onValueChange={setRaw}
+        fromSymbol={fromSymbol}
+        fromOptions={assets.map((a) => ({ symbol: a.symbol, hint: `${a.balance.toLocaleString("en-US")} available` }))}
+        onFromChange={pickFrom}
+        toSymbol={toSymbol}
+        toOptions={assets.map((a) => ({ symbol: a.symbol, hint: a.name }))}
+        onToChange={pickTo}
+        convertedText={received ? trimZeros(received.toFixed(6)) : "0"}
+        error={exceedsBalance ? `You only have ${from.balance.toLocaleString("en-US")} ${from.symbol}` : undefined}
+        footer={
+          <BalanceShortcuts
+            balanceLabel={`Bal: ${trimZeros(from.balance.toFixed(8))} ${from.symbol}`}
+            onPick={(fraction) => setRaw(trimZeros((from.balance * fraction).toFixed(8)))}
+          />
+        }
+        submitDisabled={!ready}
+        onSubmit={() => setView("confirm")}
+      />
 
-          {/* Invite Code Banner */}
-          {!appliedCode && (
-            <div className="mb-4">
-              <button
-                onClick={() => setShowInviteCode(true)}
-                className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center gap-3"
-              >
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                  <Gift className="w-5 h-5 text-primary" />
-                </div>
-                <div className="text-left flex-1">
-                  <p className="text-sm font-semibold text-foreground">Have an invite code?</p>
-                  <p className="text-xs text-muted-foreground">Enter it to earn DeeXpoints on this trade</p>
-                </div>
-              </button>
-            </div>
-          )}
-
-          {appliedCode && !tradeCompleted && (
-            <div className="mb-4 bg-success/10 border border-success/20 rounded-xl p-3">
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-success" />
-                <p className="text-xs text-success font-medium">
-                  Invite code applied! Trade ${appliedCode.minTrade}+ to earn {appliedCode.tradeReward} pts
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* From */}
-          <div className="bg-card border border-border rounded-xl p-4 mb-2">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-muted-foreground">From</span>
-              <span className="text-xs text-muted-foreground">Balance: {from.balance}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <button onClick={() => setShowFromPicker(true)} className="flex items-center gap-2 bg-secondary rounded-lg px-3 py-2">
-                <CryptoIcon symbol={from.symbol} size="sm" />
-                <span className="text-sm font-medium text-foreground">{from.symbol}</span>
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              </button>
-              <input value={amount} onChange={e => setAmount(e.target.value)} placeholder="0.00" type="number"
-                className="flex-1 text-right text-xl font-bold text-foreground bg-transparent outline-none placeholder:text-muted-foreground" />
-            </div>
-          </div>
-
-          <div className="flex justify-center -my-2 z-10 relative">
-            <button onClick={() => { const t = from; setFrom(to); setTo(t); }} className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg">
-              <ArrowDownUp className="w-5 h-5 text-primary-foreground" />
-            </button>
-          </div>
-
-          {/* To */}
-          <div className="bg-card border border-border rounded-xl p-4 mt-2 mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-muted-foreground">To</span>
-              <span className="text-xs text-muted-foreground">Balance: {to.balance}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <button onClick={() => setShowToPicker(true)} className="flex items-center gap-2 bg-secondary rounded-lg px-3 py-2">
-                <CryptoIcon symbol={to.symbol} size="sm" />
-                <span className="text-sm font-medium text-foreground">{to.symbol}</span>
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              </button>
-              <p className="flex-1 text-right text-xl font-bold text-foreground">{amtNum > 0 ? toAmount : "0.00"}</p>
-            </div>
-          </div>
-
-          <div className="bg-secondary rounded-xl p-3 mb-6">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Rate</span><span>1 {from.symbol} = {(from.rate / to.rate).toFixed(to.rate >= 100 ? 4 : 2)} {to.symbol}</span>
-            </div>
-            <div className="flex justify-between text-xs text-muted-foreground mt-1">
-              <span>Fee</span><span>0.5%</span>
-            </div>
-          </div>
-
-          <button onClick={() => amtNum > 0 && setView("confirm")}
-            className={`w-full h-14 rounded-xl font-semibold ${amtNum > 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-            Preview Swap
-          </button>
-        </div>
-
-        <AssetPicker show={showFromPicker} onClose={() => setShowFromPicker(false)} onSelect={setFrom} exclude={to.symbol} />
-        <AssetPicker show={showToPicker} onClose={() => setShowToPicker(false)} onSelect={setTo} exclude={from.symbol} />
-      </PageTransition>
-
-      {/* Invite Code Modal */}
       {showInviteCode && (
         <InviteCodeInput
           onApply={(code) => {
@@ -210,7 +139,7 @@ const SwapCrypto = () => {
           onClose={() => setShowInviteCode(false)}
         />
       )}
-    </MobileLayout>
+    </>
   );
 };
 

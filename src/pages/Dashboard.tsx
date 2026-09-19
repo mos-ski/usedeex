@@ -1,82 +1,80 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Eye, EyeOff, ArrowDownLeft, Send, TrendingUp, ArrowLeftRight, CreditCard, Phone, Wifi, Zap, Gamepad2, Wallet, Gift } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
-import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
-import CryptoIcon from "@/components/CryptoIcon";
-import ProviderIcon from "@/components/ProviderIcon";
-import NewBadge from "@/components/NewBadge";
 import InviteCodeInput from "@/components/InviteCodeInput";
 import InviteCodeProgress from "@/components/InviteCodeProgress";
 import { useInviteCode } from "@/contexts/InviteCodeContext";
+import { ActionTile, AppShell, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
+import FloatingNav from "@/components/dashboard/FloatingNav";
+import {
+  AvatarIcon,
+  BellIcon,
+  ChevronRightIcon,
+  PhoneCallIcon,
+  PlusIcon,
+  SendIcon,
+  SwapIcon,
+} from "@/components/dashboard/icons";
+import { cn } from "@/lib/utils";
 
-const cryptoRates = [
-  { name: "Bitcoin", symbol: "BTC", rate: "₦97,450,000", change: "+2.4%" },
-  { name: "Ethereum", symbol: "ETH", rate: "₦5,830,000", change: "+1.8%" },
-  { name: "USDT", symbol: "USDT", rate: "₦1,535", change: "+0.1%" },
-  { name: "USDC", symbol: "USDC", rate: "₦1,530", change: "+0.05%" },
-  { name: "Solana", symbol: "SOL", rate: "₦231,000", change: "+5.2%" },
-  { name: "BNB", symbol: "BNB", rate: "₦920,000", change: "-0.3%" },
-  { name: "Tron", symbol: "TRX", rate: "₦215", change: "+1.1%" },
+import inviteCardArt from "@/assets/dashboard/invite-card.png";
+import AssetMark from "@/components/dashboard/AssetMark";
+import logoMtn from "@/assets/dashboard/bill-mtn.png";
+import logoIkedc from "@/assets/dashboard/bill-ikedc.png";
+import logoSpottybet from "@/assets/dashboard/bill-spottybet.png";
+import logoAmazon from "@/assets/dashboard/bill-amazon.png";
+import logoApple from "@/assets/dashboard/bill-apple.png";
+import logoGooglePlay from "@/assets/dashboard/bill-googleplay.png";
+
+const quickActions = [
+  { label: "Bills", path: "/bills/airtime", Icon: PhoneCallIcon },
+  { label: "Send", path: "/send-money", Icon: SendIcon },
+  { label: "Deposit", path: "/deposit", Icon: PlusIcon },
+  { label: "Sell", path: "/sell-crypto", Icon: SwapIcon },
 ];
 
-const recentTxns = [
-  { id: 1, type: "Sold BTC", symbol: "BTC", amount: "₦450,000", date: "Today, 2:30 PM", status: "Completed", icon: "sell" },
-  { id: 2, type: "Airtime - MTN", symbol: "MTN", amount: "₦2,000", date: "Today, 11:15 AM", status: "Completed", icon: "bill", phone: "08103674006" },
-  { id: 3, type: "Sold ETH", symbol: "ETH", amount: "₦125,000", date: "Yesterday", status: "Pending", icon: "sell" },
-  { id: 4, type: "Electricity - IKEDC", symbol: "IKEDC", amount: "₦15,000", date: "Mar 5", status: "Completed", icon: "bill" },
+const billsForYou = [
+  { label: "MTN", logo: logoMtn, path: "/bills/airtime" },
+  { label: "IKEDC", logo: logoIkedc, path: "/bills/electricity" },
+  { label: "SpottyBet", logo: logoSpottybet, path: "/bills/betting" },
+  { label: "Amazon", logo: logoAmazon, path: "/giftcards" },
+  { label: "Apple", logo: logoApple, path: "/giftcards" },
+  { label: "Google Play", logo: logoGooglePlay, path: "/giftcards" },
 ];
 
-const giftCardTxns = [
-  { id: 1, brand: "APPLE", amount: "$4,020.00", date: "Jul 12th, 2024", status: "Pending" },
-  { id: 2, brand: "GOOGLE PLAY", amount: "$100.00", date: "Sep 5th, 2023", status: "Pending" },
-  { id: 3, brand: "GOOGLE PLAY", amount: "$100.00", date: "Sep 5th, 2023", status: "Pending" },
-];
-
-const giftBrandMap: Record<string, string> = { "APPLE": "Apple", "GOOGLE PLAY": "Google Play" };
-
-const getGreeting = () => {
-  const h = new Date().getHours();
-  if (h < 12) return "Good morning";
-  if (h < 17) return "Good afternoon";
-  return "Good evening";
+type Txn = {
+  id: number;
+  type: string;
+  symbol: string;
+  date: string;
+  status: "Pending" | "Success";
+  amount: string;
 };
 
-const RatesTicker = () => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    let animFrame: number;
-    let pos = 0;
-    const animate = () => { pos += 0.5; if (pos >= el.scrollWidth / 2) pos = 0; el.scrollLeft = pos; animFrame = requestAnimationFrame(animate); };
-    animFrame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animFrame);
-  }, []);
-  const duplicated = [...cryptoRates, ...cryptoRates];
-  return (
-    <div ref={scrollRef} className="overflow-hidden whitespace-nowrap mb-6">
-      <div className="inline-flex gap-3">
-        {duplicated.map((c, i) => (
-          <div key={`${c.symbol}-${i}`} className="inline-flex items-center gap-2 bg-secondary rounded-full px-3 py-1.5 shrink-0">
-            <CryptoIcon symbol={c.symbol} size="sm" />
-            <span className="text-xs font-semibold text-foreground">{c.symbol}</span>
-            <span className="text-xs text-muted-foreground">{c.rate}</span>
-            <span className={`text-xs font-medium ${c.change.startsWith("+") ? "text-success" : "text-destructive"}`}>{c.change}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+const cryptoTxns: Txn[] = [
+  { id: 1, type: "Sell BTC", symbol: "BTC", date: "Today", status: "Pending", amount: "0.00006 BTC" },
+  { id: 2, type: "Sell BTC", symbol: "BTC", date: "Jan 02, 2023", status: "Success", amount: "0.00006 BTC" },
+  { id: 3, type: "Sell BTC", symbol: "BTC", date: "Jan 02, 2023", status: "Success", amount: "0.00006 BTC" },
+];
+
+const giftCardTxns: Txn[] = [
+  { id: 1, type: "Apple", symbol: "Apple", date: "Jul 12th, 2024", status: "Pending", amount: "$4,020.00" },
+  { id: 2, type: "Google Play", symbol: "Google Play", date: "Sep 5th, 2023", status: "Success", amount: "$100.00" },
+  { id: 3, type: "Google Play", symbol: "Google Play", date: "Sep 5th, 2023", status: "Success", amount: "$100.00" },
+];
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"crypto" | "giftcards">("crypto");
-  const [showBalance, setShowBalance] = useState(true);
   const [showInviteCodeModal, setShowInviteCodeModal] = useState(false);
-  const { appliedCode, depositCompleted, tradeCompleted, hasSeenDashboardModal, applyCode, markDashboardModalSeen } = useInviteCode();
+  const {
+    appliedCode,
+    depositCompleted,
+    tradeCompleted,
+    hasSeenDashboardModal,
+    applyCode,
+    markDashboardModalSeen,
+  } = useInviteCode();
 
   useEffect(() => {
     // Prompt new users to enter an invite code the first time they land on the dashboard
@@ -86,199 +84,220 @@ const Dashboard = () => {
     }
   }, [appliedCode, hasSeenDashboardModal]);
 
-  const handleInviteCodeApply = (code: string) => {
-    applyCode(code);
-    setShowInviteCodeModal(false);
-  };
-
-  const handleCloseInviteModal = () => {
-    setShowInviteCodeModal(false);
-    markDashboardModalSeen();
-  };
+  const transactions = activeTab === "crypto" ? cryptoTxns : giftCardTxns;
 
   return (
-    <MobileLayout>
+    <AppShell>
       <PageTransition>
-        <div className="px-4 pt-4">
-          {/* Top Bar */}
-          <div className="flex items-center justify-between mb-4">
-            <button onClick={() => navigate("/profile")} className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">JD</button>
-            <div className="flex bg-secondary rounded-full p-1">
-              <button onClick={() => setActiveTab("crypto")} className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === "crypto" ? "bg-muted text-foreground" : "text-muted-foreground"}`}>Crypto</button>
-              <button onClick={() => setActiveTab("giftcards")} className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === "giftcards" ? "bg-muted text-foreground" : "text-muted-foreground"}`}>Gift cards</button>
-            </div>
-            <button onClick={() => navigate("/notifications")} className="relative w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-              <Bell className="w-5 h-5 text-primary" />
-              <div className="absolute top-1 right-1 w-3 h-3 bg-warning rounded-full border-2 border-background" />
-            </button>
+        {/* Header */}
+        <header className="flex items-center justify-between gap-4 px-6 py-4 lg:px-2 lg:py-6">
+          <button
+            type="button"
+            onClick={() => navigate("/profile")}
+            aria-label="Profile"
+            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-primary100 text-brand-blue500 transition-opacity hover:opacity-80 lg:size-10"
+          >
+            <AvatarIcon className="size-[26px] lg:size-8" />
+          </button>
+
+          <div
+            role="tablist"
+            aria-label="Asset type"
+            className="flex h-8 shrink-0 items-center gap-[3px] rounded-md bg-white p-[3px] lg:h-10"
+          >
+            {(["crypto", "giftcards"] as const).map((tab) => (
+              <button
+                key={tab}
+                role="tab"
+                type="button"
+                aria-selected={activeTab === tab}
+                onClick={() => setActiveTab(tab)}
+                className={cn(
+                  "flex h-full min-w-[68px] items-center justify-center rounded px-3 text-[11px] leading-[1.6] transition-colors lg:min-w-[92px] lg:text-sm",
+                  activeTab === tab
+                    ? "bg-brand-blue500 font-extrabold text-white shadow-sm"
+                    : "font-bold text-brand-grey500 hover:text-brand-grey600",
+                )}
+              >
+                {tab === "crypto" ? "Crypto" : "Gift cards"}
+              </button>
+            ))}
           </div>
 
-          {/* Invite Code Progress Widget */}
-          {appliedCode && (
-            <div className="mb-6">
-              <InviteCodeProgress
-                code={appliedCode.code}
-                depositReward={appliedCode.depositReward}
-                tradeReward={appliedCode.tradeReward}
-                minDeposit={appliedCode.minDeposit}
-                minTrade={appliedCode.minTrade}
-                depositCompleted={depositCompleted}
-                tradeCompleted={tradeCompleted}
-              />
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={() => navigate("/notifications")}
+            aria-label="Notifications"
+            className="relative flex size-[33px] shrink-0 items-center justify-center rounded-full bg-black/[0.03] text-brand-nearBlack transition-colors hover:bg-black/[0.06] lg:size-10"
+          >
+            <BellIcon className="size-[18px] lg:size-5" />
+            <span className="absolute right-1.5 top-[3.75px] size-[5.25px] rounded-full bg-[#FF3B30]" />
+          </button>
+        </header>
 
-          {/* Invite Code Banner (if not applied and not showing modal) */}
-          {!appliedCode && !showInviteCodeModal && (
-            <div className="mb-6">
-              <button
-                onClick={() => setShowInviteCodeModal(true)}
-                className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center gap-3"
-              >
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                  <Gift className="w-5 h-5 text-primary" />
-                </div>
-                <div className="text-left flex-1">
-                  <p className="text-sm font-semibold text-foreground">Have an invite code?</p>
-                  <p className="text-xs text-muted-foreground">Enter it to earn rewards on your first deposit and trade</p>
-                </div>
-                <div className="text-primary">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                </div>
-              </button>
-            </div>
-          )}
-
-          {/* Greeting */}
-          <p className="text-sm text-muted-foreground mb-4">{getGreeting()}, <span className="text-foreground font-medium">John</span> 👋</p>
-
-          {/* Balance Card */}
-          <div className="bg-card rounded-2xl p-5 mb-6 border border-border">
-            <p className="text-xs text-muted-foreground tracking-widest text-center mb-2">TOTAL BALANCE</p>
-            <div className="flex items-center justify-center gap-2 mb-1">
-              <p className="text-3xl font-bold text-foreground">{showBalance ? "$12,450.80" : "••••••"}</p>
-              <button onClick={() => setShowBalance(!showBalance)}>
-                {showBalance ? <EyeOff className="w-5 h-5 text-muted-foreground" /> : <Eye className="w-5 h-5 text-muted-foreground" />}
-              </button>
-            </div>
-            <p className="text-sm text-warning text-center">{showBalance ? "NGN 19,121,228.00" : "••••••"}</p>
-            <div className="h-px bg-border my-4" />
-
-            {activeTab === "crypto" ? (
-              <div className="grid grid-cols-4 gap-2">
-                <button onClick={() => navigate("/deposit")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
-                  <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center"><ArrowDownLeft className="w-4 h-4 text-primary" /></div>
-                  <span className="text-[10px] text-foreground font-medium">Deposit</span>
-                </button>
-                <button onClick={() => navigate("/sell-crypto")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
-                  <div className="w-9 h-9 rounded-full bg-success/15 flex items-center justify-center"><Send className="w-4 h-4 text-success" /></div>
-                  <span className="text-[10px] text-foreground font-medium">Sell</span>
-                </button>
-                <button onClick={() => navigate("/deex-pay")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5 relative">
-                  <div className="w-9 h-9 rounded-full bg-accent/15 flex items-center justify-center"><CreditCard className="w-4 h-4 text-accent" /></div>
-                  <span className="text-[10px] text-foreground font-medium">DeeX Pay</span>
-                  <NewBadge className="absolute -top-1 -right-1" />
-                </button>
-                <button onClick={() => navigate("/virtual-cards")} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5 relative">
-                  <div className="w-9 h-9 rounded-full bg-warning/15 flex items-center justify-center"><Wallet className="w-4 h-4 text-warning" /></div>
-                  <span className="text-[10px] text-foreground font-medium">Cards</span>
-                  <NewBadge className="absolute -top-1 -right-1" />
+        {/* Body — one column on phones, two from lg up */}
+        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-5">
+          <div className="flex flex-col gap-3 lg:gap-5">
+            {/* Total payout */}
+            <SectionCard className="flex flex-col items-center gap-1 py-[18px] lg:py-8">
+              <p className="text-[10px] uppercase leading-[1.6] text-brand-grey600 lg:text-xs">Total Payout</p>
+              <p className="font-gasoek leading-[1.4] text-brand-grey900">
+                <span className="text-[33px] lg:text-[46px]">$1,458.</span>
+                <span className="text-[17px] lg:text-[24px]">98</span>
+              </p>
+              <div className="flex items-center gap-2 text-[10px] uppercase text-brand-amberBrown lg:text-xs">
+                <p className="leading-[1.6]">
+                  <span className="font-semibold">$22.43 </span>
+                  <span className="font-medium">today</span>
+                </p>
+                <span className="font-semibold leading-[1.6]">•</span>
+                <button
+                  type="button"
+                  onClick={() => navigate("/sell-crypto")}
+                  className="font-semibold leading-[1.6] underline-offset-2 hover:underline"
+                >
+                  See rates
                 </button>
               </div>
-            ) : (
-              <button onClick={() => navigate("/giftcards")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold flex items-center justify-center gap-2">
-                <ArrowLeftRight className="w-5 h-5" /> Sell Giftcards
-              </button>
+            </SectionCard>
+
+            {/* Invite code progress (only once a code is applied) */}
+            {appliedCode && (
+              <SectionCard>
+                <InviteCodeProgress
+                  code={appliedCode.code}
+                  depositReward={appliedCode.depositReward}
+                  tradeReward={appliedCode.tradeReward}
+                  minDeposit={appliedCode.minDeposit}
+                  minTrade={appliedCode.minTrade}
+                  depositCompleted={depositCompleted}
+                  tradeCompleted={tradeCompleted}
+                />
+              </SectionCard>
+            )}
+
+            {/* Quick actions */}
+            <SectionCard>
+              <SectionHeader title="Quick Actions" />
+              <div className="grid grid-cols-4 gap-1 lg:gap-2">
+                {quickActions.map(({ label, path, Icon }) => (
+                  <ActionTile key={label} label={label} Icon={Icon} onClick={() => navigate(path)} />
+                ))}
+              </div>
+            </SectionCard>
+
+            {/* Invite code prompt */}
+            {!appliedCode && (
+              <SectionCard>
+                <button
+                  type="button"
+                  onClick={() => setShowInviteCodeModal(true)}
+                  className="flex w-full items-center gap-6 text-left"
+                >
+                  <img
+                    src={inviteCardArt}
+                    alt=""
+                    className="size-[37px] shrink-0 rotate-[21.28deg] object-contain lg:size-[46px]"
+                  />
+                  <span className="flex min-w-0 flex-1 flex-col gap-1">
+                    <span
+                      className="bg-clip-text text-xs font-semibold leading-[1.4] text-transparent lg:text-sm"
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(-68.29deg, rgb(8, 66, 108) 46.744%, rgb(255, 56, 56) 103.77%)",
+                      }}
+                    >
+                      Have an invite code?
+                    </span>
+                    <span className="text-xs leading-[1.3] text-brand-bodyText lg:text-[13px]">
+                      Get rewards when you make your first deposit and start trading
+                    </span>
+                  </span>
+                  <ChevronRightIcon className="size-[18px] shrink-0 text-brand-grey900" />
+                </button>
+              </SectionCard>
             )}
           </div>
 
-          {activeTab === "crypto" ? (
-            <>
-              <div className="mb-1">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-foreground">Today's Rates</h3>
-                  <TrendingUp className="w-4 h-4 text-muted-foreground" />
-                </div>
-                <RatesTicker />
-              </div>
-
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-foreground mb-3">Bill Payment</h3>
-                <div className="flex gap-3">
-                  {[
-                    { label: "Airtime", path: "/bills/airtime", icon: Phone },
-                    { label: "Data", path: "/bills/data", icon: Wifi },
-                    { label: "Electricity", path: "/bills/electricity", icon: Zap },
-                    { label: "Betting", path: "/bills/betting", icon: Gamepad2 },
-                  ].map((b) => (
-                    <button key={b.label} onClick={() => navigate(b.path)} className="flex-1 bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
-                      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-                        <b.icon className="w-4 h-4 text-primary" />
-                      </div>
-                      <span className="text-[10px] text-muted-foreground">{b.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-foreground">Recent Transactions</h3>
-                  <button onClick={() => navigate("/activity")} className="text-xs text-primary">See all</button>
-                </div>
-                <div className="space-y-2">
-                  {recentTxns.map((tx) => (
-                    <button key={tx.id} onClick={() => navigate("/transaction-detail", { state: { tx } })} className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        {tx.icon === "sell" ? <CryptoIcon symbol={tx.symbol} size="md" /> : <ProviderIcon name={tx.symbol} size="md" />}
-                        <div className="text-left">
-                          <p className="text-sm font-medium text-foreground">{tx.type}</p>
-                          <p className="text-xs text-muted-foreground">{tx.date}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-semibold text-foreground">{tx.amount}</p>
-                        <p className={`text-xs ${tx.status === "Completed" ? "text-success" : "text-warning"}`}>{tx.status}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-foreground">Recent transactions</h3>
-                <button onClick={() => navigate("/activity")} className="text-xs text-primary">See all</button>
-              </div>
-              <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                {giftCardTxns.map((tx, i) => (
-                  <div key={tx.id}>
-                    <button onClick={() => navigate("/receipt", { state: { type: "giftcard", data: tx } })} className="w-full flex items-center justify-between px-4 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <ProviderIcon name={giftBrandMap[tx.brand] || tx.brand} size="md" />
-                        <div className="text-left"><p className="text-sm font-semibold text-foreground">{tx.brand}</p><p className="text-xs text-muted-foreground">{tx.date} • <span className="text-warning">{tx.status}</span></p></div>
-                      </div>
-                      <p className="text-sm font-medium text-foreground">{tx.amount}</p>
-                    </button>
-                    {i < giftCardTxns.length - 1 && <div className="mx-4 h-px bg-border" />}
-                  </div>
+          <div className="flex flex-col gap-3 lg:gap-5">
+            {/* Bills for you */}
+            <SectionCard>
+              <SectionHeader title="Bills for you" onAction={() => navigate("/bills/airtime")} />
+              <div className="grid grid-cols-3 gap-px overflow-hidden border border-brand-hairline bg-brand-hairline sm:rounded-xl">
+                {billsForYou.map(({ label, logo, path }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => navigate(path)}
+                    className="flex h-[72px] flex-col items-center justify-center gap-1 bg-white p-3 transition-colors hover:bg-brand-tint lg:h-[92px] lg:gap-2"
+                  >
+                    <img src={logo} alt="" className="size-[26px] object-contain lg:size-8" />
+                    <span className="text-[10px] leading-[1.6] text-black lg:text-xs">{label}</span>
+                  </button>
                 ))}
               </div>
-            </div>
-          )}
+            </SectionCard>
+
+            {/* Transactions */}
+            <SectionCard>
+              <SectionHeader title="Transactions" onAction={() => navigate("/activity")} />
+              <div className="flex flex-col">
+                {transactions.map((tx, i) => (
+                  <button
+                    key={tx.id}
+                    type="button"
+                    onClick={() => navigate("/transaction-detail", { state: { tx } })}
+                    className={cn(
+                      "flex items-center gap-3 py-3 text-left transition-colors hover:bg-brand-grey50",
+                      i < transactions.length - 1 && "border-b border-brand-hairline",
+                    )}
+                  >
+                    <AssetMark symbol={tx.symbol} className="size-6 lg:size-8" />
+                    <span className="flex min-w-0 flex-1 items-start justify-between gap-3">
+                      <span className="flex min-w-0 flex-col">
+                        <span className="truncate text-xs font-semibold leading-[1.6] text-brand-grey900 lg:text-sm">
+                          {tx.type}
+                        </span>
+                        <span className="flex items-center gap-2">
+                          <span className="text-[11px] leading-[1.6] text-brand-grey500 lg:text-xs">{tx.date}</span>
+                          <span className="size-[3px] shrink-0 rounded-full bg-brand-grey300" />
+                          <span
+                            className={cn(
+                              "text-[11px] font-medium leading-[1.6] lg:text-xs",
+                              tx.status === "Pending" ? "text-brand-warning400" : "text-brand-success300",
+                            )}
+                          >
+                            {tx.status}
+                          </span>
+                        </span>
+                      </span>
+                      <span className="whitespace-nowrap text-xs font-semibold leading-[1.6] text-brand-grey900 lg:text-sm">
+                        {tx.amount}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </SectionCard>
+          </div>
         </div>
       </PageTransition>
-      <BottomNav />
 
-      {/* Invite Code Modal */}
+      <FloatingNav />
+
       {showInviteCodeModal && (
         <InviteCodeInput
-          onApply={handleInviteCodeApply}
-          onClose={handleCloseInviteModal}
+          onApply={(code) => {
+            applyCode(code);
+            setShowInviteCodeModal(false);
+          }}
+          onClose={() => {
+            setShowInviteCodeModal(false);
+            markDashboardModalSeen();
+          }}
         />
       )}
-    </MobileLayout>
+    </AppShell>
   );
 };
 

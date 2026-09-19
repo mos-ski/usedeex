@@ -1,45 +1,99 @@
 import { useNavigate } from "react-router-dom";
-import { Gift, TrendingUp, ArrowDownLeft, Send, Banknote, FileText, X, CreditCard } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
-import NewBadge from "@/components/NewBadge";
+import { ActionTile, AppShell, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
+import FloatingNav from "@/components/dashboard/FloatingNav";
+import {
+  ArrowDownLeftIcon,
+  ArrowUpRightIcon,
+  BookOpenIcon,
+  CursorClickIcon,
+  DownloadIcon,
+  GiftBoxIcon,
+  GiftCardIcon,
+  HeartsIcon,
+  LinkIcon,
+  PercentIcon,
+  PhoneCallIcon,
+  PhoneDeviceIcon,
+  SendIcon,
+  SignalIcon,
+  SwapIcon,
+  TagIcon,
+  WebcamIcon,
+} from "@/components/dashboard/icons";
 
-const QuickAction = () => {
+type Tile = { label: string; path: string; Icon: (props: { className?: string }) => JSX.Element };
+
+const groups: { title: string; tiles: Tile[] }[] = [
+  {
+    title: "Spend your Crypto",
+    tiles: [
+      { label: "Receive", path: "/deposit", Icon: DownloadIcon },
+      { label: "Send", path: "/send-money", Icon: SendIcon },
+      { label: "Buy", path: "/deposit", Icon: ArrowDownLeftIcon },
+      { label: "Swap Coins", path: "/swap-crypto", Icon: SwapIcon },
+      { label: "DeeX Pay", path: "/deex-pay", Icon: TagIcon },
+      { label: "Get Link", path: "/deex-pay", Icon: LinkIcon },
+      { label: "Sell", path: "/sell-crypto", Icon: ArrowUpRightIcon },
+    ],
+  },
+  {
+    title: "Trade Giftcards",
+    tiles: [
+      { label: "Sell Giftcards", path: "/giftcards", Icon: GiftBoxIcon },
+      { label: "Buy Gift Card", path: "/giftcards", Icon: GiftCardIcon },
+      { label: "Generate", path: "/generate-statement", Icon: BookOpenIcon },
+    ],
+  },
+  {
+    title: "Get Reward",
+    tiles: [
+      { label: "Rewards", path: "/rewards", Icon: HeartsIcon },
+      { label: "Earnings", path: "/referrals", Icon: PercentIcon },
+      { label: "Redeem", path: "/rewards", Icon: CursorClickIcon },
+    ],
+  },
+  {
+    title: "Your Bills",
+    tiles: [
+      { label: "Airtime", path: "/bills/airtime", Icon: PhoneCallIcon },
+      { label: "Data", path: "/bills/data", Icon: PhoneDeviceIcon },
+      { label: "Electricity", path: "/bills/electricity", Icon: SignalIcon },
+      { label: "Betting", path: "/bills/betting", Icon: WebcamIcon },
+    ],
+  },
+];
+
+const MenuPage = () => {
   const navigate = useNavigate();
 
-  const actions = [
-    { icon: Gift, label: "Sell Gift Card", path: "/giftcards", color: "bg-warning/15 text-warning" },
-    { icon: TrendingUp, label: "See Rates", path: "/dashboard", color: "bg-accent/15 text-accent" },
-    { icon: ArrowDownLeft, label: "Deposit Crypto", path: "/deposit", color: "bg-primary/15 text-primary" },
-    { icon: Send, label: "Sell Crypto", path: "/sell-crypto", color: "bg-success/15 text-success" },
-    { icon: CreditCard, label: "DeeX Pay", path: "/deex-pay", color: "bg-accent/15 text-accent", isNew: true },
-    { icon: Banknote, label: "Send Money", path: "/send-money", color: "bg-deex-purple/15 text-deex-purple" },
-    { icon: FileText, label: "Generate Statement", path: "/generate-statement", color: "bg-deex-orange/15 text-deex-orange", isNew: true },
-  ];
+  const renderGroup = ({ title, tiles }: (typeof groups)[number]) => (
+    <SectionCard key={title} className="px-4">
+      <SectionHeader title={title} />
+      <div className="grid grid-cols-4 gap-1 lg:gap-2">
+        {tiles.map((tile) => (
+          <ActionTile key={tile.label} label={tile.label} Icon={tile.Icon} onClick={() => navigate(tile.path)} />
+        ))}
+      </div>
+    </SectionCard>
+  );
 
   return (
-    <MobileLayout hideNav>
+    <AppShell>
       <PageTransition>
-        <div className="min-h-screen flex flex-col items-center justify-center px-6 relative">
-          <button onClick={() => navigate(-1)} className="absolute top-6 right-6 w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-            <X className="w-5 h-5 text-foreground" />
-          </button>
-          <h2 className="text-xl font-bold text-foreground mb-8">Quick Actions</h2>
-          <div className="grid grid-cols-3 gap-3 w-full">
-            {actions.map((a) => (
-              <button key={a.label} onClick={() => navigate(a.path)} className="bg-secondary rounded-2xl p-4 flex flex-col items-center gap-2 relative">
-                {a.isNew && <NewBadge className="absolute top-2 right-2" />}
-                <div className={`w-12 h-12 rounded-full ${a.color} flex items-center justify-center`}>
-                  <a.icon className="w-5 h-5" />
-                </div>
-                <span className="text-[11px] font-medium text-foreground text-center leading-tight">{a.label}</span>
-              </button>
-            ))}
-          </div>
+        <header className="mb-3 flex h-14 items-center bg-white px-4 sm:mt-4 sm:rounded-2xl lg:mb-0 lg:h-auto lg:bg-transparent lg:px-2 lg:py-6">
+          <h1 className="text-[19px] font-bold leading-[1.4] text-brand-grey900 lg:text-2xl">Menu</h1>
+        </header>
+
+        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-5">
+          <div className="flex flex-col gap-3 lg:gap-5">{groups.slice(0, 2).map(renderGroup)}</div>
+          <div className="flex flex-col gap-3 lg:gap-5">{groups.slice(2).map(renderGroup)}</div>
         </div>
       </PageTransition>
-    </MobileLayout>
+
+      <FloatingNav />
+    </AppShell>
   );
 };
 
-export default QuickAction;
+export default MenuPage;
