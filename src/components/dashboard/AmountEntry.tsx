@@ -79,6 +79,7 @@ export const AmountEntry = ({
   toOptions,
   onToChange,
   convertedText,
+  showConverted = true,
   error,
   footer,
   submitLabel = "Done",
@@ -96,7 +97,9 @@ export const AmountEntry = ({
   /** Omit to render the target currency as a static pill (e.g. NGN payouts). */
   toOptions?: CurrencyOption[];
   onToChange?: (symbol: string) => void;
-  convertedText: string;
+  convertedText?: string;
+  /** Bills are priced in naira only, so they hide the conversion read-out. */
+  showConverted?: boolean;
   error?: string;
   footer?: ReactNode;
   submitLabel?: string;
@@ -127,21 +130,25 @@ export const AmountEntry = ({
           </Popover>
         </div>
 
-        <div className="flex w-full items-center justify-end gap-2">
-          <span className="truncate font-mono text-xl font-semibold leading-[1.6] text-[#616263]">{convertedText}</span>
-          {toOptions && onToChange ? (
-            <Popover>
-              <PopoverTrigger aria-label="Choose target currency">
-                <Pill symbol={toSymbol}>
-                  <CaretDownIcon className="size-3 text-[#191919]" />
-                </Pill>
-              </PopoverTrigger>
-              <OptionList options={toOptions} active={toSymbol} onSelect={onToChange} />
-            </Popover>
-          ) : (
-            <Pill symbol={toSymbol} />
-          )}
-        </div>
+        {showConverted && (
+          <div className="flex w-full items-center justify-end gap-2">
+            <span className="truncate font-mono text-xl font-semibold leading-[1.6] text-[#616263]">
+              {convertedText}
+            </span>
+            {toOptions && onToChange ? (
+              <Popover>
+                <PopoverTrigger aria-label="Choose target currency">
+                  <Pill symbol={toSymbol}>
+                    <CaretDownIcon className="size-3 text-[#191919]" />
+                  </Pill>
+                </PopoverTrigger>
+                <OptionList options={toOptions} active={toSymbol} onSelect={onToChange} />
+              </Popover>
+            ) : (
+              <Pill symbol={toSymbol} />
+            )}
+          </div>
+        )}
 
         {error && <p className="text-xs text-[#D92D20]">{error}</p>}
       </div>
@@ -183,6 +190,35 @@ export const BalanceShortcuts = ({
             "rounded bg-brand-grey100 px-2 py-1 font-medium leading-[1.6] text-[11px] transition-colors hover:bg-brand-primary100",
             label === "Max" ? "text-brand-blue400" : "text-brand-grey500",
           )}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  </div>
+);
+
+/** Fixed-amount shortcuts (₦200 / ₦500 / …) used by the bill screens. */
+export const AmountShortcuts = ({
+  balanceLabel,
+  options,
+  onPick,
+}: {
+  balanceLabel: string;
+  options: { label: string; value: number }[];
+  onPick: (value: number) => void;
+}) => (
+  <div className="flex items-center justify-between gap-2">
+    <p className="min-w-0 flex-1 truncate font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
+      {balanceLabel}
+    </p>
+    <div className="flex shrink-0 items-start gap-1">
+      {options.map(({ label, value }) => (
+        <button
+          key={label}
+          type="button"
+          onClick={() => onPick(value)}
+          className="rounded bg-brand-grey100 px-2 py-1 text-[11px] font-medium leading-[1.6] text-brand-grey500 transition-colors hover:bg-brand-primary100"
         >
           {label}
         </button>
