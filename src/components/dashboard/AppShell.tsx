@@ -14,16 +14,25 @@ export const AppShell = ({
   children,
   className,
   innerClassName,
+  topColor,
 }: {
   children: ReactNode;
   className?: string;
   /** Escape hatch for screens that need to fill the viewport (e.g. Wallet's edge-to-edge list). */
   innerClassName?: string;
+  /**
+   * Paints the display-cutout strip when the page's top block differs from the
+   * shell background (e.g. Wallet's navy header on the grey canvas).
+   */
+  topColor?: string;
 }) => (
-  <div className={cn("min-h-screen bg-brand-canvas font-roboto text-brand-grey900 antialiased", className)}>
+  <div className={cn("min-h-[100dvh] bg-brand-canvas font-roboto text-brand-grey900 antialiased", className)}>
+    {topColor && (
+      <div aria-hidden="true" className={cn("fixed inset-x-0 top-0 z-40 h-[env(safe-area-inset-top)]", topColor)} />
+    )}
     <div
       className={cn(
-        "mx-auto w-full max-w-[560px] px-0 pb-32 sm:px-4 sm:pb-36 lg:max-w-[1120px] lg:px-8",
+        "mx-auto w-full max-w-[560px] px-0 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-[env(safe-area-inset-top)] sm:px-4 sm:pb-[calc(9rem+env(safe-area-inset-bottom))] lg:max-w-[1120px] lg:px-8",
         innerClassName,
       )}
     >

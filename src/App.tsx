@@ -12,6 +12,8 @@ import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import Wallet from "./pages/Wallet";
 import Deposit from "./pages/Deposit";
+import DepositCash from "./pages/DepositCash";
+import WhatsNew from "./pages/WhatsNew";
 import SellCrypto from "./pages/SellCrypto";
 import SwapCrypto from "./pages/SwapCrypto";
 import WithdrawCrypto from "./pages/WithdrawCrypto";
@@ -63,6 +65,8 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/wallet" element={<Wallet />} />
             <Route path="/deposit" element={<Deposit />} />
+            <Route path="/deposit-cash" element={<DepositCash />} />
+            <Route path="/whats-new" element={<WhatsNew />} />
             <Route path="/sell-crypto" element={<SellCrypto />} />
             <Route path="/swap-crypto" element={<SwapCrypto />} />
             <Route path="/withdraw" element={<WithdrawCrypto />} />

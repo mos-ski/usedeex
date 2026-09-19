@@ -93,7 +93,7 @@ const ActivityPage = () => {
   return (
     // Mobile mirrors the Figma: navy summary flush against the white list, which
     // runs to the bottom edge. From `sm` up both become cards in the shell.
-    <AppShell innerClassName="flex min-h-[100dvh] flex-col pb-0 sm:block sm:min-h-0 sm:pb-36">
+    <AppShell topColor="bg-brand-deepNavy" innerClassName="flex min-h-[100dvh] flex-col pb-0 sm:block sm:min-h-0 sm:pb-36">
       <PageTransition className="flex flex-1 flex-col">
         <div className="flex flex-1 flex-col sm:gap-3 lg:grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:gap-5 lg:pt-6">
           {/* Summary */}

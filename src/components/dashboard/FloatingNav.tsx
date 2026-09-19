@@ -17,8 +17,8 @@ const FloatingNav = () => {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-5 z-50 flex justify-center px-4 sm:bottom-6"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      className="fixed inset-x-0 bottom-0 z-50 flex justify-center px-4"
+      style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1.25rem)" }}
     >
       {/* Two-layer pill per the Figma: a 20% grey plate under a transparent blurred bar. */}
       <div className="flex h-[60px] w-full max-w-[289px] items-center justify-center overflow-hidden rounded-[1000px] border border-[#e6e6e6] bg-[rgba(217,217,217,0.2)] p-2 backdrop-blur-[99.7px]">

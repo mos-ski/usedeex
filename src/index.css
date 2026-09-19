@@ -68,6 +68,18 @@
   body {
     @apply bg-background text-foreground font-sora antialiased;
   }
+
+  /* Mobile-app feel: fill the dynamic viewport, no rubber-band, no tap flash. */
+  html,
+  body,
+  #root {
+    min-height: 100dvh;
+  }
+
+  body {
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 /* Custom scrollbar */

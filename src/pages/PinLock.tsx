@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { hasUnseenWhatsNew } from "./WhatsNew";
 import { Fingerprint, Delete } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
 import NewBadge from "@/components/NewBadge";
@@ -17,7 +18,7 @@ const PinLock = () => {
     setError(false);
     if (newPin.length === 4) {
       if (newPin === correctPin) {
-        setTimeout(() => navigate("/dashboard"), 200);
+        setTimeout(() => navigate(hasUnseenWhatsNew() ? "/whats-new" : "/dashboard"), 200);
       } else {
         setTimeout(() => { setError(true); setPin(""); }, 300);
       }

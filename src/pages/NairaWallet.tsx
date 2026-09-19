@@ -256,7 +256,18 @@ const NairaWallet = () => {
               <h2 className="text-lg font-bold text-foreground">Top up Naira Wallet</h2>
             </div>
 
-            <p className="text-sm text-muted-foreground mb-4">Select a bank account to fund from</p>
+            <button
+              onClick={() => navigate("/deposit-cash")}
+              className="w-full flex items-center justify-between bg-primary/10 border border-primary/20 rounded-xl px-4 py-4 mb-5"
+            >
+              <div className="text-left">
+                <p className="text-sm font-medium text-foreground">Deposit cash</p>
+                <p className="text-xs text-muted-foreground">Transfer to your dedicated DeeX account number</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-primary" />
+            </button>
+
+            <p className="text-sm text-muted-foreground mb-4">Or select a bank account to fund from</p>
 
             <div className="space-y-2">
               {nairaBanks.map((bank) => (

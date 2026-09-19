@@ -207,6 +207,31 @@ export const FilterLinesIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+/** Solid info circle used by the advisory bullets. */
+export const InfoCircleIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 16 16" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M8 1.333A6.67 6.67 0 0 0 1.333 8 6.67 6.67 0 0 0 8 14.667 6.67 6.67 0 0 0 14.667 8 6.67 6.67 0 0 0 8 1.333Zm-.5 4a.5.5 0 0 1 1 0v.334a.5.5 0 0 1-1 0v-.334Zm1.083 5.334H7.417a.5.5 0 0 1 0-1h.166V7.5h-.166a.5.5 0 0 1 0-1h.75a.5.5 0 0 1 .5.5v2.667h.166a.5.5 0 0 1 0 1Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
+/** Solid copy glyph (vuesax/bold/copy). */
+export const CopyIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M16.98 10.79v3.7c0 3.08-1.23 4.31-4.31 4.31h-3.7c-3.08 0-4.31-1.23-4.31-4.31v-3.7c0-3.08 1.23-4.31 4.31-4.31h3.7c3.08 0 4.31 1.23 4.31 4.31Z"
+      fill="currentColor"
+    />
+    <path
+      d="M14.79 2.5h-3.7c-2.72 0-3.99.96-4.25 3.19-.5.1.06.16.12.16h3.71c3.67 0 5.38 1.71 5.38 5.38v3.71c0 .06.06.12.16.12 2.23-.26 3.19-1.53 3.19-4.25v-3.7c0-3.08-1.23-4.31-4.31-4.31Z"
+      fill="currentColor"
+      opacity="0.5"
+    />
+  </svg>
+);
+
 export const ArrowLeftIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
     <path d="M19 12H5M12 19l-7-7 7-7" {...strokeProps} />

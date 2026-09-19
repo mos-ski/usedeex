@@ -33,7 +33,7 @@ const Wallet = () => {
   return (
     // Mobile mirrors the Figma: navy block flush against a white list that runs to
     // the bottom edge. From `sm` up both become cards in the standard shell.
-    <AppShell innerClassName="flex min-h-[100dvh] flex-col pb-0 sm:block sm:min-h-0 sm:pb-36">
+    <AppShell topColor="bg-brand-deepNavy" innerClassName="flex min-h-[100dvh] flex-col pb-0 sm:block sm:min-h-0 sm:pb-36">
       <PageTransition className="flex flex-1 flex-col">
         <div className="flex flex-1 flex-col sm:gap-3 lg:grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-5 lg:pt-6">
           {/* Holdings / rewards card */}
