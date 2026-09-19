@@ -1,12 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Eye, EyeOff, ArrowDownLeft, ArrowUpRight, ChevronRight, CheckCircle, Wallet, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowDownLeft, ArrowUpRight, ChevronRight, CheckCircle, Wallet } from "lucide-react";
 import MobileLayout from "@/components/layout/MobileLayout";
-import BottomNav from "@/components/layout/BottomNav";
 import PageTransition from "@/components/PageTransition";
 import ProviderIcon from "@/components/ProviderIcon";
 import { nairaWalletBalance, nairaWalletTransactions, nairaBanks } from "@/data/nairaWalletData";
 import { toast } from "sonner";
+import createWalletArrow from "@/assets/naira-wallet-create/arrow-left.svg";
+import batteryOutline from "@/assets/naira-wallet-create/battery-outline.svg";
+import batteryEnd from "@/assets/naira-wallet-create/battery-end.svg";
+import batteryFill from "@/assets/naira-wallet-create/battery-fill.svg";
+import wifiIcon from "@/assets/naira-wallet-create/wifi.svg";
+import mobileSignalIcon from "@/assets/naira-wallet-create/mobile-signal.svg";
+import walletArrowDark from "@/assets/naira-wallet-create/arrow-left-dark.svg";
+import { ActionTile, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
+import { PhoneCallIcon, PlusIcon, SendIcon } from "@/components/dashboard/icons";
+import AssetMark from "@/components/dashboard/AssetMark";
+import { cn } from "@/lib/utils";
 
 type Step = "requirements" | "home" | "topup-method" | "topup-amount" | "topup-review" | "topup-success";
 type RequirementField = {
@@ -51,12 +61,12 @@ const oldUserNeedsNairaWalletRequirements = true;
 const NairaWallet = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>(oldUserNeedsNairaWalletRequirements ? "requirements" : "home");
-  const [showBalance, setShowBalance] = useState(true);
   const [selectedBank, setSelectedBank] = useState(nairaBanks[0]);
   const [topupAmount, setTopupAmount] = useState("");
   const [requirements, setRequirements] = useState<Record<string, string>>({});
 
   const formattedBalance = nairaWalletBalance.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const [balanceLead, balanceCents] = formattedBalance.split(".");
   const requiredFieldsComplete = oldUserNairaWalletRequirements.every((field) => requirements[field.key]?.trim());
 
   const goBack = () => {
@@ -82,38 +92,43 @@ const NairaWallet = () => {
     return (
       <MobileLayout hideNav>
         <PageTransition>
-          <div className="min-h-screen bg-brand-canvas px-4 pb-8 pt-4 font-roboto text-brand-grey900">
-            <header className="mb-5 flex items-center gap-3">
-              <button type="button" onClick={goBack} aria-label="Go back" className="flex size-10 items-center justify-center rounded-full bg-white text-brand-grey900 shadow-sm transition-colors hover:bg-brand-grey50">
-                <ArrowLeft className="size-5" />
-              </button>
-              <div>
-                <h1 className="text-xl font-bold leading-tight">Create Naira Wallet</h1>
-                <p className="mt-0.5 text-xs text-brand-grey500">Set up your wallet in a minute</p>
+          <div className="flex min-h-[100dvh] flex-col bg-white font-roboto text-brand-grey900">
+            <header className="shrink-0 bg-brand-deepNavy text-white">
+              <div className="relative h-11 w-full" aria-hidden="true">
+                <span className="absolute left-6 top-3.5 text-[17px] font-semibold leading-[22px] tracking-[-0.408px]">9:41</span>
+                <div className="absolute right-6 top-[19px] flex items-center gap-[7px]">
+                  <img src={mobileSignalIcon} alt="" className="h-3 w-[18px] brightness-0 invert" />
+                  <img src={wifiIcon} alt="" className="h-3 w-[17px] brightness-0 invert" />
+                  <span className="relative h-[13px] w-[27px]">
+                    <img src={batteryOutline} alt="" className="absolute left-0 top-0 h-[13px] w-[25px] brightness-0 invert" />
+                    <img src={batteryFill} alt="" className="absolute left-0.5 top-0.5 h-[9px] w-[21px] brightness-0 invert" />
+                    <img src={batteryEnd} alt="" className="absolute right-0 top-[5px] h-[4px] w-[2px] brightness-0 invert" />
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3 px-6 py-[18px]">
+                <button type="button" onClick={goBack} className="flex w-fit items-center gap-2.5" aria-label="Back from Create Naira Wallet">
+                  <img src={createWalletArrow} alt="" className="size-6" />
+                  <span className="text-[10px] font-semibold leading-[1.4]">Create Naira Wallet</span>
+                </button>
+                <h1 className="text-[19px] font-bold leading-[1.4]">Complete your profile</h1>
+                <p className="max-w-[327px] text-sm leading-6 text-white/75">Add the details below so we can create your secure Naira Wallet.</p>
               </div>
             </header>
 
-            <section className="mb-4 rounded-2xl bg-brand-deepNavy p-5 text-white shadow-sm">
-              <div className="mb-4 flex size-11 items-center justify-center rounded-full bg-white/10">
-                <ShieldCheck className="size-6 text-brand-sky" />
-              </div>
-              <h2 className="mb-2 text-xl font-bold">Complete your profile</h2>
-              <p className="text-sm leading-6 text-white/75">
-                Add the details below so we can create your secure Naira Wallet.
-              </p>
-            </section>
-
-            <section className="mb-4 space-y-4 rounded-2xl bg-white p-4 shadow-sm">
+            <main className="flex flex-1 flex-col gap-3 px-4 py-3">
               {oldUserNairaWalletRequirements.map((field) => (
-                <div key={field.key}>
-                  <label className="mb-2 block text-sm font-medium text-brand-grey900">{field.label}</label>
+                <label key={field.key} className="flex min-h-[65px] flex-col gap-1 border-b border-brand-grey100 p-3">
+                  <span className="text-xs font-normal leading-[1.3] text-brand-bodyText">{field.label}</span>
                   {field.type === "select" ? (
                     <select
+                      aria-label={field.label}
                       value={requirements[field.key] || ""}
                       onChange={(event) => updateRequirement(field.key, event.target.value)}
-                      className={`h-12 w-full rounded-xl border border-brand-grey100 bg-brand-grey50 px-4 text-sm outline-none focus:border-brand-blue500 focus:ring-2 focus:ring-brand-primary100 ${requirements[field.key] ? "text-brand-grey900" : "text-brand-grey500"}`}
+                      className={`w-full appearance-none bg-transparent p-0 text-[15px] font-normal leading-[1.4] outline-none ${requirements[field.key] ? "text-brand-grey900" : "text-[#c9c9c9]"}`}
                     >
-                      <option value="">{field.placeholder}</option>
+                      <option value="">Select</option>
                       {field.options?.map((option) => (
                         <option key={option} value={option}>{option}</option>
                       ))}
@@ -124,31 +139,29 @@ const NairaWallet = () => {
                       value={requirements[field.key] || ""}
                       onChange={(event) => updateRequirement(field.key, event.target.value)}
                       placeholder={field.placeholder}
-                      className="h-12 w-full rounded-xl border border-brand-grey100 bg-brand-grey50 px-4 text-sm text-brand-grey900 outline-none placeholder:text-brand-grey400 focus:border-brand-blue500 focus:ring-2 focus:ring-brand-primary100"
+                      aria-label={field.label}
+                      className="w-full bg-transparent p-0 text-[15px] font-normal leading-[1.4] text-brand-grey900 outline-none placeholder:text-[#c9c9c9]"
                     />
                   )}
-                </div>
+                </label>
               ))}
-            </section>
 
-            <div className="mb-6 rounded-2xl border border-brand-primary100 bg-brand-tint p-4">
-              <div className="flex items-start gap-3">
-                <ShieldCheck className="mt-0.5 size-5 shrink-0 text-brand-blue500" />
-                <div>
-                  <p className="mb-1 text-sm font-semibold text-brand-grey900">Your details are protected</p>
-                  <p className="text-xs leading-5 text-brand-grey500">We use this information to meet verification requirements and keep your account secure.</p>
-                </div>
+              <div className="rounded bg-[#fbf7f2] px-2 py-0.5 font-manrope text-[11px] leading-[1.6] text-brand-amberBrown">
+                <p className="font-semibold">Your details are protected</p>
+                <p>We use this information to meet verification requirements and keep your account secure.</p>
               </div>
-            </div>
 
-            <button
-              type="button"
-              onClick={createWallet}
-              disabled={!requiredFieldsComplete}
-              className="h-14 w-full rounded-xl bg-brand-blue500 text-base font-bold text-white transition-colors hover:bg-brand-navy disabled:cursor-not-allowed disabled:bg-brand-grey300"
-            >
-              Create Naira Wallet
-            </button>
+              <div className="flex-1" />
+
+              <button
+                type="button"
+                onClick={createWallet}
+                disabled={!requiredFieldsComplete}
+                className="mb-[42px] h-12 w-full rounded-lg bg-brand-blue500 px-4 py-[11px] font-manrope text-base font-medium leading-[1.6] text-brand-grey50 transition-opacity disabled:opacity-50"
+              >
+                Create Naira Wallet
+              </button>
+            </main>
           </div>
         </PageTransition>
       </MobileLayout>
@@ -296,80 +309,87 @@ const NairaWallet = () => {
   }
 
   return (
-    <MobileLayout>
+    <MobileLayout hideNav>
       <PageTransition>
-        <div className="px-4 pt-4 pb-6">
-          <h2 className="text-lg font-bold text-foreground mb-4">Naira Wallet</h2>
-
-          <div className="bg-gradient-to-br from-primary/20 to-success/10 rounded-2xl p-5 mb-6 border border-border">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-sm text-muted-foreground">Available Balance</span>
-              <button onClick={() => setShowBalance(!showBalance)}>
-                {showBalance ? <Eye className="w-4 h-4 text-muted-foreground" /> : <EyeOff className="w-4 h-4 text-muted-foreground" />}
+        <div className="min-h-[100dvh] bg-brand-canvas font-roboto text-brand-grey900">
+          <header className="bg-brand-canvas">
+            <div className="relative h-11 w-full" aria-hidden="true">
+              <span className="absolute left-6 top-3.5 text-[17px] font-semibold leading-[22px] tracking-[-0.408px] text-[#191919]">9:41</span>
+              <div className="absolute right-6 top-[19px] flex items-center gap-[7px]">
+                <img src={mobileSignalIcon} alt="" className="h-3 w-[18px]" />
+                <img src={wifiIcon} alt="" className="h-3 w-[17px]" />
+                <span className="relative h-[13px] w-[27px]">
+                  <img src={batteryOutline} alt="" className="absolute left-0 top-0 h-[13px] w-[25px]" />
+                  <img src={batteryFill} alt="" className="absolute left-0.5 top-0.5 h-[9px] w-[21px]" />
+                  <img src={batteryEnd} alt="" className="absolute right-0 top-[5px] h-[4px] w-[2px]" />
+                </span>
+              </div>
+            </div>
+            <div className="relative flex h-14 items-center px-4">
+              <button type="button" onClick={goBack} aria-label="Go back" className="flex size-11 items-center justify-start p-2.5">
+                <img src={walletArrowDark} alt="" className="size-6" />
               </button>
+              <h1 className="pointer-events-none absolute inset-x-0 text-center text-[19px] font-bold leading-[1.4]">NGN</h1>
             </div>
-            <p className="text-3xl font-bold text-foreground">{showBalance ? `₦${formattedBalance}` : "••••••"}</p>
-            <p className="text-xs text-muted-foreground mt-1">DeeX Naira Wallet</p>
+          </header>
 
-            <div className="grid grid-cols-2 gap-3 mt-4">
-              <button onClick={() => setStep("topup-method")} className="bg-primary/20 rounded-xl py-2.5 flex items-center justify-center gap-2">
-                <ArrowDownLeft className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-primary">Top Up</span>
-              </button>
-              <button onClick={() => navigate("/bills/airtime")} className="bg-success/20 rounded-xl py-2.5 flex items-center justify-center gap-2">
-                <ArrowUpRight className="w-4 h-4 text-success" />
-                <span className="text-sm font-medium text-success">Pay Bills</span>
-              </button>
-            </div>
-          </div>
+          <main className="flex flex-col gap-3">
+            <SectionCard className="flex flex-col items-center gap-1 px-4 py-[18px]">
+              <p className="text-[10px] uppercase leading-[1.6] text-brand-grey600">Your Balance</p>
+              <p className="whitespace-nowrap font-gasoek leading-[1.4] text-brand-grey900">
+                <span className="text-[33px]">₦{balanceLead}.</span>
+                <span className="text-[17px]">{balanceCents}</span>
+              </p>
+              <div className="flex items-center gap-2 text-[10px] font-semibold uppercase leading-[1.6] text-brand-amberBrown">
+                <span>₦22.43 today</span><span>•</span>
+                <button type="button" onClick={() => navigate("/activity")}>See rates</button>
+              </div>
+            </SectionCard>
 
-          <div className="mb-4">
-            <h3 className="text-sm font-semibold text-foreground mb-3">Quick Actions</h3>
-            <div className="grid grid-cols-4 gap-2">
-              {[
-                { label: "Airtime", path: "/bills/airtime", icon: "📱" },
-                { label: "Data", path: "/bills/data", icon: "📶" },
-                { label: "Electricity", path: "/bills/electricity", icon: "⚡" },
-                { label: "Betting", path: "/bills/betting", icon: "🎮" },
-              ].map((b) => (
-                <button key={b.label} onClick={() => navigate(b.path)} className="bg-secondary rounded-xl py-3 flex flex-col items-center gap-1.5">
-                  <span className="text-lg">{b.icon}</span>
-                  <span className="text-[10px] text-muted-foreground">{b.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+            <SectionCard className="px-4 py-3">
+              <SectionHeader title="Quick Actions" />
+              <div className="grid grid-cols-3 gap-1">
+                {[
+                  { label: "Bills", Icon: PhoneCallIcon, onClick: () => navigate("/bills/airtime") },
+                  { label: "Withdraw", Icon: SendIcon, onClick: () => navigate("/send-money") },
+                  { label: "Deposit", Icon: PlusIcon, onClick: () => setStep("topup-method") },
+                ].map((action) => (
+                  <ActionTile key={action.label} label={action.label} Icon={action.Icon} onClick={action.onClick} />
+                ))}
+              </div>
+            </SectionCard>
 
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-foreground">Recent Transactions</h3>
-              <button onClick={() => navigate("/activity")} className="text-xs text-primary">See all</button>
-            </div>
-            <div className="space-y-2">
-              {nairaWalletTransactions.slice(0, 5).map((tx) => (
-                <button key={tx.id} className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center ${tx.type === "topup" ? "bg-success/15" : "bg-warning/15"}`}>
-                      {tx.type === "topup" ? <ArrowDownLeft className="w-4 h-4 text-success" /> : <ArrowUpRight className="w-4 h-4 text-warning" />}
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-medium text-foreground">{tx.label}</p>
-                      <p className="text-xs text-muted-foreground">{tx.date}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className={`text-sm font-semibold ${tx.amount > 0 ? "text-success" : "text-foreground"}`}>
-                      {tx.amount > 0 ? "+" : ""}₦{Math.abs(tx.amount).toLocaleString()}
-                    </p>
-                    <p className={`text-xs ${tx.status === "Completed" ? "text-success" : "text-warning"}`}>{tx.status}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
+            <SectionCard className="px-4 py-3">
+              <SectionHeader title="Transactions" onAction={() => navigate("/activity")} />
+              <div className="flex flex-col">
+                {nairaWalletTransactions.slice(0, 3).map((tx, index) => (
+                  <button
+                    key={tx.id}
+                    type="button"
+                    onClick={() => navigate("/transaction-detail", { state: { ...tx, symbol: "NGN" } })}
+                    className={cn(
+                      "flex items-center gap-3 py-3 text-left transition-colors hover:bg-brand-grey50",
+                      index < 2 && "border-b border-brand-hairline",
+                    )}
+                  >
+                    <AssetMark symbol="NGN" className="size-6 lg:size-8" />
+                    <span className="flex min-w-0 flex-1 items-start justify-between gap-3">
+                      <span className="flex min-w-0 flex-col">
+                        <span className="truncate text-xs font-semibold leading-[1.6] text-brand-grey900 lg:text-sm">NGN {tx.type === "topup" ? "Deposit" : "Withdraw"}</span>
+                        <span className="flex items-center gap-2 text-[11px] leading-[1.6] text-brand-grey500">
+                          <span>{tx.date.split(",")[0]}</span><span className="size-[3px] rounded-full bg-brand-grey300" />
+                          <span className={tx.status === "Completed" ? "font-medium text-brand-success300" : "font-medium text-brand-warning400"}>{tx.status === "Completed" ? "Success" : tx.status}</span>
+                        </span>
+                      </span>
+                      <span className="whitespace-nowrap text-xs font-semibold leading-[1.6] text-brand-grey900 lg:text-sm">₦{Math.abs(tx.amount).toLocaleString("en-NG")}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </SectionCard>
+          </main>
         </div>
       </PageTransition>
-      <BottomNav />
     </MobileLayout>
   );
 };
