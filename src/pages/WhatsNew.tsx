@@ -55,13 +55,13 @@ const WhatsNew = () => {
   };
 
   return (
-    <AppShell innerClassName="flex min-h-[100dvh] flex-col px-0 pb-0 sm:px-4 sm:pb-8 lg:max-w-[560px] lg:px-4">
+    <AppShell innerClassName="flex min-h-[100dvh] flex-col px-0 pb-0 sm:pb-8 lg:max-w-[560px]">
       <PageTransition className="flex flex-1 flex-col">
         <h1 className="sr-only">What&apos;s new in DeeX</h1>
 
         <div className="flex flex-col gap-3 pt-4">
           {releases.map((release) => (
-            <section key={release.title} className="flex flex-col gap-3 bg-white p-3 sm:rounded-2xl">
+            <section key={release.title} className="flex flex-col gap-3 bg-white p-3">
               <div className="flex items-center justify-center gap-2.5">
                 <span className="shrink-0 rounded bg-[#4B4EFC] px-1 text-[9px] font-bold leading-[1.6] text-white">
                   NEW

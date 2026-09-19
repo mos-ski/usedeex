@@ -97,7 +97,7 @@ const ActivityPage = () => {
       <PageTransition className="flex flex-1 flex-col">
         <div className="flex flex-1 flex-col sm:gap-3 lg:grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:gap-5 lg:pt-6">
           {/* Summary */}
-          <section className="bg-brand-deepNavy text-white sm:mt-4 sm:rounded-2xl lg:sticky lg:top-6 lg:mt-0">
+          <section className="bg-brand-deepNavy text-white lg:sticky lg:top-6">
             <header className="flex h-14 items-center gap-3 px-4 lg:px-6">
               <h1 className="min-w-0 flex-1 truncate text-[19px] font-bold leading-[1.4] lg:text-2xl">Activity</h1>
             </header>

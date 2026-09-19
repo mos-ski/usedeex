@@ -38,7 +38,7 @@ const Wallet = () => {
         <div className="flex flex-1 flex-col sm:gap-3 lg:grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-5 lg:pt-6">
           {/* Holdings / rewards card */}
           <section
-            className="bg-brand-deepNavy text-white sm:mt-4 sm:rounded-2xl lg:sticky lg:top-6 lg:mt-0"
+            className="bg-brand-deepNavy text-white lg:sticky lg:top-6"
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >

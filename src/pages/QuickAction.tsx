@@ -81,7 +81,7 @@ const MenuPage = () => {
   return (
     <AppShell>
       <PageTransition>
-        <header className="mb-3 flex h-14 items-center bg-white px-4 sm:mt-4 sm:rounded-2xl lg:mb-0 lg:h-auto lg:bg-transparent lg:px-2 lg:py-6">
+        <header className="mb-3 flex h-14 items-center bg-white px-4 lg:mb-0 lg:h-auto lg:bg-transparent lg:px-2 lg:py-6">
           <h1 className="text-[19px] font-bold leading-[1.4] text-brand-grey900 lg:text-2xl">Menu</h1>
         </header>
 

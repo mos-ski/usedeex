@@ -1,10 +1,10 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { AlertTriangle, Check, ChevronRight, Copy, FileText, Image } from "lucide-react";
+import { AlertTriangle, Check, ChevronRight, FileText, Image } from "lucide-react";
 import { useState, useMemo } from "react";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
 import AssetMark from "@/components/dashboard/AssetMark";
-import { ArrowDownIcon, CheckCircleIcon } from "@/components/dashboard/icons";
+import { ArrowDownIcon, CheckCircleIcon, CopyIcon } from "@/components/dashboard/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -342,7 +342,7 @@ const Receipt = () => {
                     {copied === f.value ? (
                       <Check className="size-5 text-brand-successText" />
                     ) : (
-                      <Copy className="size-5 text-brand-blue500" />
+                      <CopyIcon className="size-5 text-brand-blue500" />
                     )}
                   </button>
                 )}
@@ -358,7 +358,7 @@ const Receipt = () => {
                 {copied === txId ? (
                   <Check className="size-5 text-brand-successText" />
                 ) : (
-                  <Copy className="size-5 text-brand-blue500" />
+                  <CopyIcon className="size-5 text-brand-blue500" />
                 )}
               </button>
             </div>

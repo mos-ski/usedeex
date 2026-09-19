@@ -32,7 +32,7 @@ export const AppShell = ({
     )}
     <div
       className={cn(
-        "mx-auto w-full max-w-[560px] px-0 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-[env(safe-area-inset-top)] sm:px-4 sm:pb-[calc(9rem+env(safe-area-inset-bottom))] lg:max-w-[1120px] lg:px-8",
+        "mx-auto w-full max-w-[560px] px-0 pb-[calc(8rem+env(safe-area-inset-bottom))] pt-[env(safe-area-inset-top)] sm:pb-[calc(9rem+env(safe-area-inset-bottom))] lg:max-w-[1120px] lg:px-8",
         innerClassName,
       )}
     >
@@ -43,7 +43,7 @@ export const AppShell = ({
 
 /** One white block in the stack. */
 export const SectionCard = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <section className={cn("bg-white px-6 py-3 sm:rounded-2xl lg:px-7 lg:py-5", className)}>{children}</section>
+  <section className={cn("bg-white px-6 py-3 lg:px-7 lg:py-5", className)}>{children}</section>
 );
 
 /** Full-width primary action button (Figma "Button" component). */
@@ -105,7 +105,7 @@ export const ActionTile = ({
   <button
     type="button"
     onClick={onClick}
-    className="flex flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint px-2 py-2 text-brand-navy transition-colors hover:bg-brand-primary100 lg:gap-2 lg:rounded-xl lg:py-5"
+    className="flex flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint px-2 py-2 text-brand-navy transition-colors hover:bg-brand-primary100 lg:gap-2 lg:py-5"
   >
     <Icon className="size-6 shrink-0 lg:size-7" />
     <span className="text-center text-[10px] leading-[1.6] text-black lg:text-xs">{label}</span>

@@ -230,7 +230,7 @@ const Dashboard = () => {
             {/* Bills for you */}
             <SectionCard>
               <SectionHeader title="Bills for you" onAction={() => setShowBillPicker(true)} />
-              <div className="grid grid-cols-3 gap-px overflow-hidden border border-brand-hairline bg-brand-hairline sm:rounded-xl">
+              <div className="grid grid-cols-3 gap-px overflow-hidden border border-brand-hairline bg-brand-hairline">
                 {billsForYou.map(({ label, logo, path }) => (
                   <button
                     key={label}
