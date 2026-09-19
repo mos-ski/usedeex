@@ -6,6 +6,7 @@ import InviteCodeProgress from "@/components/InviteCodeProgress";
 import { useInviteCode } from "@/contexts/InviteCodeContext";
 import { ActionTile, AppShell, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
 import FloatingNav from "@/components/dashboard/FloatingNav";
+import BillPickerSheet from "@/components/dashboard/BillPickerSheet";
 import {
   AvatarIcon,
   BellIcon,
@@ -27,7 +28,7 @@ import logoApple from "@/assets/dashboard/bill-apple.png";
 import logoGooglePlay from "@/assets/dashboard/bill-googleplay.png";
 
 const quickActions = [
-  { label: "Bills", path: "/bills/airtime", Icon: PhoneCallIcon },
+  { label: "Bills", path: "bills", Icon: PhoneCallIcon },
   { label: "Send", path: "/send-money", Icon: SendIcon },
   { label: "Deposit", path: "/deposit", Icon: PlusIcon },
   { label: "Sell", path: "/sell-crypto", Icon: SwapIcon },
@@ -67,6 +68,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"crypto" | "giftcards">("crypto");
   const [showInviteCodeModal, setShowInviteCodeModal] = useState(false);
+  const [showBillPicker, setShowBillPicker] = useState(false);
   const {
     appliedCode,
     depositCompleted,
@@ -181,7 +183,12 @@ const Dashboard = () => {
               <SectionHeader title="Quick Actions" />
               <div className="grid grid-cols-4 gap-1 lg:gap-2">
                 {quickActions.map(({ label, path, Icon }) => (
-                  <ActionTile key={label} label={label} Icon={Icon} onClick={() => navigate(path)} />
+                  <ActionTile
+                    key={label}
+                    label={label}
+                    Icon={Icon}
+                    onClick={() => (path === "bills" ? setShowBillPicker(true) : navigate(path))}
+                  />
                 ))}
               </div>
             </SectionCard>
@@ -222,7 +229,7 @@ const Dashboard = () => {
           <div className="flex flex-col gap-3 lg:gap-5">
             {/* Bills for you */}
             <SectionCard>
-              <SectionHeader title="Bills for you" onAction={() => navigate("/bills/airtime")} />
+              <SectionHeader title="Bills for you" onAction={() => setShowBillPicker(true)} />
               <div className="grid grid-cols-3 gap-px overflow-hidden border border-brand-hairline bg-brand-hairline sm:rounded-xl">
                 {billsForYou.map(({ label, logo, path }) => (
                   <button
@@ -284,6 +291,8 @@ const Dashboard = () => {
       </PageTransition>
 
       <FloatingNav />
+
+      <BillPickerSheet open={showBillPicker} onOpenChange={setShowBillPicker} />
 
       {showInviteCodeModal && (
         <InviteCodeInput
