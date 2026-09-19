@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
 import AssetMark from "@/components/dashboard/AssetMark";
-import { ArrowDownIcon } from "@/components/dashboard/icons";
+import { ArrowDownIcon, CheckCircleIcon } from "@/components/dashboard/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -244,12 +244,12 @@ const Receipt = () => {
 
   /* ---------------- Receipt (Figma 269:7465) ---------------- */
   const status = fields.find((f) => f.label === "Status")?.value ?? "Completed";
-  const statusColor =
-    status === "Completed" || status === "Confirmed" || status === "Success"
-      ? "text-brand-successText"
-      : status === "Processing"
-        ? "text-brand-blue500"
-        : "text-brand-warning400";
+  const settled = ["Completed", "Confirmed", "Success"].includes(status);
+  const statusColor = settled
+    ? "text-brand-successText"
+    : status === "Processing"
+      ? "text-brand-blue500"
+      : "text-brand-warning400";
 
   // Headline prefers the settled value (payout) over the amount sent.
   const headline =
@@ -261,13 +261,29 @@ const Receipt = () => {
   const detailRows = fields.filter((f) => f.label !== "Status");
   const isCopyable = (label: string) => /Hash|ID$/.test(label);
 
+  /**
+   * Progress rail. Timings are placeholders like the rest of this page's mock
+   * data — swap them for the transaction's real timestamps when they exist.
+   */
+  const sentLabel = fields.find((f) => ["Amount sold", "Amount", "From"].includes(f.label))?.value ?? headline;
+  const destination = fields.find((f) => f.label === "Destination")?.value;
+  const steps = [
+    { title: "Initiated", detail: `You sent ${sentLabel}${destination ? ` to ${destination}` : ""}` },
+    {
+      title: "In progress",
+      detail: settled ? `${headline} was received • 56s` : "Awaiting confirmation",
+    },
+    ...(settled ? [{ title: "Completed", detail: "Transfer was completed • Total 2mins" }] : []),
+  ];
+
   return (
-    <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+    <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
       <PageTransition>
         <PageHeader title="Receipt" onBack={() => navigate(-1)} />
 
-        <div className="px-4">
-          <div className="flex flex-col items-center gap-2 py-3">
+        <div className="flex flex-col gap-3">
+          {/* Hero */}
+          <SectionCard className="flex flex-col items-center gap-2 px-4 py-3">
             <div className="flex items-center gap-2.5">
               {assetSymbol && <AssetMark symbol={assetSymbol} className="size-12" />}
               <p className="whitespace-nowrap font-gasoek leading-[1.4] text-brand-grey900">
@@ -277,14 +293,37 @@ const Receipt = () => {
                     <span className="text-[17px]">{headlineParts[2]}</span>
                   </>
                 ) : (
-                  <span className="text-[33px]">{headline || "\u2014"}</span>
+                  <span className="text-[33px]">{headline || "—"}</span>
                 )}
               </p>
             </div>
             <p className={cn("w-full text-center text-[15px] font-semibold leading-[1.4]", statusColor)}>{status}</p>
-          </div>
+          </SectionCard>
 
-          <div className="flex flex-col">
+          {/* Status rail */}
+          <SectionCard className="px-4 py-1.5">
+            {steps.map((step, i) => {
+              const isLast = i === steps.length - 1;
+              const active = isLast && settled;
+              return (
+                <div key={step.title} className="flex gap-3">
+                  <div className="flex flex-col items-center">
+                    <CheckCircleIcon
+                      className={cn("size-[18px] shrink-0", active ? "text-[#11C514]" : "text-brand-grey300")}
+                    />
+                    {!isLast && <span className="w-px flex-1 bg-brand-grey300" />}
+                  </div>
+                  <div className={cn("min-w-0 flex-1", !isLast && "pb-1")}>
+                    <p className="text-[13px] font-semibold leading-[1.4] text-brand-grey900">{step.title}</p>
+                    <p className="truncate text-[10px] leading-[1.3] text-brand-bodyText">{step.detail}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </SectionCard>
+
+          {/* Details */}
+          <SectionCard className="px-4">
             {detailRows.map((f) => (
               <div key={f.label} className="flex items-center gap-4 border-b border-brand-grey100 py-1.5">
                 <div className="min-w-0 flex-1 py-1.5">
@@ -310,7 +349,7 @@ const Receipt = () => {
               </div>
             ))}
 
-            <div className="flex items-center gap-4 border-b border-brand-grey100 py-1.5">
+            <div className="flex items-center gap-4 py-1.5">
               <div className="min-w-0 flex-1 py-1.5">
                 <p className="text-xs leading-[1.3] text-brand-bodyText">Transaction ID</p>
                 <p className="truncate text-[15px] font-semibold leading-[1.4] text-brand-blue500">{txId}</p>
@@ -323,9 +362,10 @@ const Receipt = () => {
                 )}
               </button>
             </div>
-          </div>
+          </SectionCard>
 
-          <div className="flex items-start gap-2 pt-6">
+          {/* Actions */}
+          <div className="flex items-start gap-2 px-4 pt-3 sm:px-0">
             <button
               type="button"
               onClick={() => setReportView("select")}

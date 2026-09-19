@@ -242,6 +242,19 @@ export const FaceIdIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+/** Outlined tick-in-circle used by the receipt status rail. */
+export const CheckCircleIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 18 18" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M16.5 8.31V9a7.5 7.5 0 1 1-4.45-6.86M16.5 3 9 10.51l-2.25-2.25"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const ArrowLeftIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
     <path d="M19 12H5M12 19l-7-7 7-7" {...strokeProps} />
