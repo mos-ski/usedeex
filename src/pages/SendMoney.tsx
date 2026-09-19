@@ -252,7 +252,7 @@ const SendMoney = () => {
     ["Wallet", "Crypto"],
     ["Rate", `${formatNgn(wallet.usdPrice * NGN_PER_USD)}/${wallet.symbol}`],
     ["Expected Payout", formatNgn(ngn)],
-    ["bank Details", `${account} - ${bank}`, resolvedName],
+    ["Bank details", `${account} - ${bank}`, resolvedName],
     ["DeeX Fee", formatNgn(DEEX_FEE)],
   ];
 
