@@ -67,6 +67,16 @@ const earnings = [
   ["50 Points", "Sandra signed traded on DeeX"],
 ] as const;
 
+/** Cashback terms, spelled out when the row is tapped. */
+const CASHBACK = { threshold: "₦2M", window: "a week", reward: "₦50,000" };
+
+/** Ways a DeeXpoint is earned, mirroring the Earnings feed. */
+const pointRules = [
+  { points: 1, label: "Every trade you complete" },
+  { points: 1, label: "Every trade a friend you referred completes" },
+  { points: 1, label: "Signing in 7 days in a row" },
+];
+
 /** Redemptions, paired with what they paid out. */
 const redemptions = [
   { points: 500, payout: "₦5,000", destination: "Naira Wallet", date: "Sep 14, 2026", status: "Completed" },
@@ -146,6 +156,8 @@ const Rewards = () => {
   const [bonusOpen, setBonusOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [historyTab, setHistoryTab] = useState<"earned" | "redeemed">("earned");
+  const [cashbackOpen, setCashbackOpen] = useState(false);
+  const [pointsOpen, setPointsOpen] = useState(false);
   const { hidden } = useBalanceVisibility();
 
   const points = parseAmount(amount);
@@ -399,7 +411,7 @@ const Rewards = () => {
             progress={0.2958}
             progressNote="₦14,700"
             footnote="4 days : 13 Hours :  23 Mins"
-            onClick={() => navigate("/naira-wallet")}
+            onClick={() => setCashbackOpen(true)}
           />
           <StatRow
             label="Sign Up Bonus"
@@ -411,7 +423,7 @@ const Rewards = () => {
             label="DeeXpoints"
             value="56/100"
             footnote="₦560 available to withdraw"
-            onClick={() => setView("redeem")}
+            onClick={() => setPointsOpen(true)}
           />
         </div>
 
@@ -450,28 +462,59 @@ const Rewards = () => {
             ))}
           </div>
         </SectionCard>
+      </PageTransition>
 
-        <SectionCard className="mt-3 px-6 py-3">
-          <div className="flex items-start justify-between gap-4">
-            <h2 className="text-xs font-semibold leading-[1.4] text-brand-grey900">Earnings</h2>
-            <button
-              type="button"
-              onClick={() => setView("history")}
-              className="font-manrope text-sm leading-[1.6] text-brand-grey400 transition-opacity hover:opacity-70"
-            >
-              History
-            </button>
-          </div>
-          <div className="flex flex-col gap-1">
-            {earnings.map(([points, description], index) => (
-              <div key={`${points}-${description}-${index}`} className="flex items-start gap-2.5">
-                <span className="whitespace-nowrap text-[11px] font-medium leading-[1.6] text-[#34A853]">{points}</span>
-                <span className="text-[11px] leading-[1.6] text-brand-grey500">{description}</span>
+      {/* How cashback is earned */}
+      <ReviewSheet
+        open={cashbackOpen}
+        onOpenChange={setCashbackOpen}
+        title="Available Cashback"
+        actionLabel="Withdraw to Naira Wallet"
+        withFaceId={false}
+        onAction={() => {
+          setCashbackOpen(false);
+          navigate("/naira-wallet");
+        }}
+      >
+        <div className="flex flex-col gap-3 py-2">
+          <p className="text-sm leading-[1.6] text-brand-bodyText">
+            Trade more than {CASHBACK.threshold} in {CASHBACK.window} and you qualify for {CASHBACK.reward} cashback.
+            Once it is earned you can withdraw it straight to your Naira Wallet.
+          </p>
+          <p className="text-xs leading-[1.6] text-brand-grey400">
+            The bar shows how far through the current week you are; the timer is how long is left to qualify.
+          </p>
+        </div>
+      </ReviewSheet>
+
+      {/* How DeeXpoints are earned */}
+      <ReviewSheet
+        open={pointsOpen}
+        onOpenChange={setPointsOpen}
+        title="DeeXpoints"
+        actionLabel="Redeem points"
+        withFaceId={false}
+        onAction={() => {
+          setPointsOpen(false);
+          setView("redeem");
+        }}
+      >
+        <div className="flex flex-col gap-3 py-2">
+          <p className="text-sm leading-[1.6] text-brand-bodyText">
+            Points build up as you use DeeX. Redeeming cashes out everything you have earned so far.
+          </p>
+          <div className="flex flex-col">
+            {pointRules.map((rule) => (
+              <div key={rule.label} className="flex items-center gap-3 border-b border-brand-grey100 py-2.5 last:border-b-0">
+                <span className="shrink-0 text-[15px] font-semibold leading-[1.4] text-[#34A853]">
+                  +{rule.points}
+                </span>
+                <span className="min-w-0 flex-1 text-sm leading-[1.6] text-brand-grey900">{rule.label}</span>
               </div>
             ))}
           </div>
-        </SectionCard>
-      </PageTransition>
+        </div>
+      </ReviewSheet>
 
       {/* Sign Up Bonus review (Figma 302:31169) */}
       <ReviewSheet

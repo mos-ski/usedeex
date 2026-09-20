@@ -14,6 +14,7 @@ export type ReviewRow = [label: string, value: string, note?: string];
 export const ReviewSheet = ({
   open,
   onOpenChange,
+  title = "Review",
   rows,
   actionLabel = "Confirm",
   onAction,
@@ -23,6 +24,8 @@ export const ReviewSheet = ({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Heading above the content; explainer sheets name themselves. */
+  title?: string;
   rows?: ReviewRow[];
   actionLabel?: string;
   onAction: () => void;
@@ -32,9 +35,9 @@ export const ReviewSheet = ({
 }) => (
   <Drawer open={open} onOpenChange={onOpenChange}>
     <DrawerContent className="border-brand-grey100 bg-brand-surface font-roboto">
-      <DrawerTitle className="sr-only">Review</DrawerTitle>
+      <DrawerTitle className="sr-only">{title}</DrawerTitle>
       <div className="mx-auto w-full max-w-[560px] px-4 pb-8">
-        <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Review</p>
+        <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">{title}</p>
 
         {children ?? (
           <div className="flex flex-col">
