@@ -171,7 +171,7 @@ const Deposit = () => {
         value={picker === "network" ? network : crypto.symbol}
         options={
           picker === "network"
-            ? crypto.networks.map((n) => ({ value: n, label: n, mark: <AssetMark symbol={crypto.symbol} /> }))
+            ? crypto.networks.map((n) => ({ value: n, label: n, mark: null }))
             : cryptos.map((c) => ({ value: c.symbol, label: c.symbol, detail: c.name }))
         }
         onSelect={(value) => (picker === "network" ? setNetwork(value) : pickCrypto(value))}

@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import AssetMark from "./AssetMark";
 import OptionSheet, { type SheetOption } from "./OptionSheet";
 import { NGN_PER_USD, formatNgn, formatUsd } from "@/lib/format";
 
@@ -38,11 +37,10 @@ export const CoinPicker = ({
         primary: formatNgn((coin.usd ?? 0) * NGN_PER_USD),
         secondary: formatUsd(coin.usd ?? 0),
         childrenTitle: "Select Network",
-        // Networks carry the coin's mark, as the frame shows.
         children: coin.networks.map((network) => ({
           value: network,
           label: network,
-          mark: <AssetMark symbol={coin.symbol} className="size-6" />,
+          mark: null,
         })),
       })),
     [coins],

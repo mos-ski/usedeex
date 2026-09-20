@@ -150,7 +150,7 @@ export const SendTo = ({
         onOpenChange={setChainOpen}
         title="Select network"
         value={chain.name}
-        options={chains.map((c) => ({ value: c.name, label: c.name, mark: <AssetMark symbol={c.symbol} /> }))}
+        options={chains.map((c) => ({ value: c.name, label: c.name, mark: null }))}
         onSelect={(name) => setChain(chains.find((c) => c.name === name) ?? chains[0])}
       />
     </AppShell>

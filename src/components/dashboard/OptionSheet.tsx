@@ -13,8 +13,8 @@ export type SheetOption = {
   primary?: string;
   /** Muted line under it. */
   secondary?: string;
-  /** Defaults to the asset/provider mark for `value`. */
-  mark?: ReactNode;
+  /** Defaults to the asset/provider mark for `value`; `null` shows none. */
+  mark?: ReactNode | null;
   /**
    * A second list shown inside this same sheet once the option is picked —
    * networks under a coin, say. Keeps the flow to one modal.
@@ -32,7 +32,7 @@ const Row = ({ option, active, onClick }: { option: SheetOption; active: boolean
       active && "bg-brand-tint",
     )}
   >
-    {option.mark ?? <AssetMark symbol={option.value} />}
+    {option.mark === null ? null : (option.mark ?? <AssetMark symbol={option.value} />)}
     <span className="flex min-w-0 flex-1 flex-col">
       <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">{option.label}</span>
       {option.detail && <span className="truncate text-xs leading-[1.3] text-brand-bodyText">{option.detail}</span>}
