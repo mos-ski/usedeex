@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, Copy, QrCode, Shield } from "lucide-react";
-import PageTransition from "@/components/PageTransition";
-import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
 import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
-import AssetMark from "@/components/dashboard/AssetMark";
-import { ReviewSheet } from "@/components/dashboard/ReviewSheet";
+import { FaceIdOverlay, ReviewSheet } from "@/components/dashboard/ReviewSheet";
+import SuccessScreen from "@/components/dashboard/SuccessScreen";
 import { ArrowRightIcon, BankIcon } from "@/components/dashboard/icons";
 import OptionSheet from "@/components/dashboard/OptionSheet";
 import { NGN_PER_USD, formatNgn, trimZeros } from "@/lib/format";
@@ -28,124 +25,67 @@ const banks = [
 /** Payouts above this are split into batches — surfaced as a hint on the row. */
 const BATCH_THRESHOLD = 5_000_000;
 
+/** Flat fee taken from the payout. */
+const DEEX_FEE = 50;
 
-type Step = "amount" | "deposit" | "pending";
 
 const SellCrypto = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<Step>("amount");
+  const [done, setDone] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [bankOpen, setBankOpen] = useState(false);
   const [symbol, setSymbol] = useState("USDT");
   const [bank, setBank] = useState(banks[0]);
   const [raw, setRaw] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [authenticating, setAuthenticating] = useState(false);
 
   const asset = assets.find((a) => a.symbol === symbol) ?? assets[0];
   const amount = parseAmount(raw);
   const ngn = amount * asset.usdPrice * NGN_PER_USD;
   const ready = amount > 0;
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(asset.address);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  /** Biometric beat, then the confirmation screen (Figma 299:28195). */
+  const confirm = () => {
+    setReviewOpen(false);
+    setAuthenticating(true);
+    window.setTimeout(() => {
+      setAuthenticating(false);
+      setDone(true);
+    }, 1400);
   };
 
-  /* ---------------- Pending ---------------- */
-  if (step === "pending") {
+  /* ---------------- Sold (Figma 299:28195) ---------------- */
+  if (done) {
     return (
-      <AppShell innerClassName="flex min-h-[100dvh] flex-col pb-0 lg:max-w-[480px] lg:px-4">
-        <PageTransition className="flex flex-1 flex-col">
-          <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 text-center">
-            <span className="mb-4 flex size-20 items-center justify-center rounded-full bg-brand-warning400/15 text-4xl">
-              ⏳
-            </span>
-            <h2 className="text-2xl font-bold text-brand-grey900">Awaiting deposit</h2>
-            <p className="text-sm text-brand-bodyText">
-              Send {trimZeros(amount.toFixed(8))} {asset.symbol} to the address provided
-            </p>
-            <p className="text-xs text-brand-bodyText">You&apos;ll receive</p>
-            <p className="text-lg font-semibold text-brand-successText">{formatNgn(ngn)}</p>
-            <p className="mt-4 rounded bg-brand-noteAmber px-2 py-1.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
-              We&apos;ll process your trade once the deposit is confirmed
-            </p>
-            <PrimaryButton className="mt-6 max-w-[343px]" onClick={() => navigate("/dashboard")}>
-              Back to Home
-            </PrimaryButton>
-          </div>
-        </PageTransition>
-      </AppShell>
+      <SuccessScreen
+        title="Sale completed!"
+        message={`You have successfully sold ${trimZeros(amount.toFixed(8))} ${asset.symbol} for ${formatNgn(ngn)} to ${bank.account} · ${bank.name}.`}
+        onPrimary={() => navigate("/dashboard")}
+        onSecondary={() =>
+          navigate("/receipt", {
+            state: {
+              type: "sell",
+              data: {
+                type: "Sell Crypto",
+                amount: formatNgn(ngn),
+                destination: `${bank.account} - ${bank.name}`,
+                status: "Completed",
+              },
+            },
+          })
+        }
+      />
     );
   }
 
-  /* ---------------- Deposit address ---------------- */
-  if (step === "deposit") {
-    return (
-      <AppShell innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
-        <PageTransition>
-          <PageHeader title={`Deposit ${asset.symbol}`} onBack={() => setStep("amount")} />
-
-          <SectionCard className="px-4">
-            {([
-              ["Selling", `${trimZeros(amount.toFixed(8))} ${asset.symbol}`],
-              ["You'll receive", formatNgn(ngn)],
-              ["Destination", `${bank.account} · ${bank.name}`],
-            ] as [string, string][]).map(([label, value], i) => (
-              <div
-                key={label}
-                className={cn("flex items-center justify-between gap-4 py-3", i < 2 && "border-b border-brand-grey100")}
-              >
-                <span className="text-sm text-brand-bodyText">{label}</span>
-                <span className="text-right text-sm font-semibold text-brand-grey900">{value}</span>
-              </div>
-            ))}
-          </SectionCard>
-
-          <SectionCard className="mt-3 flex flex-col items-center px-4 py-6">
-            <AssetMark symbol={asset.symbol} className="mb-4 size-12" />
-            <div className="mb-4 flex size-52 items-center justify-center rounded-2xl border-4 border-brand-primary100 bg-brand-grey900">
-              <QrCode className="size-36 text-white" />
-            </div>
-            <p className="mb-3 text-sm text-brand-bodyText">Your {asset.symbol} address</p>
-            <div className="mb-4 flex w-full items-center justify-between gap-3 rounded-lg border border-brand-grey100 bg-brand-grey50 px-4 py-3.5">
-              <p className="truncate font-mono text-sm text-brand-grey900">{asset.address}</p>
-              <button type="button" onClick={handleCopy} aria-label="Copy address" className="shrink-0">
-                {copied ? (
-                  <Check className="size-5 text-brand-successText" />
-                ) : (
-                  <Copy className="size-5 text-brand-blue500" />
-                )}
-              </button>
-            </div>
-            <div className="mb-6 flex w-full gap-3 rounded-lg bg-brand-tint p-4">
-              <Shield className="mt-0.5 size-8 shrink-0 text-brand-navy" />
-              <div>
-                <p className="text-sm leading-relaxed text-brand-grey900">
-                  Only send <span className="font-bold">{asset.symbol}</span> on the{" "}
-                  <span className="font-bold">{asset.network}</span> network.
-                </p>
-                <p className="mt-1 text-sm text-brand-bodyText">
-                  Sending other coins may result in permanent loss.
-                </p>
-              </div>
-            </div>
-            <PrimaryButton onClick={() => setStep("pending")}>I&apos;ve sent the crypto</PrimaryButton>
-          </SectionCard>
-        </PageTransition>
-      </AppShell>
-    );
-  }
-
-  /* ---------------- Review ---------------- */
   /* Review is a sheet over the amount screen (Figma 285:10690). */
-  const reviewRows: [string, string][] = [
-    ["Asset", asset.name],
-    ["Network", asset.network],
+  const reviewRows: [string, string, string?][] = [
     ["Amount", `${trimZeros(amount.toFixed(8))} ${asset.symbol}`],
-    ["Destination", `${bank.account} \u00b7 ${bank.name}`],
+    ["Wallet", "Crypto"],
     ["Rate", `${formatNgn(asset.usdPrice * NGN_PER_USD)}/${asset.symbol}`],
-    ["You'll receive", formatNgn(ngn)],
+    ["Expected Payout", formatNgn(ngn)],
+    ["Bank details", `${bank.account} - ${bank.name}`, "Precious Isioma"],
+    ["DeeX Fee", formatNgn(DEEX_FEE)],
   ];
 
 
@@ -224,13 +164,10 @@ const SellCrypto = () => {
         open={reviewOpen}
         onOpenChange={setReviewOpen}
         rows={reviewRows}
-        actionLabel="Proceed to deposit"
-        withFaceId={false}
-        onAction={() => {
-          setReviewOpen(false);
-          setStep("deposit");
-        }}
+        onAction={confirm}
       />
+
+      <FaceIdOverlay active={authenticating} />
     </>
   );
 };
