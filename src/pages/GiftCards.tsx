@@ -23,7 +23,7 @@ import {
 } from "@/components/dashboard/icons";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import GiftCardModeTabs from "@/components/dashboard/GiftCardModeTabs";
-import CategoryPills from "@/components/dashboard/CategoryPills";
+import { CategoryPill, CategorySheet } from "@/components/dashboard/CategoryPills";
 import SelectCountryStep, {
   CountryPill,
   CountrySheet,
@@ -90,6 +90,7 @@ const GiftCards = () => {
   const [reviewOpen, setReviewOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
+  const [categoryOpen, setCategoryOpen] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const visibleBrands = useMemo(() => {
@@ -187,8 +188,9 @@ const GiftCards = () => {
           <div className="flex flex-col gap-3 px-4">
             <GiftCardModeTabs mode="sell" />
 
-            <div className="flex justify-center">
+            <div className="flex items-center justify-center gap-2">
               <CountryPill code={countryCode} onClick={() => setCountryOpen(true)} />
+              <CategoryPill selected={categories} onClick={() => setCategoryOpen(true)} />
             </div>
 
             <input
@@ -198,8 +200,6 @@ const GiftCards = () => {
               aria-label="Search gift cards"
               className="w-full border-b border-brand-grey100 bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
             />
-
-            <CategoryPills options={giftCardCategories} selected={categories} onChange={setCategories} />
 
             <div
               role="tablist"
@@ -274,6 +274,13 @@ const GiftCards = () => {
           onOpenChange={setCountryOpen}
           value={countryCode}
           onSelect={setCountryCode}
+        />
+        <CategorySheet
+          open={categoryOpen}
+          onOpenChange={setCategoryOpen}
+          options={giftCardCategories}
+          selected={categories}
+          onChange={setCategories}
         />
       </AppShell>
     );

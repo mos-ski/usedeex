@@ -15,7 +15,6 @@ import {
   AvatarIcon,
   BellIcon,
   ChevronRightIcon,
-  GiftIcon,
   PhoneCallIcon,
   PlusIcon,
   SendIcon,
@@ -174,22 +173,14 @@ const Dashboard = () => {
               </div>
 
               {isGiftCards && (
-                <div className="mt-3 flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => navigate("/giftcards/buy")}
-                    className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-brand-blue500 whitespace-nowrap px-2 py-3 font-manrope text-[11px] font-semibold leading-[1.6] text-white transition-opacity hover:opacity-90"
-                  >
-                    <GiftIcon className="size-4" />
-                    Buy Gift Card
-                  </button>
+                <div className="mt-3">
                   <button
                     type="button"
                     onClick={() => navigate("/giftcards")}
-                    className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#095B97] whitespace-nowrap px-2 py-3 font-manrope text-[11px] font-semibold leading-[1.6] text-[#E8F3FC] transition-opacity hover:opacity-90"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-brand-blue500 px-3 py-3 font-manrope text-[11px] font-semibold leading-[1.6] text-white transition-opacity hover:opacity-90"
                   >
                     <SwapHorizontalIcon className="size-4" />
-                    Sell Gift Card
+                    Trade giftcard
                   </button>
                 </div>
               )}

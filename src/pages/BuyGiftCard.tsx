@@ -9,7 +9,7 @@ import {
   SectionHeader,
 } from "@/components/dashboard/AppShell";
 import AssetMark from "@/components/dashboard/AssetMark";
-import CategoryPills from "@/components/dashboard/CategoryPills";
+import { CategoryPill, CategorySheet } from "@/components/dashboard/CategoryPills";
 import GiftCardModeTabs from "@/components/dashboard/GiftCardModeTabs";
 import SelectCountryStep, {
   CountryPill,
@@ -62,6 +62,7 @@ const BuyGiftCard = () => {
   const [quantity, setQuantity] = useState(1);
 
   const [countryOpen, setCountryOpen] = useState(false);
+  const [categoryOpen, setCategoryOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [bought, setBought] = useState(false);
 
@@ -276,11 +277,10 @@ const BuyGiftCard = () => {
         <div className="flex flex-col gap-3 px-4">
           <GiftCardModeTabs mode="buy" />
 
-          <div className="flex justify-center">
+          <div className="flex items-center justify-center gap-2">
             <CountryPill code={countryCode} onClick={() => setCountryOpen(true)} />
+            <CategoryPill selected={categories} onClick={() => setCategoryOpen(true)} />
           </div>
-
-          <CategoryPills options={giftCardCategories} selected={categories} onChange={setCategories} />
 
           <input
             value={search}
@@ -319,6 +319,13 @@ const BuyGiftCard = () => {
         onOpenChange={setCountryOpen}
         value={countryCode}
         onSelect={setCountryCode}
+      />
+      <CategorySheet
+        open={categoryOpen}
+        onOpenChange={setCategoryOpen}
+        options={giftCardCategories}
+        selected={categories}
+        onChange={setCategories}
       />
 
     </AppShell>
