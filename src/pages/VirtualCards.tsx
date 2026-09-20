@@ -27,6 +27,8 @@ import {
 } from "@/components/dashboard/icons";
 import { cn } from "@/lib/utils";
 import deexCardMenu from "@/assets/cards/deex-card-menu.png";
+import BalanceToggle from "@/components/dashboard/BalanceToggle";
+import { maskAmount, useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
 
 const figmaTopUpIcon = "https://www.figma.com/api/mcp/asset/ffe8128f-528b-48be-9a92-a374a93fc0cf/2ba4d.svg";
 const figmaManageIcon = "https://www.figma.com/api/mcp/asset/ffe8128f-528b-48be-9a92-a374a93fc0cf/9dfcd.svg";
@@ -239,6 +241,7 @@ const VirtualCards = () => {
   const [createLabel, setCreateLabel] = useState("");
   const [dailyLimit, setDailyLimit] = useState("");
   const [monthlyLimit, setMonthlyLimit] = useState("");
+  const { hidden: balancesHidden } = useBalanceVisibility();
 
   /** Mocked: cards need KYC level 2 or above. */
   const kycLevel = 2;
@@ -733,9 +736,13 @@ const VirtualCards = () => {
             aria-label="Open DeeX card details"
           >
             <span className="flex flex-col items-center gap-2">
-              <img src={deexCardMenu} alt="DeeX virtual card" className="block w-full rounded-2xl" />
-              <span className="text-[10px] uppercase leading-[1.6] text-white/55">Balance</span>
-              <span className="font-gasoek text-[38px] leading-[1.15] text-white">{primaryCard?.balance ?? "$0.00"}</span>
+              <img src={deexCardMenu} alt="DeeX virtual card" className="mx-auto block w-full max-w-[360px] rounded-2xl object-contain" />
+              <span className="flex items-center gap-1 text-[10px] uppercase leading-[1.6] text-white/55">
+                Balance <BalanceToggle className="text-white/55" />
+              </span>
+              <span className="font-gasoek text-[38px] leading-[1.15] text-white">
+                {balancesHidden ? maskAmount(primaryCard?.balance ?? "$0.00") : primaryCard?.balance ?? "$0.00"}
+              </span>
             </span>
           </button>
         </section>
