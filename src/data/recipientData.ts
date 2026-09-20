@@ -97,3 +97,22 @@ export const bettingRecipients = makeBillRecipients(
   ["BET9JA_1234", "SPORTY_5678", "1XBET_9012", "BETKING_3456", "MSPORT_7890", "BET9JA_2468", "SPORTY_1357", "1XBET_8642", "BETKING_9753", "MSPORT_0246"],
   ["Bet9ja", "SportyBet", "1xBet", "BetKing", "MSport"],
 );
+
+export type TagRecipient = { id: string; tag: string; name: string; kind: RecipientKind };
+
+/** DeeX tags you can send to (Figma 299:27412). */
+export const tagRecipients: TagRecipient[] = [
+  { id: "tag-recent-1", tag: "@moski", name: "Adedamola Adewale", kind: "recent" },
+  ...people.slice(0, 8).map((name, index) => ({
+    id: `tag-recent-${index + 2}`,
+    tag: `@${name.split(" ")[0].toLowerCase()}`,
+    name,
+    kind: "recent" as const,
+  })),
+  ...people.slice(8).map((name, index) => ({
+    id: `tag-beneficiary-${index + 1}`,
+    tag: `@${name.split(" ")[0].toLowerCase()}${index + 1}`,
+    name,
+    kind: "beneficiary" as const,
+  })),
+];

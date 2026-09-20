@@ -54,3 +54,18 @@ export const AssetMark = ({ symbol, className }: { symbol: string; className?: s
 };
 
 export default AssetMark;
+
+/**
+ * Tinted initial used for people rather than assets — the DeeX-tag rows and
+ * the Account avatar (Figma 299:27412, 302:34379).
+ */
+export const InitialMark = ({ name, className }: { name: string; className?: string }) => (
+  <span
+    className={cn(
+      "flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-primary100 text-[13px] font-semibold uppercase leading-none text-brand-blue500",
+      className,
+    )}
+  >
+    {name.replace(/^@/, "").charAt(0)}
+  </span>
+);
