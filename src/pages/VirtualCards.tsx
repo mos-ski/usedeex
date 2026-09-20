@@ -8,6 +8,8 @@ import { TextField } from "@/components/dashboard/FormFields";
 import { StatusPill } from "@/components/dashboard/SettingsList";
 import PinEntry from "@/components/dashboard/PinEntry";
 import OptionSheet from "@/components/dashboard/OptionSheet";
+import CoinPicker from "@/components/dashboard/CoinPicker";
+import { depositExtras, NAIRA_DEPOSIT } from "@/components/dashboard/depositDestinations";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import {
   CardEditIcon,
@@ -41,7 +43,13 @@ interface VCard {
   created: string;
   dailyLimit: number;
   monthlyLimit: number;
-  transactions: { desc: string; amount: string; date: string; type: "debit" | "credit" }[];
+  transactions: {
+    desc: string;
+    amount: string;
+    date: string;
+    type: "debit" | "credit";
+    status?: "failed" | "pending" | "success";
+  }[];
 }
 
 const mockCards: VCard[] = [
@@ -56,9 +64,14 @@ const mockCards: VCard[] = [
     dailyLimit: 500,
     monthlyLimit: 5000,
     transactions: [
-      { desc: "Netflix Subscription", amount: "-$15.99", date: "Mar 7, 2026", type: "debit" },
-      { desc: "Card funding", amount: "+$100.00", date: "Mar 2, 2026", type: "credit" },
-      { desc: "Spotify Premium", amount: "-$9.99", date: "Feb 28, 2026", type: "debit" },
+      { desc: "Netflix Subscription", amount: "-$15.99", date: "Mar 7, 2026", type: "debit", status: "success" },
+      { desc: "Card funding", amount: "+$100.00", date: "Mar 2, 2026", type: "credit", status: "success" },
+      { desc: "Spotify Premium", amount: "-$9.99", date: "Feb 28, 2026", type: "debit", status: "pending" },
+      { desc: "Amazon Marketplace", amount: "-$42.50", date: "Feb 26, 2026", type: "debit", status: "failed" },
+      { desc: "Card funding", amount: "+$75.00", date: "Feb 22, 2026", type: "credit", status: "success" },
+      { desc: "Adobe Creative Cloud", amount: "-$52.99", date: "Feb 18, 2026", type: "debit", status: "success" },
+      { desc: "Uber Eats", amount: "-$28.40", date: "Feb 15, 2026", type: "debit", status: "success" },
+      { desc: "Card funding", amount: "+$200.00", date: "Feb 15, 2026", type: "credit", status: "pending" },
     ],
   },
   {
@@ -71,11 +84,26 @@ const mockCards: VCard[] = [
     created: "Jan 3, 2026",
     dailyLimit: 200,
     monthlyLimit: 1000,
-    transactions: [{ desc: "Adobe Creative Cloud", amount: "-$52.99", date: "Mar 1, 2026", type: "debit" }],
+      transactions: [
+        { desc: "Adobe Creative Cloud", amount: "-$52.99", date: "Mar 1, 2026", type: "debit", status: "success" },
+        { desc: "Card funding", amount: "+$50.00", date: "Feb 25, 2026", type: "credit", status: "pending" },
+        { desc: "Spotify Premium", amount: "-$9.99", date: "Feb 20, 2026", type: "debit", status: "failed" },
+      ],
   },
 ];
 
 const wallets = ["USDT", "BTC", "ETH"];
+const topUpWallets = ["NGN", "USDT", "USDC"];
+const walletBalances: Record<string, string> = {
+  NGN: "₦1,250,000.00",
+  USDT: "5,420.00",
+  USDC: "2,100.00",
+};
+
+const topUpCoins = [
+  { symbol: "USDT", name: "Tether", networks: [], usd: 5420 },
+  { symbol: "USDC", name: "US Dollar Coin", networks: [], usd: 2100 },
+];
 
 const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
   const [billingTab, setBillingTab] = useState<"local" | "us">("us");
@@ -202,6 +230,8 @@ const VirtualCards = () => {
   const [showNumber, setShowNumber] = useState(false);
   const [fundAmount, setFundAmount] = useState("");
   const [wallet, setWallet] = useState(wallets[0]);
+  const [topUpWallet, setTopUpWallet] = useState(topUpWallets[0]);
+  const [showTopUpAssetPicker, setShowTopUpAssetPicker] = useState(false);
   const [createLabel, setCreateLabel] = useState("");
   const [dailyLimit, setDailyLimit] = useState("");
   const [monthlyLimit, setMonthlyLimit] = useState("");
@@ -364,11 +394,30 @@ const VirtualCards = () => {
         onBack={() => setView("list")}
         value={fundAmount}
         onValueChange={setFundAmount}
-        fromSymbol={wallet}
-        fromOptions={wallets.map((symbol) => ({ symbol, name: symbol }))}
-        onFromChange={setWallet}
+        fromSymbol={topUpWallet}
+        fromOptions={topUpWallets.map((symbol) => ({ symbol, hint: `${walletBalances[symbol]} available` }))}
+        onFromChange={setTopUpWallet}
+        onFromPress={() => setShowTopUpAssetPicker(true)}
+        fromPicker={
+          <CoinPicker
+            open={showTopUpAssetPicker}
+            onOpenChange={setShowTopUpAssetPicker}
+            placeholder="Search asset"
+            coins={topUpCoins}
+            extras={depositExtras.filter((option) => option.value === NAIRA_DEPOSIT)}
+            onSelect={(symbol) => setTopUpWallet(symbol)}
+          />
+        }
         toSymbol="USD"
         convertedText={`$${fundAmount || "0.00"}`}
+        footer={
+          <div className="flex items-center justify-between border-b border-brand-grey100 py-3">
+            <span className="text-xs leading-[1.3] text-brand-bodyText">Available balance</span>
+            <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+              {walletBalances[topUpWallet]} {topUpWallet}
+            </span>
+          </div>
+        }
         submitLabel="Top Up"
         submitDisabled={!fundAmount || Number(fundAmount) <= 0}
         onSubmit={() => {
@@ -606,7 +655,11 @@ const VirtualCards = () => {
                     <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
                       {tx.desc}
                     </span>
-                    <span className="truncate text-xs leading-[1.3] text-brand-bodyText">{tx.date}</span>
+                    <span className="truncate text-xs leading-[1.3] text-brand-bodyText">
+                      {tx.date} <span className={cn(
+                        tx.status === "failed" ? "text-brand-danger" : tx.status === "pending" ? "text-brand-warning400" : "text-brand-successText",
+                      )}>• {(tx.status ?? "success").replace(/^./, (char) => char.toUpperCase())}</span>
+                    </span>
                   </span>
                   <span
                     className={cn(
@@ -656,7 +709,13 @@ const VirtualCards = () => {
             className="mt-3 block w-full text-left"
             aria-label="Open DeeX card details"
           >
-            <img src={figmaCardHero} alt="DeeX Card with balance" className="block w-full" />
+            <span className="block overflow-hidden">
+              <img
+                src={figmaCardHero}
+                alt="DeeX Card with balance"
+                className="-mb-2 -mt-2 block w-full"
+              />
+            </span>
           </button>
         </section>
 
@@ -713,7 +772,11 @@ const VirtualCards = () => {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">{tx.desc}</span>
-                    <span className="block text-xs leading-[1.3] text-brand-bodyText">{tx.date} <span className="text-brand-successText">• Success</span></span>
+                    <span className="block text-xs leading-[1.3] text-brand-bodyText">
+                      {tx.date} <span className={cn(
+                        tx.status === "failed" ? "text-brand-danger" : tx.status === "pending" ? "text-brand-warning400" : "text-brand-successText",
+                      )}>• {(tx.status ?? "success").replace(/^./, (char) => char.toUpperCase())}</span>
+                    </span>
                   </span>
                   <span className="shrink-0 text-right">
                     <span className="block text-[15px] font-semibold leading-[1.4] text-brand-grey900">{tx.amount}</span>

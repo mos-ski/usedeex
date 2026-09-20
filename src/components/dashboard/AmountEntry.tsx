@@ -46,6 +46,8 @@ export const AmountEntry = ({
   fromSymbol,
   fromOptions,
   onFromChange,
+  onFromPress,
+  fromPicker,
   toSymbol,
   toOptions,
   onToChange,
@@ -65,6 +67,9 @@ export const AmountEntry = ({
   fromSymbol: string;
   fromOptions: CurrencyOption[];
   onFromChange: (symbol: string) => void;
+  /** Optional custom picker trigger/content for flows that use a richer asset sheet. */
+  onFromPress?: () => void;
+  fromPicker?: ReactNode;
   toSymbol: string;
   /** Omit to render the target currency as a static pill (e.g. NGN payouts). */
   toOptions?: CurrencyOption[];
@@ -110,7 +115,7 @@ export const AmountEntry = ({
             aria-label={`Amount in ${fromSymbol}`}
             className="min-w-0 flex-1 bg-transparent text-right font-gasoek text-[48px] leading-[1.4] text-brand-grey900 outline-none placeholder:text-brand-grey300"
           />
-          <button type="button" aria-label="Choose asset" onClick={() => setPicker("from")}>
+          <button type="button" aria-label="Choose asset" onClick={() => (onFromPress ? onFromPress() : setPicker("from"))}>
             <Pill symbol={fromSymbol}>
               <CaretDownIcon className="size-3 text-brand-grey900" />
             </Pill>
@@ -153,6 +158,8 @@ export const AmountEntry = ({
         options={toSheet(picker === "to" ? toOptions ?? [] : fromOptions)}
         onSelect={(symbol) => (picker === "to" ? onToChange?.(symbol) : onFromChange(symbol))}
       />
+
+      {fromPicker}
 
       <NumericKeypad
         onKey={(key) => {
