@@ -170,7 +170,7 @@ const Dashboard = () => {
                 )}
               </p>
               <div className="flex items-center justify-center gap-2 text-[10px] uppercase text-brand-amberBrown lg:text-xs">
-                <p className="leading-[1.6]">
+                <p className="translate-x-2 leading-[1.6]">
                   <span className="font-semibold">{hidden ? maskAmount("$22.43") : "$22.43"} </span>
                   <span className="font-medium">today</span>
                 </p>
