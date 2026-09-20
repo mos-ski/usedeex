@@ -1,58 +1,59 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronRight, Shield, FileText, Scale } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
-import NewBadge from "@/components/NewBadge";
+import { AppShell, PageHeader, SectionCard } from "@/components/dashboard/AppShell";
+import { SettingsRow } from "@/components/dashboard/SettingsList";
+import { BookOpenIcon, LockIcon, MessageQuestionIcon, PhoneCallIcon, ReceiptIcon } from "@/components/dashboard/icons";
+import { legalDocuments } from "@/data/legalDocuments";
+
+import logoMark from "@/assets/landing/logo-mark.svg";
+
+const APP_VERSION = "2.4.1";
+const BUILD = "1842";
+
+const policyIcons = [ReceiptIcon, LockIcon, BookOpenIcon];
 
 const AboutDeeX = () => {
   const navigate = useNavigate();
 
-  const items = [
-    { icon: FileText, label: "Terms of Service", action: () => {} },
-    { icon: Shield, label: "Privacy Policy", action: () => {} },
-    { icon: Scale, label: "AML Policy", action: () => {} },
-  ];
-
   return (
-    <MobileLayout hideNav>
+    <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
       <PageTransition>
-        <div className="px-4 pt-4">
-          <div className="flex items-center gap-3 mb-6">
-            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-            <h2 className="text-lg font-bold text-foreground">About DeeX</h2>
-            <NewBadge />
-          </div>
+        <PageHeader title="About DeeX" onBack={() => navigate(-1)} />
 
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-20 h-20 rounded-2xl bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary mb-3">DX</div>
-            <p className="text-lg font-bold text-foreground">DeeX</p>
-            <p className="text-sm text-muted-foreground">Version 2.4.1</p>
-            <p className="text-xs text-muted-foreground mt-1">Build #1842</p>
-          </div>
-
-          <p className="text-sm text-muted-foreground text-center mb-8 leading-relaxed">
-            DeeX is a fast, secure platform for trading crypto, selling gift cards, paying bills, and sending money — all in one app.
+        <SectionCard className="flex flex-col items-center px-4 py-8 text-center">
+          <img src={logoMark} alt="DeeX" className="h-16 w-auto" />
+          <p className="pt-4 text-[17px] font-bold leading-[1.4] text-brand-grey900">DeeX</p>
+          <p className="text-xs leading-[1.3] text-brand-bodyText">
+            Version {APP_VERSION} • Build #{BUILD}
           </p>
+          <p className="max-w-[280px] pt-4 text-sm leading-[1.6] text-brand-bodyText">
+            DeeX is a fast, secure platform for trading crypto, selling gift cards, paying bills, and sending money —
+            all in one app.
+          </p>
+        </SectionCard>
 
-          <div className="space-y-2 mb-8">
-            {items.map((item) => (
-              <button key={item.label} onClick={item.action} className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3.5">
-                <div className="flex items-center gap-3">
-                  <item.icon className="w-5 h-5 text-muted-foreground" />
-                  <span className="text-sm font-medium text-foreground">{item.label}</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              </button>
-            ))}
-          </div>
+        <SectionCard className="mt-3 px-4 py-0">
+          {legalDocuments.map((doc, index) => (
+            <SettingsRow
+              key={doc.slug}
+              title={doc.title}
+              Icon={policyIcons[index]}
+              className={index === legalDocuments.length - 1 ? "border-b-0" : undefined}
+              onClick={() => navigate(`/legal/${doc.slug}`)}
+            />
+          ))}
+        </SectionCard>
 
-          <div className="text-center">
-            <p className="text-xs text-muted-foreground">© 2026 DeeX Technologies Ltd.</p>
-            <p className="text-xs text-muted-foreground mt-1">All rights reserved.</p>
-          </div>
-        </div>
+        <SectionCard className="mt-3 px-4 py-0">
+          <SettingsRow title="Contact support" detail="Chat with the DeeX team" Icon={MessageQuestionIcon} onClick={() => navigate("/support")} />
+          <SettingsRow title="Call us" detail="0700 000 3339" Icon={PhoneCallIcon} className="border-b-0" onClick={() => { window.location.href = "tel:07000003339"; }} />
+        </SectionCard>
+
+        <p className="px-4 pt-6 text-center text-xs leading-[1.6] text-brand-grey400">
+          © 2026 DeeX Technologies Ltd. All rights reserved.
+        </p>
       </PageTransition>
-    </MobileLayout>
+    </AppShell>
   );
 };
 

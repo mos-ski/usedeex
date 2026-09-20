@@ -1,8 +1,12 @@
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
+import PageTransition from "@/components/PageTransition";
+import { AppShell, PageHeader, SectionCard } from "@/components/dashboard/AppShell";
+import { cn } from "@/lib/utils";
 
-const notifications = [
+type Kind = "reward" | "login" | "session" | "promo";
+
+const notifications: { id: number; title: string; message: string; time: string; type: Kind }[] = [
   { id: 0, title: "You earned 200 DeeXpoints! 🎁", message: "Your first deposit unlocked the deposit reward from your invite code DX-WELCOME500.", time: "Today 3:12 PM", type: "reward" },
   { id: 1, title: "Login Notification", message: "You just successfully logged into your account. Happy trading!", time: "Today 1:43 PM", type: "login" },
   { id: 2, title: "Session Terminated", message: "Your previous session on device Galaxy S10 was terminated due to a new login from another device.", time: "Today 1:43 PM", type: "session" },
@@ -13,39 +17,71 @@ const notifications = [
   { id: 7, title: "SHARP ON WEEKDAYS, EVEN SHARPER ON WEEKENDS 😂", message: "Weekend vibes + DeeX rates = easy money. Trade now!", time: "Yesterday 2:15 PM", type: "promo" },
 ];
 
+const tabs = [
+  { id: "all", label: "All" },
+  { id: "reward", label: "Rewards" },
+  { id: "promo", label: "Offers" },
+] as const;
+
+const titleTone: Record<Kind, string> = {
+  reward: "text-brand-successText",
+  promo: "text-brand-amberBrown",
+  login: "text-brand-grey900",
+  session: "text-brand-grey900",
+};
+
 const Notifications = () => {
   const navigate = useNavigate();
+  const [tab, setTab] = useState<(typeof tabs)[number]["id"]>("all");
+
+  const visible = useMemo(
+    () => (tab === "all" ? notifications : notifications.filter((n) => n.type === tab)),
+    [tab],
+  );
 
   return (
-    <MobileLayout hideNav>
-      <div className="px-4 pt-4">
-        <div className="flex items-center mb-6">
-          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-            <ArrowLeft className="w-5 h-5 text-foreground" />
-          </button>
-          <h2 className="text-lg font-bold text-foreground w-full text-center">Notification</h2>
-        </div>
+    <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+      <PageTransition>
+        <PageHeader title="Notifications" onBack={() => navigate(-1)} />
 
-        <h3 className="text-base font-bold text-foreground mb-4">All</h3>
+        <SectionCard className="px-4 py-3">
+          <div role="tablist" aria-label="Filter notifications" className="flex items-center gap-3 rounded bg-brand-barBg p-0.5">
+            {tabs.map((t) => (
+              <button
+                key={t.id}
+                role="tab"
+                type="button"
+                aria-selected={tab === t.id}
+                onClick={() => setTab(t.id)}
+                className={cn(
+                  "shrink-0 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
+                  tab === t.id ? "bg-white text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                )}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </SectionCard>
 
-        <div className="bg-card rounded-2xl overflow-hidden">
-          {notifications.map((n, i) => (
-            <div key={n.id}>
-              <div className="px-5 py-4">
-                <p className={`text-sm font-semibold mb-1 ${n.type === "promo" ? "text-warning" : n.type === "reward" ? "text-success" : "text-foreground"}`}>
-                  {n.title}
-                </p>
-                <p className="text-sm text-muted-foreground leading-relaxed">{n.message}</p>
-                <p className="text-xs text-muted-foreground mt-2">{n.time}</p>
+        <SectionCard className="mt-3 px-4 py-0">
+          {visible.length === 0 ? (
+            <p className="py-12 text-center text-sm text-brand-bodyText">Nothing here yet.</p>
+          ) : (
+            visible.map((n, index) => (
+              <div
+                key={n.id}
+                className={cn("flex flex-col gap-1 py-4", index < visible.length - 1 && "border-b border-brand-grey100")}
+              >
+                <p className={cn("text-[15px] font-semibold leading-[1.4]", titleTone[n.type])}>{n.title}</p>
+                <p className="text-sm leading-[1.6] text-brand-bodyText">{n.message}</p>
+                <p className="text-xs leading-[1.3] text-brand-grey400">{n.time}</p>
               </div>
-              {i < notifications.length - 1 && (
-                <div className="mx-5 h-px bg-border" />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </MobileLayout>
+            ))
+          )}
+        </SectionCard>
+      </PageTransition>
+    </AppShell>
   );
 };
 

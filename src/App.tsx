@@ -33,6 +33,8 @@ import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import GenerateStatement from "./pages/GenerateStatement";
 import AboutDeeX from "./pages/AboutDeeX";
+import LegalDocument from "./pages/LegalDocument";
+import ChangePin from "./pages/ChangePin";
 import SecuritySettings from "./pages/SecuritySettings";
 import BankAccounts from "./pages/BankAccounts";
 import KycVerification from "./pages/KycVerification";
@@ -95,6 +97,8 @@ const App = () => (
             <Route path="/edit-profile" element={<EditProfile />} />
             <Route path="/generate-statement" element={<GenerateStatement />} />
             <Route path="/about" element={<AboutDeeX />} />
+            <Route path="/legal/:slug" element={<LegalDocument />} />
+            <Route path="/change-pin" element={<ChangePin />} />
             <Route path="/security" element={<SecuritySettings />} />
             <Route path="/bank-accounts" element={<BankAccounts />} />
             <Route path="/kyc" element={<KycVerification />} />
