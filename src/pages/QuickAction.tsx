@@ -13,7 +13,7 @@ import {
   GiftBoxIcon,
   GiftCardIcon,
   HeartsIcon,
-  EyeIcon,
+  ChevronRightIcon,
   LinkIcon,
   PercentIcon,
   PhoneCallIcon,
@@ -24,6 +24,7 @@ import {
   TagIcon,
   WebcamIcon,
 } from "@/components/dashboard/icons";
+import menuCardImage from "@/assets/cards/deex-card-menu.png";
 
 type Tile = { label: string; path: string; Icon: (props: { className?: string }) => JSX.Element };
 
@@ -82,6 +83,28 @@ const MenuPage = () => {
     </SectionCard>
   );
 
+  const renderCardRow = () => (
+    <SectionCard className="px-4 py-3">
+      <button
+        type="button"
+        onClick={() => navigate("/virtual-cards")}
+        className="flex w-full items-center justify-center gap-3 text-left"
+        aria-label="Open DeeX Card"
+      >
+        <img
+          src={menuCardImage}
+          alt="DeeX card ending in 1234"
+          className="h-[53px] w-[84px] shrink-0 rounded-md object-cover"
+        />
+        <span className="flex min-w-0 flex-1 flex-col gap-1">
+          <span className="truncate text-xs font-semibold leading-[1.4] text-brand-blue500">VISA Card ***4567</span>
+          <span className="text-xs leading-[1.3] text-brand-bodyText">Active</span>
+        </span>
+        <ChevronRightIcon className="size-[18px] shrink-0 text-brand-grey600" />
+      </button>
+    </SectionCard>
+  );
+
   return (
     <AppShell>
       <PageTransition>
@@ -103,38 +126,13 @@ const MenuPage = () => {
         </div>
 
         <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-5">
-          <div className="flex flex-col gap-3 lg:gap-5">{groups.slice(0, 2).map(renderGroup)}</div>
+          <div className="flex flex-col gap-3 lg:gap-5">
+            {renderGroup(groups[0])}
+            {renderCardRow()}
+            {renderGroup(groups[1])}
+          </div>
           <div className="flex flex-col gap-3 lg:gap-5">{groups.slice(2).map(renderGroup)}</div>
         </div>
-
-        <SectionCard className="mt-3 px-4 lg:mt-5">
-          <SectionHeader title="Virtual Card" />
-          <button
-            type="button"
-            onClick={() => navigate("/virtual-cards")}
-            className="group relative w-full overflow-hidden rounded-2xl bg-[#1d1f21] px-4 py-4 text-left text-white shadow-sm transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue500 focus-visible:ring-offset-2"
-            aria-label="Open virtual card details"
-          >
-            <div className="pointer-events-none absolute -right-10 -top-12 size-48 rounded-full border border-white/10" />
-            <div className="pointer-events-none absolute -bottom-20 right-16 h-56 w-px rotate-[38deg] bg-white/20" />
-            <div className="pointer-events-none absolute -bottom-20 right-28 h-56 w-px rotate-[38deg] bg-white/15" />
-
-            <div className="relative flex items-center justify-between">
-              <span className="rounded-full border border-white/40 px-3 py-1 text-[11px] font-medium tracking-wide text-white/90">
-                Virtual
-              </span>
-              <span className="text-xs font-medium text-white/70">DeeX</span>
-            </div>
-
-            <div className="relative mt-10 flex items-end justify-between gap-3">
-              <span className="text-sm font-medium text-white/90">Virtual Card *4291</span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/45 px-3 py-1.5 text-xs font-medium text-white/95 transition-colors group-hover:bg-white/10">
-                <EyeIcon className="size-4" />
-                View details
-              </span>
-            </div>
-          </button>
-        </SectionCard>
       </PageTransition>
 
       <FloatingNav />
