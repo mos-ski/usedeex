@@ -57,7 +57,7 @@ interface VCard {
 const mockCards: VCard[] = [
   {
     id: 1,
-    last4: "4291",
+    last4: "0000",
     label: "Shopping Card",
     balance: "$245.80",
     balanceNum: 245.8,
@@ -78,7 +78,7 @@ const mockCards: VCard[] = [
   },
   {
     id: 2,
-    last4: "7734",
+    last4: "1111",
     label: "Subscriptions",
     balance: "$48.20",
     balanceNum: 48.2,
@@ -112,7 +112,7 @@ const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
   const fields = (billingTab === "us"
     ? [
         ["Card holder name", "•••••••• ••••••••"],
-        ["Card number", "•••• •••• •••• 1234"],
+        ["Card number", "•••• •••• •••• 0000"],
         ["Expiry date", "••/••••"],
         ["CVV", "•••"],
         ["Billing address", "••••••••••••••••••••••••••••••••"],
@@ -120,7 +120,7 @@ const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
       ]
     : [
         ["Card holder name", "•••••••• ••••••••"],
-        ["Card number", "•••• •••• •••• 1234"],
+        ["Card number", "•••• •••• •••• 0000"],
         ["Expiry date", "••/••••"],
         ["CVV", "•••"],
         ["Billing address", "••••••••••••••••••••••••••••••••"],
@@ -367,7 +367,7 @@ const VirtualCards = () => {
             onClick={() => {
               const card: VCard = {
                 id: Date.now(),
-                last4: String(Math.floor(1000 + Math.random() * 9000)),
+                last4: "0000",
                 label: createLabel.trim(),
                 balance: "$0.00",
                 balanceNum: 0,
@@ -584,7 +584,7 @@ const VirtualCards = () => {
 
             <div className="flex items-center gap-2 pt-8">
               <p className="text-sm tracking-widest">
-                {showNumber ? `4532 7891 2345 ${selected.last4}` : `•••• •••• •••• ${selected.last4}`}
+                {showNumber ? `0000 0000 0000 ${selected.last4}` : `•••• •••• •••• ${selected.last4}`}
               </p>
               <button
                 type="button"
@@ -599,7 +599,7 @@ const VirtualCards = () => {
                   type="button"
                   aria-label="Copy card number"
                   onClick={() => {
-                    navigator.clipboard?.writeText(`4532789123456${selected.last4}`);
+                    navigator.clipboard?.writeText(`000000000000${selected.last4}`);
                     toast.success("Card number copied");
                   }}
                   className="text-brand-grey400"
