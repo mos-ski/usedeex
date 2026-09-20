@@ -44,6 +44,7 @@ import AdminUserDetail from "./pages/AdminUserDetail";
 import InviteEarn from "./pages/InviteEarn";
 import NotFound from "./pages/NotFound";
 import SignUp from "./pages/SignUp";
+import ForgotPassword from "./pages/ForgotPassword";
 import { InviteCodeProvider } from "./contexts/InviteCodeContext";
 
 const queryClient = new QueryClient();
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/pin" element={<Navigate to="/dashboard" replace />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/wallet" element={<Wallet />} />
             <Route path="/deposit" element={<Deposit />} />

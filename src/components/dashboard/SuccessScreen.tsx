@@ -28,6 +28,7 @@ export const SuccessScreen = ({
   onSecondary,
   tone = "brand",
   className,
+  contentClassName,
 }: {
   title: string;
   message: ReactNode;
@@ -39,6 +40,8 @@ export const SuccessScreen = ({
   /** "pending" swaps the brand gradient for the amber holding state. */
   tone?: "brand" | "pending";
   className?: string;
+  /** Per-screen vertical tuning without changing the shared success treatment. */
+  contentClassName?: string;
 }) => {
   const theme =
     tone === "pending"
@@ -65,7 +68,7 @@ export const SuccessScreen = ({
     />
 
     <PageTransition>
-      <div className="relative mx-auto flex min-h-screen w-full max-w-[420px] flex-col items-center px-4 pb-10 pt-[119px]">
+      <div className={cn("relative mx-auto flex min-h-screen w-full max-w-[420px] flex-col items-center px-4 pb-10 pt-[119px]", contentClassName)}>
         <CheckBadge className="size-[59px] shrink-0" fill={theme.tick} />
 
         <h1 className="mt-6 text-center font-gasoek text-[36px] uppercase leading-[1.01]">{title}</h1>

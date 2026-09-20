@@ -117,7 +117,7 @@ const Login = () => {
               }
             />
 
-            <button type="button" className="self-start text-xs leading-[1.3] text-brand-blue500">
+            <button type="button" onClick={() => navigate("/forgot-password")} className="self-start text-xs leading-[1.3] text-brand-blue500">
               Forgot Password?
             </button>
           </div>
