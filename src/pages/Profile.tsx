@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, SectionCard } from "@/components/dashboard/AppShell";
 import FloatingNav from "@/components/dashboard/FloatingNav";
@@ -7,6 +8,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import {
   CaretRightIcon,
   CardEditIcon,
+  CopyLinearIcon,
   EditPencilIcon,
   LockIcon,
   MoonIcon,
@@ -22,6 +24,7 @@ const account = {
   name: "Precious Ossai",
   email: "preciystar01@gmail.com",
   initials: "AB",
+  tag: "@Moski",
 };
 
 type Row = { title: string; detail: string; path: string; Icon: (props: { className?: string }) => JSX.Element };
@@ -87,6 +90,11 @@ const Profile = () => {
   const navigate = useNavigate();
   const { theme, toggle } = useTheme();
 
+  const copyTag = () => {
+    navigator.clipboard?.writeText(account.tag);
+    toast.success("DeeX tag copied");
+  };
+
   return (
     <AppShell topColor="bg-brand-deepNavy" innerClassName="lg:max-w-[760px] lg:px-4">
       <PageTransition>
@@ -103,7 +111,18 @@ const Profile = () => {
               <p className="max-w-[181px] text-center font-gasoek text-[33px] uppercase leading-[1.4] text-white">
                 {account.name}
               </p>
-              <p className="text-center text-[10px] uppercase leading-[1.6] text-brand-grey600">{account.email}</p>
+              <p className="text-center text-[10px] leading-[1.6] text-brand-grey600">{account.email}</p>
+
+              <button
+                type="button"
+                onClick={copyTag}
+                aria-label="Copy your DeeX tag"
+                className="flex items-center justify-center gap-0.5 transition-opacity hover:opacity-70"
+              >
+                <span className="text-[10px] leading-[1.6] text-brand-grey600">DeeX tag</span>
+                <span className="text-[10px] uppercase leading-[1.6] text-white">{account.tag}</span>
+                <CopyLinearIcon className="size-2.5 text-brand-blue500" />
+              </button>
             </div>
           </div>
         </div>
