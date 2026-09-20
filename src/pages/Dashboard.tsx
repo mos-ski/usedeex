@@ -19,7 +19,6 @@ import {
   PhoneCallIcon,
   PlusIcon,
   SendIcon,
-  SwapHorizontalIcon,
   SwapIcon,
 } from "@/components/dashboard/icons";
 import { cn } from "@/lib/utils";
@@ -181,10 +180,9 @@ const Dashboard = () => {
                       resetGiftCardCountry();
                       navigate("/giftcards");
                     }}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-brand-blue500 px-3 py-3 font-manrope text-[11px] font-semibold leading-[1.6] text-white transition-opacity hover:opacity-90"
+                    className="flex min-h-14 w-full items-center justify-center rounded-lg bg-brand-blue500 px-4 py-4 font-manrope text-sm font-semibold leading-[1.6] text-white transition-opacity hover:opacity-90"
                   >
-                    <SwapHorizontalIcon className="size-4" />
-                    Trade giftcard
+                    Trade Giftcard
                   </button>
                 </div>
               )}
