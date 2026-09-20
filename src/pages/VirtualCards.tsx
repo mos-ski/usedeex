@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader, PrimaryButton, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
+import { AmountEntry } from "@/components/dashboard/AmountEntry";
 import { TextField } from "@/components/dashboard/FormFields";
 import { StatusPill } from "@/components/dashboard/SettingsList";
 import PinEntry from "@/components/dashboard/PinEntry";
@@ -77,14 +78,24 @@ const mockCards: VCard[] = [
 const wallets = ["USDT", "BTC", "ETH"];
 
 const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
-  const fields = [
-    ["Card holder name", "Adedamola Adewale"],
-    ["Card number", "4549240639421454"],
-    ["Expiry date", "2/2030"],
-    ["CVV", "537"],
-    ["Billing address", "1007 N Orange St, 4th Floor Ste 1382, Wilmington, DE, 19801, US"],
-    ["Zip code", "19801"],
-  ] as const;
+  const [billingTab, setBillingTab] = useState<"local" | "us">("us");
+  const fields = (billingTab === "us"
+    ? [
+        ["Card holder name", "•••••••• ••••••••"],
+        ["Card number", "•••• •••• •••• 1234"],
+        ["Expiry date", "••/••••"],
+        ["CVV", "•••"],
+        ["Billing address", "••••••••••••••••••••••••••••••••"],
+        ["Zip code", "•••••"],
+      ]
+    : [
+        ["Card holder name", "•••••••• ••••••••"],
+        ["Card number", "•••• •••• •••• 1234"],
+        ["Expiry date", "••/••••"],
+        ["CVV", "•••"],
+        ["Billing address", "••••••••••••••••••••••••••••••••"],
+        ["Postal code", "•••••"],
+      ]) as readonly [string, string][];
 
   const copy = (value: string) => {
     navigator.clipboard?.writeText(value);
@@ -98,29 +109,30 @@ const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
         <div className="mx-auto w-full max-w-[560px] overflow-y-auto px-5 pb-8 pt-2">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-[17px] font-bold leading-[1.4] text-brand-grey900">Card details</p>
-            <button
-              type="button"
-              onClick={() => onOpenChange(false)}
-              className="rounded-full px-2 py-1 text-xs font-semibold text-brand-blue500"
-            >
-              Done
-            </button>
           </div>
 
           <div role="tablist" aria-label="Billing address" className="mb-5 flex items-center gap-3 rounded bg-brand-barBg p-0.5">
             <button
               type="button"
               role="tab"
-              aria-selected={false}
-              className="flex-1 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900"
+              aria-selected={billingTab === "local"}
+              onClick={() => setBillingTab("local")}
+              className={cn(
+                "flex-1 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
+                billingTab === "local" ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900",
+              )}
             >
               Local Billing Address
             </button>
             <button
               type="button"
               role="tab"
-              aria-selected
-              className="flex-1 rounded bg-brand-surface px-2 py-1.5 text-xs font-semibold leading-[1.4] text-brand-blue500"
+              aria-selected={billingTab === "us"}
+              onClick={() => setBillingTab("us")}
+              className={cn(
+                "flex-1 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
+                billingTab === "us" ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900",
+              )}
             >
               US Billing Address
             </button>
@@ -143,6 +155,9 @@ const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
                 </button>
               </div>
             ))}
+          </div>
+          <div className="pt-6">
+            <PrimaryButton onClick={() => onOpenChange(false)}>Done</PrimaryButton>
           </div>
         </div>
       </DrawerContent>
@@ -343,36 +358,26 @@ const VirtualCards = () => {
 
   /* ---------------- Fund ---------------- */
   if (view === "fund" && selected) {
-    return shell("Fund Card", () => setView("detail"), (
-      <>
-        <SectionCard className="px-4 py-4">
-          <p className="text-xs leading-[1.3] text-brand-bodyText">{selected.label}</p>
-          <p className="text-[17px] font-bold leading-[1.4] text-brand-grey900">{selected.balance}</p>
-        </SectionCard>
-
-        <SectionCard className="mt-3 flex flex-col gap-4 px-4 py-5">
-          <TextField
-            label="Amount (USD)"
-            inputMode="decimal"
-            placeholder="0.00"
-            value={fundAmount}
-            onChange={(e) => setFundAmount(e.target.value.replace(/[^\d.]/g, ""))}
-          />
-          <WalletPicker value={wallet} onChange={setWallet} />
-
-          <PrimaryButton
-            disabled={!fundAmount || Number(fundAmount) <= 0}
-            onClick={() => {
-              toast.success(`$${fundAmount} funded to card`);
-              setFundAmount("");
-              setView("detail");
-            }}
-          >
-            Fund Card
-          </PrimaryButton>
-        </SectionCard>
-      </>
-    ));
+    return (
+      <AmountEntry
+        title="Top Up"
+        onBack={() => setView("list")}
+        value={fundAmount}
+        onValueChange={setFundAmount}
+        fromSymbol={wallet}
+        fromOptions={wallets.map((symbol) => ({ symbol, name: symbol }))}
+        onFromChange={setWallet}
+        toSymbol="USD"
+        convertedText={`$${fundAmount || "0.00"}`}
+        submitLabel="Top Up"
+        submitDisabled={!fundAmount || Number(fundAmount) <= 0}
+        onSubmit={() => {
+          toast.success(`$${fundAmount} funded to card`);
+          setFundAmount("");
+          setView("list");
+        }}
+      />
+    );
   }
 
   /* ---------------- Limits ---------------- */
@@ -660,7 +665,10 @@ const VirtualCards = () => {
           <div className="grid grid-cols-3 gap-1">
             <button
               type="button"
-              onClick={() => setView("fund")}
+              onClick={() => {
+                setSelectedId(primaryCard?.id ?? null);
+                setView("fund");
+              }}
               className="flex h-[60px] flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint text-brand-navy transition-colors hover:bg-brand-primary100"
             >
               <img src={figmaTopUpIcon} alt="" className="size-6" />
