@@ -106,11 +106,16 @@ export const AmountEntry = ({
   submitDisabled?: boolean;
   onSubmit: () => void;
 }) => (
-  <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
-    <PageTransition>
+  // Fills the viewport so the amount sits in the middle and the footer rides
+  // just above the keyboard, instead of both bunching under the header.
+  <AppShell
+    className="bg-white"
+    innerClassName="flex min-h-[100dvh] flex-col pb-6 sm:pb-8 lg:max-w-[480px] lg:px-4"
+  >
+    <PageTransition className="flex flex-1 flex-col">
       <PageHeader title={title} onBack={onBack} />
 
-      <div className="flex flex-col items-end gap-1 px-4 py-14 sm:py-16">
+      <div className="flex flex-1 flex-col items-end justify-center gap-1 px-4 py-8">
         <div className="flex w-full items-center justify-end gap-2">
           <input
             value={value}
