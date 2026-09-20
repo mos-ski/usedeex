@@ -28,6 +28,10 @@ import {
 import { cn } from "@/lib/utils";
 import BalanceToggle from "@/components/dashboard/BalanceToggle";
 import { maskAmount, useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
+import cardBase from "@/assets/cards/figma313/card-base.png";
+import cardLines from "@/assets/cards/figma313/lines.svg";
+import mastercardMark from "@/assets/cards/figma313/mastercard.svg";
+import deexMark from "@/assets/cards/figma313/deex-mark.svg";
 
 const figmaTopUpIcon = "https://www.figma.com/api/mcp/asset/ffe8128f-528b-48be-9a92-a374a93fc0cf/2ba4d.svg";
 const figmaManageIcon = "https://www.figma.com/api/mcp/asset/ffe8128f-528b-48be-9a92-a374a93fc0cf/9dfcd.svg";
@@ -108,29 +112,25 @@ const topUpCoins = [
   { symbol: "USDC", name: "US Dollar Coin", networks: [], usd: 2100 },
 ];
 
-/** The card face is intentionally built as HTML/CSS so the card remains an interactive UI component. */
+/** Figma 313:40398 card face, assembled from the exported card layers and live text. */
 const VirtualCardFace = ({ last4 }: { last4: string }) => (
   <span
-    className="relative mx-auto block aspect-[1.62/1] w-full max-w-[360px] overflow-hidden rounded-[18px] border border-white/10 bg-[#0E3155] text-left shadow-[0_12px_24px_rgba(0,0,0,0.22)]"
-    style={{
-      backgroundImage:
-        "radial-gradient(ellipse at 12% 92%, transparent 0 31%, rgba(142,180,207,.25) 31.5% 32%, transparent 32.5% 37%, rgba(142,180,207,.22) 37.5% 38%, transparent 38.5% 43%, rgba(142,180,207,.2) 43.5% 44%, transparent 44.5%), repeating-linear-gradient(155deg, transparent 0 17px, rgba(142,180,207,.22) 18px 19px, transparent 20px 27px)",
-    }}
+    className="relative mx-auto block aspect-[327/190] w-full max-w-[327px] overflow-hidden rounded-[20px] text-left shadow-[8px_10px_16px_rgba(0,0,0,0.05)]"
   >
-    <span className="absolute inset-0 bg-gradient-to-br from-[#183F68]/80 via-transparent to-[#061A32]/60" />
-    <span className="relative flex h-full flex-col justify-between p-5 text-white sm:p-6">
-      <span className="flex items-center justify-between">
-        <span className="text-[19px] font-black tracking-[-0.08em] text-white">❯DEEX</span>
-        <span className="text-[11px] font-bold tracking-[0.18em] text-white/70">VIRTUAL</span>
-      </span>
-      <span className="flex flex-col gap-2">
-        <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-white/75">Card number</span>
-        <span className="text-[15px] font-semibold tracking-[0.18em] text-white">•••• •••• •••• {last4}</span>
-        <span className="flex items-end justify-between pt-1 text-[10px] uppercase tracking-[0.15em] text-white/70">
-          <span>Alex Johnson</span>
-          <span>12/30</span>
-        </span>
-      </span>
+    <img src={cardBase} alt="" className="absolute inset-0 size-full" />
+    <img src={cardLines} alt="" className="absolute left-[calc(50%+7.15%)] bottom-[-36.3%] h-[115.3%] w-[200.2%] max-w-none -translate-x-1/2" />
+    <img src={deexMark} alt="DeeX" className="absolute left-[13.5%] top-[16.6%] h-auto w-[17.1%]" />
+    <span className="absolute left-[4.9%] top-[67.4%] font-roboto text-[clamp(9px,3.7vw,12px)] font-semibold uppercase leading-none tracking-[0.05em] text-white">
+      CARD HOLDER
+    </span>
+    <span className="absolute right-[36%] top-[67.4%] font-roboto text-[clamp(9px,3.7vw,12px)] font-semibold leading-none tracking-[0.05em] text-white">
+      12/30
+    </span>
+    <span className="absolute left-[4.9%] top-[80%] font-roboto text-[clamp(12px,4.9vw,16px)] font-semibold leading-none tracking-[0.15em] text-white">
+      **** {last4}
+    </span>
+    <span className="absolute left-[78%] top-[74.7%] flex h-[16.8%] w-[13.9%] items-center justify-center rounded-[4px] bg-white/10">
+      <img src={mastercardMark} alt="Mastercard" className="h-[54%] w-[66%]" />
     </span>
   </span>
 );
@@ -139,7 +139,7 @@ const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
   const [billingTab, setBillingTab] = useState<"local" | "us">("us");
   const fields = (billingTab === "us"
     ? [
-        ["Card holder name", "Alex Johnson"],
+        ["Card holder name", "CARD HOLDER"],
         ["Card number", "4242 4242 4242 4242"],
         ["Expiry date", "12/30"],
         ["CVV", "000"],
@@ -147,7 +147,7 @@ const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
         ["Zip code", "19801"],
       ]
     : [
-        ["Card holder name", "Alex Johnson"],
+        ["Card holder name", "CARD HOLDER"],
         ["Card number", "4242 4242 4242 4242"],
         ["Expiry date", "12/30"],
         ["CVV", "000"],
