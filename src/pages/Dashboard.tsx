@@ -192,7 +192,6 @@ const Dashboard = () => {
                       ) : (
                         <span className="flex items-center gap-1">
                           <AssetMark symbol={activeRateQuotes[Math.floor(rateStep / 2) % activeRateQuotes.length].symbol} className="size-3" />
-                          <span>{activeRateQuotes[Math.floor(rateStep / 2) % activeRateQuotes.length].symbol}</span>
                           <span>{activeRateQuotes[Math.floor(rateStep / 2) % activeRateQuotes.length].value}</span>
                         </span>
                       )}
