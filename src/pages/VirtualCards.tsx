@@ -106,9 +106,23 @@ const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
             </button>
           </div>
 
-          <div className="mb-5 flex rounded-full bg-brand-grey50 p-1 text-sm font-medium">
-            <span className="flex-1 rounded-full px-3 py-2 text-center text-brand-bodyText">Local Billing Address</span>
-            <span className="flex-1 rounded-full bg-brand-surface px-3 py-2 text-center text-brand-grey900 shadow-sm">US Billing Address</span>
+          <div role="tablist" aria-label="Billing address" className="mb-5 flex items-center gap-3 rounded bg-brand-barBg p-0.5">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={false}
+              className="flex-1 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900"
+            >
+              Local Billing Address
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected
+              className="flex-1 rounded bg-brand-surface px-2 py-1.5 text-xs font-semibold leading-[1.4] text-brand-blue500"
+            >
+              US Billing Address
+            </button>
           </div>
 
           <div className="flex flex-col">
