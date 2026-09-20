@@ -1,13 +1,29 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Building2, Star, Trash2, CheckCircle2, Wallet, Phone } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
-import PageTransition from "@/components/PageTransition";
-import NewBadge from "@/components/NewBadge";
-import CryptoIcon from "@/components/CryptoIcon";
 import { toast } from "sonner";
+import PageTransition from "@/components/PageTransition";
+import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
+import AssetMark from "@/components/dashboard/AssetMark";
+import { SelectField, TextField } from "@/components/dashboard/FormFields";
+import { StatusPill } from "@/components/dashboard/SettingsList";
+import { BankIcon, PhoneCallIcon, PlusIcon } from "@/components/dashboard/icons";
+import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
+import { cn } from "@/lib/utils";
 
-type BeneficiaryTab = "banks" | "wallets" | "bills";
+type Tab = "banks" | "wallets" | "bills";
+
+const tabs: { key: Tab; label: string; cta: string }[] = [
+  { key: "banks", label: "Banks", cta: "Add Bank Account" },
+  { key: "wallets", label: "Wallets", cta: "Add Wallet Address" },
+  { key: "bills", label: "Bills", cta: "Add Bill Beneficiary" },
+];
+
+const bankNames = ["PalmPay", "Opay", "GTBank", "Access Bank", "UBA", "Zenith Bank", "First Bank"].map((b) => ({
+  value: b,
+  label: b,
+}));
+
+const billTypes = ["Airtime", "Data", "Electricity", "Betting"].map((t) => ({ value: t, label: t }));
 
 const initialBanks = [
   { id: 1, bank: "PalmPay", account: "8103674006", name: "JOHN DOE", isDefault: true, verified: true },
@@ -18,7 +34,7 @@ const initialBanks = [
 const initialWallets = [
   { id: 1, label: "Main BTC Wallet", address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh", network: "Bitcoin", symbol: "BTC" },
   { id: 2, label: "Trading USDT", address: "TJYs...X8nP", network: "TRC-20", symbol: "USDT" },
-  { id: 3, label: "@adebayo", address: "@adebayo", network: "DeeX Username", symbol: "USER" },
+  { id: 3, label: "@adebayo", address: "@adebayo", network: "DeeX Username", symbol: "NGN" },
 ];
 
 const initialBills = [
@@ -27,157 +43,249 @@ const initialBills = [
   { id: 3, label: "Bet9ja", type: "Betting", number: "BET9JA-123456", provider: "Bet9ja" },
 ];
 
+/** One saved destination: mark, label over detail, then the row's actions. */
+const BeneficiaryRow = ({
+  mark,
+  title,
+  detail,
+  pills,
+  actions,
+}: {
+  mark: React.ReactNode;
+  title: string;
+  detail: string;
+  pills?: React.ReactNode;
+  actions: React.ReactNode;
+}) => (
+  <div className="flex flex-col gap-2 border-b border-brand-grey100 py-3 last:border-b-0">
+    <div className="flex items-center gap-4">
+      {mark}
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="flex items-center gap-2">
+          <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">{title}</span>
+          {pills}
+        </span>
+        <span className="truncate text-xs leading-[1.3] text-brand-bodyText">{detail}</span>
+      </span>
+    </div>
+    <div className="flex items-center gap-4 pl-12">{actions}</div>
+  </div>
+);
+
+const actionClass = "text-xs font-semibold leading-[1.4] transition-opacity hover:opacity-70";
+
+/** Bank and Cards — the saved payout destinations, reached from Account. */
 const BankAccounts = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<BeneficiaryTab>("banks");
+  const [tab, setTab] = useState<Tab>("banks");
+  const [addOpen, setAddOpen] = useState(false);
+
   const [banks, setBanks] = useState(initialBanks);
   const [wallets, setWallets] = useState(initialWallets);
   const [bills, setBills] = useState(initialBills);
-  const [showAdd, setShowAdd] = useState(false);
 
-  const setDefault = (id: number) => setBanks(banks.map(b => ({ ...b, isDefault: b.id === id })));
-  const removeBank = (id: number) => { setBanks(banks.filter(b => b.id !== id)); toast.success("Bank removed"); };
-  const removeWallet = (id: number) => { setWallets(wallets.filter(w => w.id !== id)); toast.success("Wallet removed"); };
-  const removeBill = (id: number) => { setBills(bills.filter(b => b.id !== id)); toast.success("Beneficiary removed"); };
+  // New-entry draft, reused by all three sheets.
+  const [draft, setDraft] = useState({ bank: bankNames[0].value, account: "", label: "", address: "", network: "", type: billTypes[0].value, number: "" });
+  const patch = (next: Partial<typeof draft>) => setDraft((d) => ({ ...d, ...next }));
 
-  const tabs: { key: BeneficiaryTab; label: string }[] = [
-    { key: "banks", label: "Banks" },
-    { key: "wallets", label: "Wallets" },
-    { key: "bills", label: "Bills" },
-  ];
+  const closeSheet = () => {
+    setAddOpen(false);
+    setDraft({ bank: bankNames[0].value, account: "", label: "", address: "", network: "", type: billTypes[0].value, number: "" });
+  };
+
+  const addEntry = () => {
+    if (tab === "banks") {
+      setBanks((list) => [...list, { id: Date.now(), bank: draft.bank, account: draft.account, name: "JOHN DOE", isDefault: false, verified: false }]);
+      toast.success("Bank added");
+    } else if (tab === "wallets") {
+      setWallets((list) => [...list, { id: Date.now(), label: draft.label, address: draft.address, network: draft.network || "DeeX Username", symbol: "USDT" }]);
+      toast.success("Wallet saved");
+    } else {
+      setBills((list) => [...list, { id: Date.now(), label: draft.label, type: draft.type, number: draft.number, provider: draft.label.split(" ")[0] }]);
+      toast.success("Beneficiary saved");
+    }
+    closeSheet();
+  };
+
+  const canAdd =
+    tab === "banks"
+      ? draft.account.length >= 10
+      : tab === "wallets"
+        ? Boolean(draft.label.trim() && draft.address.trim())
+        : Boolean(draft.label.trim() && draft.number.trim());
+
+  const active = tabs.find((t) => t.key === tab)!;
 
   return (
-    <MobileLayout hideNav>
+    <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
       <PageTransition>
-        <div className="px-4 pt-4">
-          <div className="flex items-center gap-3 mb-4">
-            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-            <h2 className="text-lg font-bold text-foreground">Manage Beneficiaries</h2>
-            <NewBadge />
-          </div>
+        <PageHeader title="Bank and Cards" onBack={() => navigate(-1)} />
 
-          {/* Tabs */}
-          <div className="flex gap-1 bg-secondary rounded-xl p-1 mb-5">
-            {tabs.map(t => (
-              <button key={t.key} onClick={() => { setActiveTab(t.key); setShowAdd(false); }}
-                className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === t.key ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
+        <SectionCard className="px-4 py-3">
+          <div role="tablist" aria-label="Beneficiary type" className="flex items-center gap-3 rounded bg-brand-barBg p-0.5">
+            {tabs.map((t) => (
+              <button
+                key={t.key}
+                role="tab"
+                type="button"
+                aria-selected={tab === t.key}
+                onClick={() => setTab(t.key)}
+                className={cn(
+                  "shrink-0 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
+                  tab === t.key ? "bg-white text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                )}
+              >
                 {t.label}
               </button>
             ))}
           </div>
+        </SectionCard>
 
-          {/* Banks Tab */}
-          {activeTab === "banks" && (
-            <>
-              <div className="space-y-3 mb-6">
-                {banks.map(b => (
-                  <div key={b.id} className={`bg-card border rounded-xl p-4 ${b.isDefault ? "border-primary" : "border-border"}`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-muted-foreground" />
-                        <span className="text-sm font-semibold text-foreground">{b.bank}</span>
-                        {b.isDefault && <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded">Default</span>}
-                        {b.verified ? <CheckCircle2 className="w-4 h-4 text-success" /> : <span className="text-[10px] bg-warning/20 text-warning px-1.5 py-0.5 rounded">Pending</span>}
-                      </div>
-                    </div>
-                    <p className="text-sm text-foreground font-mono mb-1">{b.account}</p>
-                    <p className="text-xs text-muted-foreground mb-3">{b.name}</p>
-                    <div className="flex gap-2">
-                      {!b.isDefault && <button onClick={() => setDefault(b.id)} className="flex items-center gap-1 text-xs text-primary"><Star className="w-3 h-3" /> Set Default</button>}
-                      <button onClick={() => removeBank(b.id)} className="flex items-center gap-1 text-xs text-destructive ml-auto"><Trash2 className="w-3 h-3" /> Remove</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button onClick={() => setShowAdd(!showAdd)} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold flex items-center justify-center gap-2">
-                <Plus className="w-5 h-5" /> Add Bank Account
-              </button>
-              {showAdd && (
-                <div className="mt-4 bg-card border border-border rounded-xl p-4 space-y-3">
-                  <input placeholder="Bank name" className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary" />
-                  <input placeholder="Account number" className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary" />
-                  <button onClick={() => { setShowAdd(false); toast.success("Bank added"); }} className="w-full h-12 bg-success rounded-xl text-foreground font-semibold">Verify & Add</button>
-                </div>
-              )}
-            </>
-          )}
+        <SectionCard className="mt-3 px-4 py-0">
+          {tab === "banks" &&
+            banks.map((b) => (
+              <BeneficiaryRow
+                key={b.id}
+                mark={<AssetMark symbol={b.bank} />}
+                title={b.bank}
+                detail={`${b.account} • ${b.name}`}
+                pills={
+                  <>
+                    {b.isDefault && <StatusPill tone="good">Default</StatusPill>}
+                    {!b.verified && <StatusPill tone="neutral">Pending</StatusPill>}
+                  </>
+                }
+                actions={
+                  <>
+                    {!b.isDefault && (
+                      <button
+                        type="button"
+                        onClick={() => setBanks((list) => list.map((x) => ({ ...x, isDefault: x.id === b.id })))}
+                        className={cn(actionClass, "text-brand-blue500")}
+                      >
+                        Set default
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBanks((list) => list.filter((x) => x.id !== b.id));
+                        toast.success("Bank removed");
+                      }}
+                      className={cn(actionClass, "ml-auto text-brand-danger")}
+                    >
+                      Remove
+                    </button>
+                  </>
+                }
+              />
+            ))}
 
-          {/* Wallets Tab */}
-          {activeTab === "wallets" && (
-            <>
-              <div className="space-y-3 mb-6">
-                {wallets.map(w => (
-                  <div key={w.id} className="bg-card border border-border rounded-xl p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      {w.symbol === "USER" ? (
-                        <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center"><Wallet className="w-4 h-4 text-primary" /></div>
-                      ) : (
-                        <CryptoIcon symbol={w.symbol} size="sm" />
-                      )}
-                      <div className="flex-1">
-                        <p className="text-sm font-semibold text-foreground">{w.label}</p>
-                        <p className="text-xs text-muted-foreground">{w.network}</p>
-                      </div>
-                      <button onClick={() => removeWallet(w.id)} className="text-destructive"><Trash2 className="w-4 h-4" /></button>
-                    </div>
-                    <p className="text-xs text-muted-foreground font-mono break-all">{w.address}</p>
-                  </div>
-                ))}
-              </div>
-              <button onClick={() => setShowAdd(!showAdd)} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold flex items-center justify-center gap-2">
-                <Plus className="w-5 h-5" /> Add Wallet Address
-              </button>
-              {showAdd && (
-                <div className="mt-4 bg-card border border-border rounded-xl p-4 space-y-3">
-                  <input placeholder="Label (e.g. Main BTC Wallet)" className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary" />
-                  <input placeholder="Wallet address or @username" className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary font-mono" />
-                  <input placeholder="Network (e.g. TRC-20, BEP-20)" className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary" />
-                  <button onClick={() => { setShowAdd(false); toast.success("Wallet saved"); }} className="w-full h-12 bg-success rounded-xl text-foreground font-semibold">Save Wallet</button>
-                </div>
-              )}
-            </>
-          )}
+          {tab === "wallets" &&
+            wallets.map((w) => (
+              <BeneficiaryRow
+                key={w.id}
+                mark={<AssetMark symbol={w.symbol} />}
+                title={w.label}
+                detail={`${w.network} • ${w.address}`}
+                actions={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setWallets((list) => list.filter((x) => x.id !== w.id));
+                      toast.success("Wallet removed");
+                    }}
+                    className={cn(actionClass, "ml-auto text-brand-danger")}
+                  >
+                    Remove
+                  </button>
+                }
+              />
+            ))}
 
-          {/* Bills Tab */}
-          {activeTab === "bills" && (
-            <>
-              <div className="space-y-3 mb-6">
-                {bills.map(b => (
-                  <div key={b.id} className="bg-card border border-border rounded-xl p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center"><Phone className="w-4 h-4 text-primary" /></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-semibold text-foreground">{b.label}</p>
-                        <p className="text-xs text-muted-foreground">{b.type} • {b.provider}</p>
-                      </div>
-                      <button onClick={() => removeBill(b.id)} className="text-destructive"><Trash2 className="w-4 h-4" /></button>
-                    </div>
-                    <p className="text-sm text-muted-foreground font-mono">{b.number}</p>
-                  </div>
-                ))}
-              </div>
-              <button onClick={() => setShowAdd(!showAdd)} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold flex items-center justify-center gap-2">
-                <Plus className="w-5 h-5" /> Add Bill Beneficiary
-              </button>
-              {showAdd && (
-                <div className="mt-4 bg-card border border-border rounded-xl p-4 space-y-3">
-                  <input placeholder="Label (e.g. MTN - Personal)" className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary" />
-                  <select className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary">
-                    <option value="">Select type</option>
-                    <option value="Airtime">Airtime</option>
-                    <option value="Data">Data</option>
-                    <option value="Electricity">Electricity</option>
-                    <option value="Betting">Betting</option>
-                  </select>
-                  <input placeholder="Phone/Meter/Account number" className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary" />
-                  <button onClick={() => { setShowAdd(false); toast.success("Beneficiary saved"); }} className="w-full h-12 bg-success rounded-xl text-foreground font-semibold">Save Beneficiary</button>
-                </div>
-              )}
-            </>
+          {tab === "bills" &&
+            bills.map((b) => (
+              <BeneficiaryRow
+                key={b.id}
+                mark={
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-tint text-brand-blue500">
+                    <PhoneCallIcon className="size-4" />
+                  </span>
+                }
+                title={b.label}
+                detail={`${b.type} • ${b.number}`}
+                actions={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBills((list) => list.filter((x) => x.id !== b.id));
+                      toast.success("Beneficiary removed");
+                    }}
+                    className={cn(actionClass, "ml-auto text-brand-danger")}
+                  >
+                    Remove
+                  </button>
+                }
+              />
+            ))}
+
+          {((tab === "banks" && banks.length === 0) ||
+            (tab === "wallets" && wallets.length === 0) ||
+            (tab === "bills" && bills.length === 0)) && (
+            <p className="py-12 text-center text-sm text-brand-bodyText">Nothing saved yet.</p>
           )}
+        </SectionCard>
+
+        <div className="px-4 pt-6">
+          <PrimaryButton onClick={() => setAddOpen(true)}>
+            <PlusIcon className="size-5" />
+            {active.cta}
+          </PrimaryButton>
         </div>
       </PageTransition>
-    </MobileLayout>
+
+      <Drawer open={addOpen} onOpenChange={(open) => (open ? setAddOpen(true) : closeSheet())}>
+        <DrawerContent className="border-brand-grey100 bg-white font-roboto">
+          <DrawerTitle className="sr-only">{active.cta}</DrawerTitle>
+          <div className="mx-auto flex w-full max-w-[560px] flex-col gap-4 px-4 pb-8">
+            <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">{active.cta}</p>
+
+            {tab === "banks" && (
+              <>
+                <SelectField label="Bank" value={draft.bank} options={bankNames} onChange={(bank) => patch({ bank })} />
+                <TextField
+                  label="Account number"
+                  inputMode="numeric"
+                  placeholder="0123456789"
+                  value={draft.account}
+                  onChange={(e) => patch({ account: e.target.value.replace(/\D/g, "").slice(0, 10) })}
+                />
+              </>
+            )}
+
+            {tab === "wallets" && (
+              <>
+                <TextField label="Label" placeholder="E.g Main BTC Wallet" value={draft.label} onChange={(e) => patch({ label: e.target.value })} />
+                <TextField label="Wallet address or @username" placeholder="0x… or @username" value={draft.address} onChange={(e) => patch({ address: e.target.value })} />
+                <TextField label="Network" placeholder="E.g TRC-20" value={draft.network} onChange={(e) => patch({ network: e.target.value })} />
+              </>
+            )}
+
+            {tab === "bills" && (
+              <>
+                <TextField label="Label" placeholder="E.g MTN - Personal" value={draft.label} onChange={(e) => patch({ label: e.target.value })} />
+                <SelectField label="Type" value={draft.type} options={billTypes} onChange={(type) => patch({ type })} />
+                <TextField label="Phone, meter or account number" value={draft.number} onChange={(e) => patch({ number: e.target.value })} />
+              </>
+            )}
+
+            <PrimaryButton className="mt-2" disabled={!canAdd} onClick={addEntry}>
+              {tab === "banks" ? "Verify & Add" : "Save"}
+            </PrimaryButton>
+          </div>
+        </DrawerContent>
+      </Drawer>
+    </AppShell>
   );
 };
 

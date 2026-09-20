@@ -36,7 +36,7 @@ const rows: Row[] = [
   { title: "Bank and Cards", detail: "Generate statement", path: "/bank-accounts", Icon: CardEditIcon },
   { title: "Generate statement", detail: "Get your statement of account", path: "/generate-statement", Icon: ReceiptIcon },
   { title: "KYC Verification", detail: "Verify account", path: "/kyc", Icon: VerifyIcon },
-  { title: "Refer & Earn", detail: "Refer friends and earn commission", path: "/referrals", Icon: PeopleIcon },
+  { title: "Refer & Earn", detail: "Refer friends and earn commission", path: "/rewards", Icon: PeopleIcon },
   { title: "About DeeX", detail: "About, Contact and Privacy Policy", path: "/about", Icon: MessageQuestionIcon },
 ];
 
