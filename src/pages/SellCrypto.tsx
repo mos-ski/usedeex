@@ -7,7 +7,7 @@ import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
 import AssetMark from "@/components/dashboard/AssetMark";
 import { ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import { ArrowRightIcon, BankIcon } from "@/components/dashboard/icons";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import OptionSheet from "@/components/dashboard/OptionSheet";
 import { NGN_PER_USD, formatNgn, trimZeros } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +35,7 @@ const SellCrypto = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>("amount");
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [bankOpen, setBankOpen] = useState(false);
   const [symbol, setSymbol] = useState("USDT");
   const [bank, setBank] = useState(banks[0]);
   const [raw, setRaw] = useState("");
@@ -162,8 +163,12 @@ const SellCrypto = () => {
       toSymbol="NGN"
       convertedText={ngn ? Math.round(ngn).toLocaleString("en-US") : "0"}
       footer={
-        <Popover>
-          <PopoverTrigger className="w-full border-b border-brand-grey100 py-3 text-left">
+        <button
+          type="button"
+          onClick={() => setBankOpen(true)}
+          aria-label="Choose payout account"
+          className="w-full border-b border-brand-grey100 py-3 text-left"
+        >
             <span className="flex items-center gap-4">
               <span className="flex size-[30px] shrink-0 items-center justify-center rounded-full bg-brand-blue500 text-white">
                 <BankIcon className="size-3" />
@@ -181,35 +186,38 @@ const SellCrypto = () => {
                 Payout more than 5M will be paid in batches
               </span>
             )}
-          </PopoverTrigger>
-          <PopoverContent align="start" className="w-64 border-brand-grey100 bg-brand-surface p-1">
-            {banks.map((b) => (
-              <button
-                key={b.id}
-                type="button"
-                onClick={() => setBank(b)}
-                className={cn(
-                  "flex w-full flex-col rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50",
-                  bank.id === b.id && "bg-brand-tint",
-                )}
-              >
-                <span className="text-[10px] text-brand-bodyText">{b.name}</span>
-                <span className="text-xs font-semibold text-brand-grey900">{b.account}</span>
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => navigate("/bank-accounts")}
-              className="w-full rounded px-2 py-2 text-left text-xs font-medium text-brand-blue500 hover:bg-brand-grey50"
-            >
-              Manage accounts
-            </button>
-          </PopoverContent>
-        </Popover>
+        </button>
       }
       submitDisabled={!ready}
       onSubmit={() => setReviewOpen(true)}
     />
+
+      <OptionSheet
+        open={bankOpen}
+        onOpenChange={setBankOpen}
+        title="Payout account"
+        value={String(bank.id)}
+        options={banks.map((b) => ({
+          value: String(b.id),
+          label: b.account,
+          detail: b.name,
+          mark: (
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-blue500 text-white">
+              <BankIcon className="size-3" />
+            </span>
+          ),
+        }))}
+        onSelect={(id) => setBank(banks.find((b) => String(b.id) === id) ?? banks[0])}
+        footer={
+          <button
+            type="button"
+            onClick={() => navigate("/bank-accounts")}
+            className="w-full py-2 text-center text-xs font-semibold text-brand-blue500"
+          >
+            Manage accounts
+          </button>
+        }
+      />
 
       {/* Review (Figma 285:10690) — the trade is confirmed in a sheet, not a page. */}
       <ReviewSheet

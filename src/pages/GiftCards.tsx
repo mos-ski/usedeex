@@ -13,7 +13,7 @@ import {
   MinusIcon,
   PlusIcon,
 } from "@/components/dashboard/icons";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import OptionSheet from "@/components/dashboard/OptionSheet";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import { nairaWalletBalance } from "@/data/nairaWalletData";
 import { formatNgn } from "@/lib/format";
@@ -69,6 +69,7 @@ const GiftCards = () => {
   const [denomOpen, setDenomOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [countryOpen, setCountryOpen] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const visibleBrands = useMemo(() => {
@@ -125,34 +126,18 @@ const GiftCards = () => {
 
           <div className="flex flex-col gap-3 px-4">
             <div className="flex justify-center">
-              <Popover>
-                <PopoverTrigger
-                  aria-label="Choose country"
-                  className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
-                >
-                  <CaretDownIcon className="size-3 text-brand-grey900" />
-                  <span className="text-base leading-none">{country.flag}</span>
-                  <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">
-                    {country.code === "US" ? "Select Country" : country.name}
-                  </span>
-                </PopoverTrigger>
-                <PopoverContent align="center" className="w-52 border-brand-grey100 bg-brand-surface p-1">
-                  {countries.map((c) => (
-                    <button
-                      key={c.code}
-                      type="button"
-                      onClick={() => setCountry(c)}
-                      className={cn(
-                        "flex w-full items-center gap-2 rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50",
-                        country.code === c.code && "bg-brand-tint",
-                      )}
-                    >
-                      <span className="text-base leading-none">{c.flag}</span>
-                      <span className="text-xs font-semibold text-brand-grey900">{c.name}</span>
-                    </button>
-                  ))}
-                </PopoverContent>
-              </Popover>
+              <button
+                type="button"
+                aria-label="Choose country"
+                onClick={() => setCountryOpen(true)}
+                className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
+              >
+                <CaretDownIcon className="size-3 text-brand-grey900" />
+                <span className="text-base leading-none">{country.flag}</span>
+                <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">
+                  {country.code === "US" ? "Select Country" : country.name}
+                </span>
+              </button>
             </div>
 
             <input
@@ -213,6 +198,19 @@ const GiftCards = () => {
             </PrimaryButton>
           </div>
         </PageTransition>
+
+      <OptionSheet
+        open={countryOpen}
+        onOpenChange={setCountryOpen}
+        title="Select Country"
+        value={country.code}
+        options={countries.map((c) => ({
+          value: c.code,
+          label: c.name,
+          mark: <span className="flex size-8 shrink-0 items-center justify-center text-xl leading-none">{c.flag}</span>,
+        }))}
+        onSelect={(code) => setCountry(countries.find((c) => c.code === code) ?? countries[0])}
+      />
       </AppShell>
     );
   }
@@ -348,6 +346,19 @@ const GiftCards = () => {
       </Drawer>
 
       {/* Upload cards (Figma 291:15850 / 291:16090) */}
+      <OptionSheet
+        open={countryOpen}
+        onOpenChange={setCountryOpen}
+        title="Select Country"
+        value={country.code}
+        options={countries.map((c) => ({
+          value: c.code,
+          label: c.name,
+          mark: <span className="flex size-8 shrink-0 items-center justify-center text-xl leading-none">{c.flag}</span>,
+        }))}
+        onSelect={(code) => setCountry(countries.find((c) => c.code === code) ?? countries[0])}
+      />
+
       <Drawer open={uploadOpen} onOpenChange={setUploadOpen}>
         <DrawerContent className="border-brand-grey100 bg-brand-surface font-roboto">
           <DrawerTitle className="sr-only">Upload gift cards</DrawerTitle>

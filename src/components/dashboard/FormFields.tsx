@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { CaretDownIcon, CheckIcon } from "./icons";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import OptionSheet from "./OptionSheet";
 import { cn } from "@/lib/utils";
 
 /**
@@ -45,7 +45,7 @@ export const TextField = ({
 
 export type SelectOption = { value: string; label: string; icon?: ReactNode };
 
-/** Select in the shared control shell — a popover list rather than a native menu. */
+/** Select in the shared control shell; the list opens as the app's bottom sheet. */
 export const SelectField = ({
   label,
   helper,
@@ -54,6 +54,8 @@ export const SelectField = ({
   placeholder = "Select",
   onChange,
   className,
+  /** Search box in the sheet; worth it for long lists like states. */
+  searchPlaceholder,
 }: {
   label: string;
   helper?: ReactNode;
@@ -62,36 +64,42 @@ export const SelectField = ({
   placeholder?: string;
   onChange: (value: string) => void;
   className?: string;
+  searchPlaceholder?: string;
 }) => {
+  const [open, setOpen] = useState(false);
   const active = options.find((o) => o.value === value);
 
   return (
     <Field label={label} helper={helper} className={className}>
-      <Popover>
-        <PopoverTrigger className={cn(CONTROL, "flex items-center gap-2 text-left focus:border-brand-blue500")}>
-          {active?.icon}
-          <span className={cn("min-w-0 flex-1 truncate", active ? "text-brand-grey900" : "text-brand-grey300")}>
-            {active?.label ?? placeholder}
-          </span>
-          <CaretDownIcon className="size-3 shrink-0 text-brand-grey900" />
-        </PopoverTrigger>
-        <PopoverContent align="start" className="max-h-64 w-[--radix-popover-trigger-width] overflow-y-auto border-brand-grey100 bg-brand-surface p-1">
-          {options.map((o) => (
-            <button
-              key={o.value}
-              type="button"
-              onClick={() => onChange(o.value)}
-              className={cn(
-                "flex w-full items-center gap-2 rounded px-2 py-2 text-left text-sm transition-colors hover:bg-brand-grey50",
-                value === o.value ? "bg-brand-tint text-brand-blue500" : "text-brand-grey900",
-              )}
-            >
-              {o.icon}
-              <span className="min-w-0 flex-1 truncate">{o.label}</span>
-            </button>
-          ))}
-        </PopoverContent>
-      </Popover>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={cn(CONTROL, "flex items-center gap-2 text-left")}
+      >
+        {active?.icon}
+        <span className={cn("min-w-0 flex-1 truncate", active ? "text-brand-grey900" : "text-brand-grey300")}>
+          {active?.label ?? placeholder}
+        </span>
+        <CaretDownIcon className="size-3 shrink-0 text-brand-grey900" />
+      </button>
+
+      <OptionSheet
+        open={open}
+        onOpenChange={setOpen}
+        title={label}
+        searchPlaceholder={options.length > 6 ? (searchPlaceholder ?? `Search ${label.toLowerCase()}`) : undefined}
+        value={value}
+        options={options.map((o) => ({
+          value: o.value,
+          label: o.label,
+          mark: o.icon ? (
+            <span className="flex size-8 shrink-0 items-center justify-center">{o.icon}</span>
+          ) : (
+            <span className="size-0 shrink-0" />
+          ),
+        }))}
+        onSelect={onChange}
+      />
     </Field>
   );
 };

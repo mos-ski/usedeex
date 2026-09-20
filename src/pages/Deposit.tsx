@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Check, Copy, Info } from "lucide-react";
 import { toast } from "sonner";
@@ -10,7 +10,7 @@ import AssetMark from "@/components/dashboard/AssetMark";
 import { CaretDownIcon } from "@/components/dashboard/icons";
 import CoinPicker from "@/components/dashboard/CoinPicker";
 import { receivableCoins as cryptos } from "@/data/receivableCoins";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import OptionSheet from "@/components/dashboard/OptionSheet";
 import qrCode from "@/assets/landing-v2/qr-code.png";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +25,10 @@ const Deposit = () => {
   const { state } = useLocation() as { state?: { symbol?: string; network?: string } };
   const initial = cryptos.find((c) => c.symbol === state?.symbol);
   const [pickerOpen, setPickerOpen] = useState(!initial);
+  const [picker, setPicker] = useState<"asset" | "network" | null>(null);
+  // Landing here without a coin means the sheet is the whole screen; backing
+  // out of it should leave. Once something is chosen there is a page to stay on.
+  const chosen = useRef(Boolean(initial));
   const [crypto, setCrypto] = useState(initial ?? cryptos[0]);
   const [network, setNetwork] = useState(state?.network ?? (initial ?? cryptos[0]).networks[0]);
   const [copied, setCopied] = useState(false);
@@ -67,62 +71,25 @@ const Deposit = () => {
         <div className="flex flex-col items-center px-4">
           {/* Asset + network selector */}
           <div className="flex items-stretch">
-            <Popover>
-              <PopoverTrigger
-                aria-label="Choose asset"
-                className="flex items-center gap-1 rounded-l border border-brand-pillBorder bg-brand-pill px-2 py-1"
-              >
-                <AssetMark symbol={crypto.symbol} className="size-4" />
-                <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{crypto.symbol}</span>
-              </PopoverTrigger>
-              <PopoverContent align="center" className="w-52 border-brand-grey100 bg-brand-surface p-1">
-                {cryptos.map((c) => (
-                  <button
-                    key={c.symbol}
-                    type="button"
-                    onClick={() => pickCrypto(c.symbol)}
-                    className={cn(
-                      "flex w-full items-center gap-3 rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50",
-                      crypto.symbol === c.symbol && "bg-brand-tint",
-                    )}
-                  >
-                    <AssetMark symbol={c.symbol} className="size-6" />
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="truncate text-xs font-semibold text-brand-grey900">{c.symbol}</span>
-                      <span className="truncate text-[10px] text-brand-bodyText">{c.name}</span>
-                    </span>
-                  </button>
-                ))}
-              </PopoverContent>
-            </Popover>
+            <button
+              type="button"
+              aria-label="Choose asset"
+              onClick={() => setPicker("asset")}
+              className="flex items-center gap-1 rounded-l border border-brand-pillBorder bg-brand-pill px-2 py-1"
+            >
+              <AssetMark symbol={crypto.symbol} className="size-4" />
+              <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{crypto.symbol}</span>
+            </button>
 
-            <Popover>
-              <PopoverTrigger
-                aria-label="Choose network"
-                className="flex items-center gap-1 rounded-r border-y border-r border-brand-pillBorder bg-brand-pill px-2 py-1"
-              >
-                <span className="whitespace-nowrap font-manrope text-[11px] leading-[1.6]">
-                  <span className="font-medium text-brand-grey600">Network:</span>{" "}
-                  <span className="font-bold text-brand-amberBrown">{network}</span>
-                </span>
-                <CaretDownIcon className="size-3 text-brand-grey900" />
-              </PopoverTrigger>
-              <PopoverContent align="center" className="w-48 border-brand-grey100 bg-brand-surface p-1">
-                {crypto.networks.map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setNetwork(n)}
-                    className={cn(
-                      "w-full rounded px-2 py-2 text-left text-xs font-semibold transition-colors hover:bg-brand-grey50",
-                      network === n ? "bg-brand-tint text-brand-blue500" : "text-brand-grey900",
-                    )}
-                  >
-                    {n}
-                  </button>
-                ))}
-              </PopoverContent>
-            </Popover>
+            <button
+              type="button"
+              aria-label="Choose network"
+              onClick={() => setPicker("network")}
+              className="flex items-center gap-1 rounded-r border border-l-0 border-brand-pillBorder bg-brand-pill px-2 py-1"
+            >
+              <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{network}</span>
+              <CaretDownIcon className="size-3 text-brand-grey900" />
+            </button>
           </div>
 
           {/* QR — branded DeeX code, 240x240 per the Figma */}
@@ -196,17 +163,31 @@ const Deposit = () => {
         />
       )}
 
+      <OptionSheet
+        open={picker !== null}
+        onOpenChange={(next) => !next && setPicker(null)}
+        title={picker === "network" ? "Select Network" : "Assets"}
+        searchPlaceholder={picker === "asset" ? "Search coin to receive" : undefined}
+        value={picker === "network" ? network : crypto.symbol}
+        options={
+          picker === "network"
+            ? crypto.networks.map((n) => ({ value: n, label: n, mark: <AssetMark symbol={crypto.symbol} /> }))
+            : cryptos.map((c) => ({ value: c.symbol, label: c.symbol, detail: c.name }))
+        }
+        onSelect={(value) => (picker === "network" ? setNetwork(value) : pickCrypto(value))}
+      />
+
       <CoinPicker
         open={pickerOpen}
         onOpenChange={(next) => {
           setPickerOpen(next);
-          // Dismissing without a choice leaves nothing to receive into.
-          if (!next && !initial) navigate(-1);
+          if (!next && !chosen.current) navigate(-1);
         }}
         coins={cryptos}
         onSelect={(symbol, selectedNetwork) => {
           pickCrypto(symbol);
           setNetwork(selectedNetwork);
+          chosen.current = true;
         }}
       />
     </AppShell>

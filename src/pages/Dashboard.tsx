@@ -8,7 +8,6 @@ import { ActionTile, AppShell, SectionCard, SectionHeader } from "@/components/d
 import CoinPicker from "@/components/dashboard/CoinPicker";
 import { receivableCoins } from "@/data/receivableCoins";
 import FloatingNav from "@/components/dashboard/FloatingNav";
-import BillPickerSheet from "@/components/dashboard/BillPickerSheet";
 import RatesSheet from "@/components/dashboard/RatesSheet";
 import {
   AvatarIcon,
@@ -72,7 +71,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"crypto" | "giftcards">("crypto");
   const [showInviteCodeModal, setShowInviteCodeModal] = useState(false);
-  const [showBillPicker, setShowBillPicker] = useState(false);
   const [showCoinPicker, setShowCoinPicker] = useState(false);
   const [showRates, setShowRates] = useState(false);
   const {
@@ -207,7 +205,7 @@ const Dashboard = () => {
                     label={label}
                     Icon={Icon}
                     onClick={() => {
-                      if (path === "bills") return setShowBillPicker(true);
+                      if (path === "bills") return navigate("/bills/airtime");
                       if (path === "deposit") return setShowCoinPicker(true);
                       navigate(path);
                     }}
@@ -333,7 +331,6 @@ const Dashboard = () => {
 
       <FloatingNav />
 
-      <BillPickerSheet open={showBillPicker} onOpenChange={setShowBillPicker} />
 
       {/* Deposit opens the coin sheet (Figma 299:25076) before the QR screen. */}
       <CoinPicker

@@ -6,7 +6,7 @@ import { AmountEntry, groupDigits, parseAmount } from "@/components/dashboard/Am
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
 import { ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import { ArrowRightIcon, BankIcon } from "@/components/dashboard/icons";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import OptionSheet from "@/components/dashboard/OptionSheet";
 import { NGN_PER_USD, formatNgn } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +37,7 @@ const WithdrawCrypto = () => {
   const navigate = useNavigate();
   const [view, setView] = useState<View>("amount");
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [bankOpen, setBankOpen] = useState(false);
   const [coin, setCoin] = useState(coins[0]);
   const [account, setAccount] = useState(bankAccounts[0]);
   const [raw, setRaw] = useState("");
@@ -161,8 +162,12 @@ const WithdrawCrypto = () => {
       convertedText={ngn ? Math.round(ngn).toLocaleString("en-US") : "0"}
       error={exceedsBalance ? `You only have ${coin.balance.toLocaleString("en-US")} ${coin.symbol}` : undefined}
       footer={
-        <Popover>
-          <PopoverTrigger className="w-full border-b border-brand-grey100 py-3 text-left">
+        <button
+          type="button"
+          onClick={() => setBankOpen(true)}
+          aria-label="Choose payout account"
+          className="w-full border-b border-brand-grey100 py-3 text-left"
+        >
             <span className="flex items-center gap-4">
               <span className="flex size-[30px] shrink-0 items-center justify-center rounded-full bg-brand-blue500 text-white">
                 <BankIcon className="size-3" />
@@ -180,35 +185,38 @@ const WithdrawCrypto = () => {
                 Payout more than 5M will be paid in batches
               </span>
             )}
-          </PopoverTrigger>
-          <PopoverContent align="start" className="w-64 border-brand-grey100 bg-brand-surface p-1">
-            {bankAccounts.map((a) => (
-              <button
-                key={a.id}
-                type="button"
-                onClick={() => setAccount(a)}
-                className={cn(
-                  "flex w-full flex-col rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50",
-                  account.id === a.id && "bg-brand-tint",
-                )}
-              >
-                <span className="text-[10px] text-brand-bodyText">{a.bank}</span>
-                <span className="text-xs font-semibold text-brand-grey900">{a.number}</span>
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => navigate("/bank-accounts")}
-              className="w-full rounded px-2 py-2 text-left text-xs font-medium text-brand-blue500 hover:bg-brand-grey50"
-            >
-              Manage accounts
-            </button>
-          </PopoverContent>
-        </Popover>
+        </button>
       }
       submitDisabled={!ready}
       onSubmit={() => setReviewOpen(true)}
     />
+
+      <OptionSheet
+        open={bankOpen}
+        onOpenChange={setBankOpen}
+        title="Payout account"
+        value={account.id}
+        options={bankAccounts.map((a) => ({
+          value: a.id,
+          label: a.number,
+          detail: a.bank,
+          mark: (
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-blue500 text-white">
+              <BankIcon className="size-3" />
+            </span>
+          ),
+        }))}
+        onSelect={(id) => setAccount(bankAccounts.find((a) => a.id === id) ?? bankAccounts[0])}
+        footer={
+          <button
+            type="button"
+            onClick={() => navigate("/bank-accounts")}
+            className="w-full py-2 text-center text-xs font-semibold text-brand-blue500"
+          >
+            Manage accounts
+          </button>
+        }
+      />
 
       <ReviewSheet
         open={reviewOpen}

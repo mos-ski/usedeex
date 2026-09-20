@@ -6,7 +6,7 @@ import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
 import AssetMark, { InitialMark } from "@/components/dashboard/AssetMark";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
 import { ArrowRightIcon, BankIcon, CaretDownIcon } from "@/components/dashboard/icons";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import OptionSheet from "@/components/dashboard/OptionSheet";
 import { FaceIdOverlay, ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import { NGN_PER_USD, formatNgn } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -81,6 +81,7 @@ const SendMoney = () => {
   const [raw, setRaw] = useState("");
 
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [bankOpen, setBankOpen] = useState(false);
   const [authenticating, setAuthenticating] = useState(false);
 
   const resolvedName = resolveAccountName(account, bank);
@@ -256,32 +257,16 @@ const SendMoney = () => {
                 className="w-full bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
               />
               <div className="flex w-full items-center justify-between">
-                <Popover>
-                  <PopoverTrigger
-                    aria-label="Choose bank"
-                    className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
-                  >
-                    <CaretDownIcon className="size-3 text-brand-grey900" />
-                    <AssetMark symbol={bank} className="size-4 text-[9px]" />
-                    <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{bank}</span>
-                  </PopoverTrigger>
-                  <PopoverContent align="start" className="w-56 border-brand-grey100 bg-brand-surface p-1">
-                    {banks.map((b) => (
-                      <button
-                        key={b}
-                        type="button"
-                        onClick={() => setBank(b)}
-                        className={cn(
-                          "flex w-full items-center gap-2 rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50",
-                          bank === b && "bg-brand-tint",
-                        )}
-                      >
-                        <AssetMark symbol={b} className="size-5 text-[9px]" />
-                        <span className="text-xs font-semibold text-brand-grey900">{b}</span>
-                      </button>
-                    ))}
-                  </PopoverContent>
-                </Popover>
+                <button
+                  type="button"
+                  aria-label="Choose bank"
+                  onClick={() => setBankOpen(true)}
+                  className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
+                >
+                  <CaretDownIcon className="size-3 text-brand-grey900" />
+                  <AssetMark symbol={bank} className="size-4 text-[9px]" />
+                  <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{bank}</span>
+                </button>
 
                 <button
                   type="button"
@@ -483,6 +468,15 @@ const SendMoney = () => {
       {/* Review (Figma 285:10690) */}
       {/* Review (Figma 285:10690) */}
       <ReviewSheet open={reviewOpen} onOpenChange={setReviewOpen} rows={reviewRows} onAction={confirm} />
+
+      <OptionSheet
+        open={bankOpen}
+        onOpenChange={setBankOpen}
+        title="Select bank"
+        value={bank}
+        options={banks.map((b) => ({ value: b, label: b }))}
+        onSelect={setBank}
+      />
 
       {/* Biometric beat (Figma 285:10476) */}
       <FaceIdOverlay active={authenticating} />

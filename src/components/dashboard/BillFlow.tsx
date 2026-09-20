@@ -6,7 +6,7 @@ import { AmountEntry, AmountShortcuts, parseAmount } from "./AmountEntry";
 import AssetMark from "./AssetMark";
 import SuccessScreen from "./SuccessScreen";
 import { ArrowRightIcon, CaretDownIcon } from "./icons";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import OptionSheet from "./OptionSheet";
 import { FaceIdOverlay, ReviewSheet } from "./ReviewSheet";
 import { nairaWalletBalance } from "@/data/nairaWalletData";
 import { formatNgn } from "@/lib/format";
@@ -38,7 +38,18 @@ type Step = "recipient" | "amount" | "success";
  * Airtime, data, electricity and betting differ only by config — the screens,
  * review sheet and biometric step are shared.
  */
-export const BillFlow = ({ config }: { config: BillConfig }) => {
+export const BillFlow = ({
+  config,
+  billTypes,
+  activeType,
+  onTypeChange,
+}: {
+  config: BillConfig;
+  /** Tabs at the top of the recipient step, replacing the category sheet. */
+  billTypes?: { type: string; label: string }[];
+  activeType?: string;
+  onTypeChange?: (type: string) => void;
+}) => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>("recipient");
 
@@ -49,6 +60,7 @@ export const BillFlow = ({ config }: { config: BillConfig }) => {
 
   const [raw, setRaw] = useState("");
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [providerOpen, setProviderOpen] = useState(false);
   const [authenticating, setAuthenticating] = useState(false);
 
   const amount = parseAmount(raw);
@@ -126,9 +138,31 @@ export const BillFlow = ({ config }: { config: BillConfig }) => {
     return (
       <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
-          <PageHeader title={config.title} onBack={() => navigate(-1)} />
+          <PageHeader title="Pay a bill" onBack={() => navigate(-1)} />
 
           <div className="flex flex-col gap-2 px-4">
+            {billTypes && onTypeChange && (
+              <div role="tablist" aria-label="Bill type" className="flex items-center gap-3 rounded bg-brand-barBg p-0.5">
+                {billTypes.map((t) => (
+                  <button
+                    key={t.type}
+                    role="tab"
+                    type="button"
+                    aria-selected={activeType === t.type}
+                    onClick={() => onTypeChange(t.type)}
+                    className={cn(
+                      "flex-1 shrink-0 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
+                      activeType === t.type
+                        ? "bg-brand-surface text-brand-blue500"
+                        : "text-brand-grey900 hover:text-brand-blue500",
+                    )}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="flex flex-col items-center gap-1 rounded-lg border border-brand-grey100 bg-brand-surface px-3 pb-2">
               <input
                 value={identifier}
@@ -143,32 +177,16 @@ export const BillFlow = ({ config }: { config: BillConfig }) => {
                 className="w-full bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
               />
               <div className="flex w-full items-center justify-between">
-                <Popover>
-                  <PopoverTrigger
-                    aria-label="Choose provider"
-                    className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
-                  >
-                    <CaretDownIcon className="size-3 text-brand-grey900" />
-                    <AssetMark symbol={provider} className="size-4 text-[9px]" />
-                    <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{provider}</span>
-                  </PopoverTrigger>
-                  <PopoverContent align="start" className="w-56 border-brand-grey100 bg-brand-surface p-1">
-                    {config.providers.map((p) => (
-                      <button
-                        key={p}
-                        type="button"
-                        onClick={() => setProvider(p)}
-                        className={cn(
-                          "flex w-full items-center gap-2 rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50",
-                          provider === p && "bg-brand-tint",
-                        )}
-                      >
-                        <AssetMark symbol={p} className="size-5 text-[9px]" />
-                        <span className="text-xs font-semibold text-brand-grey900">{p}</span>
-                      </button>
-                    ))}
-                  </PopoverContent>
-                </Popover>
+                <button
+                  type="button"
+                  aria-label="Choose provider"
+                  onClick={() => setProviderOpen(true)}
+                  className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
+                >
+                  <CaretDownIcon className="size-3 text-brand-grey900" />
+                  <AssetMark symbol={provider} className="size-4 text-[9px]" />
+                  <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{provider}</span>
+                </button>
 
                 <button
                   type="button"
@@ -243,6 +261,15 @@ export const BillFlow = ({ config }: { config: BillConfig }) => {
             )}
           </div>
         </PageTransition>
+
+      <OptionSheet
+        open={providerOpen}
+        onOpenChange={setProviderOpen}
+        title="Select provider"
+        value={provider}
+        options={config.providers.map((p) => ({ value: p, label: p }))}
+        onSelect={setProvider}
+      />
       </AppShell>
     );
   }
@@ -300,6 +327,15 @@ export const BillFlow = ({ config }: { config: BillConfig }) => {
 
       {/* Review (Figma 289:14317) */}
       <ReviewSheet open={reviewOpen} onOpenChange={setReviewOpen} rows={reviewRows} onAction={confirm} />
+
+      <OptionSheet
+        open={providerOpen}
+        onOpenChange={setProviderOpen}
+        title="Select provider"
+        value={provider}
+        options={config.providers.map((p) => ({ value: p, label: p }))}
+        onSelect={setProvider}
+      />
 
       <FaceIdOverlay active={authenticating} />
     </>

@@ -1,9 +1,9 @@
-import { ReactNode, useRef } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { AppShell, PageHeader, PrimaryButton } from "./AppShell";
 import AssetMark from "./AssetMark";
 import { CaretDownIcon, ChevronRightIcon } from "./icons";
 import NumericKeypad from "./NumericKeypad";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import OptionSheet, { type SheetOption } from "./OptionSheet";
 import PageTransition from "@/components/PageTransition";
 import { cn } from "@/lib/utils";
 
@@ -28,36 +28,6 @@ const Pill = ({ symbol, children }: { symbol: string; children?: ReactNode }) =>
     <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{symbol}</span>
     {children}
   </span>
-);
-
-const OptionList = ({
-  options,
-  active,
-  onSelect,
-}: {
-  options: CurrencyOption[];
-  active: string;
-  onSelect: (symbol: string) => void;
-}) => (
-  <PopoverContent align="end" className="w-52 border-brand-grey100 bg-brand-surface p-1">
-    {options.map((o) => (
-      <button
-        key={o.symbol}
-        type="button"
-        onClick={() => onSelect(o.symbol)}
-        className={cn(
-          "flex w-full items-center gap-3 rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50",
-          active === o.symbol && "bg-brand-tint",
-        )}
-      >
-        <AssetMark symbol={o.symbol} className="size-6" />
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-xs font-semibold text-brand-grey900">{o.symbol}</span>
-          {o.hint && <span className="truncate text-[10px] text-brand-bodyText">{o.hint}</span>}
-        </span>
-      </button>
-    ))}
-  </PopoverContent>
 );
 
 /**
@@ -111,6 +81,10 @@ export const AmountEntry = ({
   const latest = useRef(value);
   latest.current = value;
 
+  const [picker, setPicker] = useState<"from" | "to" | null>(null);
+  const toSheet = (list: CurrencyOption[]): SheetOption[] =>
+    list.map((o) => ({ value: o.symbol, label: o.symbol, detail: o.hint ?? o.name }));
+
   return (
   // Fills the viewport so the amount sits in the middle and the footer rides
   // just above the keyboard, instead of both bunching under the header.
@@ -131,14 +105,11 @@ export const AmountEntry = ({
             aria-label={`Amount in ${fromSymbol}`}
             className="min-w-0 flex-1 bg-transparent text-right font-gasoek text-[48px] leading-[1.4] text-brand-grey900 outline-none placeholder:text-brand-grey300"
           />
-          <Popover>
-            <PopoverTrigger aria-label="Choose asset">
-              <Pill symbol={fromSymbol}>
-                <CaretDownIcon className="size-3 text-brand-grey900" />
-              </Pill>
-            </PopoverTrigger>
-            <OptionList options={fromOptions} active={fromSymbol} onSelect={onFromChange} />
-          </Popover>
+          <button type="button" aria-label="Choose asset" onClick={() => setPicker("from")}>
+            <Pill symbol={fromSymbol}>
+              <CaretDownIcon className="size-3 text-brand-grey900" />
+            </Pill>
+          </button>
         </div>
 
         {showConverted && (
@@ -147,14 +118,11 @@ export const AmountEntry = ({
               {convertedText}
             </span>
             {toOptions && onToChange ? (
-              <Popover>
-                <PopoverTrigger aria-label="Choose target currency">
-                  <Pill symbol={toSymbol}>
-                    <CaretDownIcon className="size-3 text-brand-grey900" />
-                  </Pill>
-                </PopoverTrigger>
-                <OptionList options={toOptions} active={toSymbol} onSelect={onToChange} />
-              </Popover>
+              <button type="button" aria-label="Choose target currency" onClick={() => setPicker("to")}>
+                <Pill symbol={toSymbol}>
+                  <CaretDownIcon className="size-3 text-brand-grey900" />
+                </Pill>
+              </button>
             ) : (
               <Pill symbol={toSymbol} />
             )}
@@ -170,6 +138,16 @@ export const AmountEntry = ({
           {submitLabel}
         </PrimaryButton>
       </div>
+
+      <OptionSheet
+        open={picker !== null}
+        onOpenChange={(next) => !next && setPicker(null)}
+        title="Assets"
+        searchPlaceholder="Search asset"
+        value={picker === "to" ? toSymbol : fromSymbol}
+        options={toSheet(picker === "to" ? toOptions ?? [] : fromOptions)}
+        onSelect={(symbol) => (picker === "to" ? onToChange?.(symbol) : onFromChange(symbol))}
+      />
 
       <NumericKeypad
         onKey={(key) => {

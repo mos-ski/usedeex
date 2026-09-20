@@ -3,7 +3,7 @@ import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader } from "./AppShell";
 import AssetMark from "./AssetMark";
 import { ArrowRightIcon, CaretDownIcon } from "./icons";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import OptionSheet from "./OptionSheet";
 import { cn } from "@/lib/utils";
 import type { CryptoDestination } from "@/data/recipientData";
 
@@ -35,6 +35,7 @@ export const SendTo = ({
   const [query, setQuery] = useState("");
   const [chain, setChain] = useState(chains[0]);
   const [tab, setTab] = useState<"recent" | "beneficiary">("recent");
+  const [chainOpen, setChainOpen] = useState(false);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -70,32 +71,16 @@ export const SendTo = ({
               className="w-full bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
             />
             <div className="flex w-full items-center justify-between">
-              <Popover>
-                <PopoverTrigger
-                  aria-label="Choose network"
-                  className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
-                >
-                  <CaretDownIcon className="size-3 text-brand-grey900" />
-                  <AssetMark symbol={chain.symbol} className="size-4" />
-                  <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{chain.name}</span>
-                </PopoverTrigger>
-                <PopoverContent align="start" className="w-56 border-brand-grey100 bg-brand-surface p-1">
-                  {chains.map((c) => (
-                    <button
-                      key={c.name}
-                      type="button"
-                      onClick={() => setChain(c)}
-                      className={cn(
-                        "flex w-full items-center gap-2 rounded px-2 py-2 text-left transition-colors hover:bg-brand-grey50",
-                        chain.name === c.name && "bg-brand-tint",
-                      )}
-                    >
-                      <AssetMark symbol={c.symbol} className="size-5" />
-                      <span className="text-xs font-semibold text-brand-grey900">{c.name}</span>
-                    </button>
-                  ))}
-                </PopoverContent>
-              </Popover>
+              <button
+                type="button"
+                aria-label="Choose network"
+                onClick={() => setChainOpen(true)}
+                className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
+              >
+                <CaretDownIcon className="size-3 text-brand-grey900" />
+                <AssetMark symbol={chain.symbol} className="size-4" />
+                <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{chain.name}</span>
+              </button>
 
               <button
                 type="button"
@@ -159,6 +144,15 @@ export const SendTo = ({
           </div>
         </div>
       </PageTransition>
+
+      <OptionSheet
+        open={chainOpen}
+        onOpenChange={setChainOpen}
+        title="Select network"
+        value={chain.name}
+        options={chains.map((c) => ({ value: c.name, label: c.name, mark: <AssetMark symbol={c.symbol} /> }))}
+        onSelect={(name) => setChain(chains.find((c) => c.name === name) ?? chains[0])}
+      />
     </AppShell>
   );
 };

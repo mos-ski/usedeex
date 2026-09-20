@@ -1,4 +1,4 @@
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import BillFlow, { BillConfig } from "@/components/dashboard/BillFlow";
 import { bettingRecipients, electricityRecipients, phoneRecipients } from "@/data/recipientData";
 
@@ -54,14 +54,26 @@ export const billConfigs: Record<string, BillConfig> = {
   },
 };
 
+/** Tab order across the top of the bill screen. */
+const billTypes = Object.entries(billConfigs).map(([type, c]) => ({ type, label: c.title }));
+
 const BillPayment = () => {
+  const navigate = useNavigate();
   const { type } = useParams<{ type: string }>();
   const config = type ? billConfigs[type] : undefined;
 
   if (!config) return <Navigate to="/dashboard" replace />;
 
   // Remount on type change so a half-filled form doesn't carry across bills.
-  return <BillFlow key={type} config={config} />;
+  return (
+    <BillFlow
+      key={type}
+      config={config}
+      billTypes={billTypes}
+      activeType={type}
+      onTypeChange={(next) => navigate(`/bills/${next}`, { replace: true })}
+    />
+  );
 };
 
 export default BillPayment;
