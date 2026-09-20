@@ -107,13 +107,6 @@ const Wallet = () => {
                       <span className="ml-1 text-[17px] lg:text-[22px]">pts</span>
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => navigate("/rewards")}
-                    className="font-manrope text-[11px] font-medium leading-[1.6] text-brand-primary100 underline-offset-2 hover:underline lg:text-xs"
-                  >
-                    ≈ ₦24,500 · Redeem points →
-                  </button>
                 </>
               )}
 

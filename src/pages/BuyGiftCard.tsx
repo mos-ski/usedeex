@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTransition from "@/components/PageTransition";
-import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
+import { AppShell, PageHeader, PrimaryButton, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
 import AssetMark from "@/components/dashboard/AssetMark";
 import OptionSheet from "@/components/dashboard/OptionSheet";
 import ReviewSheet from "@/components/dashboard/ReviewSheet";
@@ -9,10 +9,10 @@ import SuccessScreen from "@/components/dashboard/SuccessScreen";
 import {
   CaretDownIcon,
   CategoryIcon,
+  CheckIcon,
   FlagIcon,
   MinusIcon,
   PlusIcon,
-  SearchIcon,
 } from "@/components/dashboard/icons";
 import {
   NGN_PER_CARD_CURRENCY,
@@ -28,25 +28,36 @@ import { cn } from "@/lib/utils";
 const ALL_CATEGORIES = "all";
 const DEEX_FEE = 50;
 
-/** The country and category pills above the grid. */
+/** The country and category triggers, in the app's pill treatment. */
 const FilterPill = ({
   Icon,
   label,
   onClick,
+  ariaLabel,
 }: {
   Icon: (props: { className?: string }) => JSX.Element;
   label: string;
   onClick: () => void;
+  ariaLabel: string;
 }) => (
   <button
     type="button"
+    aria-label={ariaLabel}
     onClick={onClick}
-    className="flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-brand-grey100 bg-brand-surface px-3 py-2.5 text-left transition-colors hover:bg-brand-grey50"
+    className="flex min-w-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
   >
-    <Icon className="size-4 shrink-0 text-brand-grey600" />
-    <span className="min-w-0 flex-1 truncate text-sm leading-[1.6] text-brand-grey900">{label}</span>
-    <CaretDownIcon className="size-3 shrink-0 text-brand-grey600" />
+    <CaretDownIcon className="size-3 shrink-0 text-brand-grey900" />
+    <Icon className="size-4 shrink-0 text-brand-grey900" />
+    <span className="min-w-0 truncate text-xs font-semibold leading-[1.4] text-brand-grey900">{label}</span>
   </button>
+);
+
+/** Label above value on a hairline, the review-row shape used app-wide. */
+const DetailRow = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex flex-col border-b border-brand-grey100 py-1.5">
+    <span className="text-xs leading-[1.3] text-brand-bodyText">{label}</span>
+    <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">{value}</span>
+  </div>
 );
 
 /**
@@ -114,10 +125,10 @@ const BuyGiftCard = () => {
             <PageHeader title="Gift Card Details" onBack={() => setProduct(null)} />
 
             <div className="flex flex-col gap-3 px-4">
-              <div className="flex items-center gap-3">
-                <AssetMark symbol={product.brand} className="size-14 rounded-lg" />
+              <div className="flex items-center gap-4 py-1.5">
+                <AssetMark symbol={product.brand} className="size-12" />
                 <span className="flex min-w-0 flex-col">
-                  <span className="truncate text-xl font-bold leading-[1.4] text-brand-grey900">
+                  <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
                     {product.brand} {country.code}
                   </span>
                   <span className="truncate text-xs leading-[1.3] text-brand-bodyText">{product.brand}</span>
@@ -125,23 +136,14 @@ const BuyGiftCard = () => {
               </div>
 
               <div className="flex flex-col">
-                {(
-                  [
-                    ["Category", product.category],
-                    ["Country", `${country.flag} ${country.code}`],
-                    ["Currency", country.currency],
-                  ] as const
-                ).map(([label, value]) => (
-                  <div key={label} className="flex items-center justify-between gap-4 py-1.5">
-                    <span className="text-xs leading-[1.3] text-brand-bodyText">{label}</span>
-                    <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">{value}</span>
-                  </div>
-                ))}
+                <DetailRow label="Category" value={product.category} />
+                <DetailRow label="Country" value={`${country.flag} ${country.name}`} />
+                <DetailRow label="Currency" value={`${country.currency} • ${country.currencyName}`} />
               </div>
 
-              <div className="flex flex-col gap-2 pt-2">
-                <p className="text-xs font-semibold leading-[1.4] text-brand-grey900">Available prices</p>
-                <div className="flex flex-wrap gap-2">
+              <fieldset className="border-b border-brand-grey100 py-1.5">
+                <legend className="text-xs leading-[1.3] text-brand-bodyText">Available prices</legend>
+                <div className="mt-1 flex flex-wrap gap-1">
                   {product.denominations.map((value) => (
                     <button
                       key={value}
@@ -149,21 +151,22 @@ const BuyGiftCard = () => {
                       aria-pressed={value === price}
                       onClick={() => setPrice(value)}
                       className={cn(
-                        "rounded-lg px-3 py-2 text-[15px] font-semibold leading-[1.4] transition-colors",
+                        "flex items-center gap-1 rounded px-1.5 text-[15px] font-semibold leading-[1.4] transition-colors",
                         value === price
-                          ? "bg-brand-tint text-brand-blue500 ring-1 ring-inset ring-brand-blue500"
-                          : "bg-brand-grey50 text-brand-grey900 hover:bg-brand-grey100",
+                          ? "bg-brand-blue500 text-white"
+                          : "bg-[#daebf7] text-brand-blue500 hover:bg-brand-primary100",
                       )}
                     >
+                      {value === price && <CheckIcon className="size-3.5 shrink-0" />}
                       {formatCardPrice(value, country.currency)}
                     </button>
                   ))}
                 </div>
-              </div>
+              </fieldset>
 
-              <div className="flex flex-col gap-2 pt-2">
-                <p className="text-xs font-semibold leading-[1.4] text-brand-grey900">Quantity</p>
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col border-b border-brand-grey100 py-1.5">
+                <span className="text-xs leading-[1.3] text-brand-bodyText">Quantity</span>
+                <div className="mt-1 flex items-center gap-2">
                   <button
                     type="button"
                     aria-label="Reduce quantity"
@@ -186,18 +189,16 @@ const BuyGiftCard = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between gap-4 border-y border-brand-grey100 py-3">
-                <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">Total</span>
-                <span className="flex flex-col items-end">
-                  <span className="text-xl font-bold leading-[1.4] text-brand-grey900">
-                    {formatCardPrice(total, country.currency)}
-                  </span>
-                  <span className="text-xs leading-[1.3] text-brand-bodyText">{formatNgn(naira)}</span>
+              <div className="flex flex-col border-b border-brand-grey100 py-1.5">
+                <span className="text-xs leading-[1.3] text-brand-bodyText">Total</span>
+                <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                  {formatCardPrice(total, country.currency)}
                 </span>
+                <span className="text-xs leading-[1.3] text-brand-amberBrown">{formatNgn(naira)}</span>
               </div>
 
-              <div className="flex flex-col gap-1 pt-2">
-                <p className="text-xs font-semibold leading-[1.4] text-brand-grey900">Redeem instruction</p>
+              <div className="flex flex-col pt-2">
+                <SectionHeader title="Redeem instruction" />
                 <p className="text-[13px] leading-[1.6] text-brand-bodyText">{product.redeemInstruction}</p>
               </div>
 
@@ -239,25 +240,28 @@ const BuyGiftCard = () => {
 
           {country ? (
             <>
-              <div className="flex items-center gap-2">
-                <FilterPill Icon={FlagIcon} label={country.name} onClick={() => setCountryOpen(true)} />
+              <div className="flex items-center justify-center gap-2">
+                <FilterPill
+                  Icon={FlagIcon}
+                  ariaLabel="Choose country"
+                  label={country.name}
+                  onClick={() => setCountryOpen(true)}
+                />
                 <FilterPill
                   Icon={CategoryIcon}
+                  ariaLabel="Choose category"
                   label={category === ALL_CATEGORIES ? "All categories" : category}
                   onClick={() => setCategoryOpen(true)}
                 />
               </div>
 
-              <div className="flex items-center gap-2 rounded-lg border border-brand-grey100 bg-brand-surface px-3">
-                <SearchIcon className="size-4 shrink-0 text-brand-grey400" />
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search gift cards..."
-                  aria-label="Search gift cards"
-                  className="min-w-0 flex-1 bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
-                />
-              </div>
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search"
+                aria-label="Search gift cards"
+                className="w-full border-b border-brand-grey100 bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
+              />
 
               {visible.length === 0 ? (
                 <p className="py-16 text-center text-sm text-brand-bodyText">
@@ -270,12 +274,10 @@ const BuyGiftCard = () => {
                       key={p.id}
                       type="button"
                       onClick={() => openProduct(p)}
-                      className="flex h-[104px] flex-col items-center justify-center gap-2 bg-brand-surface p-3 transition-colors hover:bg-brand-grey50"
+                      className="flex h-20 flex-col items-center justify-center gap-1 bg-brand-surface p-3 transition-colors hover:bg-brand-grey50"
                     >
-                      <AssetMark symbol={p.brand} className="size-10 rounded-lg" />
-                      <span className="line-clamp-2 text-center text-[10px] leading-[1.4] text-brand-grey900">
-                        {p.brand}
-                      </span>
+                      <AssetMark symbol={p.brand} className="size-8" />
+                      <span className="text-center text-[10px] leading-[1.6] text-brand-grey900">{p.brand}</span>
                     </button>
                   ))}
                 </div>
@@ -283,9 +285,11 @@ const BuyGiftCard = () => {
             </>
           ) : (
             <SectionCard className="mt-6 flex flex-col items-center gap-1 px-6 py-12 text-center">
-              <FlagIcon className="mb-3 size-10 text-brand-grey300" />
-              <p className="text-[17px] font-bold leading-[1.4] text-brand-grey900">Select a country</p>
-              <p className="pb-6 text-[13px] leading-[1.6] text-brand-bodyText">
+              <span className="mb-3 flex size-16 items-center justify-center rounded-full bg-brand-tint text-brand-blue500">
+                <FlagIcon className="size-7" />
+              </span>
+              <p className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">Select a country</p>
+              <p className="pb-6 text-xs leading-[1.3] text-brand-bodyText">
                 Choose a country to see available gift cards.
               </p>
               <PrimaryButton onClick={() => setCountryOpen(true)}>Select country</PrimaryButton>

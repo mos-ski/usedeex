@@ -134,7 +134,7 @@ const ActivityPage = () => {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Enter a hash ID or transaction name"
-                  className="h-10 w-full rounded-lg border border-white/15 bg-white/10 px-3 text-xs text-white outline-none placeholder:text-white/40 focus:border-brand-blue500"
+                  className="w-full border-b border-white/20 bg-transparent py-2 text-[15px] leading-[1.4] text-white outline-none placeholder:text-white/40 focus:border-brand-blue500"
                 />
               )}
             </div>

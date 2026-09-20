@@ -168,7 +168,7 @@ export const SendTo = ({
             onChange={(e) => setQuery(e.target.value)}
             placeholder={`Search ${tab === "recent" ? "recent" : "beneficiaries"} by name or address`}
             aria-label="Search saved destinations"
-            className="mt-3 w-full rounded-lg border border-brand-grey100 bg-brand-surface px-3 py-2.5 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
+            className="mt-3 w-full border-b border-brand-grey100 bg-transparent py-2 text-[15px] leading-[1.4] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
           />
           )}
 

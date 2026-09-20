@@ -36,17 +36,17 @@ const Condition = ({
     </span>
     <span className="min-w-0 flex-1">
       <span className="flex items-center justify-between gap-3">
-        <span className="truncate text-sm font-medium leading-[1.4] text-brand-grey900">{title}</span>
+        <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">{title}</span>
         <span
           className={cn(
-            "shrink-0 text-sm font-medium leading-[1.4]",
+            "shrink-0 text-[15px] font-semibold leading-[1.4]",
             done ? "text-brand-successText" : "text-brand-blue500",
           )}
         >
           {trailing}
         </span>
       </span>
-      <span className="block text-[10px] leading-[1.6] text-brand-bodyText">{detail}</span>
+      <span className="block text-xs leading-[1.3] text-brand-bodyText">{detail}</span>
     </span>
   </div>
 );
@@ -74,12 +74,12 @@ const InviteCodeProgress = ({
           </span>
           <span className="min-w-0">
             <span className="block text-xs leading-[1.3] text-brand-bodyText">Invite Code</span>
-            <span className="block truncate text-sm font-semibold leading-[1.4] text-brand-grey900">{code}</span>
+            <span className="block truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">{code}</span>
           </span>
         </div>
         <div className="shrink-0 text-right">
           <p className="text-xs leading-[1.3] text-brand-bodyText">Earned</p>
-          <p className="text-[17px] font-bold leading-[1.4] text-brand-blue500">
+          <p className="text-[15px] font-semibold leading-[1.4] text-brand-blue500">
             {earnedReward}/{totalReward} pts
           </p>
         </div>
@@ -93,8 +93,8 @@ const InviteCodeProgress = ({
           />
         </span>
         <div className="flex justify-between pt-1">
-          <span className="text-[10px] leading-[1.6] text-brand-bodyText">{Math.round(progress)}% complete</span>
-          <span className="text-[10px] leading-[1.6] text-brand-bodyText">{2 - met} conditions remaining</span>
+          <span className="text-xs leading-[1.3] text-brand-bodyText">{Math.round(progress)}% complete</span>
+          <span className="text-xs leading-[1.3] text-brand-bodyText">{2 - met} conditions remaining</span>
         </div>
       </div>
 

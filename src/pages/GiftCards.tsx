@@ -10,6 +10,7 @@ import {
   ChevronRightIcon,
   CaretDownIcon,
   DocumentUploadIcon,
+  GiftIcon,
   MinusIcon,
   PlusIcon,
 } from "@/components/dashboard/icons";
@@ -124,6 +125,25 @@ const GiftCards = () => {
           <PageHeader title="Sell Giftcard" onBack={() => navigate(-1)} />
 
           <div className="flex flex-col gap-3 px-4">
+            <button
+              type="button"
+              onClick={() => navigate("/giftcards/buy")}
+              className="flex w-full items-center gap-4 rounded-lg bg-brand-tint px-4 py-3 text-left transition-opacity hover:opacity-80"
+            >
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-primary100 text-brand-blue500">
+                <GiftIcon className="size-5" />
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                  Buy a gift card instead
+                </span>
+                <span className="truncate text-xs leading-[1.3] text-brand-bodyText">
+                  Browse cards by country and pay from your wallet
+                </span>
+              </span>
+              <ChevronRightIcon className="size-5 shrink-0 text-brand-grey900" />
+            </button>
+
             <div className="flex justify-center">
               <button
                 type="button"

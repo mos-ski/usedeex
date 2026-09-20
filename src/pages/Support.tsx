@@ -74,7 +74,7 @@ const Support = () => {
               onKeyDown={(e) => e.key === "Enter" && send()}
               placeholder="Type your message..."
               aria-label="Message"
-              className="h-12 min-w-0 flex-1 rounded-lg border border-brand-grey100 bg-brand-surface px-4 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
+              className="min-w-0 flex-1 border-b border-brand-grey100 bg-transparent py-2 text-[15px] leading-[1.4] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
             />
             <button
               type="button"
