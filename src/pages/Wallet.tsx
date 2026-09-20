@@ -4,7 +4,7 @@ import PageTransition from "@/components/PageTransition";
 import { AppShell, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
 import FloatingNav from "@/components/dashboard/FloatingNav";
 import { GiftIcon, TrendArrowIcon } from "@/components/dashboard/icons";
-import AssetMark from "@/components/dashboard/AssetMark";
+import AssetRow from "@/components/dashboard/AssetRow";
 import { nairaWalletBalance } from "@/data/nairaWalletData";
 import { NGN_PER_USD, formatNgn, formatUsd } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -117,49 +117,23 @@ const Wallet = () => {
           <SectionCard className="flex-1 px-4 pb-28 sm:pb-3 lg:pb-5">
             <SectionHeader title="Assets" />
             <div className="flex flex-col">
-              <button
-                type="button"
+              <AssetRow
+                symbol="NGN"
+                name="Naira Wallet"
+                primary={formatNgn(nairaWalletBalance)}
+                secondary={formatUsd(nairaWalletBalance / NGN_PER_USD)}
                 onClick={() => navigate("/naira-wallet")}
-                className="flex items-center gap-4 border-b border-brand-grey100 py-3 text-left transition-colors hover:bg-brand-grey50"
-              >
-                <AssetMark symbol="NGN" />
-                <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">NGN</span>
-                  <span className="truncate text-xs leading-[1.3] text-brand-bodyText">Naira Wallet</span>
-                </span>
-                <span className="flex shrink-0 flex-col items-end">
-                  <span className="whitespace-nowrap text-[15px] font-semibold leading-[1.4] text-brand-grey900">
-                    {formatNgn(nairaWalletBalance)}
-                  </span>
-                  <span className="whitespace-nowrap text-xs leading-[1.3] text-brand-bodyText">
-                    {formatUsd(nairaWalletBalance / NGN_PER_USD)}
-                  </span>
-                </span>
-              </button>
+              />
 
               {assets.map((asset) => (
-                <button
+                <AssetRow
                   key={asset.symbol}
-                  type="button"
+                  symbol={asset.symbol}
+                  name={asset.name}
+                  primary={formatNgn(asset.usd * NGN_PER_USD)}
+                  secondary={formatUsd(asset.usd)}
                   onClick={() => navigate(`/asset/${asset.symbol.toLowerCase()}`)}
-                  className="flex items-center gap-4 border-b border-brand-grey100 py-3 text-left transition-colors hover:bg-brand-grey50"
-                >
-                  <AssetMark symbol={asset.symbol} />
-                  <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
-                      {asset.symbol}
-                    </span>
-                    <span className="truncate text-xs leading-[1.3] text-brand-bodyText">{asset.name}</span>
-                  </span>
-                  <span className="flex shrink-0 flex-col items-end">
-                    <span className="whitespace-nowrap text-[15px] font-semibold leading-[1.4] text-brand-grey900">
-                      {formatNgn(asset.usd * NGN_PER_USD)}
-                    </span>
-                    <span className="whitespace-nowrap text-xs leading-[1.3] text-brand-bodyText">
-                      {formatUsd(asset.usd)}
-                    </span>
-                  </span>
-                </button>
+                />
               ))}
             </div>
           </SectionCard>

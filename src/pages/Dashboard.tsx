@@ -5,6 +5,8 @@ import InviteCodeInput from "@/components/InviteCodeInput";
 import InviteCodeProgress from "@/components/InviteCodeProgress";
 import { useInviteCode } from "@/contexts/InviteCodeContext";
 import { ActionTile, AppShell, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
+import CoinPicker from "@/components/dashboard/CoinPicker";
+import { receivableCoins } from "@/data/receivableCoins";
 import FloatingNav from "@/components/dashboard/FloatingNav";
 import BillPickerSheet from "@/components/dashboard/BillPickerSheet";
 import {
@@ -31,7 +33,7 @@ import logoGooglePlay from "@/assets/dashboard/bill-googleplay.png";
 const quickActions = [
   { label: "Bills", path: "bills", Icon: PhoneCallIcon },
   { label: "Send", path: "/send-money", Icon: SendIcon },
-  { label: "Deposit", path: "/deposit", Icon: PlusIcon },
+  { label: "Deposit", path: "deposit", Icon: PlusIcon },
   { label: "Sell", path: "/sell-crypto", Icon: SwapIcon },
 ];
 
@@ -70,6 +72,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<"crypto" | "giftcards">("crypto");
   const [showInviteCodeModal, setShowInviteCodeModal] = useState(false);
   const [showBillPicker, setShowBillPicker] = useState(false);
+  const [showCoinPicker, setShowCoinPicker] = useState(false);
   const {
     appliedCode,
     depositCompleted,
@@ -201,7 +204,11 @@ const Dashboard = () => {
                     key={label}
                     label={label}
                     Icon={Icon}
-                    onClick={() => (path === "bills" ? setShowBillPicker(true) : navigate(path))}
+                    onClick={() => {
+                      if (path === "bills") return setShowBillPicker(true);
+                      if (path === "deposit") return setShowCoinPicker(true);
+                      navigate(path);
+                    }}
                   />
                 ))}
               </div>
@@ -325,6 +332,14 @@ const Dashboard = () => {
       <FloatingNav />
 
       <BillPickerSheet open={showBillPicker} onOpenChange={setShowBillPicker} />
+
+      {/* Deposit opens the coin sheet (Figma 299:25076) before the QR screen. */}
+      <CoinPicker
+        open={showCoinPicker}
+        onOpenChange={setShowCoinPicker}
+        coins={receivableCoins}
+        onSelect={(symbol, network) => navigate("/deposit", { state: { symbol, network } })}
+      />
 
       {showInviteCodeModal && (
         <InviteCodeInput

@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Wallet from "./pages/Wallet";
 import Deposit from "./pages/Deposit";
 import DepositCash from "./pages/DepositCash";
+import ShareDeexTag from "./pages/ShareDeexTag";
 import WhatsNew from "./pages/WhatsNew";
 import SellCrypto from "./pages/SellCrypto";
 import SwapCrypto from "./pages/SwapCrypto";
@@ -42,6 +43,7 @@ import TradeStreak from "./pages/TradeStreak";
 import AdminUserDetail from "./pages/AdminUserDetail";
 import InviteEarn from "./pages/InviteEarn";
 import NotFound from "./pages/NotFound";
+import SignUp from "./pages/SignUp";
 import { InviteCodeProvider } from "./contexts/InviteCodeContext";
 
 const queryClient = new QueryClient();
@@ -59,11 +61,12 @@ const App = () => (
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/login" element={<Login />} />
             <Route path="/pin" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/signup" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/wallet" element={<Wallet />} />
             <Route path="/deposit" element={<Deposit />} />
             <Route path="/deposit-cash" element={<DepositCash />} />
+            <Route path="/deex-tag" element={<ShareDeexTag />} />
             <Route path="/whats-new" element={<WhatsNew />} />
             <Route path="/sell-crypto" element={<SellCrypto />} />
             <Route path="/swap-crypto" element={<SwapCrypto />} />

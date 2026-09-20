@@ -5,6 +5,7 @@ import FloatingNav from "@/components/dashboard/FloatingNav";
 import {
   ArrowDownLeftIcon,
   ArrowUpRightIcon,
+  AvatarIcon,
   BookOpenIcon,
   CursorClickIcon,
   DownloadIcon,
@@ -34,6 +35,7 @@ const groups: { title: string; tiles: Tile[] }[] = [
       { label: "Swap Coins", path: "/swap-crypto", Icon: SwapIcon },
       { label: "DeeX Pay", path: "/sell-crypto", Icon: TagIcon },
       { label: "Get Link", path: "/payment-link", Icon: LinkIcon },
+      { label: "DeeX Tag", path: "/deex-tag", Icon: AvatarIcon },
       { label: "Sell", path: "/sell-crypto", Icon: ArrowUpRightIcon },
     ],
   },

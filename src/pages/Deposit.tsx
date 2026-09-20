@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Check, Copy, Info } from "lucide-react";
 import { toast } from "sonner";
 import PageTransition from "@/components/PageTransition";
@@ -9,27 +9,24 @@ import { AppShell, PageHeader } from "@/components/dashboard/AppShell";
 import AssetMark from "@/components/dashboard/AssetMark";
 import { CaretDownIcon } from "@/components/dashboard/icons";
 import CoinPicker from "@/components/dashboard/CoinPicker";
+import { receivableCoins as cryptos } from "@/data/receivableCoins";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import qrCode from "@/assets/landing-v2/qr-code.png";
 import { cn } from "@/lib/utils";
 
-const cryptos = [
-  { symbol: "BTC", name: "Bitcoin", address: "0x4867a91f8b622c9d1a5e0f3b87fa3c3a0f40f8", networks: ["BEP20", "Bitcoin Mainnet", "Lightning"] },
-  { symbol: "ETH", name: "Ethereum", address: "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD68", networks: ["ERC20", "BEP20", "Arbitrum"] },
-  { symbol: "USDT", name: "Tether", address: "0xD31f1Ec12bd7AaBA453Ff6d1a2b90c7D46d6cc11", networks: ["BEP20", "ERC20", "TRC20", "Solana"] },
-  { symbol: "USDC", name: "US Dollar Coin", address: "0x892d35Cc6634C0532925a3b844Bc9e7595f2bD12", networks: ["ERC20", "BEP20", "Solana"] },
-  { symbol: "TRX", name: "Tron", address: "TJmVQ7xk2vGZ4pW8sN1cRb3dLh9fUyE6aQ", networks: ["TRC20"] },
-];
 
 /** Middle-truncates an address the way the Figma row shows it. */
 const shorten = (address: string) => `${address.slice(0, 14)}......${address.slice(-14)}`;
 
 const Deposit = () => {
   const navigate = useNavigate();
-  // The flow opens on the coin picker (Figma 259:1739) before showing the QR.
-  const [step, setStep] = useState<"select" | "receive">("select");
-  const [crypto, setCrypto] = useState(cryptos[0]);
-  const [network, setNetwork] = useState(cryptos[0].networks[0]);
+  // The coin is chosen in the Dashboard's picker sheet (Figma 299:25076) and
+  // handed over as route state; landing here directly reopens that sheet.
+  const { state } = useLocation() as { state?: { symbol?: string; network?: string } };
+  const initial = cryptos.find((c) => c.symbol === state?.symbol);
+  const [pickerOpen, setPickerOpen] = useState(!initial);
+  const [crypto, setCrypto] = useState(initial ?? cryptos[0]);
+  const [network, setNetwork] = useState(state?.network ?? (initial ?? cryptos[0]).networks[0]);
   const [copied, setCopied] = useState(false);
   const [showInviteCode, setShowInviteCode] = useState(false);
   const { appliedCode, depositCompleted, applyCode, completeDeposit } = useInviteCode();
@@ -62,24 +59,10 @@ const Deposit = () => {
     handleCopy();
   };
 
-  if (step === "select") {
-    return (
-      <CoinPicker
-        coins={cryptos}
-        onBack={() => navigate(-1)}
-        onSelect={(symbol, selectedNetwork) => {
-          setCrypto(cryptos.find((c) => c.symbol === symbol) ?? cryptos[0]);
-          setNetwork(selectedNetwork);
-          setStep("receive");
-        }}
-      />
-    );
-  }
-
   return (
     <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
       <PageTransition>
-        <PageHeader title="Receive" onBack={() => setStep("select")} />
+        <PageHeader title="Receive" onBack={() => navigate(-1)} />
 
         <div className="flex flex-col items-center px-4">
           {/* Asset + network selector */}
@@ -212,6 +195,20 @@ const Deposit = () => {
           onClose={() => setShowInviteCode(false)}
         />
       )}
+
+      <CoinPicker
+        open={pickerOpen}
+        onOpenChange={(next) => {
+          setPickerOpen(next);
+          // Dismissing without a choice leaves nothing to receive into.
+          if (!next && !initial) navigate(-1);
+        }}
+        coins={cryptos}
+        onSelect={(symbol, selectedNetwork) => {
+          pickCrypto(symbol);
+          setNetwork(selectedNetwork);
+        }}
+      />
     </AppShell>
   );
 };
