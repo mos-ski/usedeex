@@ -656,3 +656,15 @@ export const GearIcon = ({ className }: IconProps) => (
     />
   </svg>
 );
+
+export const FlagIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path d="M5 21V4m0 0h11l-2 4 2 4H5" {...strokeProps} />
+  </svg>
+);
+
+export const CategoryIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path d="M12 3l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 16.5l9 5 9-5" {...strokeProps} />
+  </svg>
+);

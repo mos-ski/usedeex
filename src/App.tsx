@@ -22,6 +22,7 @@ import AssetDetail from "./pages/AssetDetail";
 import Receipt from "./pages/Receipt";
 import DeexPay from "./pages/DeexPay";
 import GiftCards from "./pages/GiftCards";
+import BuyGiftCard from "./pages/BuyGiftCard";
 import BillPayment from "./pages/BillPayment";
 import NairaWallet from "./pages/NairaWallet";
 import Activity from "./pages/Activity";
@@ -90,7 +91,7 @@ const App = () => (
             <Route path="/deex-pay" element={<Navigate to="/sell-crypto" replace />} />
             <Route path="/payment-link" element={<DeexPay />} />
             <Route path="/giftcards" element={<GiftCards />} />
-            <Route path="/giftcards/buy" element={<GiftCards mode="buy" />} />
+            <Route path="/giftcards/buy" element={<BuyGiftCard />} />
             <Route path="/bills/:type" element={<BillPayment />} />
             <Route path="/naira-wallet" element={<NairaWallet />} />
             <Route path="/activity" element={<Activity />} />
