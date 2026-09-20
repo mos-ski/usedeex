@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import PageTransition from "@/components/PageTransition";
-import { ActionTile, AppShell, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
+import { ActionTile, AppShell, PageHeader, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
 import FloatingNav from "@/components/dashboard/FloatingNav";
 import {
   ArrowDownLeftIcon,
@@ -83,9 +83,9 @@ const MenuPage = () => {
   return (
     <AppShell>
       <PageTransition>
-        <header className="mb-3 flex h-14 items-center bg-white px-4 lg:mb-0 lg:h-auto lg:bg-transparent lg:px-2 lg:py-6">
-          <h1 className="text-[19px] font-bold leading-[1.4] text-brand-grey900 lg:text-2xl">Menu</h1>
-        </header>
+        <div className="mb-3 bg-white lg:mb-0 lg:bg-transparent">
+          <PageHeader title="Menu" onBack={() => navigate(-1)} />
+        </div>
 
         <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-5">
           <div className="flex flex-col gap-3 lg:gap-5">{groups.slice(0, 2).map(renderGroup)}</div>
