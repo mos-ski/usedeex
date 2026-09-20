@@ -92,6 +92,7 @@ export default {
           canvas: "#F2F4F7",
           tint: "#F4FAFF",
           hairline: "#F5F5F5",
+          primary50: "#E8F3FC",
           primary100: "#D4EBFD",
           warning400: "#E9AC4B",
           success300: "#5EAE68",
