@@ -1,10 +1,12 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader, PrimaryButton, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
 import { TextField } from "@/components/dashboard/FormFields";
 import { StatusPill } from "@/components/dashboard/SettingsList";
+import PinEntry from "@/components/dashboard/PinEntry";
+import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import {
   CardEditIcon,
   CopyIcon,
@@ -69,6 +71,66 @@ const mockCards: VCard[] = [
 
 const wallets = ["USDT", "BTC", "ETH"];
 
+const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
+  const fields = [
+    ["Card holder name", "Adedamola Adewale"],
+    ["Card number", "4549240639421454"],
+    ["Expiry date", "2/2030"],
+    ["CVV", "537"],
+    ["Billing address", "1007 N Orange St, 4th Floor Ste 1382, Wilmington, DE, 19801, US"],
+    ["Zip code", "19801"],
+  ] as const;
+
+  const copy = (value: string) => {
+    navigator.clipboard?.writeText(value);
+    toast.success("Copied to clipboard");
+  };
+
+  return (
+    <Drawer open={open} onOpenChange={onOpenChange}>
+      <DrawerContent className="max-h-[92vh] border-brand-grey100 bg-brand-surface font-roboto">
+        <DrawerTitle className="sr-only">Card details</DrawerTitle>
+        <div className="mx-auto w-full max-w-[560px] overflow-y-auto px-5 pb-8 pt-2">
+          <div className="mb-4 flex items-center justify-between">
+            <p className="text-[17px] font-bold leading-[1.4] text-brand-grey900">Card details</p>
+            <button
+              type="button"
+              onClick={() => onOpenChange(false)}
+              className="rounded-full px-2 py-1 text-xs font-semibold text-brand-blue500"
+            >
+              Done
+            </button>
+          </div>
+
+          <div className="mb-5 flex rounded-full bg-brand-grey50 p-1 text-sm font-medium">
+            <span className="flex-1 rounded-full px-3 py-2 text-center text-brand-bodyText">Local Billing Address</span>
+            <span className="flex-1 rounded-full bg-brand-surface px-3 py-2 text-center text-brand-grey900 shadow-sm">US Billing Address</span>
+          </div>
+
+          <div className="flex flex-col">
+            {fields.map(([label, value]) => (
+              <div key={label} className="flex items-start gap-3 border-b border-brand-grey100 py-3 last:border-b-0">
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm leading-[1.4] text-brand-bodyText">{label}</span>
+                  <span className="block pt-1 text-[15px] leading-[1.4] text-brand-grey900">{value}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => copy(value)}
+                  aria-label={`Copy ${label}`}
+                  className="mt-2 shrink-0 rounded-md p-1 text-brand-blue500 transition-colors hover:bg-brand-tint"
+                >
+                  <CopyIcon className="size-5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+};
+
 /** Wallet chooser shared by the create and fund steps. */
 const WalletPicker = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
   <div className="flex flex-col gap-1">
@@ -93,9 +155,15 @@ const WalletPicker = ({ value, onChange }: { value: string; onChange: (v: string
 
 const VirtualCards = () => {
   const navigate = useNavigate();
-  const [view, setView] = useState<View>("list");
+  const location = useLocation();
+  const [view, setView] = useState<View>(() => (location.state?.requirePin ? "pin" : "list"));
   const [cards, setCards] = useState(mockCards);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [pinReturn, setPinReturn] = useState<"list" | "detail">("list");
+  const [pin, setPin] = useState("");
+  const [pinError, setPinError] = useState("");
+  const [showCardDetails, setShowCardDetails] = useState(false);
+  const [pinFromMenu] = useState(() => Boolean(location.state?.requirePin));
   const [showNumber, setShowNumber] = useState(false);
   const [fundAmount, setFundAmount] = useState("");
   const [wallet, setWallet] = useState(wallets[0]);
@@ -108,8 +176,52 @@ const VirtualCards = () => {
   const maxCards = 3;
   const creationFee = 2;
 
+  useEffect(() => {
+    if (view !== "pin" || pin.length !== 4) return;
+    const timeout = window.setTimeout(() => {
+      if (pin !== "1234") {
+        setPinError("Incorrect PIN, try again");
+        setPin("");
+        return;
+      }
+
+      setPinError("");
+      setPin("");
+      navigate("/virtual-cards", { replace: true, state: null });
+      if (pinReturn === "detail") setView("detail");
+      else {
+        setView("list");
+        setShowCardDetails(true);
+      }
+    }, 150);
+    return () => window.clearTimeout(timeout);
+  }, [navigate, pin, pinReturn, view]);
+
   // Read from `cards` so edits show without re-selecting.
   const selected = cards.find((c) => c.id === selectedId) ?? null;
+
+  if (view === "pin") {
+    return (
+      <PinEntry
+        title="Enter PIN"
+        caption="Enter your PIN to view card details"
+        value={pin}
+        onChange={(value) => {
+          setPin(value);
+          setPinError("");
+        }}
+        length={4}
+        error={pinError}
+        onBack={() => {
+          setPin("");
+          setPinError("");
+          if (pinFromMenu) navigate(-1);
+          else setView("list");
+        }}
+        onBiometric={() => setPin("1234")}
+      />
+    );
+  }
 
   const toggleFreeze = (id: number) => {
     setCards((list) =>
@@ -500,7 +612,10 @@ const VirtualCards = () => {
             type="button"
             onClick={() => {
               setSelectedId(primaryCard?.id ?? null);
-              setView("detail");
+              setPinReturn("list");
+              setPin("");
+              setPinError("");
+              setView("pin");
             }}
             className="mt-3 block w-full text-left"
             aria-label="Open DeeX card details"
@@ -538,7 +653,10 @@ const VirtualCards = () => {
               type="button"
               onClick={() => {
                 setSelectedId(primaryCard?.id ?? null);
-                setView("detail");
+                setPinReturn("list");
+                setPin("");
+                setPinError("");
+                setView("pin");
               }}
               className="flex h-[60px] flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint text-brand-navy transition-colors hover:bg-brand-primary100"
             >
@@ -573,6 +691,7 @@ const VirtualCards = () => {
           )}
         </SectionCard>
       </PageTransition>
+      <CardDetailsModal open={showCardDetails} onOpenChange={setShowCardDetails} />
     </AppShell>
   );
 };
