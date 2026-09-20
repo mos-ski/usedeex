@@ -26,7 +26,6 @@ import {
   TrendArrowIcon,
 } from "@/components/dashboard/icons";
 import { cn } from "@/lib/utils";
-import deexCardMenu from "@/assets/cards/deex-card-menu.png";
 import BalanceToggle from "@/components/dashboard/BalanceToggle";
 import { maskAmount, useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
 
@@ -108,6 +107,33 @@ const topUpCoins = [
   { symbol: "USDT", name: "Tether", networks: [], usd: 5420 },
   { symbol: "USDC", name: "US Dollar Coin", networks: [], usd: 2100 },
 ];
+
+/** The card face is intentionally built as HTML/CSS so the card remains an interactive UI component. */
+const VirtualCardFace = ({ last4 }: { last4: string }) => (
+  <span
+    className="relative mx-auto block aspect-[1.62/1] w-full max-w-[360px] overflow-hidden rounded-[18px] border border-white/10 bg-[#0E3155] text-left shadow-[0_12px_24px_rgba(0,0,0,0.22)]"
+    style={{
+      backgroundImage:
+        "radial-gradient(ellipse at 12% 92%, transparent 0 31%, rgba(142,180,207,.25) 31.5% 32%, transparent 32.5% 37%, rgba(142,180,207,.22) 37.5% 38%, transparent 38.5% 43%, rgba(142,180,207,.2) 43.5% 44%, transparent 44.5%), repeating-linear-gradient(155deg, transparent 0 17px, rgba(142,180,207,.22) 18px 19px, transparent 20px 27px)",
+    }}
+  >
+    <span className="absolute inset-0 bg-gradient-to-br from-[#183F68]/80 via-transparent to-[#061A32]/60" />
+    <span className="relative flex h-full flex-col justify-between p-5 text-white sm:p-6">
+      <span className="flex items-center justify-between">
+        <span className="text-[19px] font-black tracking-[-0.08em] text-white">❯DEEX</span>
+        <span className="text-[11px] font-bold tracking-[0.18em] text-white/70">VIRTUAL</span>
+      </span>
+      <span className="flex flex-col gap-2">
+        <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-white/75">Card number</span>
+        <span className="text-[15px] font-semibold tracking-[0.18em] text-white">•••• •••• •••• {last4}</span>
+        <span className="flex items-end justify-between pt-1 text-[10px] uppercase tracking-[0.15em] text-white/70">
+          <span>Alex Johnson</span>
+          <span>12/30</span>
+        </span>
+      </span>
+    </span>
+  </span>
+);
 
 const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) => {
   const [billingTab, setBillingTab] = useState<"local" | "us">("us");
@@ -736,7 +762,7 @@ const VirtualCards = () => {
             aria-label="Open DeeX card details"
           >
             <span className="flex flex-col items-center gap-2">
-              <img src={deexCardMenu} alt="DeeX virtual card" className="mx-auto block w-full max-w-[360px] rounded-2xl object-contain" />
+              <VirtualCardFace last4={primaryCard?.last4 ?? "4242"} />
               <span className="flex items-center gap-1 text-[10px] uppercase leading-[1.6] text-white/55">
                 Balance <BalanceToggle className="text-white/55" />
               </span>
