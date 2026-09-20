@@ -78,7 +78,7 @@ const WalletPicker = ({ value, onChange }: { value: string; onChange: (v: string
           onClick={() => onChange(w)}
           className={cn(
             "flex-1 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
-            value === w ? "bg-white text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+            value === w ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
           )}
         >
           {w}
@@ -341,7 +341,7 @@ const VirtualCards = () => {
 
             {selected.status === "frozen" && (
               <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-brand-deepNavy/70">
-                <span className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-brand-grey900">
+                <span className="flex items-center gap-2 rounded-full bg-brand-surface px-4 py-2 text-sm font-medium text-brand-grey900">
                   <LockIcon className="size-4 text-brand-blue400" /> Card Frozen
                 </span>
               </div>
@@ -360,7 +360,7 @@ const VirtualCards = () => {
                 className="flex flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint px-2 py-2 transition-colors hover:bg-brand-primary100"
               >
                 <Icon className={cn("size-6 shrink-0", tone)} />
-                <span className="text-center text-[10px] leading-[1.6] text-black">{label}</span>
+                <span className="text-center text-[10px] leading-[1.6] text-brand-grey900">{label}</span>
               </button>
             ))}
           </div>

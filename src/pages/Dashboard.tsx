@@ -112,7 +112,7 @@ const Dashboard = () => {
           <div
             role="tablist"
             aria-label="Asset type"
-            className="flex h-8 shrink-0 items-center gap-[3px] rounded-md bg-white p-[3px] lg:h-10"
+            className="flex h-8 shrink-0 items-center gap-[3px] rounded-md bg-brand-surface p-[3px] lg:h-10"
           >
             {(["crypto", "giftcards"] as const).map((tab) => (
               <button
@@ -235,7 +235,7 @@ const Dashboard = () => {
                       className="bg-clip-text text-xs font-semibold leading-[1.4] text-transparent lg:text-sm"
                       style={{
                         backgroundImage:
-                          "linear-gradient(-68.29deg, rgb(8, 66, 108) 46.744%, rgb(255, 56, 56) 103.77%)",
+                          "linear-gradient(-68.29deg, var(--brand-gradient-navy) 46.744%, #FF3838 103.77%)",
                       }}
                     >
                       Have an invite code?
@@ -261,10 +261,10 @@ const Dashboard = () => {
                     key={label}
                     type="button"
                     onClick={() => navigate(path)}
-                    className="flex h-[72px] flex-col items-center justify-center gap-1 bg-white p-3 transition-colors hover:bg-brand-tint lg:h-[92px] lg:gap-2"
+                    className="flex h-[72px] flex-col items-center justify-center gap-1 bg-brand-surface p-3 transition-colors hover:bg-brand-tint lg:h-[92px] lg:gap-2"
                   >
                     <img src={logo} alt="" className="size-[26px] object-contain lg:size-8" />
-                    <span className="text-[10px] leading-[1.6] text-black lg:text-xs">{label}</span>
+                    <span className="text-[10px] leading-[1.6] text-brand-grey900 lg:text-xs">{label}</span>
                   </button>
                 ))}
               </div>

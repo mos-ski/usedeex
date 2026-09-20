@@ -105,7 +105,7 @@ const Wallet = () => {
                     onClick={() => setSlide(i)}
                     className={cn(
                       "size-[4.33px] rounded-full transition-colors",
-                      slide === i ? "bg-white" : "bg-brand-blue500",
+                      slide === i ? "bg-brand-surface" : "bg-brand-blue500",
                     )}
                   />
                 ))}

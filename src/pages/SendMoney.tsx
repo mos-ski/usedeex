@@ -172,7 +172,7 @@ const SendMoney = () => {
   /* ---------------- Recipient (Figma 285:11466 / 285:11761) ---------------- */
   if (step === "recipient") {
     return (
-      <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+      <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <PageHeader title="Send to" onBack={() => navigate(-1)} />
 
@@ -188,7 +188,7 @@ const SendMoney = () => {
                   onClick={() => setMode(m.id)}
                   className={cn(
                     "shrink-0 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
-                    mode === m.id ? "bg-white text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                    mode === m.id ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
                   )}
                 >
                   {m.label}
@@ -198,7 +198,7 @@ const SendMoney = () => {
 
             {/* DeeX tag (Figma 299:27412) */}
             {mode === "tag" && (
-              <div className="flex flex-col items-center gap-1 rounded-lg border border-brand-grey100 bg-white px-3 pb-2">
+              <div className="flex flex-col items-center gap-1 rounded-lg border border-brand-grey100 bg-brand-surface px-3 pb-2">
                 <input
                   value={tag}
                   onChange={(e) => {
@@ -221,7 +221,7 @@ const SendMoney = () => {
 
             {/* Wallet address (Figma 299:28844) */}
             {mode === "address" && (
-              <div className="flex flex-col items-center gap-1 rounded-lg border border-brand-grey100 bg-white px-3 pb-2">
+              <div className="flex flex-col items-center gap-1 rounded-lg border border-brand-grey100 bg-brand-surface px-3 pb-2">
                 <input
                   value={address}
                   onChange={(e) => setAddress(e.target.value.trim())}
@@ -230,7 +230,7 @@ const SendMoney = () => {
                   className="w-full break-all bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
                 />
                 <div className="flex w-full items-center justify-between">
-                  <span className="rounded border border-[#F0F0F0] bg-[#F8F8F8] px-2 py-1.5 text-xs font-semibold leading-[1.4] text-[#191919]">
+                  <span className="rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">
                     {wallet.symbol} • {network}
                   </span>
                   <button
@@ -246,7 +246,7 @@ const SendMoney = () => {
 
             {/* Account + bank */}
             {mode === "bank" && (
-            <div className="flex flex-col items-center gap-1 rounded-lg border border-brand-grey100 bg-white px-3 pb-2">
+            <div className="flex flex-col items-center gap-1 rounded-lg border border-brand-grey100 bg-brand-surface px-3 pb-2">
               <input
                 value={account}
                 onChange={(e) => setAccount(e.target.value.replace(/\D/g, "").slice(0, 10))}
@@ -259,13 +259,13 @@ const SendMoney = () => {
                 <Popover>
                   <PopoverTrigger
                     aria-label="Choose bank"
-                    className="flex shrink-0 items-center gap-1 rounded border border-[#F0F0F0] bg-[#F8F8F8] px-2 py-1.5"
+                    className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
                   >
-                    <CaretDownIcon className="size-3 text-[#191919]" />
+                    <CaretDownIcon className="size-3 text-brand-grey900" />
                     <AssetMark symbol={bank} className="size-4 text-[9px]" />
-                    <span className="text-xs font-semibold leading-[1.4] text-[#191919]">{bank}</span>
+                    <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{bank}</span>
                   </PopoverTrigger>
-                  <PopoverContent align="start" className="w-56 border-brand-grey100 bg-white p-1">
+                  <PopoverContent align="start" className="w-56 border-brand-grey100 bg-brand-surface p-1">
                     {banks.map((b) => (
                       <button
                         key={b}
@@ -330,7 +330,7 @@ const SendMoney = () => {
                       onClick={() => setTab(t)}
                       className={cn(
                         "shrink-0 rounded px-2 py-1.5 text-xs font-semibold capitalize leading-[1.4] transition-colors",
-                        tab === t ? "bg-white text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                        tab === t ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
                       )}
                     >
                       {t}
@@ -468,7 +468,7 @@ const SendMoney = () => {
               <p
                 className={cn(
                   "mt-0.5 inline-block rounded px-2 py-0.5 font-manrope text-[11px] font-semibold leading-[1.6]",
-                  overDailyLimit ? "bg-[#FFEAEA] text-brand-danger" : "bg-[#FBF7F2] text-brand-amberBrown",
+                  overDailyLimit ? "bg-brand-noteDanger text-brand-danger" : "bg-brand-noteAmber text-brand-amberBrown",
                 )}
               >
                 You can only send {(DAILY_LIMIT / 1000).toFixed(0)}k Daily ({remaining.toLocaleString("en-US")} left)

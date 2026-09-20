@@ -411,7 +411,7 @@ const KycVerification = () => {
                       <span
                         className={cn(
                           "rounded px-2 py-0.5 text-[10px] font-semibold uppercase leading-[1.6]",
-                          done ? "bg-brand-tint text-brand-blue500" : "bg-[#FBF7F2] text-brand-amberBrown",
+                          done ? "bg-brand-tint text-brand-blue500" : "bg-brand-noteAmber text-brand-amberBrown",
                         )}
                       >
                         {done ? "Completed" : "Required"}

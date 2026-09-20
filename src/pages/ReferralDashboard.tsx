@@ -121,7 +121,7 @@ const ReferralDashboard = () => {
                 <span
                   className={cn(
                     "flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold",
-                    l.rank <= 3 ? "bg-[#FBF7F2] text-brand-amberBrown" : "bg-brand-grey100 text-brand-grey500",
+                    l.rank <= 3 ? "bg-brand-noteAmber text-brand-amberBrown" : "bg-brand-grey100 text-brand-grey500",
                   )}
                 >
                   {l.rank}

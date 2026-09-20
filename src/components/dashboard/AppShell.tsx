@@ -43,7 +43,7 @@ export const AppShell = ({
 
 /** One white block in the stack. */
 export const SectionCard = ({ children, className }: { children: ReactNode; className?: string }) => (
-  <section className={cn("bg-white px-6 py-3 lg:px-7 lg:py-5", className)}>{children}</section>
+  <section className={cn("bg-brand-surface px-6 py-3 lg:px-7 lg:py-5", className)}>{children}</section>
 );
 
 /** Full-width primary action button (Figma "Button" component). */
@@ -108,7 +108,7 @@ export const ActionTile = ({
     className="flex flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint px-2 py-2 text-brand-navy transition-colors hover:bg-brand-primary100 lg:gap-2 lg:py-5"
   >
     <Icon className="size-6 shrink-0 lg:size-7" />
-    <span className="text-center text-[10px] leading-[1.6] text-black lg:text-xs">{label}</span>
+    <span className="text-center text-[10px] leading-[1.6] text-brand-grey900 lg:text-xs">{label}</span>
   </button>
 );
 

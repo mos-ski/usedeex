@@ -27,18 +27,18 @@ const GenerateStatement = () => {
             <Calendar className="size-5 text-brand-blue500" />{value ? format(value, "PPP") : `Select ${label.toLowerCase()}`}
           </button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto border-brand-grey100 bg-white p-0" align="start"><CalendarComponent mode="single" selected={value} onSelect={setter} initialFocus /></PopoverContent>
+        <PopoverContent className="w-auto border-brand-grey100 bg-brand-surface p-0" align="start"><CalendarComponent mode="single" selected={value} onSelect={setter} initialFocus /></PopoverContent>
       </Popover>
     </label>
   );
 
   return (
-    <AppShell className="bg-white" innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
+    <AppShell className="bg-brand-surface" innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
       <PageTransition>
         <PageHeader title="Generate statement" onBack={() => navigate(-1)} />
         <SectionCard className="px-4 py-3">
           <div role="tablist" className="flex rounded bg-brand-barBg p-0.5">
-            {(["monthly", "custom"] as const).map((item) => <button key={item} type="button" onClick={() => setTab(item)} className={cn("flex-1 rounded px-3 py-2 text-xs font-semibold capitalize", tab === item ? "bg-white text-brand-blue500" : "text-brand-grey900")}>{item === "custom" ? "Custom range" : item}</button>)}
+            {(["monthly", "custom"] as const).map((item) => <button key={item} type="button" onClick={() => setTab(item)} className={cn("flex-1 rounded px-3 py-2 text-xs font-semibold capitalize", tab === item ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900")}>{item === "custom" ? "Custom range" : item}</button>)}
           </div>
         </SectionCard>
         {tab === "monthly" ? (

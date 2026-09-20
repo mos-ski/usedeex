@@ -19,7 +19,7 @@ const DeexPay = () => {
   };
 
   return (
-    <AppShell className="bg-white" innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
+    <AppShell className="bg-brand-surface" innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
       <PageTransition>
         <PageHeader title="Generate payment link" onBack={() => generated ? setGenerated(false) : navigate(-1)} />
         {generated ? (
@@ -41,11 +41,11 @@ const DeexPay = () => {
             <p className="mb-5 text-sm leading-relaxed text-brand-bodyText">Create a link your customer can use to pay you in crypto.</p>
             <label className="mb-4 block">
               <span className="mb-2 block text-xs text-brand-bodyText">Amount (USD)</span>
-              <input inputMode="decimal" value={amount} onChange={(event) => setAmount(event.target.value.replace(/[^\d.]/g, ""))} placeholder="0.00" className="h-14 w-full rounded-lg border border-brand-grey100 bg-white px-4 text-xl font-semibold text-brand-grey900 outline-none focus:border-brand-blue500" />
+              <input inputMode="decimal" value={amount} onChange={(event) => setAmount(event.target.value.replace(/[^\d.]/g, ""))} placeholder="0.00" className="h-14 w-full rounded-lg border border-brand-grey100 bg-brand-surface px-4 text-xl font-semibold text-brand-grey900 outline-none focus:border-brand-blue500" />
             </label>
             <label className="block">
               <span className="mb-2 block text-xs text-brand-bodyText">Description (optional)</span>
-              <input value={description} onChange={(event) => setDescription(event.target.value)} placeholder="What is this payment for?" className="h-14 w-full rounded-lg border border-brand-grey100 bg-white px-4 text-sm text-brand-grey900 outline-none focus:border-brand-blue500" />
+              <input value={description} onChange={(event) => setDescription(event.target.value)} placeholder="What is this payment for?" className="h-14 w-full rounded-lg border border-brand-grey100 bg-brand-surface px-4 text-sm text-brand-grey900 outline-none focus:border-brand-blue500" />
             </label>
             <PrimaryButton className="mt-8" disabled={!Number(amount)} onClick={() => setGenerated(true)}>Generate link</PrimaryButton>
           </SectionCard>

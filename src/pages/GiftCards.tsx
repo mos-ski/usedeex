@@ -119,7 +119,7 @@ const GiftCards = () => {
   /* ---------------- Brand picker (Figma 291:15235) ---------------- */
   if (step === "brand") {
     return (
-      <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+      <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <PageHeader title="Sell Giftcard" onBack={() => navigate(-1)} />
 
@@ -128,15 +128,15 @@ const GiftCards = () => {
               <Popover>
                 <PopoverTrigger
                   aria-label="Choose country"
-                  className="flex shrink-0 items-center gap-1 rounded border border-[#F0F0F0] bg-[#F8F8F8] px-2 py-1.5"
+                  className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
                 >
-                  <CaretDownIcon className="size-3 text-[#191919]" />
+                  <CaretDownIcon className="size-3 text-brand-grey900" />
                   <span className="text-base leading-none">{country.flag}</span>
-                  <span className="text-xs font-semibold leading-[1.4] text-[#191919]">
+                  <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">
                     {country.code === "US" ? "Select Country" : country.name}
                   </span>
                 </PopoverTrigger>
-                <PopoverContent align="center" className="w-52 border-brand-grey100 bg-white p-1">
+                <PopoverContent align="center" className="w-52 border-brand-grey100 bg-brand-surface p-1">
                   {countries.map((c) => (
                     <button
                       key={c.code}
@@ -178,7 +178,7 @@ const GiftCards = () => {
                   onClick={() => setCardType(key)}
                   className={cn(
                     "shrink-0 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
-                    cardType === key ? "bg-white text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                    cardType === key ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
                   )}
                 >
                   {label}
@@ -195,11 +195,11 @@ const GiftCards = () => {
                   aria-pressed={brand === b}
                   className={cn(
                     "flex h-20 flex-col items-center justify-center gap-1 p-3 transition-colors",
-                    brand === b ? "bg-brand-tint" : "bg-white hover:bg-brand-grey50",
+                    brand === b ? "bg-brand-tint" : "bg-brand-surface hover:bg-brand-grey50",
                   )}
                 >
                   <AssetMark symbol={b} className="size-8" />
-                  <span className="text-center text-[10px] leading-[1.6] text-black">{b}</span>
+                  <span className="text-center text-[10px] leading-[1.6] text-brand-grey900">{b}</span>
                 </button>
               ))}
             </div>
@@ -264,7 +264,7 @@ const GiftCards = () => {
 
       {/* Denominations (Figma 291:16320) */}
       <Drawer open={denomOpen} onOpenChange={setDenomOpen}>
-        <DrawerContent className="border-brand-grey100 bg-white font-roboto">
+        <DrawerContent className="border-brand-grey100 bg-brand-surface font-roboto">
           <DrawerTitle className="sr-only">Choose card denominations</DrawerTitle>
           <div className="mx-auto flex w-full max-w-[560px] flex-col">
             <div className="bg-brand-grey50 px-4 py-6">
@@ -319,7 +319,7 @@ const GiftCards = () => {
 
       {/* Review (Figma 291:15628) */}
       <Drawer open={reviewOpen} onOpenChange={setReviewOpen}>
-        <DrawerContent className="border-brand-grey100 bg-white font-roboto">
+        <DrawerContent className="border-brand-grey100 bg-brand-surface font-roboto">
           <DrawerTitle className="sr-only">Review sale</DrawerTitle>
           <div className="mx-auto w-full max-w-[560px] px-4 pb-8">
             <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Review</p>
@@ -349,7 +349,7 @@ const GiftCards = () => {
 
       {/* Upload cards (Figma 291:15850 / 291:16090) */}
       <Drawer open={uploadOpen} onOpenChange={setUploadOpen}>
-        <DrawerContent className="border-brand-grey100 bg-white font-roboto">
+        <DrawerContent className="border-brand-grey100 bg-brand-surface font-roboto">
           <DrawerTitle className="sr-only">Upload gift cards</DrawerTitle>
           <div className="mx-auto w-full max-w-[560px] px-4 pb-8">
             <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Review</p>
@@ -395,7 +395,7 @@ const GiftCards = () => {
                       type="button"
                       onClick={() => removeImage(images[0].id)}
                       aria-label="Remove card"
-                      className="absolute -right-3 -top-3 flex size-9 items-center justify-center rounded-full bg-white shadow-md"
+                      className="absolute -right-3 -top-3 flex size-9 items-center justify-center rounded-full bg-brand-surface shadow-md"
                     >
                       <Trash2 className="size-5 text-brand-danger" />
                     </button>
@@ -435,7 +435,7 @@ const GiftCards = () => {
                 />
               </label>
 
-              <p className="w-full rounded bg-[#FBF7F2] px-2 py-0.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
+              <p className="w-full rounded bg-brand-noteAmber px-2 py-0.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
                 Card denomination wrongly uploaded will be sold at its specific rate value
               </p>
             </div>

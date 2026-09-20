@@ -44,7 +44,7 @@ const Support = () => {
   /* ---------------- Live chat ---------------- */
   if (chatting) {
     return (
-      <AppShell className="bg-white" innerClassName="flex min-h-[100dvh] flex-col pb-4 lg:max-w-[480px] lg:px-4">
+      <AppShell className="bg-brand-surface" innerClassName="flex min-h-[100dvh] flex-col pb-4 lg:max-w-[480px] lg:px-4">
         <PageTransition className="flex flex-1 flex-col">
           <PageHeader title="DeeX Support" onBack={() => setChatting(false)} />
 
@@ -74,7 +74,7 @@ const Support = () => {
               onKeyDown={(e) => e.key === "Enter" && send()}
               placeholder="Type your message..."
               aria-label="Message"
-              className="h-12 min-w-0 flex-1 rounded-lg border border-brand-grey100 bg-white px-4 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
+              className="h-12 min-w-0 flex-1 rounded-lg border border-brand-grey100 bg-brand-surface px-4 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
             />
             <button
               type="button"

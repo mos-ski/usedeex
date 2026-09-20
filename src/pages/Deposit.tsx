@@ -60,7 +60,7 @@ const Deposit = () => {
   };
 
   return (
-    <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+    <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
       <PageTransition>
         <PageHeader title="Receive" onBack={() => navigate(-1)} />
 
@@ -70,12 +70,12 @@ const Deposit = () => {
             <Popover>
               <PopoverTrigger
                 aria-label="Choose asset"
-                className="flex items-center gap-1 rounded-l border border-[#F0F0F0] bg-[#F8F8F8] px-2 py-1"
+                className="flex items-center gap-1 rounded-l border border-brand-pillBorder bg-brand-pill px-2 py-1"
               >
                 <AssetMark symbol={crypto.symbol} className="size-4" />
-                <span className="text-xs font-semibold leading-[1.4] text-[#191919]">{crypto.symbol}</span>
+                <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{crypto.symbol}</span>
               </PopoverTrigger>
-              <PopoverContent align="center" className="w-52 border-brand-grey100 bg-white p-1">
+              <PopoverContent align="center" className="w-52 border-brand-grey100 bg-brand-surface p-1">
                 {cryptos.map((c) => (
                   <button
                     key={c.symbol}
@@ -99,15 +99,15 @@ const Deposit = () => {
             <Popover>
               <PopoverTrigger
                 aria-label="Choose network"
-                className="flex items-center gap-1 rounded-r border-y border-r border-[#F0F0F0] bg-[#F8F8F8] px-2 py-1"
+                className="flex items-center gap-1 rounded-r border-y border-r border-brand-pillBorder bg-brand-pill px-2 py-1"
               >
                 <span className="whitespace-nowrap font-manrope text-[11px] leading-[1.6]">
                   <span className="font-medium text-brand-grey600">Network:</span>{" "}
                   <span className="font-bold text-brand-amberBrown">{network}</span>
                 </span>
-                <CaretDownIcon className="size-3 text-[#191919]" />
+                <CaretDownIcon className="size-3 text-brand-grey900" />
               </PopoverTrigger>
-              <PopoverContent align="center" className="w-48 border-brand-grey100 bg-white p-1">
+              <PopoverContent align="center" className="w-48 border-brand-grey100 bg-brand-surface p-1">
                 {crypto.networks.map((n) => (
                   <button
                     key={n}

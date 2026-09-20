@@ -22,9 +22,9 @@ export const groupDigits = (raw: string) => {
 export const isAmountInput = (value: string) => /^[\d,]*\.?\d*$/.test(value);
 
 const Pill = ({ symbol, children }: { symbol: string; children?: ReactNode }) => (
-  <span className="flex shrink-0 items-center gap-1 rounded border border-[#F0F0F0] bg-[#F8F8F8] px-2 py-1.5">
+  <span className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5">
     <AssetMark symbol={symbol} className="size-4 text-[9px]" />
-    <span className="text-xs font-semibold leading-[1.4] text-[#191919]">{symbol}</span>
+    <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{symbol}</span>
     {children}
   </span>
 );
@@ -38,7 +38,7 @@ const OptionList = ({
   active: string;
   onSelect: (symbol: string) => void;
 }) => (
-  <PopoverContent align="end" className="w-52 border-brand-grey100 bg-white p-1">
+  <PopoverContent align="end" className="w-52 border-brand-grey100 bg-brand-surface p-1">
     {options.map((o) => (
       <button
         key={o.symbol}
@@ -109,7 +109,7 @@ export const AmountEntry = ({
   // Fills the viewport so the amount sits in the middle and the footer rides
   // just above the keyboard, instead of both bunching under the header.
   <AppShell
-    className="bg-white"
+    className="bg-brand-surface"
     innerClassName="flex min-h-[100dvh] flex-col pb-6 sm:pb-8 lg:max-w-[480px] lg:px-4"
   >
     <PageTransition className="flex flex-1 flex-col">
@@ -123,12 +123,12 @@ export const AmountEntry = ({
             inputMode="decimal"
             placeholder="0"
             aria-label={`Amount in ${fromSymbol}`}
-            className="min-w-0 flex-1 bg-transparent text-right font-gasoek text-[48px] leading-[1.4] text-[#191919] outline-none placeholder:text-brand-grey300"
+            className="min-w-0 flex-1 bg-transparent text-right font-gasoek text-[48px] leading-[1.4] text-brand-grey900 outline-none placeholder:text-brand-grey300"
           />
           <Popover>
             <PopoverTrigger aria-label="Choose asset">
               <Pill symbol={fromSymbol}>
-                <CaretDownIcon className="size-3 text-[#191919]" />
+                <CaretDownIcon className="size-3 text-brand-grey900" />
               </Pill>
             </PopoverTrigger>
             <OptionList options={fromOptions} active={fromSymbol} onSelect={onFromChange} />
@@ -144,7 +144,7 @@ export const AmountEntry = ({
               <Popover>
                 <PopoverTrigger aria-label="Choose target currency">
                   <Pill symbol={toSymbol}>
-                    <CaretDownIcon className="size-3 text-[#191919]" />
+                    <CaretDownIcon className="size-3 text-brand-grey900" />
                   </Pill>
                 </PopoverTrigger>
                 <OptionList options={toOptions} active={toSymbol} onSelect={onToChange} />
@@ -155,7 +155,7 @@ export const AmountEntry = ({
           </div>
         )}
 
-        {error && <p className="text-xs text-[#D92D20]">{error}</p>}
+        {error && <p className="text-xs text-brand-danger">{error}</p>}
       </div>
 
       <div data-tour="footer" className="flex flex-col gap-2.5 px-4 py-2.5">

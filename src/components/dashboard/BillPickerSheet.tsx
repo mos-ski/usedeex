@@ -19,7 +19,7 @@ export const BillPickerSheet = ({ open, onOpenChange }: { open: boolean; onOpenC
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="border-brand-grey100 bg-white font-roboto">
+      <DrawerContent className="border-brand-grey100 bg-brand-surface font-roboto">
         <DrawerTitle className="sr-only">Select a bill to pay</DrawerTitle>
         <div className="mx-auto w-full max-w-[560px] px-4 pb-8">
           <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Select Bills</p>

@@ -55,7 +55,7 @@ const Notifications = () => {
                 onClick={() => setTab(t.id)}
                 className={cn(
                   "shrink-0 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
-                  tab === t.id ? "bg-white text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                  tab === t.id ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
                 )}
               >
                 {t.label}

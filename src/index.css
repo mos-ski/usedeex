@@ -6,6 +6,71 @@
 @tailwind utilities;
 
 @layer base {
+  /**
+   * Brand surfaces and text. Light is the designed default; `.dark` restates
+   * the same roles so every screen built on brand tokens flips together.
+   */
+  :root {
+    --brand-canvas: #F2F4F7;
+    --brand-surface: #FFFFFF;
+    --brand-tint: #F4FAFF;
+    --brand-hairline: #F5F5F5;
+    --brand-bar-bg: #F6F6F6;
+
+    --brand-grey-900: #13181B;
+    --brand-grey-600: #4E606E;
+    --brand-grey-500: #617889;
+    --brand-grey-400: #869AA9;
+    --brand-grey-300: #AEBCC6;
+    --brand-grey-100: #E7EBEE;
+    --brand-grey-50: #F7F8F9;
+    --brand-body-text: #656367;
+
+    --brand-primary-100: #D4EBFD;
+    --brand-success-text: #139F16;
+    --brand-amber-brown: #BE6B0A;
+
+    --brand-pill: #F8F8F8;
+    --brand-pill-border: #F0F0F0;
+    --brand-note-amber: #FBF7F2;
+    --brand-note-danger: #FFEAEA;
+    --brand-note-info: #EFF8FF;
+    --brand-note-neutral: #F9F9F9;
+    --brand-gradient-navy: #08426C;
+  }
+
+  .dark {
+    /* Surfaces step up from the brand navy rather than going flat grey. */
+    --brand-canvas: #010D16;
+    --brand-surface: #0B1620;
+    --brand-tint: #0D1D2F;
+    --brand-hairline: #16232E;
+    --brand-bar-bg: #101C26;
+
+    --brand-grey-900: #F2F4F7;
+    --brand-grey-600: #AEBCC6;
+    --brand-grey-500: #8CA0AF;
+    --brand-grey-400: #6F8595;
+    --brand-grey-300: #4E606E;
+    --brand-grey-100: #1F2D38;
+    --brand-grey-50: #16222C;
+    --brand-body-text: #9AA4AD;
+
+    --brand-primary-100: #10314C;
+    --brand-success-text: #3FCB43;
+    --brand-amber-brown: #E9A44B;
+
+    --brand-pill: #16222C;
+    --brand-pill-border: #22303B;
+    --brand-note-amber: #2A2013;
+    --brand-note-danger: #2E1618;
+    --brand-note-info: #0F2436;
+    --brand-note-neutral: #131E27;
+    --brand-gradient-navy: #6FB6EF;
+  }
+}
+
+@layer base {
   :root {
     --background: 220 25% 7%;
     --foreground: 210 40% 98%;

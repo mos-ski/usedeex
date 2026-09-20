@@ -61,7 +61,7 @@ const ForgotPassword = () => {
 
           <div className="flex flex-col gap-[58px] pt-[9px]">
             <label className="flex w-full flex-col gap-1 border-b border-[#1F2326] p-3">
-              <span className="text-xs leading-[1.3] text-[#656367]">Enter your email</span>
+              <span className="text-xs leading-[1.3] text-brand-bodyText">Enter your email</span>
               <input
                 type="email"
                 inputMode="email"
@@ -85,10 +85,10 @@ const ForgotPassword = () => {
       </PageTransition>
 
       <Drawer open={step === "otp"} onOpenChange={(open) => !open && setStep("email")} shouldScaleBackground={false}>
-        <DrawerContent className="rounded-t-lg border-0 bg-white px-3 pb-[calc(1rem+env(safe-area-inset-bottom))] font-roboto [&>div:first-child]:mt-3 [&>div:first-child]:h-1 [&>div:first-child]:w-12 [&>div:first-child]:bg-[#D9D9D9]">
+        <DrawerContent className="rounded-t-lg border-0 bg-brand-surface px-3 pb-[calc(1rem+env(safe-area-inset-bottom))] font-roboto [&>div:first-child]:mt-3 [&>div:first-child]:h-1 [&>div:first-child]:w-12 [&>div:first-child]:bg-[#D9D9D9]">
           <div className="mx-auto w-full max-w-[420px] pt-9">
             <DrawerTitle className="text-xs font-semibold leading-[1.4] text-brand-grey900">OTP Sent!</DrawerTitle>
-            <DrawerDescription className="mt-4 text-xs leading-[1.3] text-[#656367]">
+            <DrawerDescription className="mt-4 text-xs leading-[1.3] text-brand-bodyText">
               Enter the 6-digits verification code sent to{" "}
               <span className="text-brand-blue500">{email}</span>. Not receiving OTP? Check your spam folder.
             </DrawerDescription>
@@ -115,7 +115,7 @@ const ForgotPassword = () => {
             <button
               type="button"
               onClick={pasteCode}
-              className="w-full rounded-t bg-[#EFF8FF] px-2 py-1.5 text-center font-manrope text-[13px] font-bold leading-[1.6] text-brand-blue500"
+              className="w-full rounded-t bg-brand-noteInfo px-2 py-1.5 text-center font-manrope text-[13px] font-bold leading-[1.6] text-brand-blue500"
             >
               Paste
             </button>

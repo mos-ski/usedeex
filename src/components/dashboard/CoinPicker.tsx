@@ -52,7 +52,7 @@ export const CoinPicker = ({
   return (
     <>
       <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent className="border-brand-grey100 bg-white font-roboto">
+        <DrawerContent className="border-brand-grey100 bg-brand-surface font-roboto">
           <DrawerTitle className="sr-only">Select coin</DrawerTitle>
           <div className="mx-auto w-full max-w-[560px] px-4 pb-8">
             <input
@@ -60,7 +60,7 @@ export const CoinPicker = ({
               onChange={(e) => setQuery(e.target.value)}
               placeholder={placeholder}
               aria-label="Search coins"
-              className="w-full rounded-lg border border-brand-grey100 bg-white p-4 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
+              className="w-full rounded-lg border border-brand-grey100 bg-brand-surface p-4 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
             />
 
             <p className="py-1.5 pt-4 text-xs font-semibold leading-[1.4] text-brand-grey900">Assets</p>
@@ -87,7 +87,7 @@ export const CoinPicker = ({
 
       {/* Select Network (Figma 299:25502) */}
       <Drawer open={Boolean(pending)} onOpenChange={(next) => !next && setPending(null)}>
-        <DrawerContent className="border-brand-grey100 bg-white font-roboto">
+        <DrawerContent className="border-brand-grey100 bg-brand-surface font-roboto">
           <DrawerTitle className="sr-only">Select network</DrawerTitle>
           <div className="mx-auto w-full max-w-[560px] px-4 pb-8">
             <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Select Network</p>

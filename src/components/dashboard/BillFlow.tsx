@@ -124,12 +124,12 @@ export const BillFlow = ({ config }: { config: BillConfig }) => {
   /* ---------------- Recipient (Figma 289:13876) ---------------- */
   if (step === "recipient") {
     return (
-      <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+      <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <PageHeader title={config.title} onBack={() => navigate(-1)} />
 
           <div className="flex flex-col gap-2 px-4">
-            <div className="flex flex-col items-center gap-1 rounded-lg border border-brand-grey100 bg-white px-3 pb-2">
+            <div className="flex flex-col items-center gap-1 rounded-lg border border-brand-grey100 bg-brand-surface px-3 pb-2">
               <input
                 value={identifier}
                 onChange={(e) =>
@@ -146,13 +146,13 @@ export const BillFlow = ({ config }: { config: BillConfig }) => {
                 <Popover>
                   <PopoverTrigger
                     aria-label="Choose provider"
-                    className="flex shrink-0 items-center gap-1 rounded border border-[#F0F0F0] bg-[#F8F8F8] px-2 py-1.5"
+                    className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
                   >
-                    <CaretDownIcon className="size-3 text-[#191919]" />
+                    <CaretDownIcon className="size-3 text-brand-grey900" />
                     <AssetMark symbol={provider} className="size-4 text-[9px]" />
-                    <span className="text-xs font-semibold leading-[1.4] text-[#191919]">{provider}</span>
+                    <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{provider}</span>
                   </PopoverTrigger>
-                  <PopoverContent align="start" className="w-56 border-brand-grey100 bg-white p-1">
+                  <PopoverContent align="start" className="w-56 border-brand-grey100 bg-brand-surface p-1">
                     {config.providers.map((p) => (
                       <button
                         key={p}
@@ -206,7 +206,7 @@ export const BillFlow = ({ config }: { config: BillConfig }) => {
                       onClick={() => setTab(t)}
                       className={cn(
                         "shrink-0 rounded px-2 py-1.5 text-xs font-semibold capitalize leading-[1.4] transition-colors",
-                        tab === t ? "bg-white text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                        tab === t ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
                       )}
                     >
                       {t}

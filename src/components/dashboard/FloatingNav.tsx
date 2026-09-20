@@ -21,7 +21,7 @@ const FloatingNav = () => {
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1.25rem)" }}
     >
       {/* Two-layer pill per the Figma: a 20% grey plate under a transparent blurred bar. */}
-      <div className="flex h-[60px] w-full max-w-[289px] items-center justify-center overflow-hidden rounded-[1000px] border border-[#e6e6e6] bg-[rgba(217,217,217,0.2)] p-2 backdrop-blur-[99.7px]">
+      <div className="flex h-[60px] w-full max-w-[289px] items-center justify-center overflow-hidden rounded-[1000px] border border-brand-grey100 bg-brand-surface/80 p-2 backdrop-blur-[99.7px]">
         <div className="flex h-full w-full max-w-[273px] items-center justify-center gap-[2.537px]">
           {items.map(({ label, path, Icon }) => {
             const isActive = pathname === path;
@@ -33,7 +33,7 @@ const FloatingNav = () => {
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "flex min-w-0 flex-1 flex-col items-center justify-center rounded-[100px] py-1 transition-colors",
-                  isActive ? "bg-brand-navy text-white" : "text-black hover:bg-black/[0.04]",
+                  isActive ? "bg-brand-navy text-white" : "text-brand-grey900 hover:bg-brand-grey900/[0.04]",
                 )}
               >
                 <Icon className="h-6 w-6" />

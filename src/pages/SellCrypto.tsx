@@ -66,7 +66,7 @@ const SellCrypto = () => {
             </p>
             <p className="text-xs text-brand-bodyText">You&apos;ll receive</p>
             <p className="text-lg font-semibold text-brand-successText">{formatNgn(ngn)}</p>
-            <p className="mt-4 rounded bg-[#FBF7F2] px-2 py-1.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
+            <p className="mt-4 rounded bg-brand-noteAmber px-2 py-1.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
               We&apos;ll process your trade once the deposit is confirmed
             </p>
             <PrimaryButton className="mt-6 max-w-[343px]" onClick={() => navigate("/dashboard")}>
@@ -177,12 +177,12 @@ const SellCrypto = () => {
               <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
             </span>
             {ngn > BATCH_THRESHOLD && (
-              <span className="mt-0.5 inline-block rounded bg-[#FBF7F2] px-2 py-0.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
+              <span className="mt-0.5 inline-block rounded bg-brand-noteAmber px-2 py-0.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
                 Payout more than 5M will be paid in batches
               </span>
             )}
           </PopoverTrigger>
-          <PopoverContent align="start" className="w-64 border-brand-grey100 bg-white p-1">
+          <PopoverContent align="start" className="w-64 border-brand-grey100 bg-brand-surface p-1">
             {banks.map((b) => (
               <button
                 key={b.id}

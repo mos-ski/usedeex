@@ -111,7 +111,7 @@ const WithdrawCrypto = () => {
                 />
               ))}
             </div>
-            {pinError && <p className="mb-4 text-xs text-[#D92D20]">Incorrect PIN, try again</p>}
+            {pinError && <p className="mb-4 text-xs text-brand-danger">Incorrect PIN, try again</p>}
             <div className="grid w-64 grid-cols-3 gap-4">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, null, 0, "del"].map((k, i) => (
                 <button
@@ -176,12 +176,12 @@ const WithdrawCrypto = () => {
               <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
             </span>
             {ngn > BATCH_THRESHOLD && (
-              <span className="mt-0.5 inline-block rounded bg-[#FBF7F2] px-2 py-0.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
+              <span className="mt-0.5 inline-block rounded bg-brand-noteAmber px-2 py-0.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
                 Payout more than 5M will be paid in batches
               </span>
             )}
           </PopoverTrigger>
-          <PopoverContent align="start" className="w-64 border-brand-grey100 bg-white p-1">
+          <PopoverContent align="start" className="w-64 border-brand-grey100 bg-brand-surface p-1">
             {bankAccounts.map((a) => (
               <button
                 key={a.id}

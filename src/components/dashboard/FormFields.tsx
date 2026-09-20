@@ -75,7 +75,7 @@ export const SelectField = ({
           </span>
           <CaretDownIcon className="size-3 shrink-0 text-brand-grey900" />
         </PopoverTrigger>
-        <PopoverContent align="start" className="max-h-64 w-[--radix-popover-trigger-width] overflow-y-auto border-brand-grey100 bg-white p-1">
+        <PopoverContent align="start" className="max-h-64 w-[--radix-popover-trigger-width] overflow-y-auto border-brand-grey100 bg-brand-surface p-1">
           {options.map((o) => (
             <button
               key={o.value}

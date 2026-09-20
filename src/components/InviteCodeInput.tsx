@@ -120,7 +120,7 @@ const InviteCodeInput = ({ onApply, onClose, preFilledCode, variant = "modal" }:
         role="dialog"
         aria-modal="true"
         aria-labelledby="invite-code-title"
-        className="w-full max-w-[460px] overflow-hidden rounded-t-[28px] bg-white font-roboto shadow-2xl sm:rounded-[28px]"
+        className="w-full max-w-[460px] overflow-hidden rounded-t-[28px] bg-brand-surface font-roboto shadow-2xl sm:rounded-[28px]"
       >
         <div className="mx-auto mt-3 h-1.5 w-14 rounded-full bg-brand-grey300 sm:hidden" />
         <div className="flex items-start justify-between gap-4 px-5 pb-3 pt-5 sm:px-6 sm:pt-6">
@@ -169,7 +169,7 @@ const InviteCodeInput = ({ onApply, onClose, preFilledCode, variant = "modal" }:
                     placeholder="e.g. DX-WELCOME500"
                     value={code}
                     onChange={e => { setCode(e.target.value.toUpperCase()); setError(""); }}
-                    className="h-[52px] rounded-xl border-brand-grey300 bg-white px-4 text-base font-medium uppercase tracking-wide text-brand-grey900 placeholder:normal-case placeholder:tracking-normal placeholder:text-brand-grey400 focus-visible:ring-brand-blue500"
+                    className="h-[52px] rounded-xl border-brand-grey300 bg-brand-surface px-4 text-base font-medium uppercase tracking-wide text-brand-grey900 placeholder:normal-case placeholder:tracking-normal placeholder:text-brand-grey400 focus-visible:ring-brand-blue500"
                   />
                   {error && <p className="mt-2 text-xs font-medium text-brand-danger">{error}</p>}
                 </div>

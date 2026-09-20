@@ -45,7 +45,7 @@ export const ShareDetail = ({
   };
 
   return (
-    <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+    <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
       <PageTransition>
         <PageHeader title={title} onBack={onBack} />
 
@@ -57,7 +57,7 @@ export const ShareDetail = ({
               type="button"
               onClick={handleCopy}
               aria-label={`Copy ${copyLabel.toLowerCase()}`}
-              className="flex items-center gap-1 rounded bg-[#EFF8FF] px-2 py-1.5 transition-opacity hover:opacity-80"
+              className="flex items-center gap-1 rounded bg-brand-noteInfo px-2 py-1.5 transition-opacity hover:opacity-80"
             >
               <span className="text-center font-manrope text-xl font-bold leading-[1.6] text-brand-blue500">
                 {value}
@@ -70,7 +70,7 @@ export const ShareDetail = ({
             </button>
           </div>
 
-          <div className="flex w-full flex-col gap-3 rounded-lg bg-[#F9F9F9] p-3">
+          <div className="flex w-full flex-col gap-3 rounded-lg bg-brand-noteNeutral p-3">
             {notes.map((note) => (
               <p key={note} className="flex gap-1 py-0.5">
                 <InfoCircleIcon className="mt-0.5 size-4 shrink-0 text-brand-blue500" />

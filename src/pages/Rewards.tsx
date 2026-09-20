@@ -91,7 +91,7 @@ const StatRow = ({
           <span className="whitespace-nowrap text-xs font-semibold leading-[1.4] text-brand-grey900">{label}</span>
           <InfoCircleIcon className="size-3 shrink-0 text-brand-grey400" />
         </span>
-        <span className="whitespace-nowrap text-xl font-bold leading-[1.4] text-[#191919]">{value}</span>
+        <span className="whitespace-nowrap text-xl font-bold leading-[1.4] text-brand-grey900">{value}</span>
         <ChevronRightIcon className="size-6 shrink-0 text-brand-grey900" />
       </span>
 
@@ -262,7 +262,7 @@ const Rewards = () => {
             <div className="flex min-w-0 flex-1 flex-col gap-1">
               <p
                 className="bg-clip-text text-xs font-semibold leading-[1.4] text-transparent"
-                style={{ backgroundImage: "linear-gradient(-67.32deg, #08426C 46.744%, #FF3838 103.77%)" }}
+                style={{ backgroundImage: "linear-gradient(-67.32deg, var(--brand-gradient-navy) 46.744%, #FF3838 103.77%)" }}
               >
                 Your Referral Link
               </p>
@@ -320,7 +320,7 @@ const Rewards = () => {
             className="flex w-full items-start justify-between gap-2 text-left"
           >
             <span className="min-w-0 flex-1 text-xs font-semibold leading-[1.4] text-brand-grey900">Trade Streak</span>
-            <span className="whitespace-nowrap text-xl font-bold leading-[1.4] text-[#191919]">$5</span>
+            <span className="whitespace-nowrap text-xl font-bold leading-[1.4] text-brand-grey900">$5</span>
             <ChevronRightIcon className="size-6 shrink-0 text-brand-grey900" />
           </button>
 
@@ -342,7 +342,7 @@ const Rewards = () => {
                     />
                   </span>
                 ) : (
-                  <span className="size-[22.5px] rounded-full border-[0.75px] border-[#D5D5D5]" />
+                  <span className="size-[22.5px] rounded-full border-[0.75px] border-brand-grey300" />
                 )}
               </div>
             ))}

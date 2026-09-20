@@ -83,7 +83,7 @@ const MenuPage = () => {
   return (
     <AppShell>
       <PageTransition>
-        <div className="mb-3 bg-white lg:mb-0 lg:bg-transparent">
+        <div className="mb-3 bg-brand-surface lg:mb-0 lg:bg-transparent">
           <PageHeader title="Menu" onBack={() => navigate(-1)} />
         </div>
 

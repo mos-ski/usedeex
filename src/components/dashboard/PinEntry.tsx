@@ -42,7 +42,7 @@ export const PinEntry = ({
   }, []);
 
   return (
-    <AppShell className="bg-white" innerClassName="flex min-h-[100dvh] flex-col pb-0 lg:max-w-[480px] lg:px-4">
+    <AppShell className="bg-brand-surface" innerClassName="flex min-h-[100dvh] flex-col pb-0 lg:max-w-[480px] lg:px-4">
       <PageTransition className="flex flex-1 flex-col">
         <PageHeader title={title} onBack={onBack} />
 

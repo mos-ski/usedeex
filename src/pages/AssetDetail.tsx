@@ -197,7 +197,7 @@ const AssetDetail = () => {
                     <span
                       className={cn(
                         "whitespace-nowrap text-xs leading-[1.3]",
-                        isNegative ? "text-[#D92D20]" : "text-brand-successText",
+                        isNegative ? "text-brand-danger" : "text-brand-successText",
                       )}
                     >
                       {isNegative ? "" : "+"}
@@ -346,7 +346,7 @@ const AssetDetail = () => {
           onClick={() => setShowTour(false)}
         >
           <div
-            className="w-full max-w-[380px] rounded-2xl bg-white p-6 font-roboto"
+            className="w-full max-w-[380px] rounded-2xl bg-brand-surface p-6 font-roboto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">

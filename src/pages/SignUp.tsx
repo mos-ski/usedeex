@@ -21,7 +21,7 @@ const Field = ({
 }: React.InputHTMLAttributes<HTMLInputElement> & { label: string; trailing?: React.ReactNode }) => (
   <div className="flex w-full items-end gap-4 border-b border-[#1F2326] p-3">
     <label className="flex min-w-0 flex-1 flex-col gap-1">
-      <span className="text-xs leading-[1.3] text-[#656367]">{label}</span>
+      <span className="text-xs leading-[1.3] text-brand-bodyText">{label}</span>
       <input
         {...input}
         className="w-full bg-transparent text-[15px] leading-[1.4] text-[#C9C9C9] outline-none placeholder:text-[#C9C9C9]"
@@ -91,7 +91,7 @@ const SignUp = () => {
               }
             />
 
-            <p className="text-xs leading-[1.3] text-[#656367]">
+            <p className="text-xs leading-[1.3] text-brand-bodyText">
               <span className={hasLength ? "text-white" : undefined}>At least 8 characters,</span>{" "}
               <span className={hasNumber ? "text-white" : undefined}>At least 1 number,</span>{" "}
               <span className={hasUppercase ? "text-white" : undefined}>At least 1 uppercase letter,</span>{" "}
@@ -105,7 +105,7 @@ const SignUp = () => {
             <button type="submit" className="w-full rounded-lg bg-[#095B97] p-3 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-primary50 transition-opacity hover:opacity-90">
               Sign up
             </button>
-            <p className="w-full text-xs leading-[1.3] text-[#656367]">
+            <p className="w-full text-xs leading-[1.3] text-brand-bodyText">
               By clicking sign up, you have read our{" "}
               <button type="button" className="text-white underline">Privacy policy</button>{" "}
               and accepted our <button type="button" className="text-white underline">Term of Service</button>

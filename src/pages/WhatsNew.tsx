@@ -61,7 +61,7 @@ const WhatsNew = () => {
 
         <div className="flex flex-col gap-3 pt-4">
           {releases.map((release) => (
-            <section key={release.title} className="flex flex-col gap-3 bg-white p-3">
+            <section key={release.title} className="flex flex-col gap-3 bg-brand-surface p-3">
               <div className="flex items-center justify-center gap-2.5">
                 <span className="shrink-0 rounded bg-[#4B4EFC] px-1 text-[9px] font-bold leading-[1.6] text-white">
                   NEW

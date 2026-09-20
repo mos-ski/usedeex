@@ -22,7 +22,7 @@ export const RatesSheet = ({ open, onOpenChange }: { open: boolean; onOpenChange
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="rounded-t-lg border-0 bg-white font-roboto [&>div:first-child]:mx-auto [&>div:first-child]:mt-3 [&>div:first-child]:h-1 [&>div:first-child]:w-12 [&>div:first-child]:bg-[#D9D9D9]">
+      <DrawerContent className="rounded-t-lg border-0 bg-brand-surface font-roboto [&>div:first-child]:mx-auto [&>div:first-child]:mt-3 [&>div:first-child]:h-1 [&>div:first-child]:w-12 [&>div:first-child]:bg-[#D9D9D9]">
         <DrawerTitle className="sr-only">Todays Rate</DrawerTitle>
         <div className="mx-auto w-full max-w-[560px] px-4 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-9">
           <input
@@ -30,7 +30,7 @@ export const RatesSheet = ({ open, onOpenChange }: { open: boolean; onOpenChange
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search coin to receive"
             aria-label="Search rates"
-            className="w-full rounded-lg border border-brand-grey100 bg-white p-4 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
+            className="w-full rounded-lg border border-brand-grey100 bg-brand-surface p-4 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
           />
 
           <div className="mt-2 flex gap-3 rounded bg-brand-barBg p-0.5">
@@ -40,7 +40,7 @@ export const RatesSheet = ({ open, onOpenChange }: { open: boolean; onOpenChange
                 type="button"
                 onClick={() => setSide(option)}
                 className={`rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] ${
-                  side === option ? "bg-white text-brand-blue500" : "text-brand-grey900"
+                  side === option ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900"
                 }`}
               >
                 {option === "sell" ? "Sell" : "Buy"}

@@ -86,7 +86,7 @@ const NairaWallet = () => {
     return (
       <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
-          <div className="flex min-h-[100dvh] flex-col bg-white font-roboto text-brand-grey900">
+          <div className="flex min-h-[100dvh] flex-col bg-brand-surface font-roboto text-brand-grey900">
             <header className="shrink-0 bg-brand-deepNavy text-white">
               <div className="flex flex-col gap-3 px-6 py-[18px]">
                 <button type="button" onClick={goBack} className="flex w-fit items-center gap-2.5" aria-label="Back from Create Naira Wallet">
@@ -127,7 +127,7 @@ const NairaWallet = () => {
                 </label>
               ))}
 
-              <div className="rounded bg-[#fbf7f2] px-2 py-0.5 font-manrope text-[11px] leading-[1.6] text-brand-amberBrown">
+              <div className="rounded bg-brand-noteAmber px-2 py-0.5 font-manrope text-[11px] leading-[1.6] text-brand-amberBrown">
                 <p className="font-semibold">Your details are protected</p>
                 <p>We use this information to meet verification requirements and keep your account secure.</p>
               </div>

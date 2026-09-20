@@ -132,7 +132,7 @@ const BankAccounts = () => {
                 onClick={() => setTab(t.key)}
                 className={cn(
                   "shrink-0 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
-                  tab === t.key ? "bg-white text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                  tab === t.key ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
                 )}
               >
                 {t.label}
@@ -245,7 +245,7 @@ const BankAccounts = () => {
       </PageTransition>
 
       <Drawer open={addOpen} onOpenChange={(open) => (open ? setAddOpen(true) : closeSheet())}>
-        <DrawerContent className="border-brand-grey100 bg-white font-roboto">
+        <DrawerContent className="border-brand-grey100 bg-brand-surface font-roboto">
           <DrawerTitle className="sr-only">{active.cta}</DrawerTitle>
           <div className="mx-auto flex w-full max-w-[560px] flex-col gap-4 px-4 pb-8">
             <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">{active.cta}</p>

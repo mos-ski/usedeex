@@ -619,3 +619,13 @@ export const CaretRightIcon = ({ className }: IconProps) => (
     />
   </svg>
 );
+
+/** Crescent for the appearance toggle. */
+export const MoonIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M21.53 15.93c-.16-.27-.61-.69-1.73-.49a8.46 8.46 0 0 1-1.88.13 8.4 8.4 0 0 1-5.91-2.82 8.53 8.53 0 0 1-2.1-5.51c0-.61.11-1.21.27-1.78.27-.96-.02-1.46-.22-1.67-.21-.22-.72-.53-1.73-.11a9.9 9.9 0 0 0-6.06 9.47 10.04 10.04 0 0 0 9.94 9.83 9.9 9.9 0 0 0 9.3-6.49c.36-.99.05-1.4-.18-1.67Z"
+      {...strokeProps}
+    />
+  </svg>
+);

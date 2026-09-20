@@ -69,7 +69,7 @@ export const Toggle = ({
   >
     <span
       className={cn(
-        "size-5 rounded-full bg-white shadow transition-transform",
+        "size-5 rounded-full bg-brand-surface shadow transition-transform",
         on ? "translate-x-5" : "translate-x-0",
       )}
     />
@@ -82,7 +82,7 @@ export const StatusPill = ({ tone, children }: { tone: "good" | "bad" | "neutral
     className={cn(
       "shrink-0 rounded px-2 py-0.5 text-[10px] font-semibold uppercase leading-[1.6]",
       tone === "good" && "bg-brand-tint text-brand-successText",
-      tone === "bad" && "bg-[#FFEAEA] text-brand-danger",
+      tone === "bad" && "bg-brand-noteDanger text-brand-danger",
       tone === "neutral" && "bg-brand-grey100 text-brand-grey500",
     )}
   >

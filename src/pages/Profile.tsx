@@ -2,11 +2,14 @@ import { useNavigate } from "react-router-dom";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, SectionCard } from "@/components/dashboard/AppShell";
 import FloatingNav from "@/components/dashboard/FloatingNav";
+import { SettingsRow, Toggle } from "@/components/dashboard/SettingsList";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   CaretRightIcon,
   CardEditIcon,
   EditPencilIcon,
   LockIcon,
+  MoonIcon,
   LogOutIcon,
   MessageQuestionIcon,
   NotificationIcon,
@@ -75,13 +78,14 @@ const ShortcutTile = ({
     className={`flex flex-1 flex-col items-center justify-center gap-1 rounded-[2px] px-3 py-2 transition-opacity hover:opacity-80 ${tint}`}
   >
     <Icon className={`size-6 shrink-0 ${iconColor}`} />
-    <span className="text-[10px] leading-[1.6] text-black">{label}</span>
+    <span className="text-[10px] leading-[1.6] text-brand-grey900">{label}</span>
   </button>
 );
 
 /** Account (Figma 302:33609). */
 const Profile = () => {
   const navigate = useNavigate();
+  const { theme, toggle } = useTheme();
 
   return (
     <AppShell topColor="bg-brand-deepNavy" innerClassName="lg:max-w-[760px] lg:px-4">
@@ -109,7 +113,7 @@ const Profile = () => {
             <ShortcutTile
               label="Logout"
               Icon={LogOutIcon}
-              tint="bg-[#FEF0EF]"
+              tint="bg-brand-noteDanger"
               iconColor="text-[#EB4335]"
               onClick={() => navigate("/login")}
             />
@@ -121,6 +125,16 @@ const Profile = () => {
               onClick={() => navigate("/edit-profile")}
             />
           </div>
+        </SectionCard>
+
+        <SectionCard className="mt-3 px-4 py-0">
+          <SettingsRow
+            title="Dark mode"
+            detail={theme === "dark" ? "On — matches your last choice" : "Off — using the light theme"}
+            Icon={MoonIcon}
+            className="border-b-0"
+            trailing={<Toggle label="Dark mode" on={theme === "dark"} onToggle={toggle} />}
+          />
         </SectionCard>
 
         <SectionCard className="mt-3 px-4 py-0">

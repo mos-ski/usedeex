@@ -50,6 +50,7 @@ import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import Survey from "./pages/Survey";
 import { InviteCodeProvider } from "./contexts/InviteCodeContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <ThemeProvider>
       <InviteCodeProvider>
         <BrowserRouter>
           <Routes>
@@ -113,6 +115,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </InviteCodeProvider>
+      </ThemeProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

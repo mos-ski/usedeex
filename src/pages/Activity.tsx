@@ -133,7 +133,7 @@ const ActivityPage = () => {
                       onClick={() => setTab(key)}
                       className={cn(
                         "shrink-0 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
-                        tab === key ? "bg-white text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                        tab === key ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
                       )}
                     >
                       {label}

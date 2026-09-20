@@ -160,7 +160,7 @@ const Receipt = () => {
   // Report submitted view
   if (reportView === "submitted") {
     return (
-      <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+      <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <div className="min-h-screen flex flex-col items-center justify-center px-6">
             <div className="w-20 h-20 rounded-full bg-brand-successText/10 flex items-center justify-center mb-6">
@@ -168,7 +168,7 @@ const Receipt = () => {
             </div>
             <h2 className="text-2xl font-bold text-brand-grey900 mb-2">Report Submitted</h2>
             <p className="text-brand-bodyText text-center mb-2">We've received your report and will investigate.</p>
-            <div className="border border-brand-grey100 bg-white rounded-lg p-4 w-full mb-6">
+            <div className="border border-brand-grey100 bg-brand-surface rounded-lg p-4 w-full mb-6">
               <div className="flex justify-between mb-2"><span className="text-sm text-brand-bodyText">Ticket ID</span><span className="text-sm font-mono text-brand-blue500">{ticketId}</span></div>
               <div className="flex justify-between mb-2"><span className="text-sm text-brand-bodyText">Reason</span><span className="text-sm text-brand-grey900">{selectedReason}</span></div>
               <div className="flex justify-between"><span className="text-sm text-brand-bodyText">Transaction</span><span className="text-sm font-mono text-brand-grey900">{txId.slice(0, 16)}...</span></div>
@@ -184,12 +184,12 @@ const Receipt = () => {
   // Report detail view
   if (reportView === "detail") {
     return (
-      <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+      <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <div className="px-4 pt-4">
             <PageHeader title="Report Details" onBack={() => setReportView("select")} />
 
-            <div className="border border-brand-grey100 bg-white rounded-lg p-4 mb-4">
+            <div className="border border-brand-grey100 bg-brand-surface rounded-lg p-4 mb-4">
               <p className="text-sm text-brand-bodyText mb-1">Selected issue</p>
               <p className="text-sm font-medium text-brand-grey900">{selectedReason}</p>
             </div>
@@ -217,7 +217,7 @@ const Receipt = () => {
   // Report reason selection
   if (reportView === "select") {
     return (
-      <AppShell className="bg-white" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+      <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <div className="px-4 pt-4">
             <PageHeader title="Report Transaction" onBack={() => setReportView("none")} />
@@ -362,7 +362,7 @@ const Receipt = () => {
             <button
               type="button"
               onClick={() => setReportView("select")}
-              className="flex min-w-0 flex-1 items-center justify-center rounded-lg border border-brand-danger bg-white px-4 py-[11px] font-manrope text-base font-medium leading-[1.6] text-brand-danger transition-colors hover:bg-brand-danger/5"
+              className="flex min-w-0 flex-1 items-center justify-center rounded-lg border border-brand-danger bg-brand-surface px-4 py-[11px] font-manrope text-base font-medium leading-[1.6] text-brand-danger transition-colors hover:bg-brand-danger/5"
             >
               Report
             </button>
@@ -371,7 +371,7 @@ const Receipt = () => {
                 <ArrowDownIcon className="size-6" />
                 Download
               </PopoverTrigger>
-              <PopoverContent align="end" className="w-44 border-brand-grey100 bg-white p-1">
+              <PopoverContent align="end" className="w-44 border-brand-grey100 bg-brand-surface p-1">
                 <button
                   type="button"
                   onClick={() => handleDownload("pdf")}

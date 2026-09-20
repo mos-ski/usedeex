@@ -64,7 +64,7 @@ const TradeStreak = () => {
                     <CheckIcon className="size-[13.5px]" />
                   </span>
                 ) : (
-                  <span className="size-[22.5px] rounded-full border-[0.75px] border-[#D5D5D5]" />
+                  <span className="size-[22.5px] rounded-full border-[0.75px] border-brand-grey300" />
                 )}
               </div>
             ))}
