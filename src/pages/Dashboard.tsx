@@ -169,29 +169,31 @@ const Dashboard = () => {
                   </>
                 )}
               </p>
-              <div className="flex w-full max-w-[290px] items-center justify-start gap-2 text-[10px] uppercase text-brand-amberBrown lg:text-xs">
+              <div className="flex w-full max-w-[290px] items-center justify-start text-[10px] uppercase text-brand-amberBrown lg:text-xs">
                 <p className="leading-[1.6]">
                   <span className="font-semibold">{hidden ? maskAmount("$22.43") : "$22.43"} </span>
                   <span className="font-medium">today</span>
                 </p>
-                <span className="mx-1 font-semibold leading-[1.6]">•</span>
-                <button
-                  type="button"
-                  onClick={() => setShowRates(true)}
-                  className="ml-auto h-[18px] min-w-[150px] overflow-hidden text-right font-semibold leading-[1.6] underline-offset-2 hover:underline"
-                >
-                  <span key={rateStep} className="rate-ticker-slide block whitespace-nowrap">
-                    {rateStep % 2 === 0 ? (
-                      "See today's rate"
-                    ) : (
-                      <span className="flex w-full items-center justify-end gap-1">
-                        <AssetMark symbol={rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].symbol} className="size-3" />
-                        <span>{rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].symbol}</span>
-                        <span>{rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].value}</span>
-                      </span>
-                    )}
-                  </span>
-                </button>
+                <span className="ml-auto flex items-center gap-1.5">
+                  <span className="font-semibold leading-[1.6]">•</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowRates(true)}
+                    className="h-[18px] min-w-[150px] overflow-hidden text-right font-semibold leading-[1.6] underline-offset-2 hover:underline"
+                  >
+                    <span key={rateStep} className="rate-ticker-slide block whitespace-nowrap">
+                      {rateStep % 2 === 0 ? (
+                        "See today's rate"
+                      ) : (
+                        <span className="flex w-full items-center justify-end gap-1">
+                          <AssetMark symbol={rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].symbol} className="size-3" />
+                          <span>{rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].symbol}</span>
+                          <span>{rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].value}</span>
+                        </span>
+                      )}
+                    </span>
+                  </button>
+                </span>
               </div>
 
               {isGiftCards && (
