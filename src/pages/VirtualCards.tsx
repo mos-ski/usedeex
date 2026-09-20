@@ -10,6 +10,7 @@ import PinEntry from "@/components/dashboard/PinEntry";
 import OptionSheet from "@/components/dashboard/OptionSheet";
 import CoinPicker from "@/components/dashboard/CoinPicker";
 import { depositExtras, NAIRA_DEPOSIT } from "@/components/dashboard/depositDestinations";
+import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import {
   CardEditIcon,
@@ -226,6 +227,7 @@ const VirtualCards = () => {
   const [pinError, setPinError] = useState("");
   const [showCardDetails, setShowCardDetails] = useState(false);
   const [manageOpen, setManageOpen] = useState(false);
+  const [blockConfirmOpen, setBlockConfirmOpen] = useState(false);
   const [pinFromMenu] = useState(() => Boolean(location.state?.requirePin));
   const [showNumber, setShowNumber] = useState(false);
   const [fundAmount, setFundAmount] = useState("");
@@ -806,10 +808,22 @@ const VirtualCards = () => {
             if (primaryCard) toggleFreeze(primaryCard.id);
             return;
           }
-          if (primaryCard) {
-            setCards((list) => list.map((card) => (card.id === primaryCard.id ? { ...card, status: "frozen" } : card)));
-            toast.success("Card blocked");
-          }
+          setManageOpen(false);
+          setBlockConfirmOpen(true);
+        }}
+      />
+      <ConfirmDialog
+        open={blockConfirmOpen}
+        onOpenChange={setBlockConfirmOpen}
+        title="Block card?"
+        message="Blocking this card will stop all card activity until you unblock it."
+        icon={<LockIcon className="size-6" />}
+        confirmLabel="Block card"
+        destructive
+        onConfirm={() => {
+          if (!primaryCard) return;
+          setCards((list) => list.map((card) => (card.id === primaryCard.id ? { ...card, status: "frozen" } : card)));
+          toast.success("Card blocked");
         }}
       />
     </AppShell>
