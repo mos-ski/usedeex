@@ -55,6 +55,15 @@ export const SelectCountryStep = ({
 
 const COUNTRY_KEY = "deex.giftCardCountry";
 
+/** Start a fresh gift-card trade from the country step. */
+export const resetGiftCardCountry = () => {
+  try {
+    sessionStorage.removeItem(COUNTRY_KEY);
+  } catch {
+    // Storage can be blocked; the next flow will still render its empty state.
+  }
+};
+
 /**
  * The chosen country, shared by the buy and sell routes so switching between
  * them keeps you on the same step instead of asking again.

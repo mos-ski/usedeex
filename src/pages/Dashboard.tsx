@@ -11,6 +11,7 @@ import { receivableCoins } from "@/data/receivableCoins";
 import { depositExtras, depositRouteFor } from "@/components/dashboard/depositDestinations";
 import FloatingNav from "@/components/dashboard/FloatingNav";
 import RatesSheet from "@/components/dashboard/RatesSheet";
+import { resetGiftCardCountry } from "@/components/dashboard/SelectCountryStep";
 import {
   AvatarIcon,
   BellIcon,
@@ -176,7 +177,10 @@ const Dashboard = () => {
                 <div className="mt-3">
                   <button
                     type="button"
-                    onClick={() => navigate("/giftcards")}
+                    onClick={() => {
+                      resetGiftCardCountry();
+                      navigate("/giftcards");
+                    }}
                     className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-brand-blue500 px-3 py-3 font-manrope text-[11px] font-semibold leading-[1.6] text-white transition-opacity hover:opacity-90"
                   >
                     <SwapHorizontalIcon className="size-4" />
