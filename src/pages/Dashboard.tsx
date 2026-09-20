@@ -173,7 +173,7 @@ const Dashboard = () => {
               </div>
 
               {isGiftCards && (
-                <div className="mt-3">
+                <div className="mt-3 w-full">
                   <button
                     type="button"
                     aria-label="Trade Giftcard"
