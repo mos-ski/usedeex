@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader } from "./AppShell";
 import AssetMark from "./AssetMark";
-import { ArrowRightIcon, CaretDownIcon } from "./icons";
+import { ArrowRightIcon, CaretDownIcon, SearchIcon } from "./icons";
 import OptionSheet from "./OptionSheet";
 import { cn } from "@/lib/utils";
 import type { CryptoDestination } from "@/data/recipientData";
@@ -14,7 +14,7 @@ export const chains = ["BNB Smart Chain", "Ethereum (ERC-20)", "Tron (TRC-20)", 
 /**
  * Destination picker for crypto sends (Figma 269:5828). An address field with
  * a chain filter and paste shortcut up top, then Recent / Beneficiary lists —
- * saved addresses and saved usernames — with their own search.
+ * saved addresses and saved usernames — searchable from the icon beside the tabs.
  */
 export const SendTo = ({
   title = "Send to",
@@ -32,6 +32,7 @@ export const SendTo = ({
   const [address, setAddress] = useState("");
   const [tab, setTab] = useState<"recent" | "beneficiary">("recent");
   const [chainOpen, setChainOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -116,32 +117,60 @@ export const SendTo = ({
           )}
 
           {/* Recent / Beneficiary */}
-          <div role="tablist" aria-label="Destination type" className="mt-4 flex items-center gap-3 rounded bg-brand-barBg p-0.5">
-            {(["recent", "beneficiary"] as const).map((t) => (
-              <button
-                key={t}
-                role="tab"
-                type="button"
-                aria-selected={tab === t}
-                onClick={() => setTab(t)}
-                className={cn(
-                  "shrink-0 rounded px-2 py-1.5 text-xs font-semibold capitalize leading-[1.4] transition-colors",
-                  tab === t ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
-                )}
-              >
-                {t}
-              </button>
-            ))}
+          <div className="mt-4 flex items-center gap-2">
+            <div
+              role="tablist"
+              aria-label="Destination type"
+              className="flex min-w-0 flex-1 items-center gap-3 rounded bg-brand-barBg p-0.5"
+            >
+              {(["recent", "beneficiary"] as const).map((t) => (
+                <button
+                  key={t}
+                  role="tab"
+                  type="button"
+                  aria-selected={tab === t}
+                  onClick={() => setTab(t)}
+                  className={cn(
+                    "shrink-0 rounded px-2 py-1.5 text-xs font-semibold capitalize leading-[1.4] transition-colors",
+                    tab === t ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                  )}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              aria-label="Search destinations"
+              aria-expanded={searchOpen}
+              onClick={() => {
+                // Closing drops the query so the hidden field never filters the list.
+                setSearchOpen((open) => {
+                  if (open) setQuery("");
+                  return !open;
+                });
+              }}
+              className={cn(
+                "flex shrink-0 items-center rounded p-2 text-brand-blue500 transition-colors hover:bg-brand-grey50",
+                query && "bg-brand-primary100/50",
+              )}
+            >
+              <SearchIcon className="size-[18px]" />
+            </button>
           </div>
 
           {/* Search the saved destinations */}
+          {searchOpen && (
           <input
+            autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={`Search ${tab === "recent" ? "recent" : "beneficiaries"} by name or address`}
             aria-label="Search saved destinations"
             className="mt-3 w-full rounded-lg border border-brand-grey100 bg-brand-surface px-3 py-2.5 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
           />
+          )}
 
           {/* Destinations */}
           <div className="flex flex-col pt-2">
