@@ -4,6 +4,7 @@ import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
 import { AmountEntry, groupDigits, parseAmount } from "@/components/dashboard/AmountEntry";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
+import { ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import { ArrowRightIcon, BankIcon } from "@/components/dashboard/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { NGN_PER_USD, formatNgn } from "@/lib/format";
@@ -30,11 +31,12 @@ const bankAccounts: BankAccount[] = [
 /** Payouts above this are split into batches — surfaced as a hint on the row. */
 const BATCH_THRESHOLD = 5_000_000;
 
-type View = "amount" | "confirm" | "pin" | "success";
+type View = "amount" | "pin" | "success";
 
 const WithdrawCrypto = () => {
   const navigate = useNavigate();
   const [view, setView] = useState<View>("amount");
+  const [reviewOpen, setReviewOpen] = useState(false);
   const [coin, setCoin] = useState(coins[0]);
   const [account, setAccount] = useState(bankAccounts[0]);
   const [raw, setRaw] = useState("");
@@ -93,7 +95,7 @@ const WithdrawCrypto = () => {
     return (
       <AppShell innerClassName="flex min-h-[100dvh] flex-col pb-0 lg:max-w-[480px] lg:px-4">
         <PageTransition className="flex flex-1 flex-col">
-          <PageHeader title="Enter PIN" onBack={() => setView("confirm")} />
+          <PageHeader title="Enter PIN" onBack={() => setView("amount")} />
           <div className="flex flex-1 flex-col items-center justify-center px-6">
             <p className="mb-8 text-sm text-brand-bodyText">
               Confirm withdrawal of {groupDigits(raw)} {coin.symbol}
@@ -135,55 +137,19 @@ const WithdrawCrypto = () => {
   }
 
   /* ---------------- Confirm ---------------- */
-  if (view === "confirm") {
-    const rows = [
-      ["Asset", coin.symbol],
-      ["Amount", `${groupDigits(raw)} ${coin.symbol}`],
-      ["You receive", formatNgn(ngn)],
-      ["Bank", account.bank],
-      ["Account", account.number],
-    ];
-
-    return (
-      <AppShell innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
-        <PageTransition>
-          <PageHeader title="Confirm withdrawal" onBack={() => setView("amount")} />
-          <SectionCard className="px-4">
-            {rows.map(([label, value], i) => (
-              <div
-                key={label}
-                className={cn(
-                  "flex items-center justify-between gap-4 py-3.5",
-                  i < rows.length - 1 && "border-b border-brand-grey100",
-                )}
-              >
-                <span className="text-sm text-brand-bodyText">{label}</span>
-                <span className="text-right text-sm font-semibold text-brand-grey900">{value}</span>
-              </div>
-            ))}
-          </SectionCard>
-
-          <div className="px-4 pt-4 sm:px-0">
-            <p className="mb-4 rounded bg-[#FBF7F2] px-2 py-1.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
-              Verify the account details. Completed payouts cannot be reversed.
-            </p>
-            <PrimaryButton
-              onClick={() => {
-                setPin("");
-                setView("pin");
-              }}
-            >
-              Confirm withdrawal
-            </PrimaryButton>
-          </div>
-        </PageTransition>
-      </AppShell>
-    );
-  }
+  /* Review is a sheet over the amount screen (Figma 285:10690). */
+  const reviewRows: [string, string, string?][] = [
+    ["Asset", coin.symbol],
+    ["Amount", `${groupDigits(raw)} ${coin.symbol}`],
+    ["You receive", formatNgn(ngn)],
+    ["Bank", account.bank],
+    ["Account", account.number, "Verify the account details. Completed payouts cannot be reversed."],
+  ];
 
   /* ---------------- Amount entry (Figma 269:7302) ---------------- */
   return (
-    <AmountEntry
+    <>
+      <AmountEntry
       title="Withdraw"
       onBack={() => navigate(-1)}
       value={raw}
@@ -241,8 +207,22 @@ const WithdrawCrypto = () => {
         </Popover>
       }
       submitDisabled={!ready}
-      onSubmit={() => setView("confirm")}
+      onSubmit={() => setReviewOpen(true)}
     />
+
+      <ReviewSheet
+        open={reviewOpen}
+        onOpenChange={setReviewOpen}
+        rows={reviewRows}
+        actionLabel="Confirm withdrawal"
+        withFaceId={false}
+        onAction={() => {
+          setReviewOpen(false);
+          setPin("");
+          setView("pin");
+        }}
+      />
+    </>
   );
 };
 

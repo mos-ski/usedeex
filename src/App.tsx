@@ -20,7 +20,6 @@ import WithdrawCrypto from "./pages/WithdrawCrypto";
 import SendMoney from "./pages/SendMoney";
 import AssetDetail from "./pages/AssetDetail";
 import Receipt from "./pages/Receipt";
-import TransactionDetail from "./pages/TransactionDetail";
 import DeexPay from "./pages/DeexPay";
 import GiftCards from "./pages/GiftCards";
 import BillPayment from "./pages/BillPayment";
@@ -82,7 +81,7 @@ const App = () => (
             <Route path="/send-money" element={<SendMoney />} />
             <Route path="/asset/:symbol" element={<AssetDetail />} />
             <Route path="/receipt" element={<Receipt />} />
-            <Route path="/transaction-detail" element={<TransactionDetail />} />
+            <Route path="/transaction-detail" element={<Navigate to="/receipt" replace />} />
             <Route path="/deex-pay" element={<Navigate to="/sell-crypto" replace />} />
             <Route path="/payment-link" element={<DeexPay />} />
             <Route path="/giftcards" element={<GiftCards />} />

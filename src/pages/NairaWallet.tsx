@@ -335,7 +335,19 @@ const NairaWallet = () => {
                   <button
                     key={tx.id}
                     type="button"
-                    onClick={() => navigate("/transaction-detail", { state: { ...tx, symbol: "NGN" } })}
+                    onClick={() =>
+                      navigate("/receipt", {
+                        state: {
+                          type: tx.type === "topup" ? "deposit" : "withdraw",
+                          data: {
+                            type: `NGN ${tx.type === "topup" ? "Deposit" : "Withdraw"}`,
+                            amount: `₦${Math.abs(tx.amount).toLocaleString("en-NG")}`,
+                            status: tx.status,
+                            date: tx.date,
+                          },
+                        },
+                      })
+                    }
                     className={cn(
                       "flex items-center gap-3 py-3 text-left transition-colors hover:bg-brand-grey50",
                       index < 2 && "border-b border-brand-hairline",

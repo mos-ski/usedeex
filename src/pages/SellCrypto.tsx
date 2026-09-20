@@ -5,6 +5,7 @@ import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
 import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
 import AssetMark from "@/components/dashboard/AssetMark";
+import { ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import { ArrowRightIcon, BankIcon } from "@/components/dashboard/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { NGN_PER_USD, formatNgn, trimZeros } from "@/lib/format";
@@ -28,11 +29,12 @@ const banks = [
 const BATCH_THRESHOLD = 5_000_000;
 
 
-type Step = "amount" | "review" | "deposit" | "pending";
+type Step = "amount" | "deposit" | "pending";
 
 const SellCrypto = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>("amount");
+  const [reviewOpen, setReviewOpen] = useState(false);
   const [symbol, setSymbol] = useState("USDT");
   const [bank, setBank] = useState(banks[0]);
   const [raw, setRaw] = useState("");
@@ -81,7 +83,7 @@ const SellCrypto = () => {
     return (
       <AppShell innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
         <PageTransition>
-          <PageHeader title={`Deposit ${asset.symbol}`} onBack={() => setStep("review")} />
+          <PageHeader title={`Deposit ${asset.symbol}`} onBack={() => setStep("amount")} />
 
           <SectionCard className="px-4">
             {([
@@ -135,47 +137,21 @@ const SellCrypto = () => {
   }
 
   /* ---------------- Review ---------------- */
-  if (step === "review") {
-    const rows: [string, string][] = [
-      ["Asset", asset.name],
-      ["Network", asset.network],
-      ["Amount", `${trimZeros(amount.toFixed(8))} ${asset.symbol}`],
-      ["Destination", `${bank.account} · ${bank.name}`],
-      ["Rate", `${formatNgn(asset.usdPrice * NGN_PER_USD)}/${asset.symbol}`],
-      ["You'll receive", formatNgn(ngn)],
-    ];
+  /* Review is a sheet over the amount screen (Figma 285:10690). */
+  const reviewRows: [string, string][] = [
+    ["Asset", asset.name],
+    ["Network", asset.network],
+    ["Amount", `${trimZeros(amount.toFixed(8))} ${asset.symbol}`],
+    ["Destination", `${bank.account} \u00b7 ${bank.name}`],
+    ["Rate", `${formatNgn(asset.usdPrice * NGN_PER_USD)}/${asset.symbol}`],
+    ["You'll receive", formatNgn(ngn)],
+  ];
 
-    return (
-      <AppShell innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
-        <PageTransition>
-          <PageHeader title="Confirm trade" onBack={() => setStep("amount")} />
-          <SectionCard className="px-4">
-            {rows.map(([label, value], i) => (
-              <div
-                key={label}
-                className={cn(
-                  "flex items-center justify-between gap-4 py-3.5",
-                  i < rows.length - 1 && "border-b border-brand-grey100",
-                )}
-              >
-                <span className="text-sm text-brand-bodyText">{label}</span>
-                <span className="text-right text-sm font-semibold text-brand-grey900">{value}</span>
-              </div>
-            ))}
-          </SectionCard>
-          <div className="px-4 pt-4 sm:px-0">
-            <PrimaryButton onClick={() => setStep("deposit")}>
-              Proceed to deposit <ArrowRightIcon className="size-5" />
-            </PrimaryButton>
-          </div>
-        </PageTransition>
-      </AppShell>
-    );
-  }
 
   /* ---------------- Amount entry (Figma 269:6883) ---------------- */
   return (
-    <AmountEntry
+    <>
+      <AmountEntry
       title="Sell"
       onBack={() => navigate(-1)}
       value={raw}
@@ -232,8 +208,22 @@ const SellCrypto = () => {
         </Popover>
       }
       submitDisabled={!ready}
-      onSubmit={() => setStep("review")}
+      onSubmit={() => setReviewOpen(true)}
     />
+
+      {/* Review (Figma 285:10690) — the trade is confirmed in a sheet, not a page. */}
+      <ReviewSheet
+        open={reviewOpen}
+        onOpenChange={setReviewOpen}
+        rows={reviewRows}
+        actionLabel="Proceed to deposit"
+        withFaceId={false}
+        onAction={() => {
+          setReviewOpen(false);
+          setStep("deposit");
+        }}
+      />
+    </>
   );
 };
 

@@ -7,6 +7,7 @@ import { useInviteCode } from "@/contexts/InviteCodeContext";
 import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
 import { AmountEntry, BalanceShortcuts, parseAmount } from "@/components/dashboard/AmountEntry";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
+import { FaceIdOverlay, ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import { trimZeros } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +23,7 @@ const assets = [
 const bySymbol = (symbol: string) => assets.find((a) => a.symbol === symbol) ?? assets[0];
 
 
-type View = "amount" | "confirm" | "success";
+type View = "amount" | "success";
 
 const SwapCrypto = () => {
   const navigate = useNavigate();
@@ -31,6 +32,8 @@ const SwapCrypto = () => {
   const [toSymbol, setToSymbol] = useState("USDT");
   const [raw, setRaw] = useState("");
   const [showInviteCode, setShowInviteCode] = useState(false);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [authenticating, setAuthenticating] = useState(false);
   const { appliedCode, tradeCompleted, applyCode, completeTrade } = useInviteCode();
 
   const from = bySymbol(fromSymbol);
@@ -71,39 +74,22 @@ const SwapCrypto = () => {
     );
   }
 
-  if (view === "confirm") {
-    const rows: [string, string][] = [
-      ["You pay", `${trimZeros(amount.toFixed(8))} ${from.symbol}`],
-      ["You receive", `${trimZeros(received.toFixed(6))} ${to.symbol}`],
-      ["Rate", `1 ${from.symbol} = ${trimZeros((from.rate / to.rate).toFixed(6))} ${to.symbol}`],
-      ["Fee (0.5%)", `${trimZeros(fee.toFixed(8))} ${from.symbol}`],
-    ];
+  /* Review is a sheet over the amount screen (Figma 285:10690). */
+  const reviewRows: [string, string][] = [
+    ["You pay", `${trimZeros(amount.toFixed(8))} ${from.symbol}`],
+    ["You receive", `${trimZeros(received.toFixed(6))} ${to.symbol}`],
+    ["Rate", `1 ${from.symbol} = ${trimZeros((from.rate / to.rate).toFixed(6))} ${to.symbol}`],
+    ["Fee (0.5%)", `${trimZeros(fee.toFixed(8))} ${from.symbol}`],
+  ];
 
-    return (
-      <AppShell innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
-        <PageTransition>
-          <PageHeader title="Confirm swap" onBack={() => setView("amount")} />
-          <SectionCard className="px-4">
-            {rows.map(([label, value], i) => (
-              <div
-                key={label}
-                className={cn(
-                  "flex items-center justify-between gap-4 py-3.5",
-                  i < rows.length - 1 && "border-b border-brand-grey100",
-                )}
-              >
-                <span className="text-sm text-brand-bodyText">{label}</span>
-                <span className="text-right text-sm font-semibold text-brand-grey900">{value}</span>
-              </div>
-            ))}
-          </SectionCard>
-          <div className="px-4 pt-4 sm:px-0">
-            <PrimaryButton onClick={() => setView("success")}>Confirm swap</PrimaryButton>
-          </div>
-        </PageTransition>
-      </AppShell>
-    );
-  }
+  const confirm = () => {
+    setReviewOpen(false);
+    setAuthenticating(true);
+    window.setTimeout(() => {
+      setAuthenticating(false);
+      setView("success");
+    }, 1400);
+  };
 
   return (
     <>
@@ -127,8 +113,12 @@ const SwapCrypto = () => {
           />
         }
         submitDisabled={!ready}
-        onSubmit={() => setView("confirm")}
+        onSubmit={() => setReviewOpen(true)}
       />
+
+      <ReviewSheet open={reviewOpen} onOpenChange={setReviewOpen} rows={reviewRows} actionLabel="Confirm swap" onAction={confirm} />
+
+      <FaceIdOverlay active={authenticating} />
 
       {showInviteCode && (
         <InviteCodeInput

@@ -3,8 +3,11 @@ import { CaretDownIcon, CheckIcon } from "./icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
-/** Shared control height so inputs and selects line up in a column. */
-const CONTROL = "h-14 w-full rounded-lg border border-brand-grey100 bg-white px-4 text-sm leading-[1.6]";
+/**
+ * Underlined control matching the sign-in and sign-up fields (Figma 300:29863),
+ * in the light palette: label above, value on a hairline rule.
+ */
+const CONTROL = "w-full border-b border-brand-grey100 bg-transparent py-2 text-[15px] leading-[1.4]";
 
 /** Label above a control, with optional helper text underneath. */
 export const Field = ({
@@ -18,10 +21,10 @@ export const Field = ({
   children: ReactNode;
   className?: string;
 }) => (
-  <div className={cn("flex min-w-0 flex-col gap-1.5", className)}>
+  <div className={cn("flex min-w-0 flex-col gap-1", className)}>
     <span className="text-xs leading-[1.3] text-brand-bodyText">{label}</span>
     {children}
-    {helper && <span className="text-xs leading-[1.3] text-brand-grey400">{helper}</span>}
+    {helper && <span className="pt-1 text-xs leading-[1.3] text-brand-grey400">{helper}</span>}
   </div>
 );
 
@@ -65,7 +68,7 @@ export const SelectField = ({
   return (
     <Field label={label} helper={helper} className={className}>
       <Popover>
-        <PopoverTrigger className={cn(CONTROL, "flex items-center gap-2 text-left")}>
+        <PopoverTrigger className={cn(CONTROL, "flex items-center gap-2 text-left focus:border-brand-blue500")}>
           {active?.icon}
           <span className={cn("min-w-0 flex-1 truncate", active ? "text-brand-grey900" : "text-brand-grey300")}>
             {active?.label ?? placeholder}

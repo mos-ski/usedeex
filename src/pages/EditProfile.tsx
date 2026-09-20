@@ -40,14 +40,14 @@ const EditProfile = () => {
 
         <SectionCard className="mt-3 flex flex-col gap-4 px-4 py-5">
           {verified.map((f) => (
-            <div key={f.label} className="flex min-w-0 flex-col gap-1.5">
+            <div key={f.label} className="flex min-w-0 flex-col gap-1">
               <span className="flex items-center gap-1 text-xs leading-[1.3] text-brand-bodyText">
                 {f.label}
                 <LockIcon className="size-3 text-brand-grey400" />
               </span>
-              <div className="flex h-14 w-full items-center rounded-lg border border-brand-grey100 bg-brand-grey50 px-4 text-sm leading-[1.6] text-brand-grey500">
+              <p className="w-full border-b border-brand-grey100 py-2 text-[15px] leading-[1.4] text-brand-grey500">
                 {f.value}
-              </div>
+              </p>
             </div>
           ))}
 
