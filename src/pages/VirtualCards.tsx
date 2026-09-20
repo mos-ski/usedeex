@@ -13,7 +13,6 @@ import {
   ArrowLeftIcon,
   EyeIcon,
   EyeOffIcon,
-  GearIcon,
   InfoCircleIcon,
   LockIcon,
   MinusIcon,
@@ -21,7 +20,11 @@ import {
   TrendArrowIcon,
 } from "@/components/dashboard/icons";
 import { cn } from "@/lib/utils";
-import cardPreview from "@/assets/cards/deex-card-preview.png";
+
+const figmaCardHero = "https://www.figma.com/api/mcp/asset/700f23ae-556c-4dfb-a8c7-2f19405619ce.png";
+const figmaTopUpIcon = "https://www.figma.com/api/mcp/asset/ffe8128f-528b-48be-9a92-a374a93fc0cf/2ba4d.svg";
+const figmaManageIcon = "https://www.figma.com/api/mcp/asset/ffe8128f-528b-48be-9a92-a374a93fc0cf/9dfcd.svg";
+const figmaViewIcon = "https://www.figma.com/api/mcp/asset/ffe8128f-528b-48be-9a92-a374a93fc0cf/e8f0f.svg";
 
 type CardStatus = "active" | "frozen";
 type View = "list" | "create" | "detail" | "fund" | "limits" | "manage";
@@ -621,19 +624,8 @@ const VirtualCards = () => {
             className="mt-3 block w-full text-left"
             aria-label="Open DeeX card details"
           >
-            <img
-              src={cardPreview}
-              alt="DeeX virtual card ending in 1234"
-              className="mx-auto block aspect-[348/222] w-full max-w-[348px] rounded-[20px] object-cover shadow-[8px_10px_16px_rgba(0,0,0,0.05)]"
-            />
+            <img src={figmaCardHero} alt="DeeX Card with balance" className="block w-full" />
           </button>
-
-          <div className="pt-4 text-center">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-white/45">Balance</p>
-            <p className="font-manrope text-[34px] font-extrabold leading-none tracking-[-0.06em]">
-              {primaryCard?.balance ?? "$0.00"}
-            </p>
-          </div>
         </section>
 
         <SectionCard className="mt-3 px-4 py-4">
@@ -644,7 +636,7 @@ const VirtualCards = () => {
               onClick={() => setView("fund")}
               className="flex h-[60px] flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint text-brand-navy transition-colors hover:bg-brand-primary100"
             >
-              <PlusIcon className="size-5" />
+              <img src={figmaTopUpIcon} alt="" className="size-6" />
               <span className="text-[10px] leading-[1.4] text-brand-grey900">Top Up</span>
             </button>
             <button
@@ -655,7 +647,7 @@ const VirtualCards = () => {
               }}
               className="flex h-[60px] flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint text-brand-navy transition-colors hover:bg-brand-primary100"
             >
-              <GearIcon className="size-5" />
+              <img src={figmaManageIcon} alt="" className="size-6" />
               <span className="text-[10px] leading-[1.4] text-brand-grey900">Manage Card</span>
             </button>
             <button
@@ -669,7 +661,7 @@ const VirtualCards = () => {
               }}
               className="flex h-[60px] flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint text-brand-navy transition-colors hover:bg-brand-primary100"
             >
-              <EyeIcon className="size-5" />
+              <img src={figmaViewIcon} alt="" className="size-6" />
               <span className="text-[10px] leading-[1.4] text-brand-grey900">View Details</span>
             </button>
           </div>
