@@ -321,7 +321,8 @@ const NairaWallet = () => {
                 {[
                   { label: "Bills", Icon: PhoneCallIcon, onClick: () => navigate("/bills/airtime") },
                   { label: "Withdraw", Icon: SendIcon, onClick: () => navigate("/send-money") },
-                  { label: "Deposit", Icon: PlusIcon, onClick: () => setStep("topup-method") },
+                  // Use the same dedicated account-number deposit screen as Home → Deposit → NGN.
+                  { label: "Deposit", Icon: PlusIcon, onClick: () => navigate("/deposit-cash") },
                 ].map((action) => (
                   <ActionTile key={action.label} label={action.label} Icon={action.Icon} onClick={action.onClick} />
                 ))}
