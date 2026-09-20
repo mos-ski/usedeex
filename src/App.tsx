@@ -71,7 +71,8 @@ const App = () => (
             <Route path="/asset/:symbol" element={<AssetDetail />} />
             <Route path="/receipt" element={<Receipt />} />
             <Route path="/transaction-detail" element={<TransactionDetail />} />
-            <Route path="/deex-pay" element={<DeexPay />} />
+            <Route path="/deex-pay" element={<Navigate to="/sell-crypto" replace />} />
+            <Route path="/payment-link" element={<DeexPay />} />
             <Route path="/giftcards" element={<GiftCards />} />
             <Route path="/bills/:type" element={<BillPayment />} />
             <Route path="/naira-wallet" element={<NairaWallet />} />

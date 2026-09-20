@@ -1,112 +1,59 @@
 import { useState } from "react";
+import { Calendar, Download, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Download, Calendar, FileText } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
+import { format } from "date-fns";
+import { toast } from "sonner";
 import PageTransition from "@/components/PageTransition";
-import NewBadge from "@/components/NewBadge";
+import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
 
-const months = [
-  { label: "March 2026", key: "2026-03" },
-  { label: "February 2026", key: "2026-02" },
-  { label: "January 2026", key: "2026-01" },
-  { label: "December 2025", key: "2025-12" },
-  { label: "November 2025", key: "2025-11" },
-  { label: "October 2025", key: "2025-10" },
-];
+const months = ["September 2026", "August 2026", "July 2026", "June 2026", "May 2026", "April 2026"];
 
 const GenerateStatement = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"monthly" | "custom">("monthly");
+  const [tab, setTab] = useState<"monthly" | "custom">("monthly");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
+  const download = (label: string) => toast.success(`${label} statement generated`, { description: "PDF saved to your device" });
 
-  const handleMonthlyDownload = (month: string) => {
-    toast.success(`Statement for ${month} downloaded`, { description: "PDF saved to your device" });
-  };
-
-  const handleCustomDownload = () => {
-    if (!startDate || !endDate) return;
-    toast.success("Custom statement generated", { description: `${format(startDate, "MMM d, yyyy")} — ${format(endDate, "MMM d, yyyy")}` });
-  };
+  const dateField = (label: string, value: Date | undefined, setter: (date?: Date) => void) => (
+    <label className="block">
+      <span className="mb-2 block text-xs text-brand-bodyText">{label}</span>
+      <Popover>
+        <PopoverTrigger asChild>
+          <button type="button" className={cn("flex h-14 w-full items-center gap-3 rounded-lg border border-brand-grey100 px-4 text-left text-sm text-brand-grey900", !value && "text-brand-grey300")}>
+            <Calendar className="size-5 text-brand-blue500" />{value ? format(value, "PPP") : `Select ${label.toLowerCase()}`}
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto border-brand-grey100 bg-white p-0" align="start"><CalendarComponent mode="single" selected={value} onSelect={setter} initialFocus /></PopoverContent>
+      </Popover>
+    </label>
+  );
 
   return (
-    <MobileLayout hideNav>
+    <AppShell className="bg-white" innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
       <PageTransition>
-        <div className="px-4 pt-4">
-          <div className="flex items-center gap-3 mb-6">
-            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-            <h2 className="text-lg font-bold text-foreground">Generate Statement</h2>
-            <NewBadge />
+        <PageHeader title="Generate statement" onBack={() => navigate(-1)} />
+        <SectionCard className="px-4 py-3">
+          <div role="tablist" className="flex rounded bg-brand-barBg p-0.5">
+            {(["monthly", "custom"] as const).map((item) => <button key={item} type="button" onClick={() => setTab(item)} className={cn("flex-1 rounded px-3 py-2 text-xs font-semibold capitalize", tab === item ? "bg-white text-brand-blue500" : "text-brand-grey900")}>{item === "custom" ? "Custom range" : item}</button>)}
           </div>
-
-          <div className="flex bg-secondary rounded-full p-1 mb-6">
-            <button onClick={() => setActiveTab("monthly")} className={`flex-1 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === "monthly" ? "bg-muted text-foreground" : "text-muted-foreground"}`}>
-              Monthly
-            </button>
-            <button onClick={() => setActiveTab("custom")} className={`flex-1 py-2 rounded-full text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${activeTab === "custom" ? "bg-muted text-foreground" : "text-muted-foreground"}`}>
-              Custom Range <NewBadge />
-            </button>
-          </div>
-
-          {activeTab === "monthly" ? (
-            <div className="space-y-2">
-              {months.map(m => (
-                <button key={m.key} onClick={() => handleMonthlyDownload(m.label)} className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3.5">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-muted-foreground" />
-                    <span className="text-sm font-medium text-foreground">{m.label}</span>
-                  </div>
-                  <Download className="w-4 h-4 text-primary" />
-                </button>
-              ))}
-            </div>
-          ) : (
-            <div>
-              <div className="space-y-4 mb-6">
-                <div>
-                  <label className="text-sm text-muted-foreground mb-2 block">Start Date</label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button className={cn("w-full h-12 bg-secondary rounded-xl px-4 flex items-center gap-2 text-left", !startDate && "text-muted-foreground")}>
-                        <Calendar className="w-4 h-4" />
-                        {startDate ? format(startDate, "PPP") : "Select start date"}
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <CalendarComponent mode="single" selected={startDate} onSelect={setStartDate} initialFocus className={cn("p-3 pointer-events-auto")} />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div>
-                  <label className="text-sm text-muted-foreground mb-2 block">End Date</label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button className={cn("w-full h-12 bg-secondary rounded-xl px-4 flex items-center gap-2 text-left", !endDate && "text-muted-foreground")}>
-                        <Calendar className="w-4 h-4" />
-                        {endDate ? format(endDate, "PPP") : "Select end date"}
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <CalendarComponent mode="single" selected={endDate} onSelect={setEndDate} initialFocus className={cn("p-3 pointer-events-auto")} />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </div>
-
-              <button onClick={handleCustomDownload}
-                className={`w-full h-14 rounded-xl font-semibold flex items-center justify-center gap-2 ${startDate && endDate ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-                <Download className="w-5 h-5" /> Generate Statement
-              </button>
-            </div>
-          )}
-        </div>
+        </SectionCard>
+        {tab === "monthly" ? (
+          <SectionCard className="mt-3 px-4 py-0">
+            {months.map((month, index) => <button key={month} type="button" onClick={() => download(month)} className={cn("flex w-full items-center gap-4 py-4 text-left", index < months.length - 1 && "border-b border-brand-grey100")}><span className="flex size-10 items-center justify-center rounded-full bg-brand-tint text-brand-blue500"><FileText className="size-5" /></span><span className="flex-1 text-sm font-semibold text-brand-grey900">{month}</span><Download className="size-5 text-brand-blue500" /></button>)}
+          </SectionCard>
+        ) : (
+          <SectionCard className="mt-3 space-y-4 px-4 py-5">
+            {dateField("Start date", startDate, setStartDate)}
+            {dateField("End date", endDate, setEndDate)}
+            <PrimaryButton className="mt-4" disabled={!startDate || !endDate} onClick={() => startDate && endDate && download(`${format(startDate, "MMM d")} – ${format(endDate, "MMM d, yyyy")}`)}><Download className="size-5" />Generate statement</PrimaryButton>
+          </SectionCard>
+        )}
       </PageTransition>
-    </MobileLayout>
+    </AppShell>
   );
 };
 

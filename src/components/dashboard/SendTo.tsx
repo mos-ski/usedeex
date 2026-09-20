@@ -5,18 +5,9 @@ import AssetMark from "./AssetMark";
 import { ArrowRightIcon, CaretDownIcon } from "./icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import type { CryptoDestination } from "@/data/recipientData";
 
-export type Destination = {
-  id: string;
-  /** Full value — an address or an @username. */
-  value: string;
-  /** Shortened form shown on the row. */
-  display: string;
-  label: string;
-  symbol: string;
-  network: string;
-  kind: "recent" | "beneficiary";
-};
+export type Destination = CryptoDestination;
 
 export const chains = [
   { name: "BNB Smart Chain", symbol: "BTC" },

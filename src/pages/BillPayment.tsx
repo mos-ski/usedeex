@@ -1,5 +1,6 @@
 import { Navigate, useParams } from "react-router-dom";
 import BillFlow, { BillConfig } from "@/components/dashboard/BillFlow";
+import { bettingRecipients, electricityRecipients, phoneRecipients } from "@/data/recipientData";
 
 /** Naira top-ups shared by airtime, electricity and betting. */
 const cashShortcuts = [
@@ -17,13 +18,6 @@ const dataBundles = [
   { label: "10GB", value: 3500 },
 ];
 
-const phoneBeneficiaries: BillConfig["beneficiaries"] = [
-  { id: "p1", identifier: "08103674006", name: "Self", provider: "MTN", kind: "recent" },
-  { id: "p2", identifier: "09012345678", name: "Mum", provider: "Glo", kind: "recent" },
-  { id: "p3", identifier: "07098765432", name: "Bro", provider: "Airtel", kind: "recent" },
-  { id: "p4", identifier: "08055512345", name: "Ada", provider: "MTN", kind: "beneficiary" },
-];
-
 export const billConfigs: Record<string, BillConfig> = {
   airtime: {
     title: "Airtime",
@@ -31,7 +25,7 @@ export const billConfigs: Record<string, BillConfig> = {
     identifierLabel: "Phone number",
     providers: ["MTN", "Glo", "Airtel", "9mobile"],
     shortcuts: cashShortcuts,
-    beneficiaries: phoneBeneficiaries,
+    beneficiaries: phoneRecipients,
   },
   data: {
     title: "Data",
@@ -39,7 +33,7 @@ export const billConfigs: Record<string, BillConfig> = {
     identifierLabel: "Phone number",
     providers: ["MTN", "Glo", "Airtel", "9mobile"],
     shortcuts: dataBundles,
-    beneficiaries: phoneBeneficiaries,
+    beneficiaries: phoneRecipients,
   },
   electricity: {
     title: "Electricity",
@@ -47,10 +41,7 @@ export const billConfigs: Record<string, BillConfig> = {
     identifierLabel: "Meter number",
     providers: ["IKEDC", "EKEDC", "AEDC", "PHED", "BEDC"],
     shortcuts: cashShortcuts,
-    beneficiaries: [
-      { id: "m1", identifier: "45123456789", name: "Home", provider: "IKEDC", kind: "recent" },
-      { id: "m2", identifier: "62987654321", name: "Office", provider: "EKEDC", kind: "beneficiary" },
-    ],
+    beneficiaries: electricityRecipients,
   },
   betting: {
     title: "Betting",
@@ -59,10 +50,7 @@ export const billConfigs: Record<string, BillConfig> = {
     numericIdentifier: false,
     providers: ["Bet9ja", "SportyBet", "1xBet", "BetKing", "MSport"],
     shortcuts: cashShortcuts,
-    beneficiaries: [
-      { id: "b1", identifier: "BET9JA_1234", name: "Main", provider: "Bet9ja", kind: "recent" },
-      { id: "b2", identifier: "SPORTY_5678", name: "Weekend", provider: "SportyBet", kind: "beneficiary" },
-    ],
+    beneficiaries: bettingRecipients,
   },
 };
 

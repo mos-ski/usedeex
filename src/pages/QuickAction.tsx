@@ -32,8 +32,8 @@ const groups: { title: string; tiles: Tile[] }[] = [
       { label: "Send", path: "/send-money", Icon: SendIcon },
       { label: "Buy", path: "/deposit", Icon: ArrowDownLeftIcon },
       { label: "Swap Coins", path: "/swap-crypto", Icon: SwapIcon },
-      { label: "DeeX Pay", path: "/deex-pay", Icon: TagIcon },
-      { label: "Get Link", path: "/deex-pay", Icon: LinkIcon },
+      { label: "DeeX Pay", path: "/sell-crypto", Icon: TagIcon },
+      { label: "Get Link", path: "/payment-link", Icon: LinkIcon },
       { label: "Sell", path: "/sell-crypto", Icon: ArrowUpRightIcon },
     ],
   },
@@ -49,8 +49,8 @@ const groups: { title: string; tiles: Tile[] }[] = [
     title: "Get Reward",
     tiles: [
       { label: "Rewards", path: "/rewards", Icon: HeartsIcon },
-      { label: "Earnings", path: "/referrals", Icon: PercentIcon },
-      { label: "Redeem", path: "/rewards", Icon: CursorClickIcon },
+      { label: "Earnings", path: "/rewards?tab=earnings", Icon: PercentIcon },
+      { label: "Redeem", path: "/rewards?view=redeem", Icon: CursorClickIcon },
     ],
   },
   {

@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import { NGN_PER_USD, formatNgn } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { bankRecipients, type BankRecipient } from "@/data/recipientData";
 
 const banks = ["Access Bank", "GTBank", "UBA", "Zenith Bank", "First Bank", "PalmPay", "Opay"];
 
@@ -20,16 +21,7 @@ const wallets = [
   { symbol: "ETH", name: "Ethereum", balance: 0.15, usdPrice: 3250.5 },
 ];
 
-type Recipient = { id: string; account: string; name: string; bank: string; kind: "recent" | "beneficiary" };
-
-const savedRecipients: Recipient[] = [
-  { id: "r1", account: "0894893438", name: "Emeka", bank: "UBA", kind: "recent" },
-  { id: "r2", account: "0894893434", name: "Adedamola", bank: "Access Bank", kind: "recent" },
-  { id: "r3", account: "0894893437", name: "Damilola", bank: "GTBank", kind: "recent" },
-  { id: "r4", account: "0894893435", name: "Bola", bank: "Zenith Bank", kind: "recent" },
-  { id: "b1", account: "8103674006", name: "Precious Isioma", bank: "PalmPay", kind: "beneficiary" },
-  { id: "b2", account: "9012345678", name: "Chioma Daniels", bank: "Opay", kind: "beneficiary" },
-];
+const savedRecipients = bankRecipients;
 
 /** Daily payout cap and what's already gone out today. */
 const DAILY_LIMIT = 50_000;
@@ -82,7 +74,7 @@ const SendMoney = () => {
     }
   };
 
-  const pickRecipient = (r: Recipient) => {
+  const pickRecipient = (r: BankRecipient) => {
     setAccount(r.account);
     setBank(r.bank);
     setStep("amount");

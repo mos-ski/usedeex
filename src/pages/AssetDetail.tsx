@@ -5,8 +5,9 @@ import PageTransition from "@/components/PageTransition";
 import { ActionTile, AppShell, PageHeader, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
 import AssetMark from "@/components/dashboard/AssetMark";
 import { PlusIcon, SendIcon, SwapIcon } from "@/components/dashboard/icons";
-import SendTo, { Destination } from "@/components/dashboard/SendTo";
+import SendTo from "@/components/dashboard/SendTo";
 import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
+import { cryptoDestinations, type CryptoDestination } from "@/data/recipientData";
 import { NGN_PER_USD } from "@/lib/format";
 import { splitUsdForDisplay } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -37,15 +38,6 @@ const assetData: Record<string, Asset> = {
 const recentTxns = [
   { type: "BTC to USDT", date: "Apr 25th, 2024", status: "Success", amount: "0.00001535 BTC", value: "$0.95" },
   { type: "USDT to BTC", date: "Apr 20th, 2024", status: "Success", amount: "1.00 USDT", value: "$1.00" },
-];
-
-/** Saved send destinations — addresses and DeeX usernames in one list. */
-const destinations: Destination[] = [
-  { id: "a1", value: "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD68", display: "0x742d35Cc66......7595f2bD68", label: "My Personal wallet", symbol: "BTC", network: "BTC (ERC)", kind: "recent" },
-  { id: "a2", value: "0x9eFe6AfA0912bC5a1f4d0e3D2910833744a", display: "0x9eFe6AfA09......3D2910833744a", label: "My Personal wallet", symbol: "ETH", network: "ETH (ERC)", kind: "recent" },
-  { id: "a3", value: "0xD31f1Ec12bd7AaBA453Ff6d1a2b90c7D46d6cc11", display: "0xD31f1Ec12b......7D46d6cc11", label: "Trading wallet", symbol: "USDT", network: "USDT (ERC)", kind: "recent" },
-  { id: "u1", value: "@adebayo", display: "@adebayo", label: "Adebayo Ogunlesi", symbol: "USDC", network: "DeeX username", kind: "beneficiary" },
-  { id: "u2", value: "@chioma_d", display: "@chioma_d", label: "Chioma Daniels", symbol: "TRX", network: "DeeX username", kind: "beneficiary" },
 ];
 
 const timeframes = ["1D", "1W", "1M", "1Y", "All"] as const;
@@ -97,7 +89,7 @@ const AssetDetail = () => {
   const [showTour, setShowTour] = useState(false);
   const [tourStep, setTourStep] = useState(0);
   const [withdrawView, setWithdrawView] = useState<WithdrawView>("none");
-  const [destination, setDestination] = useState<Destination | null>(null);
+  const [destination, setDestination] = useState<CryptoDestination | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState("");
 
   const key = symbol?.toUpperCase() || "BTC";
@@ -127,7 +119,7 @@ const AssetDetail = () => {
     return (
       <SendTo
         onBack={() => setWithdrawView("none")}
-        destinations={destinations}
+        destinations={cryptoDestinations}
         onSelect={(d) => {
           setDestination(d);
           setWithdrawAmount("");
