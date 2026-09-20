@@ -119,7 +119,7 @@ const VirtualCardFace = ({ last4 }: { last4: string }) => (
   >
     <img src={cardBase} alt="" className="absolute inset-0 size-full" />
     <img src={cardLines} alt="" className="absolute left-[calc(50%+7.15%)] bottom-[-36.3%] h-[115.3%] w-[200.2%] max-w-none -translate-x-1/2" />
-    <img src={deexMark} alt="DeeX" className="absolute left-[13.5%] top-[16.6%] h-auto w-[17.1%]" />
+    <img src={deexMark} alt="DeeX" className="absolute left-0 top-[16.6%] h-auto w-[17.1%]" />
     <span className="absolute left-[4.9%] top-[67.4%] font-roboto text-[clamp(9px,3.7vw,12px)] font-semibold uppercase leading-none tracking-[0.05em] text-white">
       CARD HOLDER
     </span>
