@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 import cardPreview from "@/assets/cards/deex-card-preview.png";
 
 type CardStatus = "active" | "frozen";
-type View = "list" | "create" | "detail" | "fund" | "limits";
+type View = "list" | "create" | "detail" | "fund" | "limits" | "manage";
 
 interface VCard {
   id: number;
@@ -274,6 +274,64 @@ const VirtualCards = () => {
     ));
   }
 
+  /* ---------------- Manage card ---------------- */
+  if (view === "manage" && selected) {
+    return shell("Manage Card", () => setView("list"), (
+      <SectionCard className="flex flex-col gap-2 px-4 py-4">
+        <button
+          type="button"
+          onClick={() => {
+            setCards((list) => list.map((card) => (card.id === selected.id ? { ...card, status: "frozen" } : card)));
+            toast.success("Card blocked");
+            setView("detail");
+          }}
+          className="flex items-center gap-3 rounded-lg border border-brand-grey100 px-4 py-4 text-left transition-colors hover:bg-brand-grey50"
+        >
+          <span className="flex size-10 items-center justify-center rounded-full bg-brand-danger/10 text-brand-danger">
+            <LockIcon className="size-5" />
+          </span>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">Block Card</span>
+            <span className="text-xs leading-[1.4] text-brand-bodyText">Temporarily stop all card activity</span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            toggleFreeze(selected.id);
+            setView("detail");
+          }}
+          className="flex items-center gap-3 rounded-lg border border-brand-grey100 px-4 py-4 text-left transition-colors hover:bg-brand-grey50"
+        >
+          <span className="flex size-10 items-center justify-center rounded-full bg-brand-tint text-brand-blue500">
+            <EyeOffIcon className="size-5" />
+          </span>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+              {selected.status === "frozen" ? "Unfreeze Card" : "Freeze Card"}
+            </span>
+            <span className="text-xs leading-[1.4] text-brand-bodyText">Pause spending and unpause anytime</span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate("/change-pin")}
+          className="flex items-center gap-3 rounded-lg border border-brand-grey100 px-4 py-4 text-left transition-colors hover:bg-brand-grey50"
+        >
+          <span className="flex size-10 items-center justify-center rounded-full bg-brand-tint text-brand-blue500">
+            <CardEditIcon className="size-5" />
+          </span>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">Change PIN</span>
+            <span className="text-xs leading-[1.4] text-brand-bodyText">Set a new card PIN</span>
+          </span>
+        </button>
+      </SectionCard>
+    ));
+  }
+
   /* ---------------- Detail ---------------- */
   if (view === "detail" && selected) {
     const actions = [
@@ -469,7 +527,7 @@ const VirtualCards = () => {
               type="button"
               onClick={() => {
                 setSelectedId(primaryCard?.id ?? null);
-                setView("detail");
+                setView("manage");
               }}
               className="flex h-[60px] flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint text-brand-navy transition-colors hover:bg-brand-primary100"
             >

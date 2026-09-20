@@ -85,6 +85,7 @@ const MenuPage = () => {
 
   const renderCardRow = () => (
     <SectionCard className="px-4 py-3">
+      <SectionHeader title="Virtual Card" />
       <button
         type="button"
         onClick={() => navigate("/virtual-cards")}
