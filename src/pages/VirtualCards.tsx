@@ -111,20 +111,20 @@ const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
   const [billingTab, setBillingTab] = useState<"local" | "us">("us");
   const fields = (billingTab === "us"
     ? [
-        ["Card holder name", "•••••••• ••••••••"],
-        ["Card number", "•••• •••• •••• 0000"],
-        ["Expiry date", "••/••••"],
-        ["CVV", "•••"],
-        ["Billing address", "••••••••••••••••••••••••••••••••"],
-        ["Zip code", "•••••"],
+        ["Card holder name", "Alex Johnson"],
+        ["Card number", "0000 0000 0000 0000"],
+        ["Expiry date", "12/30"],
+        ["CVV", "000"],
+        ["Billing address", "123 Demo Street, Wilmington, DE 19801, US"],
+        ["Zip code", "19801"],
       ]
     : [
-        ["Card holder name", "•••••••• ••••••••"],
-        ["Card number", "•••• •••• •••• 0000"],
-        ["Expiry date", "••/••••"],
-        ["CVV", "•••"],
-        ["Billing address", "••••••••••••••••••••••••••••••••"],
-        ["Postal code", "•••••"],
+        ["Card holder name", "Alex Johnson"],
+        ["Card number", "0000 0000 0000 0000"],
+        ["Expiry date", "12/30"],
+        ["CVV", "000"],
+        ["Billing address", "12 Demo Street, Lagos, Nigeria"],
+        ["Postal code", "100001"],
       ]) as readonly [string, string][];
 
   const copy = (value: string) => {
