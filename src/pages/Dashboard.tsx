@@ -184,7 +184,7 @@ const Dashboard = () => {
                     {rateStep % 2 === 0 ? (
                       "See rates"
                     ) : (
-                      <span className="flex items-center gap-1">
+                      <span className="flex w-full items-center justify-center gap-1">
                         <AssetMark symbol={rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].symbol} className="size-3" />
                         <span>{rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].value}</span>
                       </span>
