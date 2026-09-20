@@ -4,6 +4,11 @@
 
 type IconProps = { className?: string };
 
+/** Figma Menu DeeX Tag tile icon (node 269:5710). */
+export const DeexTagIcon = ({ className }: IconProps) => (
+  <img src="/deex-tag-user-circle.svg" alt="" aria-hidden="true" className={className} />
+);
+
 export const AvatarIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 26.6667 26.6667" fill="none" className={className} aria-hidden="true">
     <path
