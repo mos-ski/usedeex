@@ -47,10 +47,14 @@ const cardShortcuts = [
 const DEEX_FEE = 50;
 
 type Step = "brand" | "amount" | "pending";
+export type GiftCardMode = "buy" | "sell";
 type CardType = "physical" | "ecode";
 
-const GiftCards = () => {
+/** Buying and selling share the brand and amount steps; only the tail differs. */
+const GiftCards = ({ mode = "sell" }: { mode?: GiftCardMode }) => {
   const navigate = useNavigate();
+  const buying = mode === "buy";
+  const action = buying ? "Buy" : "Sell";
   const [step, setStep] = useState<Step>("brand");
 
   const [country, setCountry] = useState(countries[0]);
@@ -83,7 +87,7 @@ const GiftCards = () => {
   const rate = denominations[0].rate;
   const payout = totalNgn || amount * rate;
   const typeLabel = cardType === "physical" ? "Physical" : "e-Code";
-  const title = brand ? `${country.flag} ${brand} - ${typeLabel}` : "Sell Giftcard";
+  const title = brand ? `${country.flag} ${brand} - ${typeLabel}` : `${action} Giftcard`;
 
   const step2 = (id: string, delta: number) =>
     setCounts((c) => ({ ...c, [id]: Math.max(0, (c[id] ?? 0) + delta) }));
@@ -105,9 +109,13 @@ const GiftCards = () => {
   if (step === "pending") {
     return (
       <SuccessScreen
-        tone="pending"
-        title="Pending..."
-        message="The trader has successfully received your cards. Funds will be sent as soon as the transaction is confirmed."
+        tone={buying ? "brand" : "pending"}
+        title={buying ? "Card purchased" : "Pending..."}
+        message={
+          buying
+            ? `Your ${brand || "gift card"} code has been sent to your email and saved under Activity.`
+            : "The trader has successfully received your cards. Funds will be sent as soon as the transaction is confirmed."
+        }
         primaryLabel="Go Home"
         onPrimary={() => navigate("/dashboard")}
         secondaryLabel="Help Center"
@@ -121,7 +129,7 @@ const GiftCards = () => {
     return (
       <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
-          <PageHeader title="Sell Giftcard" onBack={() => navigate(-1)} />
+          <PageHeader title={`${action} Giftcard`} onBack={() => navigate(-1)} />
 
           <div className="flex flex-col gap-3 px-4">
             <div className="flex justify-center">
@@ -189,7 +197,9 @@ const GiftCards = () => {
             </div>
 
             <p className="px-4 pt-4 text-center text-xs leading-[1.6] text-brand-bodyText">
-              Note: Total denomination should match the value amount you wish to sell.
+              {buying
+                ? "Note: You pay in naira and the card code is delivered to you instantly."
+                : "Note: Total denomination should match the value amount you wish to sell."}
             </p>
 
             <PrimaryButton disabled={!brand} onClick={() => setStep("amount")}>
@@ -215,14 +225,23 @@ const GiftCards = () => {
   }
 
   /* ---------------- Amount (Figma 291:15459) ---------------- */
-  const reviewRows: [string, string, string?][] = [
-    ["Amount", `$${totalUsd ? totalUsd.toFixed(2) : (amount || 0).toFixed(2)}`],
-    ["Wallet", "Naira Wallet"],
-    ["Rate", `${formatNgn(rate)}/USD`],
-    ["Expected Payout", formatNgn(payout)],
-    ["Bank Details", "8103674006 - PalmPay", "Precious Isioma"],
-    ["DeeX Fee", formatNgn(DEEX_FEE)],
-  ];
+  const cardValue = `$${totalUsd ? totalUsd.toFixed(2) : (amount || 0).toFixed(2)}`;
+  const reviewRows: [string, string, string?][] = buying
+    ? [
+        ["Card value", cardValue],
+        ["Pay from", "Naira Wallet"],
+        ["Rate", `${formatNgn(rate)}/USD`],
+        ["DeeX Fee", formatNgn(DEEX_FEE)],
+        ["Total to pay", formatNgn(payout + DEEX_FEE)],
+      ]
+    : [
+        ["Amount", cardValue],
+        ["Wallet", "Naira Wallet"],
+        ["Rate", `${formatNgn(rate)}/USD`],
+        ["Expected Payout", formatNgn(payout)],
+        ["Bank Details", "8103674006 - PalmPay", "Precious Isioma"],
+        ["DeeX Fee", formatNgn(DEEX_FEE)],
+      ];
 
   return (
     <>
@@ -232,7 +251,7 @@ const GiftCards = () => {
         value={raw}
         onValueChange={setRaw}
         fromSymbol="USD"
-        fromOptions={[{ symbol: "USD", hint: "Card value" }]}
+        fromOptions={[{ symbol: "USD", hint: buying ? "Card value you want" : "Card value" }]}
         onFromChange={() => undefined}
         toSymbol="NGN"
         convertedText={payout ? Math.round(payout).toLocaleString("en-US") : "0"}
@@ -334,7 +353,8 @@ const GiftCards = () => {
                 className="font-bold"
                 onClick={() => {
                   setReviewOpen(false);
-                  setUploadOpen(true);
+                  if (buying) setStep("pending");
+                  else setUploadOpen(true);
                 }}
               >
                 Confirm

@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, SectionCard } from "@/components/dashboard/AppShell";
 import FloatingNav from "@/components/dashboard/FloatingNav";
 import { SettingsRow, Toggle } from "@/components/dashboard/SettingsList";
+import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import { useTheme } from "@/contexts/ThemeContext";
 import {
   ArrowLeftIcon,
@@ -90,6 +92,7 @@ const ShortcutTile = ({
 const Profile = () => {
   const navigate = useNavigate();
   const { theme, toggle } = useTheme();
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   const copyTag = () => {
     navigator.clipboard?.writeText(account.tag);
@@ -143,7 +146,7 @@ const Profile = () => {
               Icon={LogOutIcon}
               tint="bg-brand-noteDanger"
               iconColor="text-[#EB4335]"
-              onClick={() => navigate("/login")}
+              onClick={() => setLogoutOpen(true)}
             />
             <ShortcutTile
               label="Edit Profile"
@@ -174,6 +177,17 @@ const Profile = () => {
           </div>
         </SectionCard>
       </PageTransition>
+
+      <ConfirmDialog
+        open={logoutOpen}
+        onOpenChange={setLogoutOpen}
+        title="Log out?"
+        message="You will need your password to sign back in."
+        icon={<LogOutIcon className="size-6" />}
+        confirmLabel="Yes, log me out"
+        destructive
+        onConfirm={() => navigate("/login")}
+      />
 
       <FloatingNav />
     </AppShell>

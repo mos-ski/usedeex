@@ -44,7 +44,7 @@ const groups: { title: string; tiles: Tile[] }[] = [
     title: "Trade Giftcards",
     tiles: [
       { label: "Sell Giftcards", path: "/giftcards", Icon: GiftBoxIcon },
-      { label: "Buy Gift Card", path: "/giftcards", Icon: GiftCardIcon },
+      { label: "Buy Gift Card", path: "/giftcards/buy", Icon: GiftCardIcon },
       { label: "Generate", path: "/generate-statement", Icon: BookOpenIcon },
     ],
   },
@@ -52,7 +52,7 @@ const groups: { title: string; tiles: Tile[] }[] = [
     title: "Get Reward",
     tiles: [
       { label: "Rewards", path: "/rewards", Icon: HeartsIcon },
-      { label: "Earnings", path: "/rewards?tab=earnings", Icon: PercentIcon },
+      { label: "Earnings", path: "/rewards?view=history", Icon: PercentIcon },
       { label: "Redeem", path: "/rewards?view=redeem", Icon: CursorClickIcon },
     ],
   },

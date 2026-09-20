@@ -148,7 +148,11 @@ const payoutWallets = [
 const Rewards = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [view, setView] = useState<View>(searchParams.get("view") === "redeem" ? "redeem" : "main");
+  // Deep links from the menu: ?view=redeem and ?view=history.
+  const requestedView = searchParams.get("view");
+  const [view, setView] = useState<View>(
+    requestedView === "redeem" || requestedView === "history" ? requestedView : "main",
+  );
   const [amount, setAmount] = useState("");
   const [payout, setPayout] = useState<string>("NGN");
   const [reviewOpen, setReviewOpen] = useState(false);

@@ -24,7 +24,10 @@ import {
   type ActivityTransaction,
 } from "@/data/activityTransactions";
 
-const tabs: { key: ActivityCategory; label: string }[] = [
+type TabKey = ActivityCategory | "all";
+
+const tabs: { key: TabKey; label: string }[] = [
+  { key: "all", label: "All" },
   { key: "crypto", label: "Crypto" },
   { key: "giftcards", label: "Giftcards" },
   { key: "bills", label: "Bills" },
@@ -34,7 +37,7 @@ const tabs: { key: ActivityCategory; label: string }[] = [
 const ActivityPage = () => {
   const navigate = useNavigate();
   const { hidden } = useBalanceVisibility();
-  const [tab, setTab] = useState<ActivityCategory>("crypto");
+  const [tab, setTab] = useState<TabKey>("all");
   const [filters, setFilters] = useState<TransactionFilters>(defaultTransactionFilters);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -43,7 +46,7 @@ const ActivityPage = () => {
   const filtered = useMemo(
     () =>
       activityTransactions.filter((tx) => {
-        const matchTab = tx.category === tab;
+        const matchTab = tab === "all" || tx.category === tab;
         const matchAction = filters.action === "all" || tx.action === filters.action;
         const matchStatus = filters.status === "all"
           || (filters.status === "completed" && tx.status === "Success")

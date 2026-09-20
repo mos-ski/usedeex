@@ -90,6 +90,7 @@ const App = () => (
             <Route path="/deex-pay" element={<Navigate to="/sell-crypto" replace />} />
             <Route path="/payment-link" element={<DeexPay />} />
             <Route path="/giftcards" element={<GiftCards />} />
+            <Route path="/giftcards/buy" element={<GiftCards mode="buy" />} />
             <Route path="/bills/:type" element={<BillPayment />} />
             <Route path="/naira-wallet" element={<NairaWallet />} />
             <Route path="/activity" element={<Activity />} />
