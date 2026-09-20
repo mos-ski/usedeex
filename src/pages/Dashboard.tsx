@@ -9,6 +9,7 @@ import CoinPicker from "@/components/dashboard/CoinPicker";
 import { receivableCoins } from "@/data/receivableCoins";
 import FloatingNav from "@/components/dashboard/FloatingNav";
 import BillPickerSheet from "@/components/dashboard/BillPickerSheet";
+import RatesSheet from "@/components/dashboard/RatesSheet";
 import {
   AvatarIcon,
   BellIcon,
@@ -73,6 +74,7 @@ const Dashboard = () => {
   const [showInviteCodeModal, setShowInviteCodeModal] = useState(false);
   const [showBillPicker, setShowBillPicker] = useState(false);
   const [showCoinPicker, setShowCoinPicker] = useState(false);
+  const [showRates, setShowRates] = useState(false);
   const {
     appliedCode,
     depositCompleted,
@@ -160,7 +162,7 @@ const Dashboard = () => {
                 <span className="font-semibold leading-[1.6]">•</span>
                 <button
                   type="button"
-                  onClick={() => navigate("/sell-crypto")}
+                  onClick={() => setShowRates(true)}
                   className="font-semibold leading-[1.6] underline-offset-2 hover:underline"
                 >
                   See rates
@@ -340,6 +342,8 @@ const Dashboard = () => {
         coins={receivableCoins}
         onSelect={(symbol, network) => navigate("/deposit", { state: { symbol, network } })}
       />
+
+      <RatesSheet open={showRates} onOpenChange={setShowRates} />
 
       {showInviteCodeModal && (
         <InviteCodeInput
