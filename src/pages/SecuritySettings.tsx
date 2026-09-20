@@ -38,7 +38,7 @@ const SecuritySettings = () => {
 
         <SectionCard className="px-4 py-0">
           <SettingsRow title="Change PIN" detail="Update your 4-digit transaction PIN" Icon={LockIcon} onClick={() => navigate("/change-pin")} />
-          <SettingsRow title="Change password" detail="Update your sign-in password" Icon={VerifyIcon} onClick={() => navigate("/forgot-password")} />
+          <SettingsRow title="Change password" detail="Update your sign-in password" Icon={VerifyIcon} onClick={() => navigate("/change-password")} />
           <SettingsRow
             title="Biometric Login"
             detail="Use Face ID to sign in and confirm"

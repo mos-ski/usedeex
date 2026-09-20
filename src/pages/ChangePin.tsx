@@ -1,73 +1,83 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import PageTransition from "@/components/PageTransition";
-import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
-import { TextField } from "@/components/dashboard/FormFields";
+import PinEntry from "@/components/dashboard/PinEntry";
 
 const PIN_LENGTH = 4;
+/** Stand-in for the PIN on file. */
+const CURRENT_PIN = "1234";
 
-/** Change PIN — reached from Security Center. */
+type Step = "current" | "next" | "confirm";
+
+const copy: Record<Step, { title: string; caption: string }> = {
+  current: { title: "Enter PIN", caption: "Enter your current PIN to continue" },
+  next: { title: "New PIN", caption: `Choose a new ${PIN_LENGTH}-digit PIN` },
+  confirm: { title: "Confirm PIN", caption: "Enter your new PIN again" },
+};
+
+/** Change PIN (Figma 305:34709) — reached from Security Center. */
 const ChangePin = () => {
   const navigate = useNavigate();
-  const [current, setCurrent] = useState("");
+  const [step, setStep] = useState<Step>("current");
+  const [value, setValue] = useState("");
   const [next, setNext] = useState("");
-  const [confirm, setConfirm] = useState("");
+  const [error, setError] = useState("");
 
-  const digits = (value: string) => value.replace(/\D/g, "").slice(0, PIN_LENGTH);
-  const complete = [current, next, confirm].every((v) => v.length === PIN_LENGTH);
-  const mismatch = confirm.length === PIN_LENGTH && confirm !== next;
-  const reused = next.length === PIN_LENGTH && next === current;
+  // Each stage completes as soon as the last digit lands.
+  useEffect(() => {
+    if (value.length !== PIN_LENGTH) return;
 
-  const save = () => {
-    toast.success("PIN updated");
-    navigate(-1);
+    const advance = window.setTimeout(() => {
+      if (step === "current") {
+        if (value !== CURRENT_PIN) return fail("Incorrect PIN, try again");
+        setStep("next");
+        setValue("");
+        return;
+      }
+
+      if (step === "next") {
+        if (value === CURRENT_PIN) return fail("Choose a PIN you have not used before");
+        setNext(value);
+        setStep("confirm");
+        setValue("");
+        return;
+      }
+
+      if (value !== next) return fail("Both PINs must match");
+      toast.success("PIN updated");
+      navigate(-1);
+    }, 150);
+
+    return () => window.clearTimeout(advance);
+
+    function fail(message: string) {
+      setError(message);
+      window.setTimeout(() => {
+        setValue("");
+        setError("");
+      }, 900);
+    }
+  }, [value, step, next, navigate]);
+
+  const back = () => {
+    if (step === "current") return navigate(-1);
+    setStep(step === "confirm" ? "next" : "current");
+    setValue("");
+    setError("");
   };
 
   return (
-    <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
-      <PageTransition>
-        <PageHeader title="Change PIN" onBack={() => navigate(-1)} />
-
-        <SectionCard className="flex flex-col gap-4 px-4 py-5">
-          <TextField
-            label="Current PIN"
-            type="password"
-            inputMode="numeric"
-            autoComplete="current-password"
-            placeholder="••••"
-            value={current}
-            onChange={(e) => setCurrent(digits(e.target.value))}
-          />
-          <TextField
-            label="New PIN"
-            type="password"
-            inputMode="numeric"
-            autoComplete="new-password"
-            placeholder="••••"
-            value={next}
-            onChange={(e) => setNext(digits(e.target.value))}
-            helper={reused ? undefined : `${PIN_LENGTH} digits, different from your current PIN.`}
-          />
-          {reused && <p className="-mt-2 text-xs text-brand-danger">Choose a PIN you have not used before.</p>}
-
-          <TextField
-            label="Confirm New PIN"
-            type="password"
-            inputMode="numeric"
-            autoComplete="new-password"
-            placeholder="••••"
-            value={confirm}
-            onChange={(e) => setConfirm(digits(e.target.value))}
-          />
-          {mismatch && <p className="-mt-2 text-xs text-brand-danger">Both PINs must match.</p>}
-
-          <PrimaryButton className="mt-2" disabled={!complete || mismatch || reused} onClick={save}>
-            Save PIN
-          </PrimaryButton>
-        </SectionCard>
-      </PageTransition>
-    </AppShell>
+    <PinEntry
+      title={copy[step].title}
+      caption={copy[step].caption}
+      value={value}
+      onChange={setValue}
+      length={PIN_LENGTH}
+      error={error}
+      onBack={back}
+      // Face ID only stands in for the PIN you already have, never a new one.
+      onBiometric={step === "current" ? () => setValue(CURRENT_PIN) : undefined}
+    />
   );
 };
 

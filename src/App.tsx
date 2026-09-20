@@ -34,6 +34,7 @@ import GenerateStatement from "./pages/GenerateStatement";
 import AboutDeeX from "./pages/AboutDeeX";
 import LegalDocument from "./pages/LegalDocument";
 import ChangePin from "./pages/ChangePin";
+import ChangePassword from "./pages/ChangePassword";
 import SecuritySettings from "./pages/SecuritySettings";
 import BankAccounts from "./pages/BankAccounts";
 import KycVerification from "./pages/KycVerification";
@@ -98,6 +99,7 @@ const App = () => (
             <Route path="/about" element={<AboutDeeX />} />
             <Route path="/legal/:slug" element={<LegalDocument />} />
             <Route path="/change-pin" element={<ChangePin />} />
+            <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/security" element={<SecuritySettings />} />
             <Route path="/bank-accounts" element={<BankAccounts />} />
             <Route path="/kyc" element={<KycVerification />} />
