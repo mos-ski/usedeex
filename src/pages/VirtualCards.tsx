@@ -6,7 +6,9 @@ import { AppShell, PageHeader, PrimaryButton, SectionCard, SectionHeader } from 
 import { TextField } from "@/components/dashboard/FormFields";
 import { StatusPill } from "@/components/dashboard/SettingsList";
 import {
+  CardEditIcon,
   CopyIcon,
+  ArrowLeftIcon,
   EyeIcon,
   EyeOffIcon,
   InfoCircleIcon,
@@ -16,6 +18,7 @@ import {
   TrendArrowIcon,
 } from "@/components/dashboard/icons";
 import { cn } from "@/lib/utils";
+import cardPreview from "@/assets/cards/deex-card-preview.png";
 
 type CardStatus = "active" | "frozen";
 type View = "list" | "create" | "detail" | "fund" | "limits";
@@ -417,78 +420,103 @@ const VirtualCards = () => {
   }
 
   /* ---------------- List ---------------- */
-  return shell("Virtual Cards", () => navigate(-1), (
-    <>
-      {kycLevel < 2 && (
-        <SectionCard className="px-4 py-4">
-          <div className="flex items-start gap-3">
-            <InfoCircleIcon className="mt-0.5 size-5 shrink-0 text-brand-amberBrown" />
-            <div>
-              <p className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">KYC Level 2 Required</p>
-              <p className="pt-1 text-xs leading-[1.6] text-brand-bodyText">
-                You need at least KYC Level 2 to create a virtual card.
-              </p>
-              <button
-                type="button"
-                onClick={() => navigate("/kyc")}
-                className="pt-2 text-xs font-semibold text-brand-blue500"
-              >
-                Complete KYC
-              </button>
-            </div>
+  const primaryCard = cards[0];
+
+  return (
+    <AppShell topColor="bg-brand-deepNavy" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+      <PageTransition>
+        <section className="bg-brand-deepNavy px-4 pb-5 pt-2 text-white">
+          <header className="flex h-12 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              aria-label="Go back"
+              className="flex size-10 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10"
+            >
+              <ArrowLeftIcon className="size-6" />
+            </button>
+            <h1 className="flex-1 text-[19px] font-bold leading-[1.4]">DeeX Card</h1>
+          </header>
+
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedId(primaryCard?.id ?? null);
+              setView("detail");
+            }}
+            className="mt-3 block w-full text-left"
+            aria-label="Open DeeX card details"
+          >
+            <img
+              src={cardPreview}
+              alt="DeeX virtual card ending in 1234"
+              className="mx-auto block aspect-[348/222] w-full max-w-[348px] rounded-[20px] object-cover shadow-[8px_10px_16px_rgba(0,0,0,0.05)]"
+            />
+          </button>
+
+          <div className="pt-4 text-center">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-white/45">Balance</p>
+            <p className="font-manrope text-[34px] font-extrabold leading-none tracking-[-0.06em]">
+              {primaryCard?.balance ?? "$0.00"}
+            </p>
+          </div>
+        </section>
+
+        <SectionCard className="mt-3 px-4 py-4">
+          <SectionHeader title="Quick Actions" />
+          <div className="grid grid-cols-2 gap-1">
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedId(primaryCard?.id ?? null);
+                setView("detail");
+              }}
+              className="flex h-[60px] flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint text-brand-navy transition-colors hover:bg-brand-primary100"
+            >
+              <CardEditIcon className="size-5" />
+              <span className="text-[10px] leading-[1.4] text-brand-grey900">Manage Card</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedId(primaryCard?.id ?? null);
+                setView("detail");
+              }}
+              className="flex h-[60px] flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint text-brand-navy transition-colors hover:bg-brand-primary100"
+            >
+              <EyeIcon className="size-5" />
+              <span className="text-[10px] leading-[1.4] text-brand-grey900">View Details</span>
+            </button>
           </div>
         </SectionCard>
-      )}
 
-      <SectionCard className={cn("px-4 py-4", kycLevel < 2 && "mt-3")}>
-        <p className="text-xs leading-[1.3] text-brand-bodyText">Visa Virtual Card • USD</p>
-        <p className="pt-1 text-[15px] font-semibold leading-[1.4] text-brand-grey900">
-          {cards.length}/{maxCards} cards created • ${creationFee} per card
-        </p>
-      </SectionCard>
-
-      {cards.length === 0 ? (
-        <SectionCard className="mt-3 px-4 py-12 text-center">
-          <p className="text-sm leading-[1.6] text-brand-grey900">No virtual cards yet</p>
-          <p className="pt-1 text-xs leading-[1.6] text-brand-bodyText">Create your first card to start spending</p>
+        <SectionCard className="mt-3 px-4 py-4">
+          <SectionHeader title="July 2026" />
+          {primaryCard?.transactions.length ? (
+            <div className="flex flex-col">
+              {primaryCard.transactions.map((tx, index) => (
+                <div key={`${tx.desc}-${index}`} className="flex items-center gap-3 border-b border-brand-grey100 py-3 last:border-b-0">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-tint text-xs font-bold text-brand-blue500">
+                    {tx.type === "credit" ? "+" : "−"}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">{tx.desc}</span>
+                    <span className="block text-xs leading-[1.3] text-brand-bodyText">{tx.date} <span className="text-brand-successText">• Success</span></span>
+                  </span>
+                  <span className="shrink-0 text-right">
+                    <span className="block text-[15px] font-semibold leading-[1.4] text-brand-grey900">{tx.amount}</span>
+                    <span className="block text-xs leading-[1.3] text-brand-bodyText">{tx.type === "credit" ? "Card credit" : "Card payment"}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="py-8 text-center text-sm text-brand-bodyText">No transactions yet</p>
+          )}
         </SectionCard>
-      ) : (
-        <div className="mt-3 flex flex-col gap-3">
-          {cards.map((card) => (
-            <SectionCard key={card.id} className="px-4 py-4">
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedId(card.id);
-                  setView("detail");
-                }}
-                className="w-full rounded-2xl bg-brand-deepNavy p-5 text-left text-white"
-              >
-                <span className="flex items-start justify-between gap-3">
-                  <span className="text-xs leading-[1.3] text-brand-grey400">{card.label}</span>
-                  {card.status === "frozen" && <StatusPill tone="neutral">Frozen</StatusPill>}
-                </span>
-                <span className="block pt-1 text-[17px] font-bold leading-[1.4]">{card.balance}</span>
-                <span className="flex items-center justify-between pt-3">
-                  <span className="text-sm tracking-widest text-brand-grey400">•••• •••• •••• {card.last4}</span>
-                  <span className="text-[10px] font-bold tracking-wider text-brand-grey400">VISA</span>
-                </span>
-              </button>
-            </SectionCard>
-          ))}
-        </div>
-      )}
-
-      {cards.length < maxCards && kycLevel >= 2 && (
-        <div className="px-4 pt-6">
-          <PrimaryButton onClick={() => setView("create")}>
-            <PlusIcon className="size-5" />
-            Create New Card (${creationFee})
-          </PrimaryButton>
-        </div>
-      )}
-    </>
-  ));
+      </PageTransition>
+    </AppShell>
+  );
 };
 
 export default VirtualCards;
