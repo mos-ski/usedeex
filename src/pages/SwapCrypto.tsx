@@ -7,6 +7,7 @@ import { useInviteCode } from "@/contexts/InviteCodeContext";
 import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
 import { AmountEntry, BalanceShortcuts, parseAmount } from "@/components/dashboard/AmountEntry";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
+import { trimZeros } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 /** `rate` is the asset's USD price; swaps convert through it. */
@@ -20,7 +21,6 @@ const assets = [
 
 const bySymbol = (symbol: string) => assets.find((a) => a.symbol === symbol) ?? assets[0];
 
-const trimZeros = (value: string) => value.replace(/\.?0+$/, "") || "0";
 
 type View = "amount" | "confirm" | "success";
 

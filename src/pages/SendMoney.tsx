@@ -5,9 +5,9 @@ import { AppShell, PageHeader, PrimaryButton } from "@/components/dashboard/AppS
 import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
 import AssetMark from "@/components/dashboard/AssetMark";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
-import { ArrowRightIcon, BankIcon, CaretDownIcon, FaceIdIcon } from "@/components/dashboard/icons";
+import { ArrowRightIcon, BankIcon, CaretDownIcon } from "@/components/dashboard/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
+import { FaceIdOverlay, ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import { NGN_PER_USD, formatNgn } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { bankRecipients, type BankRecipient } from "@/data/recipientData";
@@ -294,43 +294,11 @@ const SendMoney = () => {
       />
 
       {/* Review (Figma 285:10690) */}
-      <Drawer open={reviewOpen} onOpenChange={setReviewOpen}>
-        <DrawerContent className="border-brand-grey100 bg-white font-roboto">
-          <DrawerTitle className="sr-only">Review transfer</DrawerTitle>
-          <div className="mx-auto w-full max-w-[560px] px-4 pb-8">
-            <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Review</p>
-
-            <div className="flex flex-col">
-              {reviewRows.map(([label, value, extra]) => (
-                <div key={label} className="flex flex-col border-b border-brand-grey100 py-1.5">
-                  <span className="text-xs leading-[1.3] text-brand-bodyText">{label}</span>
-                  <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">{value}</span>
-                  {extra && <span className="text-xs leading-[1.3] text-brand-amberBrown">{extra}</span>}
-                </div>
-              ))}
-            </div>
-
-            <div className="pt-6">
-              <PrimaryButton className="font-bold" onClick={confirm}>
-                Confirm
-                <FaceIdIcon className="size-6" />
-              </PrimaryButton>
-            </div>
-          </div>
-        </DrawerContent>
-      </Drawer>
+      {/* Review (Figma 285:10690) */}
+      <ReviewSheet open={reviewOpen} onOpenChange={setReviewOpen} rows={reviewRows} onAction={confirm} />
 
       {/* Biometric beat (Figma 285:10476) */}
-      {authenticating && (
-        <div className="fixed inset-0 z-[60] flex items-start justify-center bg-black/25 pt-24 backdrop-blur-[2px]">
-          <div className="flex size-[100px] items-center justify-center rounded-[28px] bg-[#13181B] shadow-xl">
-            <FaceIdIcon className="size-14 animate-pulse text-[#27F32A]" />
-          </div>
-          <span className="sr-only" role="status">
-            Confirming with Face ID
-          </span>
-        </div>
-      )}
+      <FaceIdOverlay active={authenticating} />
     </>
   );
 };

@@ -19,3 +19,6 @@ export const splitUsdForDisplay = (amount: number) => {
     cents,
   };
 };
+
+/** Drops trailing zeros from a fixed-decimal string: "0.6100" -> "0.61". */
+export const trimZeros = (value: string) => value.replace(/\.?0+$/, "") || "0";

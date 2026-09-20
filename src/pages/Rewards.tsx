@@ -10,8 +10,11 @@ import {
   SectionHeader,
 } from "@/components/dashboard/AppShell";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
+import { AmountEntry, BalanceShortcuts, RateRow, groupDigits, parseAmount } from "@/components/dashboard/AmountEntry";
+import { FaceIdOverlay, ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import FloatingNav from "@/components/dashboard/FloatingNav";
 import {
+  CheckCircleIcon,
   CheckIcon,
   ChevronRightIcon,
   ClockIcon,
@@ -19,6 +22,7 @@ import {
   InfoCircleIcon,
   SendIcon,
 } from "@/components/dashboard/icons";
+import { formatNgn, trimZeros } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 import megaphone from "@/assets/rewards/referral-megaphone.png";
@@ -27,8 +31,10 @@ import streakFire from "@/assets/rewards/streak-fire.svg";
 const REFERRAL_LINK = "app.deexoption.com/refer001655";
 
 const POINTS_BALANCE = 2450;
-const POINT_VALUE = 10;
-const MIN_REDEEM = 500;
+/** Naira a single point is worth, per the redeem rate line. */
+const POINT_VALUE_NGN = 1;
+/** Rate is quoted per 2,000pts on the redeem screen. */
+const REDEEM_UNIT = 2000;
 
 /** Su–Sa, with today's slot carrying the flame instead of a tick. */
 const streakDays = [
@@ -39,6 +45,13 @@ const streakDays = [
   { label: "Th", state: "empty" },
   { label: "Fr", state: "empty" },
   { label: "Sa", state: "empty" },
+] as const;
+
+/** Sign Up Bonus tasks (Figma 302:31600). */
+const bonusTasks = [
+  { title: "Complete KYC", detail: "Level one • Completed", done: true },
+  { title: "Trade up to $100", detail: "Traded • $59", done: false },
+  { title: "Refer a friend to trade $100", detail: "Pending", done: false },
 ] as const;
 
 const earnings = [
@@ -101,18 +114,31 @@ const StatRow = ({
   </SectionCard>
 );
 
-type View = "main" | "redeem" | "confirm" | "success";
+type View = "main" | "redeem" | "success";
 
-/** Rewards (Figma 300:30402). */
+/** Redeem payout destinations (Figma 302:32336 "Wallet"). */
+const payoutWallets = [
+  { symbol: "NGN", name: "Naira Wallet", rate: POINT_VALUE_NGN },
+  // The frame quotes 234 pts as 2.3 USDT.
+  { symbol: "USDT", name: "USDT Crypto", rate: 0.0098 },
+] as const;
+
+/** Rewards (Figma 300:30402) and the redeem flow it opens. */
 const Rewards = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [view, setView] = useState<View>(searchParams.get("view") === "redeem" ? "redeem" : "main");
   const [amount, setAmount] = useState("");
+  const [payout, setPayout] = useState<string>("NGN");
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [authenticating, setAuthenticating] = useState(false);
+  const [bonusOpen, setBonusOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const points = Number(amount) || 0;
-  const valid = points >= MIN_REDEEM && points <= POINTS_BALANCE;
+  const points = parseAmount(amount);
+  const wallet = payoutWallets.find((w) => w.symbol === payout) ?? payoutWallets[0];
+  const payoutAmount = points * wallet.rate;
+  const overBalance = points > POINTS_BALANCE;
 
   const copyLink = () => {
     navigator.clipboard?.writeText(`https://${REFERRAL_LINK}`);
@@ -120,11 +146,24 @@ const Rewards = () => {
     window.setTimeout(() => setCopied(false), 1600);
   };
 
+  const confirm = () => {
+    setReviewOpen(false);
+    setAuthenticating(true);
+    window.setTimeout(() => {
+      setAuthenticating(false);
+      setView("success");
+    }, 1400);
+  };
+
+  const formatPayout = (value: number) =>
+    wallet.symbol === "NGN" ? formatNgn(value) : `${trimZeros(value.toFixed(4))} ${wallet.symbol}`;
+
+  /* ---------------- Success (Figma 302:31999) ---------------- */
   if (view === "success")
     return (
       <SuccessScreen
-        title="Redemption submitted"
-        message={`${points.toLocaleString()} points (₦${(points * POINT_VALUE).toLocaleString()}) will be credited to your PalmPay account after approval.`}
+        title="Redeem Completed!"
+        message={`You have successfully redeemed ${points.toLocaleString()} DeeX pts for ${formatPayout(payoutAmount)} into your ${wallet.name}.`}
         onPrimary={() => {
           setView("main");
           setAmount("");
@@ -134,10 +173,10 @@ const Rewards = () => {
             state: {
               type: "reward",
               data: {
-                points: `${points} pts`,
-                cash: `₦${(points * POINT_VALUE).toLocaleString()}`,
-                status: "Processing",
-                account: "8103674006 - PalmPay",
+                points: `${points.toLocaleString()} pts`,
+                cash: formatPayout(payoutAmount),
+                status: "Completed",
+                account: wallet.name,
               },
             },
           })
@@ -145,94 +184,55 @@ const Rewards = () => {
       />
     );
 
-  if (view === "confirm")
-    return (
-      <AppShell className="bg-white" innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
-        <PageTransition>
-          <PageHeader title="Confirm redemption" onBack={() => setView("redeem")} />
-          <SectionCard className="px-4 py-2">
-            {[
-              ["Points", `${points.toLocaleString()} pts`],
-              ["Rate", `1 pt = ₦${POINT_VALUE}`],
-              ["You'll receive", `₦${(points * POINT_VALUE).toLocaleString()}`],
-              ["Credit to", "8103674006 · PalmPay"],
-              ["Remaining", `${(POINTS_BALANCE - points).toLocaleString()} pts`],
-            ].map(([label, value], index, rows) => (
-              <div
-                key={label}
-                className={cn(
-                  "flex items-center justify-between gap-4 py-4",
-                  index < rows.length - 1 && "border-b border-brand-grey100",
-                )}
-              >
-                <span className="text-sm text-brand-bodyText">{label}</span>
-                <span className="text-right text-sm font-semibold text-brand-grey900">{value}</span>
-              </div>
-            ))}
-          </SectionCard>
-          <div className="px-4 pt-6">
-            <p className="mb-4 text-center text-xs text-brand-bodyText">
-              Redemptions are reviewed before disbursement.
-            </p>
-            <PrimaryButton onClick={() => setView("success")}>Redeem now</PrimaryButton>
-          </div>
-        </PageTransition>
-      </AppShell>
-    );
-
+  /* ---------------- Redeem Points (Figma 302:31712) ---------------- */
   if (view === "redeem")
     return (
-      <AppShell className="bg-white" innerClassName="pb-10 lg:max-w-[480px] lg:px-4">
-        <PageTransition>
-          <PageHeader title="Redeem points" onBack={() => setView("main")} />
-          <SectionCard className="px-4 py-5">
-            <div className="rounded-lg bg-brand-navy px-5 py-6 text-center text-white">
-              <p className="text-xs text-white/70">Available points</p>
-              <p className="mt-1 text-3xl font-bold">{POINTS_BALANCE.toLocaleString()}</p>
-              <p className="mt-1 text-sm text-brand-primary100">
-                ≈ ₦{(POINTS_BALANCE * POINT_VALUE).toLocaleString()}
-              </p>
-            </div>
-            <label className="mt-6 block">
-              <span className="mb-2 block text-xs text-brand-bodyText">Points to redeem</span>
-              <input
-                type="number"
-                value={amount}
-                onChange={(event) => setAmount(event.target.value)}
-                placeholder={`Minimum ${MIN_REDEEM}`}
-                className="h-14 w-full rounded-lg border border-brand-grey100 px-4 text-xl font-semibold text-brand-grey900 outline-none focus:border-brand-blue500"
+      <>
+        <AmountEntry
+          title="Redeem Points"
+          onBack={() => setView("main")}
+          value={amount}
+          onValueChange={setAmount}
+          fromSymbol="PTS"
+          fromOptions={[{ symbol: "PTS", hint: "DeeX points" }]}
+          onFromChange={() => undefined}
+          toSymbol={wallet.symbol}
+          toOptions={payoutWallets.map((w) => ({ symbol: w.symbol, hint: w.name }))}
+          onToChange={setPayout}
+          convertedText={
+            wallet.symbol === "NGN"
+              ? (points * wallet.rate).toLocaleString("en-US")
+              : trimZeros((points * wallet.rate).toFixed(4))
+          }
+          error={overBalance ? "Amount exceeds your points balance" : undefined}
+          footer={
+            <>
+              <RateRow text={`${REDEEM_UNIT.toLocaleString()}pts ~ ₦${(REDEEM_UNIT * POINT_VALUE_NGN).toLocaleString()}`} />
+              <BalanceShortcuts
+                balanceLabel={`Bal: ${POINTS_BALANCE.toLocaleString()}pts`}
+                onPick={(fraction) => setAmount(groupDigits(String(Math.floor(POINTS_BALANCE * fraction))))}
               />
-            </label>
-            <div className="mt-3 grid grid-cols-4 gap-2">
-              {[500, 1000, 2000, POINTS_BALANCE].map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setAmount(String(value))}
-                  className={cn(
-                    "rounded-full px-2 py-2 text-xs font-medium",
-                    points === value ? "bg-brand-blue500 text-white" : "bg-brand-tint text-brand-blue500",
-                  )}
-                >
-                  {value === POINTS_BALANCE ? "All" : value.toLocaleString()}
-                </button>
-              ))}
-            </div>
-            {points > 0 && (
-              <p className={cn("mt-3 text-center text-xs", valid ? "text-brand-successText" : "text-brand-danger")}>
-                {valid
-                  ? `You will receive ₦${(points * POINT_VALUE).toLocaleString()}`
-                  : points < MIN_REDEEM
-                    ? `Minimum redemption is ${MIN_REDEEM} points`
-                    : "Amount exceeds your balance"}
-              </p>
-            )}
-            <PrimaryButton className="mt-7" disabled={!valid} onClick={() => setView("confirm")}>
-              Continue
-            </PrimaryButton>
-          </SectionCard>
-        </PageTransition>
-      </AppShell>
+            </>
+          }
+          submitDisabled={points <= 0 || overBalance}
+          onSubmit={() => setReviewOpen(true)}
+        />
+
+        {/* Review (Figma 302:32336) */}
+        <ReviewSheet
+          open={reviewOpen}
+          onOpenChange={setReviewOpen}
+          rows={[
+            ["Amount", `${points.toLocaleString()} DeeX pts`],
+            ["Payouts", formatPayout(payoutAmount)],
+            ["Wallet", wallet.name],
+          ]}
+          onAction={confirm}
+        />
+
+        {/* Biometric beat (Figma 302:32626) */}
+        <FaceIdOverlay active={authenticating} />
+      </>
     );
 
   return (
@@ -303,7 +303,7 @@ const Rewards = () => {
             label="Sign Up Bonus"
             value="$5"
             footnote="2/3 items completed"
-            onClick={() => navigate("/kyc")}
+            onClick={() => setBonusOpen(true)}
           />
           <StatRow
             label="DeeXpoints"
@@ -370,6 +370,45 @@ const Rewards = () => {
           </div>
         </SectionCard>
       </PageTransition>
+
+      {/* Sign Up Bonus review (Figma 302:31169) */}
+      <ReviewSheet
+        open={bonusOpen}
+        onOpenChange={setBonusOpen}
+        actionLabel="Close"
+        withFaceId={false}
+        onAction={() => setBonusOpen(false)}
+      >
+        <div className="flex flex-col border-b border-brand-grey100 py-1.5">
+          <span className="text-xs leading-[1.3] text-brand-bodyText">Sign Up Bonus</span>
+          <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">500 Pts (₦5,000)</span>
+        </div>
+
+        <div className="flex flex-col gap-1 py-6">
+          {bonusTasks.map((task) => (
+            <div key={task.title} className="flex items-center gap-3">
+              <span className="flex w-[18px] shrink-0 justify-center">
+                {task.done ? (
+                  <CheckCircleIcon className="size-[18px] text-[#11C514]" />
+                ) : (
+                  <span className="size-4 rounded-full border-[1.5px] border-brand-grey300" />
+                )}
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span
+                  className={cn(
+                    "text-[13px] font-semibold leading-[1.4] text-brand-grey900",
+                    task.done && "line-through opacity-50",
+                  )}
+                >
+                  {task.title}
+                </span>
+                <span className="text-[10px] leading-[1.3] text-brand-bodyText">{task.detail}</span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </ReviewSheet>
 
       <FloatingNav />
     </AppShell>

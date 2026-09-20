@@ -7,7 +7,7 @@ import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
 import AssetMark from "@/components/dashboard/AssetMark";
 import { ArrowRightIcon, BankIcon } from "@/components/dashboard/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { NGN_PER_USD, formatNgn } from "@/lib/format";
+import { NGN_PER_USD, formatNgn, trimZeros } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const assets = [
@@ -27,7 +27,6 @@ const banks = [
 /** Payouts above this are split into batches — surfaced as a hint on the row. */
 const BATCH_THRESHOLD = 5_000_000;
 
-const trimZeros = (value: string) => value.replace(/\.?0+$/, "") || "0";
 
 type Step = "amount" | "review" | "deposit" | "pending";
 

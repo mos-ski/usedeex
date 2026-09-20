@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { AppShell, PageHeader, PrimaryButton } from "./AppShell";
 import AssetMark from "./AssetMark";
-import { CaretDownIcon } from "./icons";
+import { CaretDownIcon, ChevronRightIcon } from "./icons";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import PageTransition from "@/components/PageTransition";
 import { cn } from "@/lib/utils";
@@ -166,6 +166,22 @@ export const AmountEntry = ({
       </div>
     </PageTransition>
   </AppShell>
+);
+
+/**
+ * Conversion rate line above the shortcuts, e.g. "2,000pts ~ ₦2,000"
+ * (Figma 302:31712). The chevron opens whatever detail the screen provides.
+ */
+export const RateRow = ({ text, onOpen }: { text: string; onOpen?: () => void }) => (
+  <button
+    type="button"
+    onClick={onOpen}
+    disabled={!onOpen}
+    className="flex w-full items-center justify-between gap-2 py-1 text-left disabled:cursor-default"
+  >
+    <span className="min-w-0 flex-1 truncate text-sm leading-[1.4] text-brand-grey900">{text}</span>
+    <ChevronRightIcon className="size-5 shrink-0 text-brand-grey400" />
+  </button>
 );
 
 /** Swap's footer: available balance plus 25/50/75/Max shortcuts. */
