@@ -6,6 +6,7 @@ import { AppShell, PageHeader, PrimaryButton, SectionCard, SectionHeader } from 
 import { TextField } from "@/components/dashboard/FormFields";
 import { StatusPill } from "@/components/dashboard/SettingsList";
 import PinEntry from "@/components/dashboard/PinEntry";
+import OptionSheet from "@/components/dashboard/OptionSheet";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import {
   CardEditIcon,
@@ -181,6 +182,7 @@ const VirtualCards = () => {
   const [pin, setPin] = useState("");
   const [pinError, setPinError] = useState("");
   const [showCardDetails, setShowCardDetails] = useState(false);
+  const [manageOpen, setManageOpen] = useState(false);
   const [pinFromMenu] = useState(() => Boolean(location.state?.requirePin));
   const [showNumber, setShowNumber] = useState(false);
   const [fundAmount, setFundAmount] = useState("");
@@ -217,6 +219,17 @@ const VirtualCards = () => {
 
   // Read from `cards` so edits show without re-selecting.
   const selected = cards.find((c) => c.id === selectedId) ?? null;
+
+  const manageOptions = [
+    { value: "block", label: "Block Card", detail: "Temporarily stop all card activity", mark: null },
+    {
+      value: "freeze",
+      label: selected?.status === "frozen" ? "Unfreeze Card" : "Freeze Card",
+      detail: "Pause spending and unpause anytime",
+      mark: null,
+    },
+    { value: "pin", label: "Change PIN", detail: "Set a new card PIN", mark: null },
+  ];
 
   if (view === "pin") {
     return (
@@ -657,7 +670,7 @@ const VirtualCards = () => {
               type="button"
               onClick={() => {
                 setSelectedId(primaryCard?.id ?? null);
-                setView("manage");
+                setManageOpen(true);
               }}
               className="flex h-[60px] flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint text-brand-navy transition-colors hover:bg-brand-primary100"
             >
@@ -707,6 +720,27 @@ const VirtualCards = () => {
         </SectionCard>
       </PageTransition>
       <CardDetailsModal open={showCardDetails} onOpenChange={setShowCardDetails} />
+      <OptionSheet
+        open={manageOpen}
+        onOpenChange={setManageOpen}
+        title="Manage Card"
+        options={manageOptions}
+        onSelect={(value) => {
+          if (value === "pin") {
+            setManageOpen(false);
+            navigate("/change-pin");
+            return;
+          }
+          if (value === "freeze") {
+            if (primaryCard) toggleFreeze(primaryCard.id);
+            return;
+          }
+          if (primaryCard) {
+            setCards((list) => list.map((card) => (card.id === primaryCard.id ? { ...card, status: "frozen" } : card)));
+            toast.success("Card blocked");
+          }
+        }}
+      />
     </AppShell>
   );
 };
