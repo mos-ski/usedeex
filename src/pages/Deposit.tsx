@@ -9,6 +9,7 @@ import { AppShell, PageHeader } from "@/components/dashboard/AppShell";
 import AssetMark from "@/components/dashboard/AssetMark";
 import { CaretDownIcon } from "@/components/dashboard/icons";
 import CoinPicker from "@/components/dashboard/CoinPicker";
+import { depositExtras, depositRouteFor } from "@/components/dashboard/depositDestinations";
 import { receivableCoins as cryptos } from "@/data/receivableCoins";
 import qrCode from "@/assets/landing-v2/qr-code.png";
 import { cn } from "@/lib/utils";
@@ -159,7 +160,14 @@ const Deposit = () => {
           if (!next && !chosen.current) navigate(-1);
         }}
         coins={cryptos}
+        extras={depositExtras}
         onSelect={(symbol, selectedNetwork) => {
+          const route = depositRouteFor(symbol, selectedNetwork);
+          if (route.path !== "/deposit") {
+            chosen.current = true;
+            navigate(route.path);
+            return;
+          }
           pickCrypto(symbol);
           setNetwork(selectedNetwork);
           chosen.current = true;

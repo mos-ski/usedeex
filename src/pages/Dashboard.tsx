@@ -7,6 +7,7 @@ import { useInviteCode } from "@/contexts/InviteCodeContext";
 import { ActionTile, AppShell, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
 import CoinPicker from "@/components/dashboard/CoinPicker";
 import { receivableCoins } from "@/data/receivableCoins";
+import { depositExtras, depositRouteFor } from "@/components/dashboard/depositDestinations";
 import FloatingNav from "@/components/dashboard/FloatingNav";
 import RatesSheet from "@/components/dashboard/RatesSheet";
 import {
@@ -337,7 +338,11 @@ const Dashboard = () => {
         open={showCoinPicker}
         onOpenChange={setShowCoinPicker}
         coins={receivableCoins}
-        onSelect={(symbol, network) => navigate("/deposit", { state: { symbol, network } })}
+        extras={depositExtras}
+        onSelect={(symbol, network) => {
+          const route = depositRouteFor(symbol, network);
+          navigate(route.path, route.state ? { state: route.state } : undefined);
+        }}
       />
 
       <RatesSheet open={showRates} onOpenChange={setShowRates} />
