@@ -93,7 +93,7 @@ const Profile = () => {
 
           <div className="flex flex-col items-center gap-3 px-6 py-[18px]">
             <div className="flex flex-col items-center gap-1">
-              <span className="flex size-[72px] items-center justify-center rounded-full bg-brand-primary100 font-sora text-[32px] font-semibold leading-[1.4] text-brand-blue500 ring-4 ring-white">
+              <span className="flex size-[72px] items-center justify-center rounded-full bg-brand-primary100 text-[32px] font-semibold leading-[1.4] text-brand-blue500 ring-4 ring-white">
                 {account.initials}
               </span>
               <p className="max-w-[181px] text-center font-gasoek text-[33px] uppercase leading-[1.4] text-white">
