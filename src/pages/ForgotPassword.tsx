@@ -78,7 +78,7 @@ const ForgotPassword = () => {
               type="submit"
               className="w-full rounded-lg bg-[#095B97] p-3 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-primary50 transition-opacity hover:opacity-90"
             >
-              Sign up
+              Continue
             </button>
           </div>
         </form>

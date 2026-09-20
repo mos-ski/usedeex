@@ -110,7 +110,7 @@ const SignUp = () => {
               <button type="button" className="text-white underline">Privacy policy</button>{" "}
               and accepted our <button type="button" className="text-white underline">Term of Service</button>
             </p>
-            <button type="button" onClick={() => navigate("/dashboard")} className="text-xs leading-[1.3] text-brand-blue500 transition-opacity hover:opacity-80">
+            <button type="button" onClick={() => navigate("/login")} className="text-xs leading-[1.3] text-brand-blue500 transition-opacity hover:opacity-80">
               I have an account
             </button>
           </div>
