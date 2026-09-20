@@ -65,7 +65,7 @@ export const ReviewSheet = ({
 /** The biometric beat between Confirm and the success screen (Figma 302:32626). */
 export const FaceIdOverlay = ({ active }: { active: boolean }) =>
   active ? (
-    <div className="fixed inset-0 z-[60] flex items-start justify-center bg-black/25 pt-24 backdrop-blur-[2px]">
+    <div className="fixed inset-0 z-[60] flex items-start justify-center bg-black/25 pt-12 sm:pt-16 backdrop-blur-[2px]">
       <div className="flex size-[100px] items-center justify-center rounded-[28px] bg-[#13181B] shadow-xl">
         <FaceIdIcon className="size-14 animate-pulse text-[#27F32A]" />
       </div>
