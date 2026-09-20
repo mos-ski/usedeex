@@ -131,7 +131,7 @@ const Dashboard = () => {
             type="button"
             onClick={() => navigate("/notifications")}
             aria-label="Notifications"
-            className="relative flex size-[33px] shrink-0 items-center justify-center rounded-full bg-black/[0.03] text-brand-nearBlack transition-colors hover:bg-black/[0.06] lg:size-10"
+            className="relative flex size-[33px] shrink-0 items-center justify-center rounded-full bg-brand-grey50 text-brand-grey900 transition-colors hover:bg-brand-grey100 lg:size-10"
           >
             <BellIcon className="size-[18px] lg:size-5" />
             <span className="absolute right-1.5 top-[3.75px] size-[5.25px] rounded-full bg-[#FF3B30]" />
