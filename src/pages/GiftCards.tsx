@@ -239,7 +239,10 @@ const GiftCards = () => {
                 <button
                   key={b}
                   type="button"
-                  onClick={() => setBrand(b)}
+                  onClick={() => {
+                    setBrand(b);
+                    setStep("amount");
+                  }}
                   aria-pressed={brand === b}
                   className={cn(
                     "flex h-20 flex-col items-center justify-center gap-1 p-3 transition-colors",
@@ -262,9 +265,6 @@ const GiftCards = () => {
               sell.
             </p>
 
-            <PrimaryButton disabled={!brand} onClick={() => setStep("amount")}>
-              Done
-            </PrimaryButton>
           </div>
         </PageTransition>
 
