@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
 import { FaceIdOverlay, ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
-import { ArrowRightIcon, BankIcon } from "@/components/dashboard/icons";
+import { ChevronRightIcon, BankIcon } from "@/components/dashboard/icons";
 import OptionSheet from "@/components/dashboard/OptionSheet";
 import { NGN_PER_USD, formatNgn, trimZeros } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -153,7 +153,7 @@ const SellCrypto = () => {
                   {bank.account}
                 </span>
               </span>
-              <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+              <ChevronRightIcon className="size-5 shrink-0 text-brand-grey900" />
             </span>
             {ngn > BATCH_THRESHOLD && (
               <span className="mt-0.5 inline-block rounded bg-brand-noteAmber px-2 py-0.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader } from "./AppShell";
 import AssetMark from "./AssetMark";
-import { ArrowRightIcon, CaretDownIcon, SearchIcon } from "./icons";
+import { ChevronRightIcon, CaretDownIcon, SearchIcon } from "./icons";
 import OptionSheet from "./OptionSheet";
 import { cn } from "@/lib/utils";
 import type { CryptoDestination } from "@/data/recipientData";
@@ -112,7 +112,7 @@ export const SendTo = ({
                 <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">Send to this address</span>
                 <span className="truncate text-xs leading-[1.3] text-brand-bodyText">{chain}</span>
               </span>
-              <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+              <ChevronRightIcon className="size-5 shrink-0 text-brand-grey900" />
             </button>
           )}
 
@@ -198,7 +198,7 @@ export const SendTo = ({
                       {d.label} • {d.network}
                     </span>
                   </span>
-                  <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+                  <ChevronRightIcon className="size-5 shrink-0 text-brand-grey900" />
                 </button>
               ))
             )}

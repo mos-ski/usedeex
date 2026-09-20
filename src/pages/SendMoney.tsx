@@ -5,7 +5,7 @@ import { AppShell, PageHeader, PrimaryButton } from "@/components/dashboard/AppS
 import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
 import AssetMark, { TagAvatar } from "@/components/dashboard/AssetMark";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
-import { ArrowRightIcon, BankIcon, CaretDownIcon } from "@/components/dashboard/icons";
+import { ChevronRightIcon, BankIcon, CaretDownIcon } from "@/components/dashboard/icons";
 import OptionSheet from "@/components/dashboard/OptionSheet";
 import { FaceIdOverlay, ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import { NGN_PER_USD, formatNgn } from "@/lib/format";
@@ -361,7 +361,7 @@ const SendMoney = () => {
                               {d.label} • {d.network}
                             </span>
                           </span>
-                          <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+                          <ChevronRightIcon className="size-5 shrink-0 text-brand-grey900" />
                         </button>
                       ))
                     : mode === "tag"
@@ -379,7 +379,7 @@ const SendMoney = () => {
                             </span>
                             <span className="truncate text-xs leading-[1.3] text-brand-bodyText">{r.name}</span>
                           </span>
-                          <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+                          <ChevronRightIcon className="size-5 shrink-0 text-brand-grey900" />
                         </button>
                       ))
                     : visible.map((r) => (
@@ -398,7 +398,7 @@ const SendMoney = () => {
                           {r.name} • {r.bank}
                         </span>
                       </span>
-                      <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+                      <ChevronRightIcon className="size-5 shrink-0 text-brand-grey900" />
                     </button>
                   ))}
                 </div>
@@ -486,7 +486,7 @@ const SendMoney = () => {
                     </>
                   )}
                 </span>
-                <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+                <ChevronRightIcon className="size-5 shrink-0 text-brand-grey900" />
               </button>
             </div>
             {mode === "bank" && (

@@ -7,7 +7,7 @@ import { AmountEntry, AmountShortcuts, parseAmount } from "@/components/dashboar
 import AssetMark from "@/components/dashboard/AssetMark";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
 import {
-  ArrowRightIcon,
+  ChevronRightIcon,
   CaretDownIcon,
   DocumentUploadIcon,
   MinusIcon,
@@ -246,7 +246,7 @@ const GiftCards = () => {
               <span className="min-w-0 flex-1 truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
                 Range ${denominations[0].usd} - ${denominations[denominations.length - 1].usd}
               </span>
-              <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+              <ChevronRightIcon className="size-5 shrink-0 text-brand-grey900" />
             </button>
             <AmountShortcuts
               balanceLabel={totalUsd ? `Card value: $${totalUsd.toFixed(2)}` : `Rate: ${formatNgn(rate)}/USD`}

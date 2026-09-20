@@ -5,7 +5,7 @@ import { AppShell, PageHeader, PrimaryButton } from "./AppShell";
 import { AmountEntry, AmountShortcuts, parseAmount } from "./AmountEntry";
 import AssetMark from "./AssetMark";
 import SuccessScreen from "./SuccessScreen";
-import { ArrowRightIcon, CaretDownIcon } from "./icons";
+import { ChevronRightIcon, CaretDownIcon } from "./icons";
 import OptionSheet from "./OptionSheet";
 import { FaceIdOverlay, ReviewSheet } from "./ReviewSheet";
 import { nairaWalletBalance } from "@/data/nairaWalletData";
@@ -252,7 +252,7 @@ export const BillFlow = ({
                             {b.name} • {b.provider}
                           </span>
                         </span>
-                        <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+                        <ChevronRightIcon className="size-5 shrink-0 text-brand-grey900" />
                       </button>
                     ))
                   )}
@@ -311,7 +311,7 @@ export const BillFlow = ({
                     {identifier}
                   </span>
                 </span>
-                <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+                <ChevronRightIcon className="size-5 shrink-0 text-brand-grey900" />
               </button>
             </div>
             <AmountShortcuts

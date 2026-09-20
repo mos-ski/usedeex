@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { CheckIcon } from "./icons";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
 
@@ -71,12 +72,13 @@ const PillGroup = <T extends string>({
             aria-pressed={selected}
             onClick={() => onChange(option.value)}
             className={cn(
-              "rounded px-1 text-[15px] font-semibold leading-[1.4] text-brand-blue500 transition-colors",
+              "flex items-center gap-1 rounded px-1.5 text-[15px] font-semibold leading-[1.4] transition-colors",
               selected
-                ? "bg-[#c7e2f5] ring-1 ring-inset ring-brand-blue500/20"
-                : "bg-[#daebf7] hover:bg-brand-primary100",
+                ? "bg-brand-blue500 text-white"
+                : "bg-[#daebf7] text-brand-blue500 hover:bg-brand-primary100",
             )}
           >
+            {selected && <CheckIcon className="size-3.5 shrink-0" />}
             {option.label}
           </button>
         );

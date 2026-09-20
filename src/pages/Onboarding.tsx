@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTransition from "@/components/PageTransition";
 import { PrimaryButton } from "@/components/dashboard/AppShell";
-import { ArrowRightIcon, GiftIcon, PhoneCallIcon, SwapIcon } from "@/components/dashboard/icons";
+import { ChevronRightIcon, GiftIcon, PhoneCallIcon, SwapIcon } from "@/components/dashboard/icons";
 import { cn } from "@/lib/utils";
 
 const slides = [
@@ -53,7 +53,7 @@ const Onboarding = () => {
               onClick={() => (last ? finish() : setCurrent(current + 1))}
             >
               {last ? "Get Started" : "Next"}
-              <ArrowRightIcon className="size-5" />
+              <ChevronRightIcon className="size-5" />
             </PrimaryButton>
           </div>
 
