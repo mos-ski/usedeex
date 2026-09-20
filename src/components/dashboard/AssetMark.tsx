@@ -69,3 +69,48 @@ export const InitialMark = ({ name, className }: { name: string; className?: str
     {name.replace(/^@/, "").charAt(0)}
   </span>
 );
+
+/** Brand-adjacent hues the generated avatars pick from. */
+const avatarPalette = [
+  ["#0B75C2", "#D4EBFD"],
+  ["#004D85", "#D0EBFF"],
+  ["#008751", "#D6F2E4"],
+  ["#BE6B0A", "#FBEFDD"],
+  ["#6047DF", "#E4E0FB"],
+  ["#C2185B", "#FBE0EA"],
+] as const;
+
+/** Stable hash so a given tag always draws the same avatar. */
+const hashOf = (seed: string) => [...seed].reduce((acc, c) => (acc * 31 + c.charCodeAt(0)) >>> 0, 7);
+
+/**
+ * Generated identicon for a DeeX tag — a mirrored dot grid, so every handle
+ * gets a distinct picture without shipping a photo per user.
+ */
+export const TagAvatar = ({ seed, className }: { seed: string; className?: string }) => {
+  const hash = hashOf(seed.replace(/^@/, "").toLowerCase());
+  const [ink, bg] = avatarPalette[hash % avatarPalette.length];
+
+  // Build the left three columns, then mirror them for symmetry.
+  const cells: boolean[][] = Array.from({ length: 5 }, (_, row) =>
+    Array.from({ length: 5 }, (_, col) => {
+      const source = col > 2 ? 4 - col : col;
+      return ((hash >> (row * 3 + source)) & 1) === 1;
+    }),
+  );
+
+  return (
+    <span
+      className={cn("flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full", className)}
+      style={{ backgroundColor: bg }}
+    >
+      <svg viewBox="0 0 5 5" className="size-full" aria-hidden="true">
+        {cells.flatMap((row, y) =>
+          row.map((on, x) =>
+            on ? <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" fill={ink} /> : null,
+          ),
+        )}
+      </svg>
+    </span>
+  );
+};

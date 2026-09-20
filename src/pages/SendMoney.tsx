@@ -3,14 +3,21 @@ import { useNavigate } from "react-router-dom";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader, PrimaryButton } from "@/components/dashboard/AppShell";
 import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
-import AssetMark, { InitialMark } from "@/components/dashboard/AssetMark";
+import AssetMark, { TagAvatar } from "@/components/dashboard/AssetMark";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
 import { ArrowRightIcon, BankIcon, CaretDownIcon } from "@/components/dashboard/icons";
 import OptionSheet from "@/components/dashboard/OptionSheet";
 import { FaceIdOverlay, ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import { NGN_PER_USD, formatNgn } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { bankRecipients, tagRecipients, type BankRecipient, type TagRecipient } from "@/data/recipientData";
+import {
+  bankRecipients,
+  cryptoDestinations,
+  tagRecipients,
+  type BankRecipient,
+  type CryptoDestination,
+  type TagRecipient,
+} from "@/data/recipientData";
 
 const banks = ["Access Bank", "GTBank", "UBA", "Zenith Bank", "First Bank", "PalmPay", "Opay"];
 
@@ -30,9 +37,9 @@ const savedRecipients = bankRecipients;
  * the recipient step.
  */
 const modes = [
+  { id: "address", label: "Address" },
   { id: "bank", label: "Bank" },
   { id: "tag", label: "DeeX Tag" },
-  { id: "address", label: "Address" },
 ] as const;
 type Mode = (typeof modes)[number]["id"];
 
@@ -68,7 +75,7 @@ const SendMoney = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>("recipient");
 
-  const [mode, setMode] = useState<Mode>("bank");
+  const [mode, setMode] = useState<Mode>("address");
   const [account, setAccount] = useState("");
   const [bank, setBank] = useState(banks[0]);
   const [tag, setTag] = useState("");
@@ -94,6 +101,13 @@ const SendMoney = () => {
 
   const visible = useMemo(() => savedRecipients.filter((r) => r.kind === tab), [tab]);
   const visibleTags = useMemo(() => tagRecipients.filter((r) => r.kind === tab), [tab]);
+  // Saved wallet addresses; the "beneficiary" half of the data set is usernames,
+  // so both tabs draw from the address entries and split them in two.
+  const visibleAddresses = useMemo(() => {
+    const addresses = cryptoDestinations.filter((d) => d.value.startsWith("0x") || !d.value.startsWith("@"));
+    const half = Math.ceil(addresses.length / 2);
+    return tab === "recent" ? addresses.slice(0, half) : addresses.slice(half);
+  }, [tab]);
   const network = defaultNetwork[wallet.symbol] ?? "ERC 20";
 
   /** Whether the chosen recipient is complete enough to move on. */
@@ -123,6 +137,11 @@ const SendMoney = () => {
   const pickRecipient = (r: BankRecipient) => {
     setAccount(r.account);
     setBank(r.bank);
+    setStep("amount");
+  };
+
+  const pickAddress = (d: CryptoDestination) => {
+    setAddress(d.value);
     setStep("amount");
   };
 
@@ -302,7 +321,7 @@ const SendMoney = () => {
                   <PrimaryButton onClick={() => setStep("amount")}>Continue</PrimaryButton>
                 </div>
               </>
-            ) : mode === "address" ? null : (
+            ) : (
               <>
                 {/* Recent / Beneficiary */}
                 <div role="tablist" aria-label="Recipient type" className="flex items-center gap-3 rounded bg-brand-barBg p-0.5">
@@ -324,7 +343,27 @@ const SendMoney = () => {
                 </div>
 
                 <div className="flex flex-col">
-                  {mode === "tag"
+                  {mode === "address"
+                    ? visibleAddresses.map((d) => (
+                        <button
+                          key={d.id}
+                          type="button"
+                          onClick={() => pickAddress(d)}
+                          className="flex items-center gap-4 border-b border-brand-grey100 py-3 text-left transition-colors hover:bg-brand-grey50"
+                        >
+                          <AssetMark symbol={d.symbol} />
+                          <span className="flex min-w-0 flex-1 flex-col">
+                            <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                              {d.display}
+                            </span>
+                            <span className="truncate text-xs leading-[1.3] text-brand-bodyText">
+                              {d.label} • {d.network}
+                            </span>
+                          </span>
+                          <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
+                        </button>
+                      ))
+                    : mode === "tag"
                     ? visibleTags.map((r) => (
                         <button
                           key={r.id}
@@ -332,7 +371,7 @@ const SendMoney = () => {
                           onClick={() => pickTag(r)}
                           className="flex items-center gap-4 border-b border-brand-grey100 py-3 text-left transition-colors hover:bg-brand-grey50"
                         >
-                          <InitialMark name={r.tag} />
+                          <TagAvatar seed={r.tag} />
                           <span className="flex min-w-0 flex-1 flex-col">
                             <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
                               {r.tag}
@@ -417,7 +456,7 @@ const SendMoney = () => {
                   <BankIcon className="size-3" />
                 </span>
               ) : mode === "tag" ? (
-                <InitialMark name={tag} />
+                <TagAvatar seed={tag} />
               ) : (
                 <AssetMark symbol={wallet.symbol} />
               )}
