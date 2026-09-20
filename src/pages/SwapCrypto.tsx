@@ -8,6 +8,7 @@ import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/d
 import { AmountEntry, BalanceShortcuts, parseAmount } from "@/components/dashboard/AmountEntry";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
 import { FaceIdOverlay, ReviewSheet } from "@/components/dashboard/ReviewSheet";
+import Walkthrough, { shouldShowWalkthrough, type WalkthroughStep } from "@/components/dashboard/Walkthrough";
 import { trimZeros } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,14 @@ const bySymbol = (symbol: string) => assets.find((a) => a.symbol === symbol) ?? 
 
 type View = "amount" | "success";
 
+/** First-run coach marks for the swap screen. */
+const SWAP_TOUR_KEY = "deex.tour.swap";
+const swapTour: WalkthroughStep[] = [
+  { anchor: "amount", title: "Start with what you're paying", description: "Type the amount and pick the coin you want to swap from." },
+  { anchor: "converted", title: "See what you get back", description: "The converted amount updates live at today's rate." },
+  { anchor: "footer", title: "Use your balance", description: "Tap 25%, 50%, 75% or Max to fill the amount from what you hold, then Done." },
+];
+
 const SwapCrypto = () => {
   const navigate = useNavigate();
   const [view, setView] = useState<View>("amount");
@@ -34,6 +43,7 @@ const SwapCrypto = () => {
   const [showInviteCode, setShowInviteCode] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [authenticating, setAuthenticating] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
   const { appliedCode, tradeCompleted, applyCode, completeTrade } = useInviteCode();
 
   const from = bySymbol(fromSymbol);
@@ -61,6 +71,12 @@ const SwapCrypto = () => {
     if (symbol === fromSymbol) setFromSymbol(toSymbol);
     setToSymbol(symbol);
   };
+
+  useEffect(() => {
+    if (view !== "amount" || !shouldShowWalkthrough(SWAP_TOUR_KEY)) return;
+    const timer = window.setTimeout(() => setTourOpen(true), 600);
+    return () => window.clearTimeout(timer);
+  }, [view]);
 
   if (view === "success") {
     return (
@@ -119,6 +135,13 @@ const SwapCrypto = () => {
       <ReviewSheet open={reviewOpen} onOpenChange={setReviewOpen} rows={reviewRows} actionLabel="Confirm swap" onAction={confirm} />
 
       <FaceIdOverlay active={authenticating} />
+
+      <Walkthrough
+        steps={swapTour}
+        open={tourOpen}
+        onClose={() => setTourOpen(false)}
+        storageKey={SWAP_TOUR_KEY}
+      />
 
       {showInviteCode && (
         <InviteCodeInput

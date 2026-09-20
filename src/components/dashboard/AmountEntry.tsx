@@ -116,7 +116,7 @@ export const AmountEntry = ({
       <PageHeader title={title} onBack={onBack} />
 
       <div className="flex flex-1 flex-col items-end justify-center gap-1 px-4 py-8">
-        <div className="flex w-full items-center justify-end gap-2">
+        <div data-tour="amount" className="flex w-full items-center justify-end gap-2">
           <input
             value={value}
             onChange={(e) => isAmountInput(e.target.value) && onValueChange(groupDigits(e.target.value))}
@@ -136,7 +136,7 @@ export const AmountEntry = ({
         </div>
 
         {showConverted && (
-          <div className="flex w-full items-center justify-end gap-2">
+          <div data-tour="converted" className="flex w-full items-center justify-end gap-2">
             <span className="truncate font-mono text-xl font-semibold leading-[1.6] text-[#616263]">
               {convertedText}
             </span>
@@ -158,7 +158,7 @@ export const AmountEntry = ({
         {error && <p className="text-xs text-[#D92D20]">{error}</p>}
       </div>
 
-      <div className="flex flex-col gap-2.5 px-4 py-2.5">
+      <div data-tour="footer" className="flex flex-col gap-2.5 px-4 py-2.5">
         {footer}
         <PrimaryButton disabled={submitDisabled} onClick={onSubmit}>
           {submitLabel}
