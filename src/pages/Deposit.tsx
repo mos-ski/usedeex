@@ -10,7 +10,6 @@ import AssetMark from "@/components/dashboard/AssetMark";
 import { CaretDownIcon } from "@/components/dashboard/icons";
 import CoinPicker from "@/components/dashboard/CoinPicker";
 import { receivableCoins as cryptos } from "@/data/receivableCoins";
-import OptionSheet from "@/components/dashboard/OptionSheet";
 import qrCode from "@/assets/landing-v2/qr-code.png";
 import { cn } from "@/lib/utils";
 
@@ -25,7 +24,6 @@ const Deposit = () => {
   const { state } = useLocation() as { state?: { symbol?: string; network?: string } };
   const initial = cryptos.find((c) => c.symbol === state?.symbol);
   const [pickerOpen, setPickerOpen] = useState(!initial);
-  const [picker, setPicker] = useState<"asset" | "network" | null>(null);
   // Landing here without a coin means the sheet is the whole screen; backing
   // out of it should leave. Once something is chosen there is a page to stay on.
   const chosen = useRef(Boolean(initial));
@@ -69,28 +67,19 @@ const Deposit = () => {
         <PageHeader title="Receive" onBack={() => navigate(-1)} />
 
         <div className="flex flex-col items-center px-4">
-          {/* Asset + network selector */}
-          <div className="flex items-stretch">
-            <button
-              type="button"
-              aria-label="Choose asset"
-              onClick={() => setPicker("asset")}
-              className="flex items-center gap-1 rounded-l border border-brand-pillBorder bg-brand-pill px-2 py-1"
-            >
-              <AssetMark symbol={crypto.symbol} className="size-4" />
-              <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{crypto.symbol}</span>
-            </button>
-
-            <button
-              type="button"
-              aria-label="Choose network"
-              onClick={() => setPicker("network")}
-              className="flex items-center gap-1 rounded-r border border-l-0 border-brand-pillBorder bg-brand-pill px-2 py-1"
-            >
-              <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{network}</span>
-              <CaretDownIcon className="size-3 text-brand-grey900" />
-            </button>
-          </div>
+          {/* One control: picks the coin, then its network (Figma 299:25076). */}
+          <button
+            type="button"
+            aria-label="Choose asset and network"
+            onClick={() => setPickerOpen(true)}
+            className="flex items-center gap-2 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1"
+          >
+            <AssetMark symbol={crypto.symbol} className="size-4" />
+            <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{crypto.symbol}</span>
+            <span className="text-brand-grey300" aria-hidden="true">·</span>
+            <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">{network}</span>
+            <CaretDownIcon className="size-3 text-brand-grey900" />
+          </button>
 
           {/* QR — branded DeeX code, 240x240 per the Figma */}
           <img
@@ -162,20 +151,6 @@ const Deposit = () => {
           onClose={() => setShowInviteCode(false)}
         />
       )}
-
-      <OptionSheet
-        open={picker !== null}
-        onOpenChange={(next) => !next && setPicker(null)}
-        title={picker === "network" ? "Select Network" : "Assets"}
-        searchPlaceholder={picker === "asset" ? "Search coin to receive" : undefined}
-        value={picker === "network" ? network : crypto.symbol}
-        options={
-          picker === "network"
-            ? crypto.networks.map((n) => ({ value: n, label: n, mark: null }))
-            : cryptos.map((c) => ({ value: c.symbol, label: c.symbol, detail: c.name }))
-        }
-        onSelect={(value) => (picker === "network" ? setNetwork(value) : pickCrypto(value))}
-      />
 
       <CoinPicker
         open={pickerOpen}
