@@ -194,3 +194,17 @@
   animation: floatGiftCards 5s ease-in-out infinite;
   animation-fill-mode: both;
 }
+
+@keyframes rateTickerSlide {
+  0% { opacity: 0; transform: translateY(100%); }
+  18%, 78% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-100%); }
+}
+
+.rate-ticker-slide {
+  animation: rateTickerSlide 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rate-ticker-slide { animation: none; }
+}

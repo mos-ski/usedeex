@@ -69,6 +69,8 @@ const giftCardTxns: Txn[] = [
   { id: 3, type: "Google Play", symbol: "Google Play", date: "Sep 5th, 2023", status: "Success", amount: "$100.00" },
 ];
 
+const rateQuotes = ["BTC ₦1,384 / $1", "ETH ₦1,380 / $1", "USDT ₦1,382 / $1"];
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"crypto" | "giftcards">("crypto");
@@ -76,6 +78,7 @@ const Dashboard = () => {
   const [showCoinPicker, setShowCoinPicker] = useState(false);
   const { hidden } = useBalanceVisibility();
   const [showRates, setShowRates] = useState(false);
+  const [rateStep, setRateStep] = useState(0);
   const { appliedCode, hasSeenDashboardModal, applyCode, markDashboardModalSeen } = useInviteCode();
 
   useEffect(() => {
@@ -85,6 +88,11 @@ const Dashboard = () => {
       return () => clearTimeout(timer);
     }
   }, [appliedCode, hasSeenDashboardModal]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setRateStep((step) => step + 1), 2400);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const isGiftCards = activeTab === "giftcards";
   const transactions = isGiftCards ? giftCardTxns : cryptoTxns;
@@ -166,9 +174,11 @@ const Dashboard = () => {
                 <button
                   type="button"
                   onClick={() => setShowRates(true)}
-                  className="font-semibold leading-[1.6] underline-offset-2 hover:underline"
+                  className="min-w-[96px] overflow-hidden text-left font-semibold leading-[1.6] underline-offset-2 hover:underline"
                 >
-                  See rates
+                  <span key={rateStep} className="rate-ticker-slide block whitespace-nowrap">
+                    {rateStep % 2 === 0 ? "See rates" : rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length]}
+                  </span>
                 </button>
               </div>
 
