@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTransition from "@/components/PageTransition";
 import InviteCodeInput from "@/components/InviteCodeInput";
-import InviteCodeProgress from "@/components/InviteCodeProgress";
 import { useInviteCode } from "@/contexts/InviteCodeContext";
 import { ActionTile, AppShell, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
 import CoinPicker from "@/components/dashboard/CoinPicker";
@@ -78,14 +77,7 @@ const Dashboard = () => {
   const [showCoinPicker, setShowCoinPicker] = useState(false);
   const { hidden } = useBalanceVisibility();
   const [showRates, setShowRates] = useState(false);
-  const {
-    appliedCode,
-    depositCompleted,
-    tradeCompleted,
-    hasSeenDashboardModal,
-    applyCode,
-    markDashboardModalSeen,
-  } = useInviteCode();
+  const { appliedCode, hasSeenDashboardModal, applyCode, markDashboardModalSeen } = useInviteCode();
 
   useEffect(() => {
     // Prompt new users to enter an invite code the first time they land on the dashboard
@@ -202,21 +194,6 @@ const Dashboard = () => {
                 </div>
               )}
             </SectionCard>
-
-            {/* Invite code progress (only once a code is applied) */}
-            {appliedCode && (
-              <SectionCard>
-                <InviteCodeProgress
-                  code={appliedCode.code}
-                  depositReward={appliedCode.depositReward}
-                  tradeReward={appliedCode.tradeReward}
-                  minDeposit={appliedCode.minDeposit}
-                  minTrade={appliedCode.minTrade}
-                  depositCompleted={depositCompleted}
-                  tradeCompleted={tradeCompleted}
-                />
-              </SectionCard>
-            )}
 
             {/* Quick actions */}
             {!isGiftCards && (
