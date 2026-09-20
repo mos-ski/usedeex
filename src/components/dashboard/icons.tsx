@@ -296,9 +296,10 @@ export const SwapHorizontalIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+/** Back chevron. Every use is a back or previous control, hence no shaft. */
 export const ArrowLeftIcon = ({ className }: IconProps) => (
   <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-    <path d="M19 12H5M12 19l-7-7 7-7" {...strokeProps} />
+    <path d="M15 5l-7 7 7 7" {...strokeProps} />
   </svg>
 );
 

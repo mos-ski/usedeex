@@ -6,14 +6,15 @@ import FloatingNav from "@/components/dashboard/FloatingNav";
 import { SettingsRow, Toggle } from "@/components/dashboard/SettingsList";
 import { useTheme } from "@/contexts/ThemeContext";
 import {
-  CaretRightIcon,
+  ArrowLeftIcon,
   CardEditIcon,
+  CaretRightIcon,
   CopyLinearIcon,
   EditPencilIcon,
   LockIcon,
-  MoonIcon,
   LogOutIcon,
   MessageQuestionIcon,
+  MoonIcon,
   NotificationIcon,
   PeopleIcon,
   ReceiptIcon,
@@ -99,7 +100,15 @@ const Profile = () => {
     <AppShell topColor="bg-brand-deepNavy" innerClassName="lg:max-w-[760px] lg:px-4">
       <PageTransition>
         <div className="bg-brand-deepNavy">
-          <header className="flex h-14 items-center px-4">
+          <header className="flex h-14 items-center gap-1 px-4">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              aria-label="Go back"
+              className="-ml-2 flex size-11 shrink-0 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10"
+            >
+              <ArrowLeftIcon className="size-6" />
+            </button>
             <h1 className="text-[19px] font-bold leading-[1.4] text-white">Account</h1>
           </header>
 

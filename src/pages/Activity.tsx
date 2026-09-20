@@ -5,7 +5,11 @@ import EmptyState from "@/components/EmptyState";
 import { AppShell, SectionCard } from "@/components/dashboard/AppShell";
 import FloatingNav from "@/components/dashboard/FloatingNav";
 import AssetMark from "@/components/dashboard/AssetMark";
-import { FilterLinesIcon, SearchIcon } from "@/components/dashboard/icons";
+import {
+  ArrowLeftIcon,
+  FilterLinesIcon,
+  SearchIcon,
+} from "@/components/dashboard/icons";
 import TransactionFilterSheet, {
   defaultTransactionFilters,
   type TransactionFilters,
@@ -75,7 +79,15 @@ const ActivityPage = () => {
         <div className="flex flex-1 flex-col sm:gap-3 lg:grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:gap-5 lg:pt-6">
           {/* Summary */}
           <section className="bg-brand-deepNavy text-white lg:sticky lg:top-6">
-            <header className="flex h-14 items-center gap-3 px-4 lg:px-6">
+            <header className="flex h-14 items-center gap-1 px-4 lg:px-6">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                aria-label="Go back"
+                className="-ml-2 flex size-11 shrink-0 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10"
+              >
+                <ArrowLeftIcon className="size-6" />
+              </button>
               <h1 className="min-w-0 flex-1 truncate text-[19px] font-bold leading-[1.4] lg:text-2xl">Activity</h1>
             </header>
 

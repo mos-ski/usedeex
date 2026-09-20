@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
 import FloatingNav from "@/components/dashboard/FloatingNav";
-import { GiftIcon, TrendArrowIcon } from "@/components/dashboard/icons";
+import {
+  ArrowLeftIcon,
+  GiftIcon,
+  TrendArrowIcon,
+} from "@/components/dashboard/icons";
 import AssetRow from "@/components/dashboard/AssetRow";
 import { nairaWalletBalance } from "@/data/nairaWalletData";
 import { NGN_PER_USD, formatNgn, formatUsd } from "@/lib/format";
@@ -42,7 +46,15 @@ const Wallet = () => {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            <header className="flex h-14 items-center justify-between gap-4 px-6">
+            <header className="flex h-14 items-center justify-between gap-1 px-6">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                aria-label="Go back"
+                className="-ml-2 flex size-11 shrink-0 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10"
+              >
+                <ArrowLeftIcon className="size-6" />
+              </button>
               <h1 className="min-w-0 flex-1 truncate text-[19px] font-bold leading-[1.4] lg:text-2xl">Wallet</h1>
               <button
                 type="button"
