@@ -16,7 +16,6 @@ import {
   AvatarIcon,
   BellIcon,
   ChevronRightIcon,
-  GiftCardIcon,
   PhoneCallIcon,
   PlusIcon,
   SendIcon,
@@ -174,7 +173,7 @@ const Dashboard = () => {
               </div>
 
               {isGiftCards && (
-                <div className="mt-3 flex justify-end">
+                <div className="mt-3">
                   <button
                     type="button"
                     aria-label="Trade Giftcard"
@@ -182,9 +181,9 @@ const Dashboard = () => {
                       resetGiftCardCountry();
                       navigate("/giftcards");
                     }}
-                    className="flex size-14 items-center justify-center rounded-full bg-brand-blue500 text-white shadow-sm transition-opacity hover:opacity-90"
+                    className="flex w-full items-center justify-center rounded-lg bg-[#095B97] p-3 font-manrope text-[11px] font-semibold leading-[1.6] text-[#E8F3FC] transition-opacity hover:opacity-90"
                   >
-                    <GiftCardIcon className="size-7" />
+                    Trade Giftcard
                   </button>
                 </div>
               )}
