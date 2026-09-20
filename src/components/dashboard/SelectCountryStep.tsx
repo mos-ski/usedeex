@@ -1,3 +1,4 @@
+import { useCallback, useState } from "react";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader, SectionCard } from "./AppShell";
 import OptionSheet from "./OptionSheet";
@@ -51,6 +52,34 @@ export const SelectCountryStep = ({
     />
   </AppShell>
 );
+
+const COUNTRY_KEY = "deex.giftCardCountry";
+
+/**
+ * The chosen country, shared by the buy and sell routes so switching between
+ * them keeps you on the same step instead of asking again.
+ */
+export const useGiftCardCountry = () => {
+  const [code, setCode] = useState(() => {
+    try {
+      return sessionStorage.getItem(COUNTRY_KEY) ?? "";
+    } catch {
+      // Storage can be blocked; the choice just will not survive the switch.
+      return "";
+    }
+  });
+
+  const choose = useCallback((next: string) => {
+    setCode(next);
+    try {
+      sessionStorage.setItem(COUNTRY_KEY, next);
+    } catch {
+      // As above.
+    }
+  }, []);
+
+  return [code, choose] as const;
+};
 
 /** The country trigger: caret, flag, name — the pill used across both flows. */
 export const CountryPill = ({ code, onClick }: { code: string; onClick: () => void }) => {

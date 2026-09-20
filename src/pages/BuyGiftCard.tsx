@@ -9,15 +9,16 @@ import {
   SectionHeader,
 } from "@/components/dashboard/AppShell";
 import AssetMark from "@/components/dashboard/AssetMark";
-import OptionSheet from "@/components/dashboard/OptionSheet";
+import CategoryPills from "@/components/dashboard/CategoryPills";
+import GiftCardModeTabs from "@/components/dashboard/GiftCardModeTabs";
 import SelectCountryStep, {
   CountryPill,
   CountrySheet,
+  useGiftCardCountry,
 } from "@/components/dashboard/SelectCountryStep";
 import ReviewSheet from "@/components/dashboard/ReviewSheet";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
 import {
-  CaretDownIcon,
   CheckIcon,
   MinusIcon,
   PlusIcon,
@@ -33,31 +34,7 @@ import {
 import { formatNgn } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-const ALL_CATEGORIES = "all";
 const DEEX_FEE = 50;
-
-/** The category trigger, matching the country pill beside it. */
-const FilterPill = ({
-  label,
-  onClick,
-  ariaLabel,
-}: {
-  label: string;
-  onClick: () => void;
-  ariaLabel: string;
-}) => (
-  <button
-    type="button"
-    aria-label={ariaLabel}
-    onClick={onClick}
-    className="flex min-w-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
-  >
-    <CaretDownIcon className="size-3 shrink-0 text-brand-grey900" />
-    <span className="min-w-0 truncate text-xs font-semibold leading-[1.4] text-brand-grey900">
-      {label}
-    </span>
-  </button>
-);
 
 /** Label above value on a hairline, the review-row shape used app-wide. */
 const DetailRow = ({ label, value }: { label: string; value: string }) => (
@@ -77,15 +54,14 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
 const BuyGiftCard = () => {
   const navigate = useNavigate();
 
-  const [countryCode, setCountryCode] = useState("");
-  const [category, setCategory] = useState<string>(ALL_CATEGORIES);
+  const [countryCode, setCountryCode] = useGiftCardCountry();
+  const [categories, setCategories] = useState<string[]>([]);
   const [search, setSearch] = useState("");
   const [product, setProduct] = useState<GiftCardProduct | null>(null);
   const [price, setPrice] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
   const [countryOpen, setCountryOpen] = useState(false);
-  const [categoryOpen, setCategoryOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [bought, setBought] = useState(false);
 
@@ -97,10 +73,10 @@ const BuyGiftCard = () => {
     return giftCardProducts.filter(
       (p) =>
         p.countries.includes(country.code) &&
-        (category === ALL_CATEGORIES || p.category === category) &&
+        (categories.length === 0 || categories.includes(p.category)) &&
         (!q || p.brand.toLowerCase().includes(q)),
     );
-  }, [country, category, search]);
+  }, [country, categories, search]);
 
   const openProduct = (next: GiftCardProduct) => {
     setProduct(next);
@@ -112,7 +88,7 @@ const BuyGiftCard = () => {
   if (!country) {
     return (
       <SelectCountryStep
-        title="Buy Giftcard"
+        title="Gift Cards"
         description="Choose a country to see available gift cards."
         open={countryOpen}
         onOpenChange={setCountryOpen}
@@ -295,21 +271,16 @@ const BuyGiftCard = () => {
       innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4"
     >
       <PageTransition>
-        <PageHeader title="Buy Giftcard" onBack={() => navigate(-1)} />
+        <PageHeader title="Gift Cards" onBack={() => navigate(-1)} />
 
         <div className="flex flex-col gap-3 px-4">
-          <p className="text-xs leading-[1.3] text-brand-bodyText">
-            Browse gift cards by country and category.
-          </p>
+          <GiftCardModeTabs mode="buy" />
 
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex justify-center">
             <CountryPill code={countryCode} onClick={() => setCountryOpen(true)} />
-            <FilterPill
-              ariaLabel="Choose category"
-              label={category === ALL_CATEGORIES ? "All categories" : category}
-              onClick={() => setCategoryOpen(true)}
-            />
           </div>
+
+          <CategoryPills options={giftCardCategories} selected={categories} onChange={setCategories} />
 
           <input
             value={search}
@@ -350,21 +321,6 @@ const BuyGiftCard = () => {
         onSelect={setCountryCode}
       />
 
-      <OptionSheet
-        open={categoryOpen}
-        onOpenChange={setCategoryOpen}
-        title="Select a category"
-        value={category}
-        options={[
-          { value: ALL_CATEGORIES, label: "All categories", mark: null },
-          ...giftCardCategories.map((c) => ({
-            value: c,
-            label: c,
-            mark: null,
-          })),
-        ]}
-        onSelect={setCategory}
-      />
     </AppShell>
   );
 };

@@ -22,11 +22,18 @@ import {
   PlusIcon,
 } from "@/components/dashboard/icons";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
+import GiftCardModeTabs from "@/components/dashboard/GiftCardModeTabs";
+import CategoryPills from "@/components/dashboard/CategoryPills";
 import SelectCountryStep, {
   CountryPill,
   CountrySheet,
+  useGiftCardCountry,
 } from "@/components/dashboard/SelectCountryStep";
-import { giftCardCountries } from "@/data/giftCardCatalog";
+import {
+  giftCardCategories,
+  giftCardCountries,
+  giftCardProducts,
+} from "@/data/giftCardCatalog";
 import { formatNgn } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -68,7 +75,8 @@ const GiftCards = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>("brand");
 
-  const [countryCode, setCountryCode] = useState("");
+  const [countryCode, setCountryCode] = useGiftCardCountry();
+  const [categories, setCategories] = useState<string[]>([]);
   const [search, setSearch] = useState("");
   const [cardType, setCardType] = useState<CardType>("physical");
   const [brand, setBrand] = useState("");
@@ -86,8 +94,15 @@ const GiftCards = () => {
 
   const visibleBrands = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return brands.filter((b) => !q || b.toLowerCase().includes(q));
-  }, [search]);
+    return giftCardProducts
+      .filter(
+        (p) =>
+          p.countries.includes(countryCode) &&
+          (categories.length === 0 || categories.includes(p.category)) &&
+          (!q || p.brand.toLowerCase().includes(q)),
+      )
+      .map((p) => p.brand);
+  }, [countryCode, categories, search]);
 
   /** Card value and payout derived from the denomination counts. */
   const totalUsd = denominations.reduce(
@@ -133,7 +148,7 @@ const GiftCards = () => {
   if (!country) {
     return (
       <SelectCountryStep
-        title="Sell Giftcard"
+        title="Gift Cards"
         description="Choose where your cards were bought to see the brands we take."
         open={countryOpen}
         onOpenChange={setCountryOpen}
@@ -167,9 +182,11 @@ const GiftCards = () => {
         innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4"
       >
         <PageTransition>
-          <PageHeader title="Sell Giftcard" onBack={() => navigate(-1)} />
+          <PageHeader title="Gift Cards" onBack={() => navigate(-1)} />
 
           <div className="flex flex-col gap-3 px-4">
+            <GiftCardModeTabs mode="sell" />
+
             <div className="flex justify-center">
               <CountryPill code={countryCode} onClick={() => setCountryOpen(true)} />
             </div>
@@ -181,6 +198,8 @@ const GiftCards = () => {
               aria-label="Search gift cards"
               className="w-full border-b border-brand-grey100 bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
             />
+
+            <CategoryPills options={giftCardCategories} selected={categories} onChange={setCategories} />
 
             <div
               role="tablist"
@@ -211,6 +230,11 @@ const GiftCards = () => {
               ))}
             </div>
 
+            {visibleBrands.length === 0 ? (
+              <p className="py-16 text-center text-sm text-brand-bodyText">
+                No gift cards match that in {country.name}.
+              </p>
+            ) : (
             <div className="grid grid-cols-3 gap-px border border-brand-grey100 bg-brand-grey100">
               {visibleBrands.map((b) => (
                 <button
@@ -232,6 +256,7 @@ const GiftCards = () => {
                 </button>
               ))}
             </div>
+            )}
 
             <p className="px-4 pt-4 text-center text-xs leading-[1.6] text-brand-bodyText">
               Note: Total denomination should match the value amount you wish to

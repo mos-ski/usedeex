@@ -182,6 +182,33 @@ export const giftCardProducts: GiftCardProduct[] = [
       "Go to spotify.com/redeem while signed in and enter the code to add Premium time to your account. Cannot be combined with an active billed-through-partner plan.",
   },
   {
+    id: "sephora",
+    brand: "Sephora",
+    category: "Shopping",
+    countries: ["US", "GB", "CA", "FR", "IT", "ES"],
+    denominations: [25, 50, 100],
+    redeemInstruction:
+      "Enter the code at checkout on sephora.com or present it in store. Applies to beauty products in the country of issue and does not expire.",
+  },
+  {
+    id: "itunes",
+    brand: "iTunes",
+    category: "Entertainment",
+    countries: ["US", "GB", "CA", "AU", "DE", "FR", "JP"],
+    denominations: [10, 25, 50, 100],
+    redeemInstruction:
+      "Redeem under Redeem Gift Card in Settings, or in the App Store and Apple Music. Valid only in the country of purchase.",
+  },
+  {
+    id: "nordstrom",
+    brand: "Nordstrom",
+    category: "Shopping",
+    countries: ["US", "CA"],
+    denominations: [25, 50, 100, 250],
+    redeemInstruction:
+      "Use at any Nordstrom or Nordstrom Rack store, or on nordstrom.com at checkout. No fees and no expiry.",
+  },
+  {
     id: "jumia",
     brand: "Jumia",
     category: "Shopping",
