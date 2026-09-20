@@ -169,8 +169,8 @@ const Dashboard = () => {
                   </>
                 )}
               </p>
-              <div className="flex items-center justify-center gap-2 text-[10px] uppercase text-brand-amberBrown lg:text-xs">
-                <p className="translate-x-2 leading-[1.6]">
+              <div className="flex items-center justify-start gap-2 text-[10px] uppercase text-brand-amberBrown lg:text-xs">
+                <p className="leading-[1.6]">
                   <span className="font-semibold">{hidden ? maskAmount("$22.43") : "$22.43"} </span>
                   <span className="font-medium">today</span>
                 </p>
@@ -178,11 +178,11 @@ const Dashboard = () => {
                 <button
                   type="button"
                   onClick={() => setShowRates(true)}
-                  className="h-[18px] min-w-[96px] overflow-hidden text-center font-semibold leading-[1.6] underline-offset-2 hover:underline"
+                  className="h-[18px] min-w-[112px] overflow-hidden text-left font-semibold leading-[1.6] underline-offset-2 hover:underline"
                 >
                   <span key={rateStep} className="rate-ticker-slide block whitespace-nowrap">
                     {rateStep % 2 === 0 ? (
-                      "See rates"
+                      "See today's rate"
                     ) : (
                       <span className="flex w-full items-center justify-center gap-1">
                         <AssetMark symbol={rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].symbol} className="size-3" />
