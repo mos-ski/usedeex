@@ -26,8 +26,8 @@ import {
   TrendArrowIcon,
 } from "@/components/dashboard/icons";
 import { cn } from "@/lib/utils";
+import deexCardMenu from "@/assets/cards/deex-card-menu.png";
 
-const figmaCardHero = "https://www.figma.com/api/mcp/asset/700f23ae-556c-4dfb-a8c7-2f19405619ce.png";
 const figmaTopUpIcon = "https://www.figma.com/api/mcp/asset/ffe8128f-528b-48be-9a92-a374a93fc0cf/2ba4d.svg";
 const figmaManageIcon = "https://www.figma.com/api/mcp/asset/ffe8128f-528b-48be-9a92-a374a93fc0cf/9dfcd.svg";
 const figmaViewIcon = "https://www.figma.com/api/mcp/asset/ffe8128f-528b-48be-9a92-a374a93fc0cf/e8f0f.svg";
@@ -732,12 +732,10 @@ const VirtualCards = () => {
             className="mt-3 block w-full text-left"
             aria-label="Open DeeX card details"
           >
-            <span className="block overflow-hidden">
-              <img
-                src={figmaCardHero}
-                alt="DeeX Card with balance"
-                className="-mb-2 -mt-2 block w-full"
-              />
+            <span className="flex flex-col items-center gap-2">
+              <img src={deexCardMenu} alt="DeeX virtual card" className="block w-full rounded-2xl" />
+              <span className="text-[10px] uppercase leading-[1.6] text-white/55">Balance</span>
+              <span className="font-gasoek text-[38px] leading-[1.15] text-white">{primaryCard?.balance ?? "$0.00"}</span>
             </span>
           </button>
         </section>
