@@ -57,7 +57,7 @@ interface VCard {
 const mockCards: VCard[] = [
   {
     id: 1,
-    last4: "0000",
+    last4: "4242",
     label: "Shopping Card",
     balance: "$245.80",
     balanceNum: 245.8,
@@ -112,7 +112,7 @@ const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
   const fields = (billingTab === "us"
     ? [
         ["Card holder name", "Alex Johnson"],
-        ["Card number", "0000 0000 0000 0000"],
+        ["Card number", "4242 4242 4242 4242"],
         ["Expiry date", "12/30"],
         ["CVV", "000"],
         ["Billing address", "123 Demo Street, Wilmington, DE 19801, US"],
@@ -120,7 +120,7 @@ const CardDetailsModal = ({ open, onOpenChange }: { open: boolean; onOpenChange:
       ]
     : [
         ["Card holder name", "Alex Johnson"],
-        ["Card number", "0000 0000 0000 0000"],
+        ["Card number", "4242 4242 4242 4242"],
         ["Expiry date", "12/30"],
         ["CVV", "000"],
         ["Billing address", "12 Demo Street, Lagos, Nigeria"],
@@ -367,7 +367,7 @@ const VirtualCards = () => {
             onClick={() => {
               const card: VCard = {
                 id: Date.now(),
-                last4: "0000",
+                last4: "4242",
                 label: createLabel.trim(),
                 balance: "$0.00",
                 balanceNum: 0,
@@ -584,7 +584,7 @@ const VirtualCards = () => {
 
             <div className="flex items-center gap-2 pt-8">
               <p className="text-sm tracking-widest">
-                {showNumber ? `0000 0000 0000 ${selected.last4}` : `•••• •••• •••• ${selected.last4}`}
+                {showNumber ? `4242 4242 4242 ${selected.last4}` : `•••• •••• •••• ${selected.last4}`}
               </p>
               <button
                 type="button"
@@ -599,7 +599,7 @@ const VirtualCards = () => {
                   type="button"
                   aria-label="Copy card number"
                   onClick={() => {
-                    navigator.clipboard?.writeText(`000000000000${selected.last4}`);
+                    navigator.clipboard?.writeText(`424242424242${selected.last4}`);
                     toast.success("Card number copied");
                   }}
                   className="text-brand-grey400"
