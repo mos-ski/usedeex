@@ -52,6 +52,7 @@ export const AmountEntry = ({
   convertedText,
   showConverted = true,
   error,
+  topSlot,
   footer,
   submitLabel = "Done",
   submitDisabled,
@@ -72,6 +73,8 @@ export const AmountEntry = ({
   /** Bills are priced in naira only, so they hide the conversion read-out. */
   showConverted?: boolean;
   error?: string;
+  /** Sits directly under the header — a source or type selector. */
+  topSlot?: ReactNode;
   footer?: ReactNode;
   submitLabel?: string;
   submitDisabled?: boolean;
@@ -94,6 +97,8 @@ export const AmountEntry = ({
   >
     <PageTransition className="flex flex-1 flex-col">
       <PageHeader title={title} onBack={onBack} />
+
+      {topSlot && <div className="px-4 pt-1">{topSlot}</div>}
 
       <div className="flex flex-1 flex-col items-end justify-center gap-1 px-4 py-8">
         <div data-tour="amount" className="flex w-full items-center justify-end gap-2">

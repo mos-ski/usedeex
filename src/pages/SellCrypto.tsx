@@ -28,6 +28,16 @@ const BATCH_THRESHOLD = 5_000_000;
 /** Flat fee taken from the payout. */
 const DEEX_FEE = 50;
 
+/**
+ * Where the crypto is coming from. Selling from the DeeX wallet runs the
+ * normal flow; an external wallet needs a deposit address first, so it hands
+ * off to the Receive screen.
+ */
+const sources = [
+  { id: "wallet", label: "My Wallet" },
+  { id: "external", label: "External" },
+] as const;
+
 
 const SellCrypto = () => {
   const navigate = useNavigate();
@@ -93,6 +103,30 @@ const SellCrypto = () => {
   return (
     <>
       <AmountEntry
+      topSlot={
+        <div role="tablist" aria-label="Crypto source" className="flex items-center gap-3 rounded bg-brand-barBg p-0.5">
+          {sources.map((src) => (
+            <button
+              key={src.id}
+              role="tab"
+              type="button"
+              aria-selected={src.id === "wallet"}
+              onClick={() =>
+                src.id === "external" &&
+                navigate("/deposit", { state: { symbol: asset.symbol, network: asset.network } })
+              }
+              className={cn(
+                "flex-1 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
+                src.id === "wallet"
+                  ? "bg-brand-surface text-brand-blue500"
+                  : "text-brand-grey900 hover:text-brand-blue500",
+              )}
+            >
+              {src.label}
+            </button>
+          ))}
+        </div>
+      }
       title="Sell"
       onBack={() => navigate(-1)}
       value={raw}
