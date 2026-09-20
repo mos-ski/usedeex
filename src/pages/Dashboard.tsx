@@ -174,7 +174,7 @@ const Dashboard = () => {
                   <span className="font-semibold">{hidden ? maskAmount("$22.43") : "$22.43"} </span>
                   <span className="font-medium">today</span>
                 </p>
-                <span className="font-semibold leading-[1.6]">•</span>
+                <span className="mx-1 font-semibold leading-[1.6]">•</span>
                 <button
                   type="button"
                   onClick={() => setShowRates(true)}
