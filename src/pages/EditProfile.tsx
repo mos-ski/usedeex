@@ -1,78 +1,69 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Lock } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
-import PageTransition from "@/components/PageTransition";
-import NewBadge from "@/components/NewBadge";
 import { toast } from "sonner";
+import PageTransition from "@/components/PageTransition";
+import { AppShell, PageHeader, PrimaryButton, SectionCard } from "@/components/dashboard/AppShell";
+import { TextField } from "@/components/dashboard/FormFields";
+import { LockIcon } from "@/components/dashboard/icons";
+
+/** Details fixed by verification — shown, but not editable here. */
+const verified = [
+  { label: "First Name", value: "John" },
+  { label: "Last Name", value: "Doe" },
+  { label: "Email", value: "johndoe@email.com" },
+  { label: "Date of Birth", value: "1995-06-15" },
+];
 
 const EditProfile = () => {
   const navigate = useNavigate();
-  const [firstName] = useState("John");
-  const [lastName] = useState("Doe");
-  const [email] = useState("johndoe@email.com");
-  const [dob] = useState("1995-06-15");
   const [username, setUsername] = useState("@johndoe");
   const [phone, setPhone] = useState("+234 810 367 4006");
 
-  const handleSave = () => {
-    toast.success("Profile updated successfully");
+  const save = () => {
+    toast.success("Profile updated");
     navigate("/profile");
   };
 
   return (
-    <MobileLayout hideNav>
+    <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
       <PageTransition>
-        <div className="px-4 pt-4">
-          <div className="flex items-center gap-3 mb-6">
-            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-            <h2 className="text-lg font-bold text-foreground">Edit Profile</h2>
-            <NewBadge />
-          </div>
+        <PageHeader title="Edit Profile" onBack={() => navigate(-1)} />
 
-          <div className="flex flex-col items-center mb-6">
-            <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary mb-3">JD</div>
-            <p className="text-xs text-muted-foreground">Tap to change photo</p>
-          </div>
+        <SectionCard className="flex flex-col items-center px-4 py-6">
+          <span className="flex size-[72px] items-center justify-center rounded-full bg-brand-primary100 text-[32px] font-semibold leading-[1.4] text-brand-blue500">
+            JD
+          </span>
+          <button type="button" className="pt-3 text-xs font-semibold text-brand-blue500">
+            Tap to change photo
+          </button>
+        </SectionCard>
 
-          <div className="space-y-4">
-            {/* Non-editable: First Name */}
-            <div>
-              <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-1.5">First Name <Lock className="w-3 h-3" /></label>
-              <div className="w-full h-12 bg-muted rounded-xl px-4 flex items-center text-muted-foreground">{firstName}</div>
+        <SectionCard className="mt-3 flex flex-col gap-4 px-4 py-5">
+          {verified.map((f) => (
+            <div key={f.label} className="flex min-w-0 flex-col gap-1.5">
+              <span className="flex items-center gap-1 text-xs leading-[1.3] text-brand-bodyText">
+                {f.label}
+                <LockIcon className="size-3 text-brand-grey400" />
+              </span>
+              <div className="flex h-14 w-full items-center rounded-lg border border-brand-grey100 bg-brand-grey50 px-4 text-sm leading-[1.6] text-brand-grey500">
+                {f.value}
+              </div>
             </div>
-            {/* Non-editable: Last Name */}
-            <div>
-              <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-1.5">Last Name <Lock className="w-3 h-3" /></label>
-              <div className="w-full h-12 bg-muted rounded-xl px-4 flex items-center text-muted-foreground">{lastName}</div>
-            </div>
-            {/* Non-editable: Email */}
-            <div>
-              <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-1.5">Email <Lock className="w-3 h-3" /></label>
-              <div className="w-full h-12 bg-muted rounded-xl px-4 flex items-center text-muted-foreground">{email}</div>
-            </div>
-            {/* Non-editable: Date of Birth */}
-            <div>
-              <label className="text-sm text-muted-foreground mb-2 block flex items-center gap-1.5">Date of Birth <Lock className="w-3 h-3" /></label>
-              <div className="w-full h-12 bg-muted rounded-xl px-4 flex items-center text-muted-foreground">{dob}</div>
-            </div>
+          ))}
 
-            {/* Editable: Username */}
-            <div>
-              <label className="text-sm text-muted-foreground mb-2 block">Username</label>
-              <input value={username} onChange={e => setUsername(e.target.value)} className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary" />
-            </div>
-            {/* Editable: Phone Number */}
-            <div>
-              <label className="text-sm text-muted-foreground mb-2 block">Phone Number</label>
-              <input value={phone} onChange={e => setPhone(e.target.value)} className="w-full h-12 bg-secondary rounded-xl px-4 text-foreground outline-none focus:ring-2 focus:ring-primary" />
-            </div>
-          </div>
+          <p className="-mt-1 text-xs leading-[1.6] text-brand-grey400">
+            These come from your verification. Contact support if they need to change.
+          </p>
 
-          <button onClick={handleSave} className="w-full h-14 bg-primary rounded-xl text-primary-foreground font-semibold mt-8 mb-8">Save Changes</button>
-        </div>
+          <TextField label="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <TextField label="Phone Number" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+
+          <PrimaryButton className="mt-2" onClick={save}>
+            Save Changes
+          </PrimaryButton>
+        </SectionCard>
       </PageTransition>
-    </MobileLayout>
+    </AppShell>
   );
 };
 

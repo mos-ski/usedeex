@@ -1,19 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowDownLeft, ArrowUpRight, ChevronRight, CheckCircle, Wallet } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
 import ProviderIcon from "@/components/ProviderIcon";
 import { nairaWalletBalance, nairaWalletTransactions, nairaBanks } from "@/data/nairaWalletData";
 import { toast } from "sonner";
 import createWalletArrow from "@/assets/naira-wallet-create/arrow-left.svg";
-import batteryOutline from "@/assets/naira-wallet-create/battery-outline.svg";
-import batteryEnd from "@/assets/naira-wallet-create/battery-end.svg";
-import batteryFill from "@/assets/naira-wallet-create/battery-fill.svg";
-import wifiIcon from "@/assets/naira-wallet-create/wifi.svg";
-import mobileSignalIcon from "@/assets/naira-wallet-create/mobile-signal.svg";
 import walletArrowDark from "@/assets/naira-wallet-create/arrow-left-dark.svg";
-import { ActionTile, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
+import { ActionTile, AppShell, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
 import { PhoneCallIcon, PlusIcon, SendIcon } from "@/components/dashboard/icons";
 import AssetMark from "@/components/dashboard/AssetMark";
 import { cn } from "@/lib/utils";
@@ -90,23 +84,10 @@ const NairaWallet = () => {
 
   if (step === "requirements") {
     return (
-      <MobileLayout hideNav>
+      <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <div className="flex min-h-[100dvh] flex-col bg-white font-roboto text-brand-grey900">
             <header className="shrink-0 bg-brand-deepNavy text-white">
-              <div className="relative h-11 w-full" aria-hidden="true">
-                <span className="absolute left-6 top-3.5 text-[17px] font-semibold leading-[22px] tracking-[-0.408px]">9:41</span>
-                <div className="absolute right-6 top-[19px] flex items-center gap-[7px]">
-                  <img src={mobileSignalIcon} alt="" className="h-3 w-[18px] brightness-0 invert" />
-                  <img src={wifiIcon} alt="" className="h-3 w-[17px] brightness-0 invert" />
-                  <span className="relative h-[13px] w-[27px]">
-                    <img src={batteryOutline} alt="" className="absolute left-0 top-0 h-[13px] w-[25px] brightness-0 invert" />
-                    <img src={batteryFill} alt="" className="absolute left-0.5 top-0.5 h-[9px] w-[21px] brightness-0 invert" />
-                    <img src={batteryEnd} alt="" className="absolute right-0 top-[5px] h-[4px] w-[2px] brightness-0 invert" />
-                  </span>
-                </div>
-              </div>
-
               <div className="flex flex-col gap-3 px-6 py-[18px]">
                 <button type="button" onClick={goBack} className="flex w-fit items-center gap-2.5" aria-label="Back from Create Naira Wallet">
                   <img src={createWalletArrow} alt="" className="size-6" />
@@ -164,13 +145,13 @@ const NairaWallet = () => {
             </main>
           </div>
         </PageTransition>
-      </MobileLayout>
+      </AppShell>
     );
   }
 
   if (step === "topup-success") {
     return (
-      <MobileLayout hideNav>
+      <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <div className="min-h-screen flex flex-col items-center justify-center px-6">
             <CheckCircle className="w-20 h-20 text-success mb-6" />
@@ -181,13 +162,13 @@ const NairaWallet = () => {
             <button onClick={() => navigate("/dashboard")} className="w-full h-12 bg-secondary rounded-xl text-foreground font-semibold">Back to Home</button>
           </div>
         </PageTransition>
-      </MobileLayout>
+      </AppShell>
     );
   }
 
   if (step === "topup-review") {
     return (
-      <MobileLayout hideNav>
+      <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <div className="px-4 pt-4">
             <div className="flex items-center gap-3 mb-6">
@@ -210,13 +191,13 @@ const NairaWallet = () => {
             <button onClick={() => setStep("topup-success")} className="w-full h-12 bg-primary rounded-xl text-primary-foreground font-semibold">Confirm Top-up</button>
           </div>
         </PageTransition>
-      </MobileLayout>
+      </AppShell>
     );
   }
 
   if (step === "topup-amount") {
     return (
-      <MobileLayout hideNav>
+      <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <div className="px-4 pt-4">
             <div className="flex items-center gap-3 mb-6">
@@ -258,13 +239,13 @@ const NairaWallet = () => {
             </button>
           </div>
         </PageTransition>
-      </MobileLayout>
+      </AppShell>
     );
   }
 
   if (step === "topup-method") {
     return (
-      <MobileLayout hideNav>
+      <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
         <PageTransition>
           <div className="px-4 pt-4">
             <div className="flex items-center gap-3 mb-6">
@@ -304,27 +285,15 @@ const NairaWallet = () => {
             </div>
           </div>
         </PageTransition>
-      </MobileLayout>
+      </AppShell>
     );
   }
 
   return (
-    <MobileLayout hideNav>
+    <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
       <PageTransition>
         <div className="min-h-[100dvh] bg-brand-canvas font-roboto text-brand-grey900">
           <header className="bg-brand-canvas">
-            <div className="relative h-11 w-full" aria-hidden="true">
-              <span className="absolute left-6 top-3.5 text-[17px] font-semibold leading-[22px] tracking-[-0.408px] text-[#191919]">9:41</span>
-              <div className="absolute right-6 top-[19px] flex items-center gap-[7px]">
-                <img src={mobileSignalIcon} alt="" className="h-3 w-[18px]" />
-                <img src={wifiIcon} alt="" className="h-3 w-[17px]" />
-                <span className="relative h-[13px] w-[27px]">
-                  <img src={batteryOutline} alt="" className="absolute left-0 top-0 h-[13px] w-[25px]" />
-                  <img src={batteryFill} alt="" className="absolute left-0.5 top-0.5 h-[9px] w-[21px]" />
-                  <img src={batteryEnd} alt="" className="absolute right-0 top-[5px] h-[4px] w-[2px]" />
-                </span>
-              </div>
-            </div>
             <div className="relative flex h-14 items-center px-4">
               <button type="button" onClick={goBack} aria-label="Go back" className="flex size-11 items-center justify-start p-2.5">
                 <img src={walletArrowDark} alt="" className="size-6" />
@@ -390,7 +359,7 @@ const NairaWallet = () => {
           </main>
         </div>
       </PageTransition>
-    </MobileLayout>
+    </AppShell>
   );
 };
 

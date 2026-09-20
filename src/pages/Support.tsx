@@ -1,134 +1,156 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, MessageCircle, ChevronDown, ChevronRight, Send, HelpCircle, Mail, Phone } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
 import PageTransition from "@/components/PageTransition";
-import NewBadge from "@/components/NewBadge";
+import { AppShell, PageHeader, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
+import { SettingsRow } from "@/components/dashboard/SettingsList";
+import {
+  CaretDownIcon,
+  MessageQuestionIcon,
+  PhoneCallIcon,
+  SendIcon,
+} from "@/components/dashboard/icons";
+import { cn } from "@/lib/utils";
 
 const faqs = [
   { q: "How long does a crypto sale take?", a: "Most crypto sales are settled within 1-5 minutes. Payout is sent to your default bank account automatically." },
   { q: "What are DeeXpoints?", a: "DeeXpoints are reward points earned from trading. 1 point = ₦10. You can redeem them for cash anytime." },
-  { q: "How do I verify my account?", a: "Go to Profile → KYC Verification. Complete Level 1 (email+phone), Level 2 (BVN), and Level 3 (ID upload) for higher limits." },
+  { q: "How do I verify my account?", a: "Go to Account → KYC Verification. Complete Level 1 (profile), Level 2 (BVN), and Level 3 (ID upload) for higher limits." },
   { q: "What networks do you support?", a: "We support BTC, ETH (ERC-20), USDT (TRC-20, BEP-20, ERC-20), SOL, and more. Always check the network before sending." },
   { q: "Can I cancel a transaction?", a: "Blockchain transactions cannot be reversed once confirmed. Bill payments may be reversible within 24 hours." },
 ];
 
-type View = "main" | "chat";
-
-const messages = [
-  { from: "bot", text: "Hi John! 👋 How can I help you today?" },
-];
+type Message = { from: "bot" | "user"; text: string };
 
 const Support = () => {
   const navigate = useNavigate();
-  const [view, setView] = useState<View>("main");
+  const [chatting, setChatting] = useState(false);
   const [expanded, setExpanded] = useState<number | null>(null);
-  const [chatMessages, setChatMessages] = useState(messages);
+  const [messages, setMessages] = useState<Message[]>([
+    { from: "bot", text: "Hi John! 👋 How can I help you today?" },
+  ]);
   const [input, setInput] = useState("");
 
-  const sendMessage = () => {
-    if (!input.trim()) return;
-    setChatMessages([...chatMessages, { from: "user", text: input }, { from: "bot", text: "Thanks for your message! A support agent will respond shortly. Your ticket ID is #DX-" + Math.floor(Math.random() * 9000 + 1000) }]);
+  const send = () => {
+    const text = input.trim();
+    if (!text) return;
+    setMessages((list) => [
+      ...list,
+      { from: "user", text },
+      { from: "bot", text: `Thanks for your message! A support agent will respond shortly. Your ticket ID is #DX-${Math.floor(Math.random() * 9000 + 1000)}` },
+    ]);
     setInput("");
   };
 
-  if (view === "chat") {
+  /* ---------------- Live chat ---------------- */
+  if (chatting) {
     return (
-      <MobileLayout hideNav><PageTransition>
-        <div className="flex flex-col h-screen">
-          <div className="px-4 pt-4 pb-3 border-b border-border">
-            <div className="flex items-center gap-3">
-              <button onClick={() => setView("main")} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-              <div>
-                <h2 className="text-sm font-bold text-foreground">DeeX Support</h2>
-                <p className="text-xs text-success">Online</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex-1 overflow-auto px-4 py-4 space-y-3">
-            {chatMessages.map((m, i) => (
-              <div key={i} className={`flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${m.from === "user" ? "bg-primary text-primary-foreground rounded-br-sm" : "bg-secondary text-foreground rounded-bl-sm"}`}>
+      <AppShell className="bg-white" innerClassName="flex min-h-[100dvh] flex-col pb-4 lg:max-w-[480px] lg:px-4">
+        <PageTransition className="flex flex-1 flex-col">
+          <PageHeader title="DeeX Support" onBack={() => setChatting(false)} />
+
+          <p className="-mt-3 px-4 text-center text-xs font-semibold text-brand-successText">Online</p>
+
+          <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-4">
+            {messages.map((m, index) => (
+              <div key={index} className={cn("flex", m.from === "user" ? "justify-end" : "justify-start")}>
+                <span
+                  className={cn(
+                    "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-[1.6]",
+                    m.from === "user"
+                      ? "rounded-br-sm bg-brand-blue500 text-white"
+                      : "rounded-bl-sm bg-brand-grey50 text-brand-grey900",
+                  )}
+                >
                   {m.text}
-                </div>
+                </span>
               </div>
             ))}
           </div>
-          <div className="px-4 py-3 border-t border-border">
-            <div className="flex gap-2">
-              <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendMessage()} placeholder="Type your message..."
-                className="flex-1 h-12 bg-secondary rounded-xl px-4 text-foreground placeholder:text-muted-foreground outline-none" />
-              <button onClick={sendMessage} className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center"><Send className="w-5 h-5 text-primary-foreground" /></button>
-            </div>
+
+          <div className="flex items-center gap-2 border-t border-brand-grey100 px-4 pt-3">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && send()}
+              placeholder="Type your message..."
+              aria-label="Message"
+              className="h-12 min-w-0 flex-1 rounded-lg border border-brand-grey100 bg-white px-4 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
+            />
+            <button
+              type="button"
+              onClick={send}
+              aria-label="Send message"
+              className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-brand-blue500 text-white transition-opacity hover:opacity-90"
+            >
+              <SendIcon className="size-5" />
+            </button>
           </div>
-        </div>
-      </PageTransition></MobileLayout>
+        </PageTransition>
+      </AppShell>
     );
   }
 
+  /* ---------------- Help & Support ---------------- */
   return (
-    <MobileLayout hideNav>
+    <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
       <PageTransition>
-        <div className="px-4 pt-4">
-          <div className="flex items-center gap-3 mb-6">
-            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-            <h2 className="text-lg font-bold text-foreground">Help & Support</h2>
-            <NewBadge />
+        <PageHeader title="Help & Support" onBack={() => navigate(-1)} />
+
+        <SectionCard className="px-4 py-3">
+          <SectionHeader title="Contact Us" />
+          <div className="flex flex-col">
+            <SettingsRow
+              title="Live Chat"
+              detail="Chat with our team in real-time"
+              Icon={MessageQuestionIcon}
+              onClick={() => setChatting(true)}
+            />
+            <SettingsRow
+              title="Email Support"
+              detail="support@deex.app"
+              Icon={SendIcon}
+              onClick={() => {
+                window.location.href = "mailto:support@deex.app";
+              }}
+            />
+            <SettingsRow
+              title="WhatsApp"
+              detail="+234 810 367 4006"
+              Icon={PhoneCallIcon}
+              className="border-b-0"
+              onClick={() => window.open("https://wa.me/2348103674006", "_blank", "noopener,noreferrer")}
+            />
           </div>
+        </SectionCard>
 
-          {/* Support channels */}
-          <h3 className="text-sm font-semibold text-foreground mb-3">Contact Us</h3>
-          <div className="space-y-2 mb-6">
-            <button onClick={() => setView("chat")} className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center gap-3">
-              <MessageCircle className="w-8 h-8 text-primary" />
-              <div className="text-left flex-1">
-                <p className="text-sm font-semibold text-foreground">Live Chat</p>
-                <p className="text-xs text-muted-foreground">Chat with our team in real-time</p>
-              </div>
-              <ChevronRight className="w-5 h-5 text-primary" />
-            </button>
-
-            <a href="mailto:support@deex.app" className="w-full bg-secondary rounded-xl p-4 flex items-center gap-3">
-              <Mail className="w-8 h-8 text-accent" />
-              <div className="text-left flex-1">
-                <p className="text-sm font-semibold text-foreground flex items-center gap-2">Email Support <NewBadge /></p>
-                <p className="text-xs text-muted-foreground">support@deex.app</p>
-              </div>
-              <ChevronRight className="w-5 h-5 text-muted-foreground" />
-            </a>
-
-            <a href="https://wa.me/2348103674006" target="_blank" rel="noopener noreferrer" className="w-full bg-secondary rounded-xl p-4 flex items-center gap-3">
-              <Phone className="w-8 h-8 text-success" />
-              <div className="text-left flex-1">
-                <p className="text-sm font-semibold text-foreground flex items-center gap-2">WhatsApp <NewBadge /></p>
-                <p className="text-xs text-muted-foreground">+234 810 367 4006</p>
-              </div>
-              <ChevronRight className="w-5 h-5 text-muted-foreground" />
-            </a>
+        <SectionCard className="mt-3 px-4 py-3">
+          <SectionHeader title="Frequently Asked Questions" />
+          <div className="flex flex-col">
+            {faqs.map((faq, index) => {
+              const open = expanded === index;
+              return (
+                <div key={faq.q} className="border-b border-brand-grey100 last:border-b-0">
+                  <button
+                    type="button"
+                    aria-expanded={open}
+                    onClick={() => setExpanded(open ? null : index)}
+                    className="flex w-full items-center gap-3 py-3 text-left"
+                  >
+                    <span className="min-w-0 flex-1 text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                      {faq.q}
+                    </span>
+                    <CaretDownIcon
+                      className={cn("size-3 shrink-0 text-brand-grey600 transition-transform", open && "rotate-180")}
+                    />
+                  </button>
+                  {open && <p className="pb-3 text-sm leading-[1.6] text-brand-bodyText">{faq.a}</p>}
+                </div>
+              );
+            })}
           </div>
-
-          <h3 className="text-sm font-semibold text-foreground mb-3">Frequently Asked Questions</h3>
-          <div className="space-y-2">
-            {faqs.map((faq, i) => (
-              <div key={i} className="bg-secondary rounded-xl overflow-hidden">
-                <button onClick={() => setExpanded(expanded === i ? null : i)} className="w-full flex items-center justify-between px-4 py-3.5">
-                  <div className="flex items-center gap-3">
-                    <HelpCircle className="w-4 h-4 text-muted-foreground shrink-0" />
-                    <span className="text-sm font-medium text-foreground text-left">{faq.q}</span>
-                  </div>
-                  <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform shrink-0 ${expanded === i ? "rotate-180" : ""}`} />
-                </button>
-                {expanded === i && (
-                  <div className="px-4 pb-3 pl-11">
-                    <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        </SectionCard>
       </PageTransition>
-    </MobileLayout>
+    </AppShell>
   );
 };
 
