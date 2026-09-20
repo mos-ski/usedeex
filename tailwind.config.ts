@@ -18,6 +18,7 @@ export default {
         manrope: ["Manrope", "sans-serif"],
         gasoek: ["'Gasoek One'", "sans-serif"],
         roboto: ["Roboto", "sans-serif"],
+        mono: ["'Roboto Mono'", "ui-monospace", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",

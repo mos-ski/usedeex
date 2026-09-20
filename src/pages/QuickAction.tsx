@@ -9,6 +9,7 @@ import {
   BookOpenIcon,
   CursorClickIcon,
   DownloadIcon,
+  GearIcon,
   GiftBoxIcon,
   GiftCardIcon,
   HeartsIcon,
@@ -84,7 +85,20 @@ const MenuPage = () => {
     <AppShell>
       <PageTransition>
         <div className="mb-3 bg-brand-surface lg:mb-0 lg:bg-transparent">
-          <PageHeader title="Menu" onBack={() => navigate(-1)} />
+          <PageHeader
+            title="Menu"
+            onBack={() => navigate(-1)}
+            action={
+              <button
+                type="button"
+                onClick={() => navigate("/profile")}
+                aria-label="Account settings"
+                className="flex size-11 shrink-0 items-center justify-center rounded-full text-brand-grey900 transition-colors hover:bg-brand-grey900/[0.04]"
+              >
+                <GearIcon className="size-6" />
+              </button>
+            }
+          />
         </div>
 
         <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-5">

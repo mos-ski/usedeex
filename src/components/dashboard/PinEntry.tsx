@@ -1,15 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader } from "./AppShell";
 import { FaceIdIcon } from "./icons";
+import NumericKeypad from "./NumericKeypad";
 import { cn } from "@/lib/utils";
 
 /**
- * PIN entry (Figma 305:34709) — a row of dots over the device's numeric
- * keyboard, with the Face ID shortcut beneath.
- *
- * The Figma shows the OS keypad, so the field is a transparent input with
- * `inputMode="numeric"` and the device supplies the keys.
+ * PIN entry (Figma 305:34709) — a row of dots with the Face ID shortcut, over
+ * the app's own keypad.
  */
 export const PinEntry = ({
   title = "Enter PIN",
@@ -33,25 +31,16 @@ export const PinEntry = ({
   /** Omit to hide the Face ID shortcut. */
   onBiometric?: () => void;
 }) => {
-  const input = useRef<HTMLInputElement>(null);
-
-  // Raise the keyboard as soon as the screen appears.
-  useEffect(() => {
-    const timer = window.setTimeout(() => input.current?.focus(), 250);
-    return () => window.clearTimeout(timer);
-  }, []);
+  // Two taps in one tick would otherwise both read the same stale `value`.
+  const latest = useRef(value);
+  latest.current = value;
 
   return (
     <AppShell className="bg-brand-surface" innerClassName="flex min-h-[100dvh] flex-col pb-0 lg:max-w-[480px] lg:px-4">
       <PageTransition className="flex flex-1 flex-col">
         <PageHeader title={title} onBack={onBack} />
 
-        <button
-          type="button"
-          onClick={() => input.current?.focus()}
-          aria-label="Enter your PIN"
-          className="flex flex-1 cursor-default flex-col items-center pt-24"
-        >
+        <div className="flex flex-1 flex-col items-center pt-20">
           {caption && <p className="pb-8 text-sm leading-[1.6] text-brand-bodyText">{caption}</p>}
 
           <span className="flex items-center gap-4">
@@ -69,31 +58,28 @@ export const PinEntry = ({
           {error && <p className="pt-4 text-xs leading-[1.3] text-brand-danger">{error}</p>}
 
           {onBiometric && (
-            <span
-              role="button"
-              tabIndex={0}
+            <button
+              type="button"
               aria-label="Use Face ID"
-              onClick={(e) => {
-                e.stopPropagation();
-                onBiometric();
-              }}
-              onKeyDown={(e) => e.key === "Enter" && onBiometric()}
-              className="mt-20 text-brand-grey900 transition-opacity hover:opacity-70"
+              onClick={onBiometric}
+              className="mt-14 text-brand-grey900 transition-opacity hover:opacity-70"
             >
-              <FaceIdIcon className="size-11" />
-            </span>
+              <FaceIdIcon className="size-12" />
+            </button>
           )}
-        </button>
+        </div>
 
-        {/* Off-screen field: the device draws the keypad, the dots show progress. */}
-        <input
-          ref={input}
-          value={value}
-          onChange={(e) => onChange(e.target.value.replace(/\D/g, "").slice(0, length))}
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          aria-label={title}
-          className="pointer-events-none absolute size-px opacity-0"
+        <NumericKeypad
+          decimal={false}
+          onKey={(d) => {
+            if (latest.current.length >= length) return;
+            latest.current += d;
+            onChange(latest.current);
+          }}
+          onBackspace={() => {
+            latest.current = latest.current.slice(0, -1);
+            onChange(latest.current);
+          }}
         />
       </PageTransition>
     </AppShell>

@@ -1,7 +1,8 @@
-import { ReactNode } from "react";
+import { ReactNode, useRef } from "react";
 import { AppShell, PageHeader, PrimaryButton } from "./AppShell";
 import AssetMark from "./AssetMark";
 import { CaretDownIcon, ChevronRightIcon } from "./icons";
+import NumericKeypad from "./NumericKeypad";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import PageTransition from "@/components/PageTransition";
 import { cn } from "@/lib/utils";
@@ -105,7 +106,12 @@ export const AmountEntry = ({
   submitLabel?: string;
   submitDisabled?: boolean;
   onSubmit: () => void;
-}) => (
+}) => {
+  // Keeps rapid keypad taps from all reading the same stale value.
+  const latest = useRef(value);
+  latest.current = value;
+
+  return (
   // Fills the viewport so the amount sits in the middle and the footer rides
   // just above the keyboard, instead of both bunching under the header.
   <AppShell
@@ -120,7 +126,7 @@ export const AmountEntry = ({
           <input
             value={value}
             onChange={(e) => isAmountInput(e.target.value) && onValueChange(groupDigits(e.target.value))}
-            inputMode="decimal"
+            readOnly
             placeholder="0"
             aria-label={`Amount in ${fromSymbol}`}
             className="min-w-0 flex-1 bg-transparent text-right font-gasoek text-[48px] leading-[1.4] text-brand-grey900 outline-none placeholder:text-brand-grey300"
@@ -164,9 +170,24 @@ export const AmountEntry = ({
           {submitLabel}
         </PrimaryButton>
       </div>
+
+      <NumericKeypad
+        onKey={(key) => {
+          const raw = latest.current.replace(/,/g, "");
+          // One decimal point only, and never lead with one.
+          if (key === "." && (raw.includes(".") || !raw)) return;
+          latest.current = groupDigits(raw + key);
+          onValueChange(latest.current);
+        }}
+        onBackspace={() => {
+          latest.current = groupDigits(latest.current.replace(/,/g, "").slice(0, -1));
+          onValueChange(latest.current);
+        }}
+      />
     </PageTransition>
   </AppShell>
-);
+  );
+};
 
 /**
  * Conversion rate line above the shortcuts, e.g. "2,000pts ~ ₦2,000"

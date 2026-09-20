@@ -73,7 +73,16 @@ export const PrimaryButton = ({
 );
 
 /** Back arrow + centred title, for detail screens pushed from a list. */
-export const PageHeader = ({ title, onBack }: { title: string; onBack: () => void }) => (
+export const PageHeader = ({
+  title,
+  onBack,
+  action,
+}: {
+  title: string;
+  onBack: () => void;
+  /** Optional control on the right; the title stays optically centred. */
+  action?: ReactNode;
+}) => (
   <header className="flex h-14 items-center gap-2.5 px-4 lg:px-2 lg:py-6">
     <button
       type="button"
@@ -83,9 +92,15 @@ export const PageHeader = ({ title, onBack }: { title: string; onBack: () => voi
     >
       <ArrowLeftIcon className="size-6" />
     </button>
-    <h1 className="min-w-0 flex-1 truncate pr-11 text-center text-[19px] font-bold leading-[1.4] text-brand-grey900 lg:text-2xl">
+    <h1
+      className={cn(
+        "min-w-0 flex-1 truncate text-center text-[19px] font-bold leading-[1.4] text-brand-grey900 lg:text-2xl",
+        !action && "pr-11",
+      )}
+    >
       {title}
     </h1>
+    {action}
   </header>
 );
 
