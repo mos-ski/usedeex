@@ -13,6 +13,7 @@ import {
   GiftBoxIcon,
   GiftCardIcon,
   HeartsIcon,
+  EyeIcon,
   LinkIcon,
   PercentIcon,
   PhoneCallIcon,
@@ -105,6 +106,35 @@ const MenuPage = () => {
           <div className="flex flex-col gap-3 lg:gap-5">{groups.slice(0, 2).map(renderGroup)}</div>
           <div className="flex flex-col gap-3 lg:gap-5">{groups.slice(2).map(renderGroup)}</div>
         </div>
+
+        <SectionCard className="mt-3 px-4 lg:mt-5">
+          <SectionHeader title="Virtual Card" />
+          <button
+            type="button"
+            onClick={() => navigate("/virtual-cards")}
+            className="group relative w-full overflow-hidden rounded-2xl bg-[#1d1f21] px-4 py-4 text-left text-white shadow-sm transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue500 focus-visible:ring-offset-2"
+            aria-label="Open virtual card details"
+          >
+            <div className="pointer-events-none absolute -right-10 -top-12 size-48 rounded-full border border-white/10" />
+            <div className="pointer-events-none absolute -bottom-20 right-16 h-56 w-px rotate-[38deg] bg-white/20" />
+            <div className="pointer-events-none absolute -bottom-20 right-28 h-56 w-px rotate-[38deg] bg-white/15" />
+
+            <div className="relative flex items-center justify-between">
+              <span className="rounded-full border border-white/40 px-3 py-1 text-[11px] font-medium tracking-wide text-white/90">
+                Virtual
+              </span>
+              <span className="text-xs font-medium text-white/70">DeeX</span>
+            </div>
+
+            <div className="relative mt-10 flex items-end justify-between gap-3">
+              <span className="text-sm font-medium text-white/90">Virtual Card *4291</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/45 px-3 py-1.5 text-xs font-medium text-white/95 transition-colors group-hover:bg-white/10">
+                <EyeIcon className="size-4" />
+                View details
+              </span>
+            </div>
+          </button>
+        </SectionCard>
       </PageTransition>
 
       <FloatingNav />
