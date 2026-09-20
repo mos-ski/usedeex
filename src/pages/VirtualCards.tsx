@@ -11,6 +11,7 @@ import OptionSheet from "@/components/dashboard/OptionSheet";
 import CoinPicker from "@/components/dashboard/CoinPicker";
 import { depositExtras, NAIRA_DEPOSIT } from "@/components/dashboard/depositDestinations";
 import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
+import { ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import {
   CardEditIcon,
@@ -234,6 +235,7 @@ const VirtualCards = () => {
   const [wallet, setWallet] = useState(wallets[0]);
   const [topUpWallet, setTopUpWallet] = useState(topUpWallets[0]);
   const [showTopUpAssetPicker, setShowTopUpAssetPicker] = useState(false);
+  const [topUpReviewOpen, setTopUpReviewOpen] = useState(false);
   const [createLabel, setCreateLabel] = useState("");
   const [dailyLimit, setDailyLimit] = useState("");
   const [monthlyLimit, setMonthlyLimit] = useState("");
@@ -390,44 +392,63 @@ const VirtualCards = () => {
 
   /* ---------------- Fund ---------------- */
   if (view === "fund" && selected) {
+    const topUpReviewRows: [string, string, string?][] = [
+      ["Asset", topUpWallet],
+      ["Amount", `${fundAmount || "0.00"} ${topUpWallet}`],
+      ["Card", `${selected.label} ••••${selected.last4}`],
+      ["Available balance", `${walletBalances[topUpWallet]} ${topUpWallet}`],
+    ];
+
     return (
-      <AmountEntry
-        title="Top Up"
-        onBack={() => setView("list")}
-        value={fundAmount}
-        onValueChange={setFundAmount}
-        fromSymbol={topUpWallet}
-        fromOptions={topUpWallets.map((symbol) => ({ symbol, hint: `${walletBalances[symbol]} available` }))}
-        onFromChange={setTopUpWallet}
-        onFromPress={() => setShowTopUpAssetPicker(true)}
-        fromPicker={
-          <CoinPicker
-            open={showTopUpAssetPicker}
-            onOpenChange={setShowTopUpAssetPicker}
-            placeholder="Search asset"
-            coins={topUpCoins}
-            extras={depositExtras.filter((option) => option.value === NAIRA_DEPOSIT)}
-            onSelect={(symbol) => setTopUpWallet(symbol)}
-          />
-        }
-        toSymbol="USD"
-        convertedText={`$${fundAmount || "0.00"}`}
-        footer={
-          <div className="flex items-center justify-between border-b border-brand-grey100 py-3">
-            <span className="text-xs leading-[1.3] text-brand-bodyText">Available balance</span>
-            <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">
-              {walletBalances[topUpWallet]} {topUpWallet}
-            </span>
-          </div>
-        }
-        submitLabel="Top Up"
-        submitDisabled={!fundAmount || Number(fundAmount) <= 0}
-        onSubmit={() => {
-          toast.success(`$${fundAmount} funded to card`);
-          setFundAmount("");
-          setView("list");
-        }}
-      />
+      <>
+        <AmountEntry
+          title="Top Up"
+          onBack={() => setView("list")}
+          value={fundAmount}
+          onValueChange={setFundAmount}
+          fromSymbol={topUpWallet}
+          fromOptions={topUpWallets.map((symbol) => ({ symbol, hint: `${walletBalances[symbol]} available` }))}
+          onFromChange={setTopUpWallet}
+          onFromPress={() => setShowTopUpAssetPicker(true)}
+          fromPicker={
+            <CoinPicker
+              open={showTopUpAssetPicker}
+              onOpenChange={setShowTopUpAssetPicker}
+              placeholder="Search asset"
+              coins={topUpCoins}
+              extras={depositExtras.filter((option) => option.value === NAIRA_DEPOSIT)}
+              onSelect={(symbol) => setTopUpWallet(symbol)}
+            />
+          }
+          toSymbol="USD"
+          convertedText={`$${fundAmount || "0.00"}`}
+          footer={
+            <div className="flex items-center justify-between border-b border-brand-grey100 py-3">
+              <span className="text-xs leading-[1.3] text-brand-bodyText">Available balance</span>
+              <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                {walletBalances[topUpWallet]} {topUpWallet}
+              </span>
+            </div>
+          }
+          submitLabel="Top Up"
+          submitDisabled={!fundAmount || Number(fundAmount) <= 0}
+          onSubmit={() => setTopUpReviewOpen(true)}
+        />
+        <ReviewSheet
+          open={topUpReviewOpen}
+          onOpenChange={setTopUpReviewOpen}
+          title="Review Top Up"
+          rows={topUpReviewRows}
+          actionLabel="Confirm Top Up"
+          withFaceId={false}
+          onAction={() => {
+            toast.success(`${fundAmount} ${topUpWallet} funded to card`);
+            setTopUpReviewOpen(false);
+            setFundAmount("");
+            setView("list");
+          }}
+        />
+      </>
     );
   }
 
