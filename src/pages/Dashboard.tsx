@@ -66,11 +66,17 @@ const cryptoTxns: Txn[] = [
 const giftCardTxns: Txn[] = [
   { id: 1, type: "Apple", symbol: "Apple", date: "Jul 12th, 2024", status: "Pending", amount: "$4,020.00" },
   { id: 2, type: "Google Play", symbol: "Google Play", date: "Sep 5th, 2023", status: "Success", amount: "$100.00" },
-  { id: 3, type: "Google Play", symbol: "Google Play", date: "Sep 5th, 2023", status: "Success", amount: "$100.00" },
+  { id: 3, type: "Nike", symbol: "Nike", date: "Aug 21st, 2023", status: "Success", amount: "$250.00" },
 ];
 
 const rateQuotes = [
   { symbol: "USDT", value: "₦1,382/$" },
+];
+
+const giftCardRateQuotes = [
+  { symbol: "Apple", value: "₦1,380/$" },
+  { symbol: "Google Play", value: "₦1,375/$" },
+  { symbol: "Nike", value: "₦1,370/$" },
 ];
 
 const Dashboard = () => {
@@ -98,6 +104,7 @@ const Dashboard = () => {
 
   const isGiftCards = activeTab === "giftcards";
   const transactions = isGiftCards ? giftCardTxns : cryptoTxns;
+  const activeRateQuotes = isGiftCards ? giftCardRateQuotes : rateQuotes;
 
   return (
     <AppShell>
@@ -184,9 +191,9 @@ const Dashboard = () => {
                         "See Rates"
                       ) : (
                         <span className="flex items-center gap-1">
-                          <AssetMark symbol={rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].symbol} className="size-3" />
-                          <span>{rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].symbol}</span>
-                          <span>{rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].value}</span>
+                          <AssetMark symbol={activeRateQuotes[Math.floor(rateStep / 2) % activeRateQuotes.length].symbol} className="size-3" />
+                          <span>{activeRateQuotes[Math.floor(rateStep / 2) % activeRateQuotes.length].symbol}</span>
+                          <span>{activeRateQuotes[Math.floor(rateStep / 2) % activeRateQuotes.length].value}</span>
                         </span>
                       )}
                     </span>
