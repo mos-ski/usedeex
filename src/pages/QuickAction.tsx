@@ -88,7 +88,7 @@ const MenuPage = () => {
       <SectionHeader title="Virtual Card" />
       <button
         type="button"
-        onClick={() => navigate("/virtual-cards", { state: { requirePin: true } })}
+        onClick={() => navigate("/virtual-cards")}
         className="flex w-full items-center justify-center gap-3 text-left"
         aria-label="Open DeeX Card"
       >
