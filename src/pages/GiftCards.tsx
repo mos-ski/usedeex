@@ -2,8 +2,16 @@ import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react";
 import PageTransition from "@/components/PageTransition";
-import { AppShell, PageHeader, PrimaryButton } from "@/components/dashboard/AppShell";
-import { AmountEntry, AmountShortcuts, parseAmount } from "@/components/dashboard/AmountEntry";
+import {
+  AppShell,
+  PageHeader,
+  PrimaryButton,
+} from "@/components/dashboard/AppShell";
+import {
+  AmountEntry,
+  AmountShortcuts,
+  parseAmount,
+} from "@/components/dashboard/AmountEntry";
 import AssetMark from "@/components/dashboard/AssetMark";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
 import {
@@ -13,19 +21,26 @@ import {
   MinusIcon,
   PlusIcon,
 } from "@/components/dashboard/icons";
-import OptionSheet from "@/components/dashboard/OptionSheet";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
+import SelectCountryStep, {
+  CountryPill,
+  CountrySheet,
+} from "@/components/dashboard/SelectCountryStep";
+import { giftCardCountries } from "@/data/giftCardCatalog";
 import { formatNgn } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-const countries = [
-  { code: "US", flag: "🇺🇸", name: "United States" },
-  { code: "GB", flag: "🇬🇧", name: "United Kingdom" },
-  { code: "CA", flag: "🇨🇦", name: "Canada" },
-  { code: "DE", flag: "🇩🇪", name: "Germany" },
+const brands = [
+  "Amazon",
+  "Apple",
+  "Google Play",
+  "Steam",
+  "Walmart",
+  "Nike",
+  "Sephora",
+  "iTunes",
+  "Nordstrom",
 ];
-
-const brands = ["Amazon", "Apple", "Google Play", "Steam", "Walmart", "Nike", "Sephora", "iTunes", "Nordstrom"];
 
 /** Denominations for the picked brand, with the rate DeeX pays per dollar. */
 type Denomination = { id: string; label: string; rate: number; usd: number };
@@ -53,7 +68,7 @@ const GiftCards = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>("brand");
 
-  const [country, setCountry] = useState(countries[0]);
+  const [countryCode, setCountryCode] = useState("");
   const [search, setSearch] = useState("");
   const [cardType, setCardType] = useState<CardType>("physical");
   const [brand, setBrand] = useState("");
@@ -75,22 +90,35 @@ const GiftCards = () => {
   }, [search]);
 
   /** Card value and payout derived from the denomination counts. */
-  const totalUsd = denominations.reduce((sum, d) => sum + (counts[d.id] ?? 0) * d.usd, 0);
-  const totalNgn = denominations.reduce((sum, d) => sum + (counts[d.id] ?? 0) * d.usd * d.rate, 0);
+  const totalUsd = denominations.reduce(
+    (sum, d) => sum + (counts[d.id] ?? 0) * d.usd,
+    0,
+  );
+  const totalNgn = denominations.reduce(
+    (sum, d) => sum + (counts[d.id] ?? 0) * d.usd * d.rate,
+    0,
+  );
 
   const amount = parseAmount(raw);
   /** Rate DeeX pays for this brand, in naira per dollar. */
   const rate = denominations[0].rate;
   const payout = totalNgn || amount * rate;
   const typeLabel = cardType === "physical" ? "Physical" : "e-Code";
-  const title = brand ? `${country.flag} ${brand} - ${typeLabel}` : "Sell Giftcard";
+  const title = brand
+    ? `${country.flag} ${brand} - ${typeLabel}`
+    : "Sell Giftcard";
+
+  const country = giftCardCountries.find((c) => c.code === countryCode);
 
   const step2 = (id: string, delta: number) =>
     setCounts((c) => ({ ...c, [id]: Math.max(0, (c[id] ?? 0) + delta) }));
 
   const addImages = (files: FileList | null) => {
     if (!files) return;
-    const next = [...files].map((file) => ({ id: `${file.name}-${file.size}-${Math.random()}`, url: URL.createObjectURL(file) }));
+    const next = [...files].map((file) => ({
+      id: `${file.name}-${file.size}-${Math.random()}`,
+      url: URL.createObjectURL(file),
+    }));
     setImages((prev) => [...prev, ...next]);
   };
 
@@ -100,6 +128,21 @@ const GiftCards = () => {
       if (target) URL.revokeObjectURL(target.url);
       return prev.filter((i) => i.id !== id);
     });
+
+  /* ---------------- Country (first step of both flows) ---------------- */
+  if (!country) {
+    return (
+      <SelectCountryStep
+        title="Sell Giftcard"
+        description="Choose where your cards were bought to see the brands we take."
+        open={countryOpen}
+        onOpenChange={setCountryOpen}
+        value={countryCode}
+        onSelect={setCountryCode}
+        onBack={() => navigate(-1)}
+      />
+    );
+  }
 
   /* ---------------- Pending (Figma 293:16742) ---------------- */
   if (step === "pending") {
@@ -119,24 +162,16 @@ const GiftCards = () => {
   /* ---------------- Brand picker (Figma 291:15235) ---------------- */
   if (step === "brand") {
     return (
-      <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+      <AppShell
+        className="bg-brand-surface"
+        innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4"
+      >
         <PageTransition>
           <PageHeader title="Sell Giftcard" onBack={() => navigate(-1)} />
 
           <div className="flex flex-col gap-3 px-4">
             <div className="flex justify-center">
-              <button
-                type="button"
-                aria-label="Choose country"
-                onClick={() => setCountryOpen(true)}
-                className="flex shrink-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
-              >
-                <CaretDownIcon className="size-3 text-brand-grey900" />
-                <span className="text-base leading-none">{country.flag}</span>
-                <span className="text-xs font-semibold leading-[1.4] text-brand-grey900">
-                  {country.code === "US" ? "Select Country" : country.name}
-                </span>
-              </button>
+              <CountryPill code={countryCode} onClick={() => setCountryOpen(true)} />
             </div>
 
             <input
@@ -147,7 +182,11 @@ const GiftCards = () => {
               className="w-full border-b border-brand-grey100 bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
             />
 
-            <div role="tablist" aria-label="Card type" className="flex items-center gap-3 rounded bg-brand-barBg p-0.5">
+            <div
+              role="tablist"
+              aria-label="Card type"
+              className="flex items-center gap-3 rounded bg-brand-barBg p-0.5"
+            >
               {(
                 [
                   { key: "physical", label: "Physical card" },
@@ -162,7 +201,9 @@ const GiftCards = () => {
                   onClick={() => setCardType(key)}
                   className={cn(
                     "shrink-0 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
-                    cardType === key ? "bg-brand-surface text-brand-blue500" : "text-brand-grey900 hover:text-brand-blue500",
+                    cardType === key
+                      ? "bg-brand-surface text-brand-blue500"
+                      : "text-brand-grey900 hover:text-brand-blue500",
                   )}
                 >
                   {label}
@@ -179,17 +220,22 @@ const GiftCards = () => {
                   aria-pressed={brand === b}
                   className={cn(
                     "flex h-20 flex-col items-center justify-center gap-1 p-3 transition-colors",
-                    brand === b ? "bg-brand-tint" : "bg-brand-surface hover:bg-brand-grey50",
+                    brand === b
+                      ? "bg-brand-tint"
+                      : "bg-brand-surface hover:bg-brand-grey50",
                   )}
                 >
                   <AssetMark symbol={b} className="size-8" />
-                  <span className="text-center text-[10px] leading-[1.6] text-brand-grey900">{b}</span>
+                  <span className="text-center text-[10px] leading-[1.6] text-brand-grey900">
+                    {b}
+                  </span>
                 </button>
               ))}
             </div>
 
             <p className="px-4 pt-4 text-center text-xs leading-[1.6] text-brand-bodyText">
-              Note: Total denomination should match the value amount you wish to sell.
+              Note: Total denomination should match the value amount you wish to
+              sell.
             </p>
 
             <PrimaryButton disabled={!brand} onClick={() => setStep("amount")}>
@@ -198,18 +244,12 @@ const GiftCards = () => {
           </div>
         </PageTransition>
 
-      <OptionSheet
-        open={countryOpen}
-        onOpenChange={setCountryOpen}
-        title="Select Country"
-        value={country.code}
-        options={countries.map((c) => ({
-          value: c.code,
-          label: c.name,
-          mark: <span className="flex size-8 shrink-0 items-center justify-center text-xl leading-none">{c.flag}</span>,
-        }))}
-        onSelect={(code) => setCountry(countries.find((c) => c.code === code) ?? countries[0])}
-      />
+        <CountrySheet
+          open={countryOpen}
+          onOpenChange={setCountryOpen}
+          value={countryCode}
+          onSelect={setCountryCode}
+        />
       </AppShell>
     );
   }
@@ -235,7 +275,9 @@ const GiftCards = () => {
         fromOptions={[{ symbol: "USD", hint: "Card value" }]}
         onFromChange={() => undefined}
         toSymbol="NGN"
-        convertedText={payout ? Math.round(payout).toLocaleString("en-US") : "0"}
+        convertedText={
+          payout ? Math.round(payout).toLocaleString("en-US") : "0"
+        }
         footer={
           <>
             <button
@@ -244,12 +286,17 @@ const GiftCards = () => {
               className="flex w-full items-center gap-2 py-2 text-left"
             >
               <span className="min-w-0 flex-1 truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
-                Range ${denominations[0].usd} - ${denominations[denominations.length - 1].usd}
+                Range ${denominations[0].usd} - $
+                {denominations[denominations.length - 1].usd}
               </span>
               <ChevronRightIcon className="size-5 shrink-0 text-brand-grey900" />
             </button>
             <AmountShortcuts
-              balanceLabel={totalUsd ? `Card value: $${totalUsd.toFixed(2)}` : `Rate: ${formatNgn(rate)}/USD`}
+              balanceLabel={
+                totalUsd
+                  ? `Card value: $${totalUsd.toFixed(2)}`
+                  : `Rate: ${formatNgn(rate)}/USD`
+              }
               options={cardShortcuts}
               onPick={(value) => setRaw(value.toLocaleString("en-US"))}
             />
@@ -262,14 +309,17 @@ const GiftCards = () => {
       {/* Denominations (Figma 291:16320) */}
       <Drawer open={denomOpen} onOpenChange={setDenomOpen}>
         <DrawerContent className="border-brand-grey100 bg-brand-surface font-roboto">
-          <DrawerTitle className="sr-only">Choose card denominations</DrawerTitle>
+          <DrawerTitle className="sr-only">
+            Choose card denominations
+          </DrawerTitle>
           <div className="mx-auto flex w-full max-w-[560px] flex-col">
             <div className="bg-brand-grey50 px-4 py-6">
               <p className="text-[19px] font-bold leading-[1.4] text-brand-grey900">
                 Total card value: ${totalUsd.toFixed(2)}
               </p>
               <p className="text-xs leading-[1.3] text-brand-bodyText">
-                Naira equivalent: {Math.round(totalNgn).toLocaleString("en-US")} NGN
+                Naira equivalent: {Math.round(totalNgn).toLocaleString("en-US")}{" "}
+                NGN
               </p>
             </div>
 
@@ -277,8 +327,12 @@ const GiftCards = () => {
               {denominations.map((d) => (
                 <div key={d.id} className="flex items-center gap-4">
                   <div className="min-w-0 flex-1">
-                    <p className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">{d.label}</p>
-                    <p className="text-xs leading-[1.3] text-brand-bodyText">{d.rate} NGN/USD</p>
+                    <p className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                      {d.label}
+                    </p>
+                    <p className="text-xs leading-[1.3] text-brand-bodyText">
+                      {d.rate} NGN/USD
+                    </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
                     <button
@@ -306,7 +360,10 @@ const GiftCards = () => {
             </div>
 
             <div className="px-4 pb-8 pt-6">
-              <PrimaryButton className="font-bold" onClick={() => setDenomOpen(false)}>
+              <PrimaryButton
+                className="font-bold"
+                onClick={() => setDenomOpen(false)}
+              >
                 Confirm
               </PrimaryButton>
             </div>
@@ -319,13 +376,26 @@ const GiftCards = () => {
         <DrawerContent className="border-brand-grey100 bg-brand-surface font-roboto">
           <DrawerTitle className="sr-only">Review sale</DrawerTitle>
           <div className="mx-auto w-full max-w-[560px] px-4 pb-8">
-            <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Review</p>
+            <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">
+              Review
+            </p>
             <div className="flex flex-col">
               {reviewRows.map(([label, value, extra]) => (
-                <div key={label} className="flex flex-col border-b border-brand-grey100 py-1.5">
-                  <span className="text-xs leading-[1.3] text-brand-bodyText">{label}</span>
-                  <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">{value}</span>
-                  {extra && <span className="text-xs leading-[1.3] text-brand-amberBrown">{extra}</span>}
+                <div
+                  key={label}
+                  className="flex flex-col border-b border-brand-grey100 py-1.5"
+                >
+                  <span className="text-xs leading-[1.3] text-brand-bodyText">
+                    {label}
+                  </span>
+                  <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                    {value}
+                  </span>
+                  {extra && (
+                    <span className="text-xs leading-[1.3] text-brand-amberBrown">
+                      {extra}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
@@ -345,29 +415,26 @@ const GiftCards = () => {
       </Drawer>
 
       {/* Upload cards (Figma 291:15850 / 291:16090) */}
-      <OptionSheet
+      <CountrySheet
         open={countryOpen}
         onOpenChange={setCountryOpen}
-        title="Select Country"
-        value={country.code}
-        options={countries.map((c) => ({
-          value: c.code,
-          label: c.name,
-          mark: <span className="flex size-8 shrink-0 items-center justify-center text-xl leading-none">{c.flag}</span>,
-        }))}
-        onSelect={(code) => setCountry(countries.find((c) => c.code === code) ?? countries[0])}
+        value={countryCode}
+        onSelect={setCountryCode}
       />
 
       <Drawer open={uploadOpen} onOpenChange={setUploadOpen}>
         <DrawerContent className="border-brand-grey100 bg-brand-surface font-roboto">
           <DrawerTitle className="sr-only">Upload gift cards</DrawerTitle>
           <div className="mx-auto w-full max-w-[560px] px-4 pb-8">
-            <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Review</p>
+            <p className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">
+              Review
+            </p>
 
             <div className="flex flex-col items-center gap-6 pt-2">
               <p className="w-full text-xs leading-[1.3] text-brand-bodyText">
-                Please upload the Gift card you want to sell. Make sure the photo is clear and all necessary details are
-                displayed. You can upload multiple cards.
+                Please upload the Gift card you want to sell. Make sure the
+                photo is clear and all necessary details are displayed. You can
+                upload multiple cards.
               </p>
 
               <input
@@ -436,7 +503,9 @@ const GiftCards = () => {
               )}
 
               <label className="flex w-full flex-col gap-1 border-b border-brand-grey100 p-3">
-                <span className="text-xs leading-[1.3] text-brand-bodyText">Add Notes</span>
+                <span className="text-xs leading-[1.3] text-brand-bodyText">
+                  Add Notes
+                </span>
                 <input
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
@@ -446,7 +515,8 @@ const GiftCards = () => {
               </label>
 
               <p className="w-full rounded bg-brand-noteAmber px-2 py-0.5 font-manrope text-[11px] font-semibold leading-[1.6] text-brand-amberBrown">
-                Card denomination wrongly uploaded will be sold at its specific rate value
+                Card denomination wrongly uploaded will be sold at its specific
+                rate value
               </p>
             </div>
 

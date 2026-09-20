@@ -1,16 +1,24 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTransition from "@/components/PageTransition";
-import { AppShell, PageHeader, PrimaryButton, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
+import {
+  AppShell,
+  PageHeader,
+  PrimaryButton,
+  SectionCard,
+  SectionHeader,
+} from "@/components/dashboard/AppShell";
 import AssetMark from "@/components/dashboard/AssetMark";
 import OptionSheet from "@/components/dashboard/OptionSheet";
+import SelectCountryStep, {
+  CountryPill,
+  CountrySheet,
+} from "@/components/dashboard/SelectCountryStep";
 import ReviewSheet from "@/components/dashboard/ReviewSheet";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
 import {
   CaretDownIcon,
-  CategoryIcon,
   CheckIcon,
-  FlagIcon,
   MinusIcon,
   PlusIcon,
 } from "@/components/dashboard/icons";
@@ -28,14 +36,12 @@ import { cn } from "@/lib/utils";
 const ALL_CATEGORIES = "all";
 const DEEX_FEE = 50;
 
-/** The country and category triggers, in the app's pill treatment. */
+/** The category trigger, matching the country pill beside it. */
 const FilterPill = ({
-  Icon,
   label,
   onClick,
   ariaLabel,
 }: {
-  Icon: (props: { className?: string }) => JSX.Element;
   label: string;
   onClick: () => void;
   ariaLabel: string;
@@ -47,8 +53,9 @@ const FilterPill = ({
     className="flex min-w-0 items-center gap-1 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5"
   >
     <CaretDownIcon className="size-3 shrink-0 text-brand-grey900" />
-    <Icon className="size-4 shrink-0 text-brand-grey900" />
-    <span className="min-w-0 truncate text-xs font-semibold leading-[1.4] text-brand-grey900">{label}</span>
+    <span className="min-w-0 truncate text-xs font-semibold leading-[1.4] text-brand-grey900">
+      {label}
+    </span>
   </button>
 );
 
@@ -56,7 +63,9 @@ const FilterPill = ({
 const DetailRow = ({ label, value }: { label: string; value: string }) => (
   <div className="flex flex-col border-b border-brand-grey100 py-1.5">
     <span className="text-xs leading-[1.3] text-brand-bodyText">{label}</span>
-    <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">{value}</span>
+    <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+      {value}
+    </span>
   </div>
 );
 
@@ -99,8 +108,26 @@ const BuyGiftCard = () => {
     setQuantity(1);
   };
 
+  /* ---------------- Country (first step of both flows) ---------------- */
+  if (!country) {
+    return (
+      <SelectCountryStep
+        title="Buy Giftcard"
+        description="Choose a country to see available gift cards."
+        open={countryOpen}
+        onOpenChange={setCountryOpen}
+        value={countryCode}
+        onSelect={(code) => {
+          setCountryCode(code);
+          setSearch("");
+        }}
+        onBack={() => navigate(-1)}
+      />
+    );
+  }
+
   /* ---------------- Bought ---------------- */
-  if (bought && product && country) {
+  if (bought && product) {
     return (
       <SuccessScreen
         title="Card purchased"
@@ -114,15 +141,21 @@ const BuyGiftCard = () => {
   }
 
   /* ---------------- Card details ---------------- */
-  if (product && country) {
+  if (product) {
     const total = price * quantity;
     const naira = total * (NGN_PER_CARD_CURRENCY[country.currency] ?? 1);
 
     return (
       <>
-        <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+        <AppShell
+          className="bg-brand-surface"
+          innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4"
+        >
           <PageTransition>
-            <PageHeader title="Gift Card Details" onBack={() => setProduct(null)} />
+            <PageHeader
+              title="Gift Card Details"
+              onBack={() => setProduct(null)}
+            />
 
             <div className="flex flex-col gap-3 px-4">
               <div className="flex items-center gap-4 py-1.5">
@@ -131,18 +164,28 @@ const BuyGiftCard = () => {
                   <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
                     {product.brand} {country.code}
                   </span>
-                  <span className="truncate text-xs leading-[1.3] text-brand-bodyText">{product.brand}</span>
+                  <span className="truncate text-xs leading-[1.3] text-brand-bodyText">
+                    {product.brand}
+                  </span>
                 </span>
               </div>
 
               <div className="flex flex-col">
                 <DetailRow label="Category" value={product.category} />
-                <DetailRow label="Country" value={`${country.flag} ${country.name}`} />
-                <DetailRow label="Currency" value={`${country.currency} • ${country.currencyName}`} />
+                <DetailRow
+                  label="Country"
+                  value={`${country.flag} ${country.name}`}
+                />
+                <DetailRow
+                  label="Currency"
+                  value={`${country.currency} • ${country.currencyName}`}
+                />
               </div>
 
               <fieldset className="border-b border-brand-grey100 py-1.5">
-                <legend className="text-xs leading-[1.3] text-brand-bodyText">Available prices</legend>
+                <legend className="text-xs leading-[1.3] text-brand-bodyText">
+                  Available prices
+                </legend>
                 <div className="mt-1 flex flex-wrap gap-1">
                   {product.denominations.map((value) => (
                     <button
@@ -157,7 +200,9 @@ const BuyGiftCard = () => {
                           : "bg-[#daebf7] text-brand-blue500 hover:bg-brand-primary100",
                       )}
                     >
-                      {value === price && <CheckIcon className="size-3.5 shrink-0" />}
+                      {value === price && (
+                        <CheckIcon className="size-3.5 shrink-0" />
+                      )}
                       {formatCardPrice(value, country.currency)}
                     </button>
                   ))}
@@ -165,7 +210,9 @@ const BuyGiftCard = () => {
               </fieldset>
 
               <div className="flex flex-col border-b border-brand-grey100 py-1.5">
-                <span className="text-xs leading-[1.3] text-brand-bodyText">Quantity</span>
+                <span className="text-xs leading-[1.3] text-brand-bodyText">
+                  Quantity
+                </span>
                 <div className="mt-1 flex items-center gap-2">
                   <button
                     type="button"
@@ -190,19 +237,28 @@ const BuyGiftCard = () => {
               </div>
 
               <div className="flex flex-col border-b border-brand-grey100 py-1.5">
-                <span className="text-xs leading-[1.3] text-brand-bodyText">Total</span>
+                <span className="text-xs leading-[1.3] text-brand-bodyText">
+                  Total
+                </span>
                 <span className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">
                   {formatCardPrice(total, country.currency)}
                 </span>
-                <span className="text-xs leading-[1.3] text-brand-amberBrown">{formatNgn(naira)}</span>
+                <span className="text-xs leading-[1.3] text-brand-amberBrown">
+                  {formatNgn(naira)}
+                </span>
               </div>
 
               <div className="flex flex-col pt-2">
                 <SectionHeader title="Redeem instruction" />
-                <p className="text-[13px] leading-[1.6] text-brand-bodyText">{product.redeemInstruction}</p>
+                <p className="text-[13px] leading-[1.6] text-brand-bodyText">
+                  {product.redeemInstruction}
+                </p>
               </div>
 
-              <PrimaryButton className="mt-4" onClick={() => setReviewOpen(true)}>
+              <PrimaryButton
+                className="mt-4"
+                onClick={() => setReviewOpen(true)}
+              >
                 Buy Gift Card
               </PrimaryButton>
             </div>
@@ -214,7 +270,10 @@ const BuyGiftCard = () => {
           onOpenChange={setReviewOpen}
           rows={[
             ["Card", `${product.brand} ${country.code}`],
-            ["Face value", `${formatCardPrice(price, country.currency)} × ${quantity}`],
+            [
+              "Face value",
+              `${formatCardPrice(price, country.currency)} × ${quantity}`,
+            ],
             ["Pay from", "Naira Wallet"],
             ["DeeX Fee", formatNgn(DEEX_FEE)],
             ["Total to pay", formatNgn(naira + DEEX_FEE)],
@@ -231,89 +290,64 @@ const BuyGiftCard = () => {
 
   /* ---------------- Browse ---------------- */
   return (
-    <AppShell className="bg-brand-surface" innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+    <AppShell
+      className="bg-brand-surface"
+      innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4"
+    >
       <PageTransition>
         <PageHeader title="Buy Giftcard" onBack={() => navigate(-1)} />
 
         <div className="flex flex-col gap-3 px-4">
-          <p className="text-xs leading-[1.3] text-brand-bodyText">Browse gift cards by country and category.</p>
+          <p className="text-xs leading-[1.3] text-brand-bodyText">
+            Browse gift cards by country and category.
+          </p>
 
-          {country ? (
-            <>
-              <div className="flex items-center justify-center gap-2">
-                <FilterPill
-                  Icon={FlagIcon}
-                  ariaLabel="Choose country"
-                  label={country.name}
-                  onClick={() => setCountryOpen(true)}
-                />
-                <FilterPill
-                  Icon={CategoryIcon}
-                  ariaLabel="Choose category"
-                  label={category === ALL_CATEGORIES ? "All categories" : category}
-                  onClick={() => setCategoryOpen(true)}
-                />
-              </div>
+          <div className="flex items-center justify-center gap-2">
+            <CountryPill code={countryCode} onClick={() => setCountryOpen(true)} />
+            <FilterPill
+              ariaLabel="Choose category"
+              label={category === ALL_CATEGORIES ? "All categories" : category}
+              onClick={() => setCategoryOpen(true)}
+            />
+          </div>
 
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search"
-                aria-label="Search gift cards"
-                className="w-full border-b border-brand-grey100 bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
-              />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search"
+            aria-label="Search gift cards"
+            className="w-full border-b border-brand-grey100 bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
+          />
 
-              {visible.length === 0 ? (
-                <p className="py-16 text-center text-sm text-brand-bodyText">
-                  No gift cards match that in {country.name}.
-                </p>
-              ) : (
-                <div className="grid grid-cols-3 gap-px border border-brand-grey100 bg-brand-grey100">
-                  {visible.map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => openProduct(p)}
-                      className="flex h-20 flex-col items-center justify-center gap-1 bg-brand-surface p-3 transition-colors hover:bg-brand-grey50"
-                    >
-                      <AssetMark symbol={p.brand} className="size-8" />
-                      <span className="text-center text-[10px] leading-[1.6] text-brand-grey900">{p.brand}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </>
+          {visible.length === 0 ? (
+            <p className="py-16 text-center text-sm text-brand-bodyText">
+              No gift cards match that in {country.name}.
+            </p>
           ) : (
-            <SectionCard className="mt-6 flex flex-col items-center gap-1 px-6 py-12 text-center">
-              <span className="mb-3 flex size-16 items-center justify-center rounded-full bg-brand-tint text-brand-blue500">
-                <FlagIcon className="size-7" />
-              </span>
-              <p className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">Select a country</p>
-              <p className="pb-6 text-xs leading-[1.3] text-brand-bodyText">
-                Choose a country to see available gift cards.
-              </p>
-              <PrimaryButton onClick={() => setCountryOpen(true)}>Select country</PrimaryButton>
-            </SectionCard>
+            <div className="grid grid-cols-3 gap-px border border-brand-grey100 bg-brand-grey100">
+              {visible.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => openProduct(p)}
+                  className="flex h-20 flex-col items-center justify-center gap-1 bg-brand-surface p-3 transition-colors hover:bg-brand-grey50"
+                >
+                  <AssetMark symbol={p.brand} className="size-8" />
+                  <span className="text-center text-[10px] leading-[1.6] text-brand-grey900">
+                    {p.brand}
+                  </span>
+                </button>
+              ))}
+            </div>
           )}
         </div>
       </PageTransition>
 
-      <OptionSheet
+      <CountrySheet
         open={countryOpen}
         onOpenChange={setCountryOpen}
-        title="Select a country"
-        searchPlaceholder="Search"
         value={countryCode}
-        options={giftCardCountries.map((c) => ({
-          value: c.code,
-          label: `${c.name} (${c.code})`,
-          detail: `${c.currency} • ${c.currencyName}`,
-          mark: <span className="flex size-8 shrink-0 items-center justify-center text-xl leading-none">{c.flag}</span>,
-        }))}
-        onSelect={(code) => {
-          setCountryCode(code);
-          setSearch("");
-        }}
+        onSelect={setCountryCode}
       />
 
       <OptionSheet
@@ -323,7 +357,11 @@ const BuyGiftCard = () => {
         value={category}
         options={[
           { value: ALL_CATEGORIES, label: "All categories", mark: null },
-          ...giftCardCategories.map((c) => ({ value: c, label: c, mark: null })),
+          ...giftCardCategories.map((c) => ({
+            value: c,
+            label: c,
+            mark: null,
+          })),
         ]}
         onSelect={setCategory}
       />
