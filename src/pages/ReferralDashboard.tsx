@@ -1,9 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Copy, Check, Users, Trophy, TrendingUp, ChevronRight } from "lucide-react";
-import MobileLayout from "@/components/layout/MobileLayout";
+import { toast } from "sonner";
 import PageTransition from "@/components/PageTransition";
-import NewBadge from "@/components/NewBadge";
+import { AppShell, PageHeader, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
+import { InitialMark } from "@/components/dashboard/AssetMark";
+import { StatusPill } from "@/components/dashboard/SettingsList";
+import { CopyLinearIcon } from "@/components/dashboard/icons";
+import { cn } from "@/lib/utils";
+
+const REFERRAL_LINK = "app.deexoption.com/refer001655";
+
+const stats = [
+  { label: "Total Referrals", value: "5" },
+  { label: "Earned", value: "₦2,000" },
+  { label: "Pending", value: "₦1,000" },
+];
 
 const referrals = [
   { name: "Adewale M.", status: "Traded", earned: "₦500", date: "Mar 7" },
@@ -23,83 +34,109 @@ const leaderboard = [
 const ReferralDashboard = () => {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
-  const link = "https://deex.app/ref/johndoe";
 
-  const handleCopy = () => { navigator.clipboard.writeText(link); setCopied(true); setTimeout(() => setCopied(false), 2000); };
+  const copyLink = () => {
+    navigator.clipboard?.writeText(`https://${REFERRAL_LINK}`);
+    setCopied(true);
+    toast.success("Referral link copied");
+    window.setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
-    <MobileLayout hideNav>
+    <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
       <PageTransition>
-        <div className="px-4 pt-4 pb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><ArrowLeft className="w-5 h-5 text-foreground" /></button>
-            <h2 className="text-lg font-bold text-foreground">Referrals</h2>
-            <NewBadge />
-          </div>
+        <PageHeader title="Referrals" onBack={() => navigate(-1)} />
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-3 mb-6">
-            <div className="bg-card border border-border rounded-xl p-3 text-center">
-              <Users className="w-5 h-5 text-primary mx-auto mb-1" />
-              <p className="text-lg font-bold text-foreground">5</p>
-              <p className="text-[10px] text-muted-foreground">Total Referrals</p>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-3 text-center">
-              <TrendingUp className="w-5 h-5 text-success mx-auto mb-1" />
-              <p className="text-lg font-bold text-foreground">₦2,000</p>
-              <p className="text-[10px] text-muted-foreground">Earned</p>
-            </div>
-            <div className="bg-card border border-border rounded-xl p-3 text-center">
-              <Trophy className="w-5 h-5 text-warning mx-auto mb-1" />
-              <p className="text-lg font-bold text-foreground">₦1,000</p>
-              <p className="text-[10px] text-muted-foreground">Pending</p>
-            </div>
-          </div>
-
-          {/* Link */}
-          <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 mb-6">
-            <p className="text-xs text-muted-foreground mb-2">Your referral link</p>
-            <div className="flex gap-2">
-              <input readOnly value={link} className="flex-1 h-10 bg-secondary/50 rounded-lg px-3 text-xs text-muted-foreground outline-none" />
-              <button onClick={handleCopy} className="h-10 px-4 bg-primary rounded-lg text-primary-foreground text-sm font-medium flex items-center gap-1">
-                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Referral list */}
-          <h3 className="text-sm font-semibold text-foreground mb-3">Your Referrals</h3>
-          <div className="space-y-2 mb-6">
-            {referrals.map((r, i) => (
-              <div key={i} className="flex items-center justify-between bg-secondary rounded-xl px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium text-foreground">{r.name}</p>
-                  <p className="text-xs text-muted-foreground">{r.date} • {r.status}</p>
-                </div>
-                <span className={`text-xs font-medium ${r.earned === "Pending" ? "text-warning" : "text-success"}`}>{r.earned}</span>
+        {/* Totals */}
+        <SectionCard className="px-4 py-4">
+          <div className="flex items-stretch">
+            {stats.map((s, index) => (
+              <div
+                key={s.label}
+                className={cn("flex flex-1 flex-col items-center gap-1", index < 2 && "border-r border-brand-grey100")}
+              >
+                <span className="text-[17px] font-bold leading-[1.4] text-brand-grey900">{s.value}</span>
+                <span className="text-center text-[11px] leading-[1.3] text-brand-bodyText">{s.label}</span>
               </div>
             ))}
           </div>
+        </SectionCard>
 
-          {/* Leaderboard */}
-          <h3 className="text-sm font-semibold text-foreground mb-3">🏆 Leaderboard</h3>
-          <div className="space-y-2">
-            {leaderboard.map(l => (
-              <div key={l.rank} className={`flex items-center justify-between rounded-xl px-4 py-3 ${l.name === "You" ? "bg-primary/10 border border-primary/20" : "bg-secondary"}`}>
-                <div className="flex items-center gap-3">
-                  <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${l.rank <= 3 ? "bg-warning/20 text-warning" : "bg-muted text-muted-foreground"}`}>{l.rank}</span>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{l.name}</p>
-                    <p className="text-xs text-muted-foreground">{l.referrals} referrals</p>
-                  </div>
-                </div>
-                <span className="text-sm font-semibold text-foreground">{l.earned}</span>
+        {/* Link */}
+        <SectionCard className="mt-3 px-4 py-4">
+          <p className="text-xs leading-[1.3] text-brand-bodyText">Your referral link</p>
+          <div className="flex items-center gap-3 pt-1">
+            <p className="min-w-0 flex-1 truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+              {REFERRAL_LINK}
+            </p>
+            <button
+              type="button"
+              onClick={copyLink}
+              aria-label="Copy referral link"
+              className="shrink-0 text-brand-blue500 transition-opacity hover:opacity-70"
+            >
+              <CopyLinearIcon className="size-5" />
+            </button>
+          </div>
+          {copied && <p className="pt-1 text-[10px] font-medium text-brand-successText">Copied</p>}
+        </SectionCard>
+
+        {/* Referrals */}
+        <SectionCard className="mt-3 px-4 py-3">
+          <SectionHeader title="Your Referrals" />
+          <div className="flex flex-col">
+            {referrals.map((r) => (
+              <div key={r.name} className="flex items-center gap-4 border-b border-brand-grey100 py-3 last:border-b-0">
+                <InitialMark name={r.name} />
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">{r.name}</span>
+                  <span className="truncate text-xs leading-[1.3] text-brand-bodyText">
+                    {r.date} • {r.status}
+                  </span>
+                </span>
+                {r.earned === "Pending" ? (
+                  <StatusPill tone="neutral">Pending</StatusPill>
+                ) : (
+                  <span className="shrink-0 text-[15px] font-semibold leading-[1.4] text-brand-successText">
+                    {r.earned}
+                  </span>
+                )}
               </div>
             ))}
           </div>
-        </div>
+        </SectionCard>
+
+        {/* Leaderboard */}
+        <SectionCard className="mt-3 px-4 py-3">
+          <SectionHeader title="Leaderboard" />
+          <div className="flex flex-col">
+            {leaderboard.map((l) => (
+              <div
+                key={l.rank}
+                className={cn(
+                  "flex items-center gap-4 border-b border-brand-grey100 py-3 last:border-b-0",
+                  l.name === "You" && "bg-brand-tint",
+                )}
+              >
+                <span
+                  className={cn(
+                    "flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                    l.rank <= 3 ? "bg-[#FBF7F2] text-brand-amberBrown" : "bg-brand-grey100 text-brand-grey500",
+                  )}
+                >
+                  {l.rank}
+                </span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">{l.name}</span>
+                  <span className="truncate text-xs leading-[1.3] text-brand-bodyText">{l.referrals} referrals</span>
+                </span>
+                <span className="shrink-0 text-[15px] font-semibold leading-[1.4] text-brand-grey900">{l.earned}</span>
+              </div>
+            ))}
+          </div>
+        </SectionCard>
       </PageTransition>
-    </MobileLayout>
+    </AppShell>
   );
 };
 

@@ -1,4 +1,5 @@
-import { Check, Clock, Gift, TrendingUp, ArrowDownLeft } from "lucide-react";
+import { ArrowDownLeftIcon, CheckIcon, GiftIcon, TrendArrowIcon } from "@/components/dashboard/icons";
+import { cn } from "@/lib/utils";
 
 interface InviteCodeProgressProps {
   code: string;
@@ -9,6 +10,46 @@ interface InviteCodeProgressProps {
   depositCompleted: boolean;
   tradeCompleted: boolean;
 }
+
+/** One condition on the invite code, with its reward or completed state. */
+const Condition = ({
+  title,
+  detail,
+  trailing,
+  done,
+  Icon,
+}: {
+  title: string;
+  detail: string;
+  trailing: string;
+  done: boolean;
+  Icon: (props: { className?: string }) => JSX.Element;
+}) => (
+  <div className="flex items-center gap-3">
+    <span
+      className={cn(
+        "flex size-6 shrink-0 items-center justify-center rounded-full",
+        done ? "bg-brand-successText text-white" : "border-[1.5px] border-brand-grey300 text-brand-grey400",
+      )}
+    >
+      {done ? <CheckIcon className="size-3.5" /> : <Icon className="size-3" />}
+    </span>
+    <span className="min-w-0 flex-1">
+      <span className="flex items-center justify-between gap-3">
+        <span className="truncate text-sm font-medium leading-[1.4] text-brand-grey900">{title}</span>
+        <span
+          className={cn(
+            "shrink-0 text-sm font-medium leading-[1.4]",
+            done ? "text-brand-successText" : "text-brand-blue500",
+          )}
+        >
+          {trailing}
+        </span>
+      </span>
+      <span className="block text-[10px] leading-[1.6] text-brand-bodyText">{detail}</span>
+    </span>
+  </div>
+);
 
 const InviteCodeProgress = ({
   code,
@@ -21,89 +62,58 @@ const InviteCodeProgress = ({
 }: InviteCodeProgressProps) => {
   const totalReward = depositReward + tradeReward;
   const earnedReward = (depositCompleted ? depositReward : 0) + (tradeCompleted ? tradeReward : 0);
-  const progress = ((depositCompleted ? 1 : 0) + (tradeCompleted ? 1 : 0)) / 2 * 100;
+  const met = (depositCompleted ? 1 : 0) + (tradeCompleted ? 1 : 0);
+  const progress = (met / 2) * 100;
 
   return (
-    <div className="bg-card border border-border rounded-2xl p-4">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-            <Gift className="w-4 h-4 text-primary" />
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Invite Code</p>
-            <p className="text-sm font-mono font-semibold text-foreground">{code}</p>
-          </div>
+    <div className="rounded-lg border border-brand-grey100 bg-white p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-primary100 text-brand-blue500">
+            <GiftIcon className="size-4" />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-xs leading-[1.3] text-brand-bodyText">Invite Code</span>
+            <span className="block truncate text-sm font-semibold leading-[1.4] text-brand-grey900">{code}</span>
+          </span>
         </div>
-        <div className="text-right">
-          <p className="text-xs text-muted-foreground">Earned</p>
-          <p className="text-lg font-bold text-primary">{earnedReward}/{totalReward} pts</p>
+        <div className="shrink-0 text-right">
+          <p className="text-xs leading-[1.3] text-brand-bodyText">Earned</p>
+          <p className="text-[17px] font-bold leading-[1.4] text-brand-blue500">
+            {earnedReward}/{totalReward} pts
+          </p>
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="mb-4">
-        <div className="h-2 bg-secondary rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary rounded-full transition-all duration-500"
+      <div className="pt-4">
+        <span className="block h-1 overflow-hidden rounded-sm bg-brand-grey100">
+          <span
+            className="block h-full rounded-sm bg-brand-blue500 transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
-        </div>
-        <div className="flex justify-between mt-1">
-          <span className="text-[10px] text-muted-foreground">{Math.round(progress)}% complete</span>
-          <span className="text-[10px] text-muted-foreground">{2 - (depositCompleted ? 1 : 0) - (tradeCompleted ? 1 : 0)} conditions remaining</span>
+        </span>
+        <div className="flex justify-between pt-1">
+          <span className="text-[10px] leading-[1.6] text-brand-bodyText">{Math.round(progress)}% complete</span>
+          <span className="text-[10px] leading-[1.6] text-brand-bodyText">{2 - met} conditions remaining</span>
         </div>
       </div>
 
-      {/* Conditions */}
-      <div className="space-y-3">
-        {/* Registration */}
-        <div className="flex items-center gap-3">
-          <div className="w-6 h-6 rounded-full bg-success flex items-center justify-center shrink-0">
-            <Check className="w-3.5 h-3.5 text-white" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-foreground">Registration</p>
-            <p className="text-[10px] text-success">Completed</p>
-          </div>
-        </div>
-
-        {/* Deposit */}
-        <div className="flex items-center gap-3">
-          <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${depositCompleted ? "bg-success" : "bg-secondary border-2 border-muted-foreground"}`}>
-            {depositCompleted ? <Check className="w-3.5 h-3.5 text-white" /> : <ArrowDownLeft className="w-3 h-3 text-muted-foreground" />}
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-foreground">Deposit</p>
-              <span className={`text-sm font-medium ${depositCompleted ? "text-success" : "text-primary"}`}>
-                {depositCompleted ? "Completed" : `+${depositReward} pts`}
-              </span>
-            </div>
-            <p className="text-[10px] text-muted-foreground">
-              {depositCompleted ? "Bonus credited" : `Deposit min $${minDeposit}`}
-            </p>
-          </div>
-        </div>
-
-        {/* Trade */}
-        <div className="flex items-center gap-3">
-          <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${tradeCompleted ? "bg-success" : "bg-secondary border-2 border-muted-foreground"}`}>
-            {tradeCompleted ? <Check className="w-3.5 h-3.5 text-white" /> : <TrendingUp className="w-3 h-3 text-muted-foreground" />}
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-foreground">Trade</p>
-              <span className={`text-sm font-medium ${tradeCompleted ? "text-success" : "text-primary"}`}>
-                {tradeCompleted ? "Completed" : `+${tradeReward} pts`}
-              </span>
-            </div>
-            <p className="text-[10px] text-muted-foreground">
-              {tradeCompleted ? "Bonus credited" : `Trade min $${minTrade}`}
-            </p>
-          </div>
-        </div>
+      <div className="flex flex-col gap-3 pt-4">
+        <Condition title="Registration" detail="Completed" trailing="Done" done Icon={CheckIcon} />
+        <Condition
+          title="Deposit"
+          detail={depositCompleted ? "Bonus credited" : `Deposit min $${minDeposit}`}
+          trailing={depositCompleted ? "Completed" : `+${depositReward} pts`}
+          done={depositCompleted}
+          Icon={ArrowDownLeftIcon}
+        />
+        <Condition
+          title="Trade"
+          detail={tradeCompleted ? "Bonus credited" : `Trade min $${minTrade}`}
+          trailing={tradeCompleted ? "Completed" : `+${tradeReward} pts`}
+          done={tradeCompleted}
+          Icon={TrendArrowIcon}
+        />
       </div>
     </div>
   );

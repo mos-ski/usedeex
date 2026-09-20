@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Gift, X, Check, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { X, Check, ArrowRight } from "lucide-react";
+import { GiftIcon } from "@/components/dashboard/icons";
 
 interface InviteCodeInputProps {
   onApply: (code: string) => void;
@@ -47,30 +46,58 @@ const InviteCodeInput = ({ onApply, onClose, preFilledCode, variant = "modal" }:
     setLoading(false);
   };
 
+  /** Shared field + Apply button for the two embedded variants. */
+  const entry = (
+    <>
+      <div className="flex items-end gap-3">
+        <input
+          placeholder="Enter invite code"
+          value={code}
+          onChange={(e) => {
+            setCode(e.target.value.toUpperCase());
+            setError("");
+          }}
+          disabled={success}
+          aria-label="Invite code"
+          className="min-w-0 flex-1 border-b border-brand-grey100 bg-transparent py-2 text-[15px] uppercase leading-[1.4] text-brand-grey900 outline-none placeholder:normal-case placeholder:text-brand-grey300 focus:border-brand-blue500 disabled:text-brand-grey400"
+        />
+        <button
+          type="button"
+          onClick={handleApply}
+          disabled={loading || success}
+          className="shrink-0 rounded-lg bg-brand-blue500 px-4 py-2 font-manrope text-sm font-medium leading-[1.6] text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+        >
+          {loading ? "…" : success ? <Check className="size-4" /> : "Apply"}
+        </button>
+      </div>
+      {error && <p className="pt-2 text-xs leading-[1.3] text-brand-danger">{error}</p>}
+      {success && (
+        <div className="mt-3 rounded-lg bg-brand-tint p-3">
+          <p className="text-xs font-medium leading-[1.6] text-brand-successText">Code applied successfully!</p>
+          <p className="pt-1 text-xs leading-[1.6] text-brand-bodyText">
+            Deposit ${mockValidCode.minDeposit} to earn {mockValidCode.depositReward} pts
+          </p>
+          <p className="text-xs leading-[1.6] text-brand-bodyText">
+            Trade ${mockValidCode.minTrade} to earn {mockValidCode.tradeReward} pts
+          </p>
+        </div>
+      )}
+    </>
+  );
+
   if (variant === "banner") {
     return (
-      <div className="bg-primary/10 border border-primary/20 rounded-xl p-4">
+      <div className="rounded-lg bg-brand-tint p-4">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-            <Gift className="w-5 h-5 text-primary" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-foreground mb-1">Have an invite code?</p>
-            <p className="text-xs text-muted-foreground mb-3">Enter it to earn DeeXpoints on your first deposit and trade</p>
-            <div className="flex gap-2">
-              <Input
-                placeholder="Enter invite code"
-                value={code}
-                onChange={e => { setCode(e.target.value.toUpperCase()); setError(""); }}
-                className="uppercase text-sm h-9"
-                disabled={success}
-              />
-              <Button onClick={handleApply} disabled={loading || success} className="h-9 px-4 bg-primary text-primary-foreground">
-                {loading ? "..." : success ? <Check className="w-4 h-4" /> : "Apply"}
-              </Button>
-            </div>
-            {error && <p className="text-xs text-destructive mt-2">{error}</p>}
-            {success && <p className="text-xs text-success mt-2">Code applied! Check your rewards</p>}
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-primary100 text-brand-blue500">
+            <GiftIcon className="size-5" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[15px] font-semibold leading-[1.4] text-brand-grey900">Have an invite code?</p>
+            <p className="pb-3 pt-1 text-xs leading-[1.6] text-brand-bodyText">
+              Enter it to earn DeeXpoints on your first deposit and trade
+            </p>
+            {entry}
           </div>
         </div>
       </div>
@@ -79,31 +106,9 @@ const InviteCodeInput = ({ onApply, onClose, preFilledCode, variant = "modal" }:
 
   if (variant === "inline") {
     return (
-      <div className="bg-secondary rounded-xl p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Gift className="w-4 h-4 text-primary" />
-          <p className="text-sm font-medium text-foreground">Invite Code</p>
-        </div>
-        <div className="flex gap-2">
-          <Input
-            placeholder="Enter invite code"
-            value={code}
-            onChange={e => { setCode(e.target.value.toUpperCase()); setError(""); }}
-            className="uppercase text-sm"
-            disabled={success}
-          />
-          <Button onClick={handleApply} disabled={loading || success} className="bg-primary text-primary-foreground">
-            {loading ? "..." : success ? <Check className="w-4 h-4" /> : "Apply"}
-          </Button>
-        </div>
-        {error && <p className="text-xs text-destructive mt-2">{error}</p>}
-        {success && (
-          <div className="mt-3 bg-success/10 rounded-lg p-3">
-            <p className="text-xs text-success font-medium">Code applied successfully!</p>
-            <p className="text-xs text-muted-foreground mt-1">Deposit ${mockValidCode.minDeposit} to earn {mockValidCode.depositReward} pts</p>
-            <p className="text-xs text-muted-foreground">Trade ${mockValidCode.minTrade} to earn {mockValidCode.tradeReward} pts</p>
-          </div>
-        )}
+      <div className="flex flex-col gap-1">
+        <span className="text-xs leading-[1.3] text-brand-bodyText">Invite Code</span>
+        {entry}
       </div>
     );
   }
