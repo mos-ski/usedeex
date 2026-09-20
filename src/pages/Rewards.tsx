@@ -67,6 +67,14 @@ const earnings = [
   ["50 Points", "Sandra signed traded on DeeX"],
 ] as const;
 
+/** Redemptions, paired with what they paid out. */
+const redemptions = [
+  { points: 500, payout: "₦5,000", destination: "Naira Wallet", date: "Sep 14, 2026", status: "Completed" },
+  { points: 250, payout: "2.45 USDT", destination: "USDT Crypto", date: "Sep 2, 2026", status: "Completed" },
+  { points: 1000, payout: "₦10,000", destination: "Naira Wallet", date: "Aug 21, 2026", status: "Completed" },
+  { points: 120, payout: "₦1,200", destination: "Naira Wallet", date: "Aug 9, 2026", status: "Processing" },
+] as const;
+
 /**
  * One tappable stat block: label + info dot on the left, the figure and a
  * chevron on the right, then an optional bar and a footnote underneath.
@@ -117,7 +125,7 @@ const StatRow = ({
   </SectionCard>
 );
 
-type View = "main" | "redeem" | "success";
+type View = "main" | "redeem" | "history" | "success";
 
 /** Redeem payout destinations (Figma 302:32336 "Wallet"). */
 const payoutWallets = [
@@ -137,6 +145,7 @@ const Rewards = () => {
   const [authenticating, setAuthenticating] = useState(false);
   const [bonusOpen, setBonusOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [historyTab, setHistoryTab] = useState<"earned" | "redeemed">("earned");
   const { hidden } = useBalanceVisibility();
 
   const points = parseAmount(amount);
@@ -161,6 +170,78 @@ const Rewards = () => {
 
   const formatPayout = (value: number) =>
     wallet.symbol === "NGN" ? formatNgn(value) : `${trimZeros(value.toFixed(4))} ${wallet.symbol}`;
+
+  /* ---------------- Rewards history ---------------- */
+  if (view === "history") {
+    return (
+      <AppShell innerClassName="pb-10 sm:pb-12 lg:max-w-[480px] lg:px-4">
+        <PageTransition>
+          <PageHeader title="Points history" onBack={() => setView("main")} />
+
+          <SectionCard className="px-4 py-3">
+            <div role="tablist" aria-label="Points history" className="flex items-center gap-3 rounded bg-brand-barBg p-0.5">
+              {([
+                ["earned", "Earnings"],
+                ["redeemed", "Redeemed"],
+              ] as const).map(([id, label]) => (
+                <button
+                  key={id}
+                  role="tab"
+                  type="button"
+                  aria-selected={historyTab === id}
+                  onClick={() => setHistoryTab(id)}
+                  className={cn(
+                    "flex-1 rounded px-2 py-1.5 text-xs font-semibold leading-[1.4] transition-colors",
+                    historyTab === id
+                      ? "bg-brand-surface text-brand-blue500"
+                      : "text-brand-grey900 hover:text-brand-blue500",
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </SectionCard>
+
+          <SectionCard className="mt-3 px-4 py-0">
+            {historyTab === "earned"
+              ? earnings.map(([points, description], index) => (
+                  <div
+                    key={`${points}-${description}-${index}`}
+                    className="flex items-center gap-4 border-b border-brand-grey100 py-3 last:border-b-0"
+                  >
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                        {description}
+                      </span>
+                      <span className="truncate text-xs leading-[1.3] text-brand-bodyText">Earned</span>
+                    </span>
+                    <span className="shrink-0 text-[15px] font-semibold leading-[1.4] text-[#34A853]">+{points}</span>
+                  </div>
+                ))
+              : redemptions.map((r) => (
+                  <div
+                    key={`${r.date}-${r.points}`}
+                    className="flex items-center gap-4 border-b border-brand-grey100 py-3 last:border-b-0"
+                  >
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                        {r.payout} to {r.destination}
+                      </span>
+                      <span className="truncate text-xs leading-[1.3] text-brand-bodyText">
+                        {r.date} • {r.status}
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-[15px] font-semibold leading-[1.4] text-brand-grey900">
+                      -{r.points.toLocaleString()} pts
+                    </span>
+                  </div>
+                ))}
+          </SectionCard>
+        </PageTransition>
+      </AppShell>
+    );
+  }
 
   /* ---------------- Success (Figma 302:31999) ---------------- */
   if (view === "success")
@@ -307,7 +388,7 @@ const Rewards = () => {
           <SectionHeader title="Quick Actions" />
           <div className="grid grid-cols-2 gap-1">
             <ActionTile label="Redeem" Icon={SendIcon} onClick={() => setView("redeem")} />
-            <ActionTile label="History" Icon={ClockIcon} onClick={() => navigate("/activity")} />
+            <ActionTile label="History" Icon={ClockIcon} onClick={() => setView("history")} />
           </div>
         </SectionCard>
 
@@ -375,7 +456,7 @@ const Rewards = () => {
             <h2 className="text-xs font-semibold leading-[1.4] text-brand-grey900">Earnings</h2>
             <button
               type="button"
-              onClick={() => navigate("/activity")}
+              onClick={() => setView("history")}
               className="font-manrope text-sm leading-[1.6] text-brand-grey400 transition-opacity hover:opacity-70"
             >
               History
