@@ -15,7 +15,6 @@ import {
 } from "@/components/dashboard/icons";
 import OptionSheet from "@/components/dashboard/OptionSheet";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
-import { nairaWalletBalance } from "@/data/nairaWalletData";
 import { formatNgn } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -39,14 +38,12 @@ const denominations: Denomination[] = [
   { id: "d500", label: "$500", rate: 240, usd: 500 },
 ];
 
-const cashShortcuts = [
-  { label: "₦200", value: 200 },
-  { label: "₦500", value: 500 },
-  { label: "₦1,000", value: 1000 },
-  { label: "₦5,000", value: 5000 },
+const cardShortcuts = [
+  { label: "$10", value: 10 },
+  { label: "$25", value: 25 },
+  { label: "$50", value: 50 },
+  { label: "$100", value: 100 },
 ];
-
-const RANGE = { min: 1200, max: 4000 };
 const DEEX_FEE = 50;
 
 type Step = "brand" | "amount" | "pending";
@@ -82,7 +79,9 @@ const GiftCards = () => {
   const totalNgn = denominations.reduce((sum, d) => sum + (counts[d.id] ?? 0) * d.usd * d.rate, 0);
 
   const amount = parseAmount(raw);
-  const payout = totalNgn || amount;
+  /** Rate DeeX pays for this brand, in naira per dollar. */
+  const rate = denominations[0].rate;
+  const payout = totalNgn || amount * rate;
   const typeLabel = cardType === "physical" ? "Physical" : "e-Code";
   const title = brand ? `${country.flag} ${brand} - ${typeLabel}` : "Sell Giftcard";
 
@@ -217,9 +216,9 @@ const GiftCards = () => {
 
   /* ---------------- Amount (Figma 291:15459) ---------------- */
   const reviewRows: [string, string, string?][] = [
-    ["Amount", totalUsd ? `$${totalUsd.toFixed(2)}` : `${raw || "0"} NGN`],
+    ["Amount", `$${totalUsd ? totalUsd.toFixed(2) : (amount || 0).toFixed(2)}`],
     ["Wallet", "Naira Wallet"],
-    ["Rate", `${formatNgn(denominations[0].rate)}/USD`],
+    ["Rate", `${formatNgn(rate)}/USD`],
     ["Expected Payout", formatNgn(payout)],
     ["Bank Details", "8103674006 - PalmPay", "Precious Isioma"],
     ["DeeX Fee", formatNgn(DEEX_FEE)],
@@ -232,8 +231,8 @@ const GiftCards = () => {
         onBack={() => setStep("brand")}
         value={raw}
         onValueChange={setRaw}
-        fromSymbol="NGN"
-        fromOptions={[{ symbol: "NGN", hint: "Naira Wallet" }]}
+        fromSymbol="USD"
+        fromOptions={[{ symbol: "USD", hint: "Card value" }]}
         onFromChange={() => undefined}
         toSymbol="NGN"
         convertedText={payout ? Math.round(payout).toLocaleString("en-US") : "0"}
@@ -245,13 +244,13 @@ const GiftCards = () => {
               className="flex w-full items-center gap-2 py-2 text-left"
             >
               <span className="min-w-0 flex-1 truncate text-[15px] font-semibold leading-[1.4] text-brand-grey900">
-                Range ₦{RANGE.min.toLocaleString("en-US")} - ₦{RANGE.max.toLocaleString("en-US")}
+                Range ${denominations[0].usd} - ${denominations[denominations.length - 1].usd}
               </span>
               <ArrowRightIcon className="size-5 shrink-0 text-brand-grey900" />
             </button>
             <AmountShortcuts
-              balanceLabel={totalUsd ? `Card value: $${totalUsd.toFixed(2)}` : `Bal: ${formatNgn(nairaWalletBalance)}`}
-              options={cashShortcuts}
+              balanceLabel={totalUsd ? `Card value: $${totalUsd.toFixed(2)}` : `Rate: ${formatNgn(rate)}/USD`}
+              options={cardShortcuts}
               onPick={(value) => setRaw(value.toLocaleString("en-US"))}
             />
           </>
