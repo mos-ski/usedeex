@@ -51,6 +51,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Survey from "./pages/Survey";
 import { InviteCodeProvider } from "./contexts/InviteCodeContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { BalanceVisibilityProvider } from "./contexts/BalanceVisibilityContext";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <ThemeProvider>
+      <BalanceVisibilityProvider>
       <InviteCodeProvider>
         <BrowserRouter>
           <Routes>
@@ -115,6 +117,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </InviteCodeProvider>
+      </BalanceVisibilityProvider>
       </ThemeProvider>
     </TooltipProvider>
   </QueryClientProvider>

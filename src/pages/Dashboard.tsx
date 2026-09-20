@@ -6,6 +6,8 @@ import InviteCodeProgress from "@/components/InviteCodeProgress";
 import { useInviteCode } from "@/contexts/InviteCodeContext";
 import { ActionTile, AppShell, SectionCard, SectionHeader } from "@/components/dashboard/AppShell";
 import CoinPicker from "@/components/dashboard/CoinPicker";
+import BalanceToggle from "@/components/dashboard/BalanceToggle";
+import { maskAmount, useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
 import { receivableCoins } from "@/data/receivableCoins";
 import { depositExtras, depositRouteFor } from "@/components/dashboard/depositDestinations";
 import FloatingNav from "@/components/dashboard/FloatingNav";
@@ -73,6 +75,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState<"crypto" | "giftcards">("crypto");
   const [showInviteCodeModal, setShowInviteCodeModal] = useState(false);
   const [showCoinPicker, setShowCoinPicker] = useState(false);
+  const { hidden } = useBalanceVisibility();
   const [showRates, setShowRates] = useState(false);
   const {
     appliedCode,
@@ -148,14 +151,23 @@ const Dashboard = () => {
           <div className="flex flex-col gap-3 lg:gap-5">
             {/* Total payout */}
             <SectionCard className="flex flex-col items-center gap-1 py-[18px] lg:py-8">
-              <p className="text-[10px] uppercase leading-[1.6] text-brand-grey600 lg:text-xs">Total Payout</p>
+              <p className="flex items-center justify-center gap-0.5 text-[10px] uppercase leading-[1.6] text-brand-grey600 lg:text-xs">
+                Total Payout
+                <BalanceToggle />
+              </p>
               <p className="font-gasoek leading-[1.4] text-brand-grey900">
-                <span className="text-[33px] lg:text-[46px]">$1,458.</span>
-                <span className="text-[17px] lg:text-[24px]">98</span>
+                {hidden ? (
+                  <span className="text-[33px] lg:text-[46px]">{maskAmount("$1,458.98")}</span>
+                ) : (
+                  <>
+                    <span className="text-[33px] lg:text-[46px]">$1,458.</span>
+                    <span className="text-[17px] lg:text-[24px]">98</span>
+                  </>
+                )}
               </p>
               <div className="flex items-center gap-2 text-[10px] uppercase text-brand-amberBrown lg:text-xs">
                 <p className="leading-[1.6]">
-                  <span className="font-semibold">$22.43 </span>
+                  <span className="font-semibold">{hidden ? maskAmount("$22.43") : "$22.43"} </span>
                   <span className="font-medium">today</span>
                 </p>
                 <span className="font-semibold leading-[1.6]">•</span>

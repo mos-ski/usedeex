@@ -13,6 +13,8 @@ import SuccessScreen from "@/components/dashboard/SuccessScreen";
 import { AmountEntry, BalanceShortcuts, RateRow, groupDigits, parseAmount } from "@/components/dashboard/AmountEntry";
 import { FaceIdOverlay, ReviewSheet } from "@/components/dashboard/ReviewSheet";
 import FloatingNav from "@/components/dashboard/FloatingNav";
+import BalanceToggle from "@/components/dashboard/BalanceToggle";
+import { maskAmount, useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
 import {
   ArrowLeftIcon,
   CheckCircleIcon,
@@ -135,6 +137,7 @@ const Rewards = () => {
   const [authenticating, setAuthenticating] = useState(false);
   const [bonusOpen, setBonusOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const { hidden } = useBalanceVisibility();
 
   const points = parseAmount(amount);
   const wallet = payoutWallets.find((w) => w.symbol === payout) ?? payoutWallets[0];
@@ -252,10 +255,19 @@ const Rewards = () => {
             <h1 className="text-[19px] font-bold leading-[1.4] text-white">Rewards</h1>
           </header>
           <div className="flex flex-col items-center gap-1 px-6 py-[18px]">
-            <p className="text-[10px] font-bold uppercase leading-[1.6] text-brand-grey600">Total Earnings</p>
+            <p className="flex items-center justify-center gap-0.5 text-[10px] font-bold uppercase leading-[1.6] text-brand-grey600">
+              Total Earnings
+              <BalanceToggle />
+            </p>
             <p className="font-gasoek leading-[1.4] text-white">
-              <span className="text-[33px]">$1,458.</span>
-              <span className="text-[17px]">98</span>
+              {hidden ? (
+                <span className="text-[33px]">{maskAmount("$1,458.98")}</span>
+              ) : (
+                <>
+                  <span className="text-[33px]">$1,458.</span>
+                  <span className="text-[17px]">98</span>
+                </>
+              )}
             </p>
           </div>
         </div>

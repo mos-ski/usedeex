@@ -9,6 +9,8 @@ import {
   TrendArrowIcon,
 } from "@/components/dashboard/icons";
 import AssetRow from "@/components/dashboard/AssetRow";
+import BalanceToggle from "@/components/dashboard/BalanceToggle";
+import { maskAmount, useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
 import { nairaWalletBalance } from "@/data/nairaWalletData";
 import { NGN_PER_USD, formatNgn, formatUsd } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -24,6 +26,7 @@ const assets = [
 const Wallet = () => {
   const navigate = useNavigate();
   const [slide, setSlide] = useState(0);
+  const { hidden } = useBalanceVisibility();
   const touchStartX = useRef(0);
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -71,12 +74,19 @@ const Wallet = () => {
               {slide === 0 ? (
                 <>
                   <div className="flex flex-col items-center gap-1">
-                    <p className="text-[10px] font-bold uppercase leading-[1.6] text-brand-grey600 lg:text-xs">
+                    <p className="flex items-center justify-center gap-0.5 text-[10px] font-bold uppercase leading-[1.6] text-brand-grey600 lg:text-xs">
                       Holdings
+                      <BalanceToggle />
                     </p>
                     <p className="whitespace-nowrap font-gasoek leading-[1.4]">
-                      <span className="text-[33px] lg:text-[42px]">$1,458.</span>
-                      <span className="text-[17px] lg:text-[22px]">98</span>
+                      {hidden ? (
+                        <span className="text-[33px] lg:text-[42px]">{maskAmount("$1,458.98")}</span>
+                      ) : (
+                        <>
+                          <span className="text-[33px] lg:text-[42px]">$1,458.</span>
+                          <span className="text-[17px] lg:text-[22px]">98</span>
+                        </>
+                      )}
                     </p>
                   </div>
                   <p className="flex items-center gap-0.5 font-manrope text-[11px] font-medium leading-[1.6] lg:text-xs">
@@ -88,8 +98,9 @@ const Wallet = () => {
               ) : (
                 <>
                   <div className="flex flex-col items-center gap-1">
-                    <p className="text-[10px] font-bold uppercase leading-[1.6] text-brand-grey600 lg:text-xs">
+                    <p className="flex items-center justify-center gap-0.5 text-[10px] font-bold uppercase leading-[1.6] text-brand-grey600 lg:text-xs">
                       Rewards earned
+                      <BalanceToggle />
                     </p>
                     <p className="whitespace-nowrap font-gasoek leading-[1.4]">
                       <span className="text-[33px] lg:text-[42px]">2,450</span>

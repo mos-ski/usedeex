@@ -126,7 +126,7 @@ const InviteCodeInput = ({ onApply, onClose, preFilledCode, variant = "modal" }:
         <div className="flex items-start justify-between gap-4 px-5 pb-3 pt-5 sm:px-6 sm:pt-6">
           <div className="flex min-w-0 items-center gap-3">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-primary100">
-              <Gift className="size-5 text-brand-blue500" />
+              <GiftIcon className="size-5 text-brand-blue500" />
             </span>
             <div>
               <h3 id="invite-code-title" className="text-xl font-bold leading-tight text-brand-grey900">Enter invite code</h3>
@@ -175,7 +175,7 @@ const InviteCodeInput = ({ onApply, onClose, preFilledCode, variant = "modal" }:
                 </div>
                 <div className="rounded-2xl bg-brand-tint p-4">
                   <div className="mb-3 flex items-center gap-2">
-                    <Gift className="size-4 text-brand-blue500" />
+                    <GiftIcon className="size-4 text-brand-blue500" />
                     <span className="text-sm font-semibold text-brand-grey900">Reward preview</span>
                   </div>
                   <div className="flex items-center justify-between text-sm leading-6">

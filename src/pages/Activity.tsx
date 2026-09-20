@@ -4,6 +4,8 @@ import PageTransition from "@/components/PageTransition";
 import EmptyState from "@/components/EmptyState";
 import { AppShell, SectionCard } from "@/components/dashboard/AppShell";
 import FloatingNav from "@/components/dashboard/FloatingNav";
+import BalanceToggle from "@/components/dashboard/BalanceToggle";
+import { maskAmount, useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
 import AssetMark from "@/components/dashboard/AssetMark";
 import {
   ArrowLeftIcon,
@@ -31,6 +33,7 @@ const tabs: { key: ActivityCategory; label: string }[] = [
 
 const ActivityPage = () => {
   const navigate = useNavigate();
+  const { hidden } = useBalanceVisibility();
   const [tab, setTab] = useState<ActivityCategory>("crypto");
   const [filters, setFilters] = useState<TransactionFilters>(defaultTransactionFilters);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -92,12 +95,19 @@ const ActivityPage = () => {
             </header>
 
             <div className="flex flex-col items-center gap-1 px-6 py-[18px] lg:py-8">
-              <p className="text-center text-[10px] font-bold uppercase leading-[1.6] text-brand-grey600 lg:text-xs">
+              <p className="flex items-center justify-center gap-0.5 text-center text-[10px] font-bold uppercase leading-[1.6] text-brand-grey600 lg:text-xs">
                 Total • {activeLabel} ({filters.status === "all" ? "all" : filters.status})
+                <BalanceToggle />
               </p>
               <p className="whitespace-nowrap font-gasoek leading-[1.4]">
-                <span className="text-[33px] lg:text-[42px]">{total.lead}</span>
-                <span className="text-[17px] lg:text-[22px]">{total.cents}</span>
+                {hidden ? (
+                  <span className="text-[33px] lg:text-[42px]">{maskAmount(total.lead + total.cents)}</span>
+                ) : (
+                  <>
+                    <span className="text-[33px] lg:text-[42px]">{total.lead}</span>
+                    <span className="text-[17px] lg:text-[22px]">{total.cents}</span>
+                  </>
+                )}
               </p>
             </div>
 
