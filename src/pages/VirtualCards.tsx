@@ -13,6 +13,7 @@ import {
   ArrowLeftIcon,
   EyeIcon,
   EyeOffIcon,
+  GearIcon,
   InfoCircleIcon,
   LockIcon,
   MinusIcon,
@@ -637,7 +638,15 @@ const VirtualCards = () => {
 
         <SectionCard className="mt-3 px-4 py-4">
           <SectionHeader title="Quick Actions" />
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-3 gap-1">
+            <button
+              type="button"
+              onClick={() => setView("fund")}
+              className="flex h-[60px] flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint text-brand-navy transition-colors hover:bg-brand-primary100"
+            >
+              <PlusIcon className="size-5" />
+              <span className="text-[10px] leading-[1.4] text-brand-grey900">Top Up</span>
+            </button>
             <button
               type="button"
               onClick={() => {
@@ -646,7 +655,7 @@ const VirtualCards = () => {
               }}
               className="flex h-[60px] flex-col items-center justify-center gap-1 rounded-[2px] bg-brand-tint text-brand-navy transition-colors hover:bg-brand-primary100"
             >
-              <CardEditIcon className="size-5" />
+              <GearIcon className="size-5" />
               <span className="text-[10px] leading-[1.4] text-brand-grey900">Manage Card</span>
             </button>
             <button
