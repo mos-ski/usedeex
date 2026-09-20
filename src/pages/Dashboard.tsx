@@ -179,13 +179,13 @@ const Dashboard = () => {
                   <button
                     type="button"
                     onClick={() => setShowRates(true)}
-                    className="h-[18px] min-w-[150px] overflow-hidden text-right font-semibold leading-[1.6] underline-offset-2 hover:underline"
+                    className="h-[18px] min-w-0 overflow-hidden text-left font-semibold leading-[1.6] underline-offset-2 hover:underline"
                   >
                     <span key={rateStep} className="rate-ticker-slide block whitespace-nowrap">
                       {rateStep % 2 === 0 ? (
                         "See today's rate"
                       ) : (
-                        <span className="flex w-full items-center justify-end gap-1">
+                        <span className="flex items-center gap-1">
                           <AssetMark symbol={rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].symbol} className="size-3" />
                           <span>{rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].symbol}</span>
                           <span>{rateQuotes[Math.floor(rateStep / 2) % rateQuotes.length].value}</span>
