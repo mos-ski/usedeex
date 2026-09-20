@@ -251,7 +251,7 @@ const Rewards = () => {
           </div>
         </div>
 
-        <SectionCard className="relative mt-3 h-[61px] px-0 py-0">
+        <SectionCard className="relative mt-3 h-[61px] overflow-hidden px-0 py-0">
           <img
             src={megaphone}
             alt=""
