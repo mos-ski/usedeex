@@ -447,3 +447,44 @@ export const AppleMarkIcon = ({ className }: IconProps) => (
     />
   </svg>
 );
+
+/** clock, from the Rewards quick actions (Figma 302:31133). */
+export const ClockIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M12 6V12L16 14M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+      {...strokeProps}
+    />
+  </svg>
+);
+
+/** Bare tick for the filled trade-streak days (Figma fi:check). */
+export const CheckIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 13.5 13.5" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M11.25 3.375L5.0625 9.5625L2.25 6.75"
+      stroke="currentColor"
+      strokeWidth="1.125"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+/**
+ * vuesax/linear/copy — outlined front sheet over a filled back sheet. Distinct
+ * from CopyIcon (both sheets solid), which the receipt rows use.
+ */
+export const CopyLinearIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
+    <path
+      d="M13.3333 10.75V14.25C13.3333 17.1667 12.1667 18.3333 9.25 18.3333H5.75C2.83333 18.3333 1.66667 17.1667 1.66667 14.25V10.75C1.66667 7.83333 2.83333 6.66667 5.75 6.66667H9.25C12.1667 6.66667 13.3333 7.83333 13.3333 10.75Z"
+      {...strokeProps}
+    />
+    <path
+      d="M18.3333 5.75V9.25C18.3333 12.1667 17.1667 13.3333 14.25 13.3333H13.3333V10.75C13.3333 7.83333 12.1667 6.66667 9.25 6.66667H6.66667V5.75C6.66667 2.83333 7.83333 1.66667 10.75 1.66667H14.25C17.1667 1.66667 18.3333 2.83333 18.3333 5.75Z"
+      fill="currentColor"
+      {...strokeProps}
+    />
+  </svg>
+);
