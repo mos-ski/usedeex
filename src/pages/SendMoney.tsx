@@ -250,7 +250,8 @@ const SendMoney = () => {
                   className="w-full break-all bg-transparent py-3 text-sm leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300"
                 />
                 <div className="flex w-full items-center justify-between">
-                  <span className="rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">
+                  <span className="flex items-center gap-1.5 rounded border border-brand-pillBorder bg-brand-pill px-2 py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">
+                    <AssetMark symbol={wallet.symbol} className="size-4 text-[9px]" />
                     {wallet.symbol} • {network}
                   </span>
                   <button

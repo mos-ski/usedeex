@@ -6,6 +6,8 @@ import { ActionTile, AppShell, PageHeader, SectionCard, SectionHeader } from "@/
 import AssetMark from "@/components/dashboard/AssetMark";
 import { PlusIcon, SendIcon, SwapIcon } from "@/components/dashboard/icons";
 import SendTo from "@/components/dashboard/SendTo";
+import OptionSheet from "@/components/dashboard/OptionSheet";
+import { receivableCoins } from "@/data/receivableCoins";
 import { AmountEntry, parseAmount } from "@/components/dashboard/AmountEntry";
 import { cryptoDestinations, type CryptoDestination } from "@/data/recipientData";
 import { NGN_PER_USD } from "@/lib/format";
@@ -91,10 +93,23 @@ const AssetDetail = () => {
   const [withdrawView, setWithdrawView] = useState<WithdrawView>("none");
   const [destination, setDestination] = useState<CryptoDestination | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [networkOpen, setNetworkOpen] = useState(false);
 
   const key = symbol?.toUpperCase() || "BTC";
   const asset = assetData[key] || assetData.BTC;
   const isNegative = asset.changeUsd < 0;
+
+  // Depositing needs a chain, so ask for it here rather than sending the
+  // user to /deposit to pick the coin they are already looking at.
+  const networks = receivableCoins.find((c) => c.symbol === key)?.networks ?? [];
+  const openDeposit = (network: string) => navigate("/deposit", { state: { symbol: key, network } });
+  const startDeposit = () => {
+    if (networks.length > 1) {
+      setNetworkOpen(true);
+      return;
+    }
+    openDeposit(networks[0] ?? "");
+  };
 
   const values = useMemo(() => buildSeries(key, timeframe, asset.price), [key, timeframe, asset.price]);
   const chartData = values.map((v, i) => ({ i, v }));
@@ -297,7 +312,7 @@ const AssetDetail = () => {
             <SectionCard className="px-4">
               <SectionHeader title="Quick Actions" />
               <div className="grid grid-cols-3 gap-1 lg:gap-2">
-                <ActionTile label="Deposit" Icon={PlusIcon} onClick={() => navigate("/deposit")} />
+                <ActionTile label="Deposit" Icon={PlusIcon} onClick={startDeposit} />
                 <ActionTile label="Withdraw" Icon={SendIcon} onClick={() => setWithdrawView("sendTo")} />
                 <ActionTile label="Swap" Icon={SwapIcon} onClick={() => navigate("/swap-crypto")} />
               </div>
@@ -339,6 +354,18 @@ const AssetDetail = () => {
           </div>
         </div>
       </PageTransition>
+
+      {/* Chain first, then the QR screen. */}
+      <OptionSheet
+        open={networkOpen}
+        onOpenChange={setNetworkOpen}
+        title="Select Network"
+        options={networks.map((network) => ({ value: network, label: network, mark: null }))}
+        onSelect={(network) => {
+          setNetworkOpen(false);
+          openDeposit(network);
+        }}
+      />
 
       {showTour && (
         <div
