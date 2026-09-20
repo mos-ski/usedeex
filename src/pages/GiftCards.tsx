@@ -116,6 +116,7 @@ const GiftCards = () => {
   );
 
   const amount = parseAmount(raw);
+  const country = giftCardCountries.find((c) => c.code === countryCode);
   /** Rate DeeX pays for this brand, in naira per dollar. */
   const rate = denominations[0].rate;
   const payout = totalNgn || amount * rate;
@@ -123,8 +124,6 @@ const GiftCards = () => {
   const title = brand
     ? `${country.flag} ${brand} - ${typeLabel}`
     : "Sell Giftcard";
-
-  const country = giftCardCountries.find((c) => c.code === countryCode);
 
   const step2 = (id: string, delta: number) =>
     setCounts((c) => ({ ...c, [id]: Math.max(0, (c[id] ?? 0) + delta) }));
