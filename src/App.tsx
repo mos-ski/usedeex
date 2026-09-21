@@ -25,6 +25,7 @@ import GiftCards from "./pages/GiftCards";
 import BuyGiftCard from "./pages/BuyGiftCard";
 import MarketingTopic from "./pages/MarketingTopic";
 import MarketingPolicy from "./pages/MarketingPolicy";
+import ScrollToTop from "./components/ScrollToTop";
 import BillPayment from "./pages/BillPayment";
 import NairaWallet from "./pages/NairaWallet";
 import Activity from "./pages/Activity";
@@ -67,6 +68,7 @@ const App = () => (
       <BalanceVisibilityProvider>
       <InviteCodeProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/ad-2000-offer" element={<AdOffer2000 />} />
