@@ -25,6 +25,18 @@ export const legalDocuments: LegalDocument[] = [
     ],
   },
   {
+    slug: "compliance",
+    title: "Compliance",
+    updated: "Last updated 1 September 2026",
+    sections: [
+      { heading: "How we are regulated", body: "DeeX Technologies Ltd is registered in Nigeria and operates its payout and virtual asset services under the obligations set by the Nigerian Financial Intelligence Unit and the Securities and Exchange Commission." },
+      { heading: "Verification", body: "Every account is verified before it can trade. Identity checks are tiered: a valid government ID and a liveness check unlock the first limits, and proof of address opens the higher ones." },
+      { heading: "Monitoring", body: "Trades are screened for sanctions exposure and for patterns that suggest fraud or laundering. A flagged account is held while we review it, and we tell the holder where we are permitted to." },
+      { heading: "Reporting and records", body: "We keep transaction records for the period the law requires and report what we are obliged to report. Records are available to a user on request through support." },
+      { heading: "Raising a concern", body: "Compliance questions and reports go to compliance@deexoptions.com and are answered by the compliance team rather than general support." },
+    ],
+  },
+  {
     slug: "aml",
     title: "AML Policy",
     updated: "Last updated 1 September 2026",

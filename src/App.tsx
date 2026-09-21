@@ -23,6 +23,8 @@ import Receipt from "./pages/Receipt";
 import DeexPay from "./pages/DeexPay";
 import GiftCards from "./pages/GiftCards";
 import BuyGiftCard from "./pages/BuyGiftCard";
+import MarketingTopic from "./pages/MarketingTopic";
+import MarketingPolicy from "./pages/MarketingPolicy";
 import BillPayment from "./pages/BillPayment";
 import NairaWallet from "./pages/NairaWallet";
 import Activity from "./pages/Activity";
@@ -115,6 +117,15 @@ const App = () => (
             <Route path="/trade-streak" element={<TradeStreak />} />
             <Route path="/admin/users/:id" element={<AdminUserDetail />} />
             <Route path="/admin" element={<AdminPanel />} />
+            {/* Website pages behind the footer — never the app's own screens. */}
+            <Route path="/products/:slug" element={<MarketingTopic />} />
+            <Route path="/company/:slug" element={<MarketingTopic />} />
+            <Route path="/rewards-programme/:slug" element={<MarketingTopic />} />
+            <Route path="/rewards-programme" element={<MarketingTopic slug="tasks" />} />
+            <Route path="/merchant" element={<MarketingTopic slug="merchant" />} />
+            <Route path="/faq" element={<MarketingTopic slug="faq" />} />
+            <Route path="/policies/:slug" element={<MarketingPolicy />} />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
