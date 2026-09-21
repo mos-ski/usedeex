@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTransition from "@/components/PageTransition";
 import EmptyState from "@/components/EmptyState";
+import SkeletonRows, { useListLoading } from "@/components/dashboard/SkeletonRows";
 import { AppShell, SectionCard } from "@/components/dashboard/AppShell";
 import FloatingNav from "@/components/dashboard/FloatingNav";
 import BalanceToggle from "@/components/dashboard/BalanceToggle";
@@ -42,6 +43,7 @@ const ActivityPage = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const loadingList = useListLoading();
 
   const filtered = useMemo(
     () =>
@@ -182,7 +184,9 @@ const ActivityPage = () => {
             </SectionCard>
 
             <SectionCard className="flex-1 px-4 pb-28 sm:pb-3 lg:pb-5">
-              {Object.keys(grouped).length === 0 ? (
+              {loadingList ? (
+                <SkeletonRows rows={5} />
+              ) : Object.keys(grouped).length === 0 ? (
                 <EmptyState
                   title="No transactions yet"
                   description="Transactions in this category will appear here once you start trading"

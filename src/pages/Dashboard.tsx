@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { surveyQuestions } from "@/data/surveyQuestions";
 import PageTransition from "@/components/PageTransition";
 import InviteCodeInput from "@/components/InviteCodeInput";
 import { useInviteCode } from "@/contexts/InviteCodeContext";
@@ -79,6 +81,8 @@ const giftCardRateQuotes = [
   { symbol: "Nike", value: "₦1,370/$" },
 ];
 
+const SURVEY_PROMPT_KEY = "deex.surveyPrompted";
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"crypto" | "giftcards">("crypto");
@@ -96,6 +100,28 @@ const Dashboard = () => {
       return () => clearTimeout(timer);
     }
   }, [appliedCode, hasSeenDashboardModal]);
+
+  useEffect(() => {
+    // Ask for the survey once per device, after the invite prompt has had its turn.
+    if (localStorage.getItem(SURVEY_PROMPT_KEY)) return;
+    const timer = setTimeout(() => {
+      localStorage.setItem(SURVEY_PROMPT_KEY, "asked");
+      toast("Help us make DeeX better", {
+        description: `${surveyQuestions.length} quick questions about how you use DeeX.`,
+        duration: 12000,
+        action: { label: "Take survey", onClick: () => navigate("/survey") },
+        cancel: {
+          label: "Not now",
+          onClick: () =>
+            toast("No problem", {
+              description: "You can take it any time from Menu → About DeeX → Take the survey.",
+              duration: 8000,
+            }),
+        },
+      });
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   useEffect(() => {
     const timer = window.setInterval(() => setRateStep((step) => step + 1), 2400);

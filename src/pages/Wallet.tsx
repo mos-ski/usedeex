@@ -9,6 +9,7 @@ import {
   TrendArrowIcon,
 } from "@/components/dashboard/icons";
 import AssetRow from "@/components/dashboard/AssetRow";
+import SkeletonRows, { useListLoading } from "@/components/dashboard/SkeletonRows";
 import BalanceToggle from "@/components/dashboard/BalanceToggle";
 import { maskAmount, useBalanceVisibility } from "@/contexts/BalanceVisibilityContext";
 import { nairaWalletBalance } from "@/data/nairaWalletData";
@@ -25,6 +26,7 @@ const assets = [
 
 const Wallet = () => {
   const navigate = useNavigate();
+  const loadingAssets = useListLoading();
   const [slide, setSlide] = useState(0);
   const { hidden } = useBalanceVisibility();
   const touchStartX = useRef(0);
@@ -132,6 +134,9 @@ const Wallet = () => {
           {/* Assets */}
           <SectionCard className="flex-1 px-4 pb-28 sm:pb-3 lg:pb-5">
             <SectionHeader title="Assets" />
+            {loadingAssets ? (
+              <SkeletonRows rows={assets.length + 1} />
+            ) : (
             <div className="flex flex-col">
               <AssetRow
                 symbol="NGN"
@@ -152,6 +157,7 @@ const Wallet = () => {
                 />
               ))}
             </div>
+            )}
           </SectionCard>
         </div>
       </PageTransition>
