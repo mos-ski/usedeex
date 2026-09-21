@@ -668,3 +668,15 @@ export const CategoryIcon = ({ className }: IconProps) => (
     <path d="M12 3l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 16.5l9 5 9-5" {...strokeProps} />
   </svg>
 );
+
+export const StarIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path d="M12 3.5l2.6 5.27 5.82.85-4.21 4.1.99 5.78L12 16.77l-5.2 2.73.99-5.78-4.21-4.1 5.82-.85L12 3.5z" {...strokeProps} />
+  </svg>
+);
+
+export const ClipboardListIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path d="M9 4h6v3H9V4zM7 5.5H5.5v15h13v-15H17M9 11h6M9 15h4" {...strokeProps} />
+  </svg>
+);
