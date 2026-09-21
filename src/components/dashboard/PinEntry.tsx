@@ -1,13 +1,14 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader } from "./AppShell";
 import { FaceIdIcon } from "./icons";
 import NumericKeypad from "./NumericKeypad";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 /**
  * PIN entry (Figma 305:34709) — a row of dots with the Face ID shortcut, over
- * the app's own keypad.
+ * the app's own keypad. Desktop types on the real keyboard instead.
  */
 export const PinEntry = ({
   title = "Enter PIN",
@@ -32,8 +33,25 @@ export const PinEntry = ({
   onBiometric?: () => void;
 }) => {
   // Two taps in one tick would otherwise both read the same stale `value`.
+  const isMobile = useIsMobile();
   const latest = useRef(value);
   latest.current = value;
+
+  useEffect(() => {
+    if (isMobile) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Backspace") {
+        latest.current = latest.current.slice(0, -1);
+        onChange(latest.current);
+        return;
+      }
+      if (!/^[0-9]$/.test(event.key) || latest.current.length >= length) return;
+      latest.current += event.key;
+      onChange(latest.current);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isMobile, length, onChange]);
 
   return (
     <AppShell className="bg-brand-surface" innerClassName="flex min-h-[100dvh] flex-col pb-0 lg:max-w-[480px] lg:px-4">
@@ -69,6 +87,7 @@ export const PinEntry = ({
           )}
         </div>
 
+        {isMobile && (
         <NumericKeypad
           decimal={false}
           onKey={(d) => {
@@ -81,6 +100,7 @@ export const PinEntry = ({
             onChange(latest.current);
           }}
         />
+        )}
       </PageTransition>
     </AppShell>
   );

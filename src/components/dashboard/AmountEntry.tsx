@@ -3,6 +3,7 @@ import { AppShell, PageHeader, PrimaryButton } from "./AppShell";
 import AssetMark from "./AssetMark";
 import { CaretDownIcon, ChevronRightIcon } from "./icons";
 import NumericKeypad from "./NumericKeypad";
+import { useIsMobile } from "@/hooks/use-mobile";
 import OptionSheet, { type SheetOption } from "./OptionSheet";
 import PageTransition from "@/components/PageTransition";
 import { cn } from "@/lib/utils";
@@ -89,6 +90,7 @@ export const AmountEntry = ({
   const latest = useRef(value);
   latest.current = value;
 
+  const isMobile = useIsMobile();
   const [picker, setPicker] = useState<"from" | "to" | null>(null);
   const toSheet = (list: CurrencyOption[]): SheetOption[] =>
     list.map((o) => ({ value: o.symbol, label: o.symbol, detail: o.hint ?? o.name }));
@@ -110,11 +112,21 @@ export const AmountEntry = ({
           <input
             value={value}
             onChange={(e) => isAmountInput(e.target.value) && onValueChange(groupDigits(e.target.value))}
-            readOnly
+            // The keypad drives the value on a phone; desktop types into it.
+            readOnly={isMobile}
+            inputMode="decimal"
+            autoFocus={!isMobile}
             placeholder="0"
             aria-label={`Amount in ${fromSymbol}`}
-            className="min-w-0 flex-1 bg-transparent text-right font-gasoek text-[48px] leading-[1.4] text-brand-grey900 outline-none placeholder:text-brand-grey300"
+            className="min-w-0 flex-1 bg-transparent text-right font-gasoek text-[48px] leading-[1.4] text-brand-grey900 caret-brand-blue500 outline-none placeholder:text-brand-grey300"
           />
+          {/* A read-only field shows no caret, so stand one in to say "type here". */}
+          {isMobile && (
+            <span
+              aria-hidden="true"
+              className="-ml-1 h-[52px] w-0.5 shrink-0 animate-caret-blink rounded-full bg-brand-blue500"
+            />
+          )}
           <button type="button" aria-label="Choose asset" onClick={() => (onFromPress ? onFromPress() : setPicker("from"))}>
             <Pill symbol={fromSymbol}>
               <CaretDownIcon className="size-3 text-brand-grey900" />
@@ -161,6 +173,7 @@ export const AmountEntry = ({
 
       {fromPicker}
 
+      {isMobile && (
       <NumericKeypad
         onKey={(key) => {
           const raw = latest.current.replace(/,/g, "");
@@ -174,6 +187,7 @@ export const AmountEntry = ({
           onValueChange(latest.current);
         }}
       />
+      )}
     </PageTransition>
   </AppShell>
   );
