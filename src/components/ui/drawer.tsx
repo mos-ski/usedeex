@@ -32,11 +32,14 @@ const DrawerContent = React.forwardRef<
       ref={ref}
       className={cn(
         "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background",
+        // Desktop has no thumb to drag, and a sheet the height of the page is
+        // hard to read: centre it, cap it, and scroll inside instead.
+        "sm:inset-0 sm:m-auto sm:mt-auto sm:h-fit sm:max-h-[80vh] sm:w-full sm:max-w-[460px] sm:overflow-y-auto sm:rounded-lg sm:![transform:none]",
         className,
       )}
       {...props}
     >
-      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
+      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted sm:hidden" />
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>
