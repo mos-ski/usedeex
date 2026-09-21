@@ -1,3 +1,5 @@
+import { hasAssetLogo } from "@/components/dashboard/AssetMark";
+
 /**
  * Catalogue behind Buy Giftcard: which countries DeeX sells into, and the
  * cards available in each. A card is a brand in one country, so the same
@@ -54,7 +56,7 @@ export type GiftCardProduct = {
   redeemInstruction: string;
 };
 
-export const giftCardProducts: GiftCardProduct[] = [
+const allGiftCardProducts: GiftCardProduct[] = [
   {
     id: "netflix",
     brand: "NetFlix",
@@ -218,6 +220,15 @@ export const giftCardProducts: GiftCardProduct[] = [
       "Enter the voucher code at checkout on Jumia in the country of issue. Applies to items sold by Jumia and participating sellers.",
   },
 ];
+
+/**
+ * Only brands we hold a logo for. A lettered circle reads as a placeholder,
+ * so a brand stays out of the catalogue until its artwork lands — adding the
+ * file to AssetMark is enough to bring it back.
+ */
+export const giftCardProducts: GiftCardProduct[] = allGiftCardProducts.filter((product) =>
+  hasAssetLogo(product.brand),
+);
 
 /** Symbol for the amount shown on a card's price pills. */
 export const currencySymbols: Record<string, string> = {
