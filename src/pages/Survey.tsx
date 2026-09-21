@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import PageTransition from "@/components/PageTransition";
 import { AppShell, PageHeader, PrimaryButton } from "@/components/dashboard/AppShell";
 import { RadioRow } from "@/components/dashboard/FormFields";
+import CategoryPills from "@/components/dashboard/CategoryPills";
 import { CheckCircleIcon, HeartsIcon } from "@/components/dashboard/icons";
 import { surveyQuestions } from "@/data/surveyQuestions";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,13 @@ const Survey = () => {
   const answer = answers[question?.id] ?? "";
 
   const updateAnswer = (value: string) => setAnswers((current) => ({ ...current, [question.id]: value }));
+
+  /** Appends a suggestion to whatever the user has already typed. */
+  const addSuggestion = (suggestion: string) => {
+    const current = answers[question.id] ?? "";
+    if (current.includes(suggestion)) return;
+    updateAnswer(current.trim() ? `${current.replace(/[.\s]+$/, "")}. ${suggestion}` : suggestion);
+  };
 
   const goBack = () => {
     if (stage === "intro") return navigate(-1);
@@ -115,6 +123,17 @@ const Survey = () => {
             </div>
           )}
 
+          {question.type === "multi" && (
+            <div className="pt-4">
+              <CategoryPills
+                label="Pick as many as you like"
+                options={question.options ?? []}
+                selected={answer ? answer.split(",") : []}
+                onChange={(next) => updateAnswer(next.join(","))}
+              />
+            </div>
+          )}
+
           {question.type === "text" && (
             <div className="pt-4">
               <textarea
@@ -126,6 +145,24 @@ const Survey = () => {
                 className="min-h-[190px] w-full resize-none border-b border-brand-grey100 bg-transparent py-2 text-[15px] leading-[1.6] text-brand-grey900 outline-none placeholder:text-brand-grey300 focus:border-brand-blue500"
               />
               <p className="pt-1 text-right text-xs leading-[1.3] text-brand-bodyText">{answer.length}/600</p>
+
+              {question.suggestions && (
+                <div className="pt-4">
+                  <p className="text-xs leading-[1.3] text-brand-bodyText">Or start from one of these</p>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {question.suggestions.map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onClick={() => addSuggestion(suggestion)}
+                        className="rounded bg-[#daebf7] px-1.5 text-[15px] font-semibold leading-[1.4] text-brand-blue500 transition-colors hover:bg-brand-primary100"
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
