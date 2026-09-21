@@ -23,7 +23,10 @@ import {
 } from "@/components/dashboard/icons";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import GiftCardModeTabs from "@/components/dashboard/GiftCardModeTabs";
-import { CategoryPill, CategorySheet } from "@/components/dashboard/CategoryPills";
+import {
+  CategoryPill,
+  CategorySheet,
+} from "@/components/dashboard/CategoryPills";
 import SelectCountryStep, {
   CountryPill,
   CountrySheet,
@@ -188,8 +191,14 @@ const GiftCards = () => {
             <GiftCardModeTabs mode="sell" />
 
             <div className="flex items-center justify-center gap-2">
-              <CountryPill code={countryCode} onClick={() => setCountryOpen(true)} />
-              <CategoryPill selected={categories} onClick={() => setCategoryOpen(true)} />
+              <CountryPill
+                code={countryCode}
+                onClick={() => setCountryOpen(true)}
+              />
+              <CategoryPill
+                selected={categories}
+                onClick={() => setCategoryOpen(true)}
+              />
             </div>
 
             <input
@@ -234,37 +243,36 @@ const GiftCards = () => {
                 No gift cards match that in {country.name}.
               </p>
             ) : (
-            <div className="grid grid-cols-3 gap-px border border-brand-grey100 bg-brand-grey100">
-              {visibleBrands.map((b) => (
-                <button
-                  key={b}
-                  type="button"
-                  onClick={() => {
-                    setBrand(b);
-                    setStep("amount");
-                  }}
-                  aria-pressed={brand === b}
-                  className={cn(
-                    "flex h-20 flex-col items-center justify-center gap-1 p-3 transition-colors",
-                    brand === b
-                      ? "bg-brand-tint"
-                      : "bg-brand-surface hover:bg-brand-grey50",
-                  )}
-                >
-                  <AssetMark symbol={b} className="size-8" />
-                  <span className="text-center text-[10px] leading-[1.6] text-brand-grey900">
-                    {b}
-                  </span>
-                </button>
-              ))}
-            </div>
+              <div className="grid grid-cols-3 gap-px border border-brand-grey100 bg-brand-grey100">
+                {visibleBrands.map((b) => (
+                  <button
+                    key={b}
+                    type="button"
+                    onClick={() => {
+                      setBrand(b);
+                      setStep("amount");
+                    }}
+                    aria-pressed={brand === b}
+                    className={cn(
+                      "flex h-20 flex-col items-center justify-center gap-1 p-3 transition-colors",
+                      brand === b
+                        ? "bg-brand-tint"
+                        : "bg-brand-surface hover:bg-brand-grey50",
+                    )}
+                  >
+                    <AssetMark symbol={b} className="size-8" />
+                    <span className="text-center text-[10px] leading-[1.6] text-brand-grey900">
+                      {b}
+                    </span>
+                  </button>
+                ))}
+              </div>
             )}
 
             <p className="px-4 pt-4 text-center text-xs leading-[1.6] text-brand-bodyText">
               Note: Total denomination should match the value amount you wish to
               sell.
             </p>
-
           </div>
         </PageTransition>
 

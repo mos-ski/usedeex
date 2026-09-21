@@ -9,7 +9,10 @@ import {
   SectionHeader,
 } from "@/components/dashboard/AppShell";
 import AssetMark from "@/components/dashboard/AssetMark";
-import { CategoryPill, CategorySheet } from "@/components/dashboard/CategoryPills";
+import {
+  CategoryPill,
+  CategorySheet,
+} from "@/components/dashboard/CategoryPills";
 import GiftCardModeTabs from "@/components/dashboard/GiftCardModeTabs";
 import SelectCountryStep, {
   CountryPill,
@@ -18,11 +21,7 @@ import SelectCountryStep, {
 } from "@/components/dashboard/SelectCountryStep";
 import ReviewSheet from "@/components/dashboard/ReviewSheet";
 import SuccessScreen from "@/components/dashboard/SuccessScreen";
-import {
-  CheckIcon,
-  MinusIcon,
-  PlusIcon,
-} from "@/components/dashboard/icons";
+import { CheckIcon, MinusIcon, PlusIcon } from "@/components/dashboard/icons";
 import {
   NGN_PER_CARD_CURRENCY,
   formatCardPrice,
@@ -278,8 +277,14 @@ const BuyGiftCard = () => {
           <GiftCardModeTabs mode="buy" />
 
           <div className="flex items-center justify-center gap-2">
-            <CountryPill code={countryCode} onClick={() => setCountryOpen(true)} />
-            <CategoryPill selected={categories} onClick={() => setCategoryOpen(true)} />
+            <CountryPill
+              code={countryCode}
+              onClick={() => setCountryOpen(true)}
+            />
+            <CategoryPill
+              selected={categories}
+              onClick={() => setCategoryOpen(true)}
+            />
           </div>
 
           <input
@@ -314,12 +319,6 @@ const BuyGiftCard = () => {
         </div>
       </PageTransition>
 
-      <CountrySheet
-        open={countryOpen}
-        onOpenChange={setCountryOpen}
-        value={countryCode}
-        onSelect={setCountryCode}
-      />
       <CategorySheet
         open={categoryOpen}
         onOpenChange={setCategoryOpen}
@@ -328,6 +327,12 @@ const BuyGiftCard = () => {
         onChange={setCategories}
       />
 
+      <CountrySheet
+        open={countryOpen}
+        onOpenChange={setCountryOpen}
+        value={countryCode}
+        onSelect={setCountryCode}
+      />
     </AppShell>
   );
 };
