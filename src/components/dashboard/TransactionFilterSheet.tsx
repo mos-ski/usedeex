@@ -99,8 +99,8 @@ export const TransactionFilterSheet = ({ open, onOpenChange, value, onApply }: T
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[88dvh] rounded-t-lg border-brand-grey100 bg-brand-surface p-3 font-roboto [&>div:first-child]:mt-0 [&>div:first-child]:h-1 [&>div:first-child]:w-12 [&>div:first-child]:bg-[#d9d9d9]">
-        <div className="mx-auto w-full max-w-[375px] overflow-y-auto pb-[max(0px,env(safe-area-inset-bottom))]">
-          <div className="h-9" aria-hidden="true" />
+        <div className="mx-auto w-full max-w-[375px] overflow-y-auto pb-[max(0px,env(safe-area-inset-bottom))] sm:max-w-none sm:overflow-visible sm:pb-0">
+          <div className="h-9 sm:hidden" aria-hidden="true" />
           <DrawerTitle className="py-1.5 text-xs font-semibold leading-[1.4] text-brand-grey900">Filter Transaction</DrawerTitle>
 
           <div>

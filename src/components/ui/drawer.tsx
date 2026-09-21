@@ -34,7 +34,11 @@ const DrawerContent = React.forwardRef<
         "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background",
         // Desktop has no thumb to drag, and a sheet the height of the page is
         // hard to read: centre it, cap it, and scroll inside instead.
-        "sm:inset-0 sm:m-auto sm:mt-auto sm:h-fit sm:max-h-[80vh] sm:w-full sm:max-w-[460px] sm:overflow-y-auto sm:rounded-lg sm:![transform:none]",
+        "sm:inset-0 sm:m-auto sm:mt-auto sm:h-fit sm:max-h-[85vh] sm:w-full sm:max-w-[460px] sm:overflow-hidden sm:rounded-lg sm:![transform:none]",
+        // Centring with inset-0 makes the content box the whole viewport, so
+        // scrolling it would show a scrollbar for overflow that is not there.
+        // The content wrapper scrolls instead, and only when it needs to.
+        "sm:[&>div:last-child]:max-h-[85vh] sm:[&>div:last-child]:overflow-y-auto",
         className,
       )}
       {...props}
