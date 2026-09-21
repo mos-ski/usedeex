@@ -44,7 +44,7 @@ const quickActions = [
 const billsForYou = [
   { label: "MTN", logo: logoMtn, path: "/bills/airtime" },
   { label: "IKEDC", logo: logoIkedc, path: "/bills/electricity" },
-  { label: "SpottyBet", logo: logoSpottybet, path: "/bills/betting" },
+  { label: "SportyBet", logo: logoSpottybet, path: "/bills/betting" },
   { label: "Amazon", logo: logoAmazon, path: "/giftcards" },
   { label: "Apple", logo: logoApple, path: "/giftcards" },
   { label: "Google Play", logo: logoGooglePlay, path: "/giftcards" },

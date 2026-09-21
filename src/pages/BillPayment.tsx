@@ -1,6 +1,14 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import BillFlow, { BillConfig } from "@/components/dashboard/BillFlow";
+import { hasAssetLogo } from "@/components/dashboard/AssetMark";
 import { bettingRecipients, electricityRecipients, phoneRecipients } from "@/data/recipientData";
+
+/**
+ * A provider we have no logo for would render a lettered circle, which reads
+ * as a placeholder. Drop it until its artwork is added — the list is derived,
+ * so adding the file to AssetMark is enough to bring the provider back.
+ */
+const withLogo = (providers: string[]) => providers.filter(hasAssetLogo);
 
 /** Naira top-ups shared by airtime, electricity and betting. */
 const cashShortcuts = [
@@ -23,7 +31,7 @@ export const billConfigs: Record<string, BillConfig> = {
     title: "Airtime",
     identifierPlaceholder: "Enter Phone Number",
     identifierLabel: "Phone number",
-    providers: ["MTN", "Glo", "Airtel", "9mobile"],
+    providers: withLogo(["MTN", "Glo", "Airtel", "9mobile"]),
     shortcuts: cashShortcuts,
     beneficiaries: phoneRecipients,
   },
@@ -31,7 +39,7 @@ export const billConfigs: Record<string, BillConfig> = {
     title: "Data",
     identifierPlaceholder: "Enter Phone Number",
     identifierLabel: "Phone number",
-    providers: ["MTN", "Glo", "Airtel", "9mobile"],
+    providers: withLogo(["MTN", "Glo", "Airtel", "9mobile"]),
     shortcuts: dataBundles,
     beneficiaries: phoneRecipients,
   },
@@ -39,7 +47,7 @@ export const billConfigs: Record<string, BillConfig> = {
     title: "Electricity",
     identifierPlaceholder: "Enter Meter Number",
     identifierLabel: "Meter number",
-    providers: ["IKEDC", "EKEDC", "AEDC", "PHED", "BEDC"],
+    providers: withLogo(["IKEDC", "EKEDC", "AEDC", "PHED", "BEDC"]),
     shortcuts: cashShortcuts,
     beneficiaries: electricityRecipients,
   },
@@ -48,7 +56,7 @@ export const billConfigs: Record<string, BillConfig> = {
     identifierPlaceholder: "Enter User ID",
     identifierLabel: "User ID",
     numericIdentifier: false,
-    providers: ["Bet9ja", "SportyBet", "1xBet", "BetKing", "MSport"],
+    providers: withLogo(["Bet9ja", "SportyBet", "1xBet", "BetKing", "MSport"]),
     shortcuts: cashShortcuts,
     beneficiaries: bettingRecipients,
   },

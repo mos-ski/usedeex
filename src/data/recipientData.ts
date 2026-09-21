@@ -1,3 +1,5 @@
+import { hasAssetLogo } from "@/components/dashboard/AssetMark";
+
 export type RecipientKind = "recent" | "beneficiary";
 
 export type BankRecipient = {
@@ -32,7 +34,8 @@ const people = [
   "Kelechi Nwosu", "Yemi Ajayi", "Zainab Musa", "Chidi Eze", "Temitope Lawal",
 ] as const;
 
-const banks = ["UBA", "Access Bank", "GTBank", "Zenith Bank", "PalmPay", "Opay", "First Bank"] as const;
+// Only banks whose logo we hold; the rest would draw a lettered placeholder.
+const banks = ["UBA", "Access Bank", "GTBank", "Zenith Bank", "PalmPay", "Opay", "First Bank"].filter(hasAssetLogo);
 
 export const bankRecipients: BankRecipient[] = (["recent", "beneficiary"] as const).flatMap((kind, group) =>
   people.map((name, index) => ({
@@ -69,8 +72,13 @@ export const cryptoDestinations: CryptoDestination[] = [
   }),
 ];
 
-const makeBillRecipients = (prefix: string, identifiers: string[], providers: readonly string[]): BillRecipient[] =>
-  (["recent", "beneficiary"] as const).flatMap((kind, group) =>
+const makeBillRecipients = (prefix: string, identifiers: string[], allProviders: readonly string[]): BillRecipient[] => {
+  // A saved recipient on a provider we cannot badge would draw a lettered
+  // circle, so keep only the providers we hold artwork for.
+  const providers = allProviders.filter(hasAssetLogo);
+  if (providers.length === 0) return [];
+
+  return (["recent", "beneficiary"] as const).flatMap((kind, group) =>
     identifiers.map((identifier, index) => ({
       id: `${prefix}-${kind}-${index + 1}`,
       identifier: group === 0 ? identifier : `${identifier.slice(0, -2)}${String(70 + index).slice(-2)}`,
@@ -79,6 +87,7 @@ const makeBillRecipients = (prefix: string, identifiers: string[], providers: re
       kind,
     })),
   );
+};
 
 export const phoneRecipients = makeBillRecipients(
   "phone",

@@ -15,7 +15,7 @@ import logoZenith from "@/assets/banks/zenith.png";
 export const providerLogos: Record<string, string> = {
   MTN: logoMtn,
   IKEDC: logoIkedc,
-  SpottyBet: logoSpottybet,
+  SportyBet: logoSpottybet,
   Amazon: logoAmazon,
   Apple: logoApple,
   "Google Play": logoGooglePlay,
@@ -24,6 +24,12 @@ export const providerLogos: Record<string, string> = {
   GTBank: logoGtbank,
   "Zenith Bank": logoZenith,
 };
+
+/**
+ * True when we hold real artwork for this symbol. Lists filter on it rather
+ * than falling back to a lettered circle, which reads as a placeholder.
+ */
+export const hasAssetLogo = (symbol: string) => Boolean(coinIcons[symbol] ?? providerLogos[symbol]);
 
 /**
  * The 32px circular mark that fronts every asset / transaction row.

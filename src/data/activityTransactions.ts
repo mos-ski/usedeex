@@ -42,7 +42,7 @@ const billItems = [
   { title: "MTN - Airtime", symbol: "MTN", receiptType: "airtime", provider: "MTN" },
   { title: "IKEDC - Electricity", symbol: "IKEDC", receiptType: "electricity", provider: "IKEDC" },
   { title: "Airtel - Data", symbol: "Airtel", receiptType: "data", provider: "Airtel" },
-  { title: "SpottyBet - Betting", symbol: "SpottyBet", receiptType: "betting", provider: "SpottyBet" },
+  { title: "SportyBet - Betting", symbol: "SportyBet", receiptType: "betting", provider: "SportyBet" },
   { title: "Glo - Data", symbol: "Glo", receiptType: "data", provider: "Glo" },
 ];
 const payoutProviders = ["PalmPay", "Opay", "GTBank", "Access Bank", "UBA"];

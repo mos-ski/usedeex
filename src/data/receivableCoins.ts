@@ -1,3 +1,4 @@
+import { hasAssetLogo } from "@/components/dashboard/AssetMark";
 import type { PickableCoin } from "@/components/dashboard/CoinPicker";
 
 /**
@@ -6,7 +7,7 @@ import type { PickableCoin } from "@/components/dashboard/CoinPicker";
  */
 export type ReceivableCoin = PickableCoin & { address: string };
 
-export const receivableCoins: ReceivableCoin[] = [
+const allReceivableCoins: ReceivableCoin[] = [
   {
     symbol: "BTC",
     name: "Bitcoin",
@@ -43,3 +44,6 @@ export const receivableCoins: ReceivableCoin[] = [
     networks: ["TRC20"],
   },
 ];
+
+/** Only coins we hold a mark for; a lettered circle reads as a placeholder. */
+export const receivableCoins: ReceivableCoin[] = allReceivableCoins.filter((coin) => hasAssetLogo(coin.symbol));
