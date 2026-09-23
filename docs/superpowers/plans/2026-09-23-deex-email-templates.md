@@ -315,9 +315,9 @@ const BODY = (
 
 export function verifyCodeEmail(data: VerifyCodeData): string {
   const withCta = BODY.replace("{{cta}}", ctaButton("Verify Email", data.verifyUrl));
+  // Fill AFTER shelling so the footer's {{email}} token is also replaced.
   // Figma renders the heading uppercase (textCase UPPER), so uppercase the name.
-  const filled = fillTokens(withCta, { ...data, name: data.name.toUpperCase() });
-  return emailShell("Verify your email", filled);
+  return fillTokens(emailShell("Verify your email", withCta), { ...data, name: data.name.toUpperCase() });
 }
 ```
 
@@ -403,8 +403,8 @@ const BODY =
 
 export function welcomeEmail(data: WelcomeData): string {
   // Heading is uppercase per Figma convention; body greetings elsewhere stay verbatim.
-  const filled = fillTokens(BODY.replace("{{cta}}", ctaButton("Open DeeX", data.dashboardUrl)), { ...data, name: data.name.toUpperCase() });
-  return emailShell("Welcome to DeeX", filled);
+  // Fill AFTER shelling so the footer's {{email}} token is also replaced.
+  return fillTokens(emailShell("Welcome to DeeX", BODY.replace("{{cta}}", ctaButton("Open DeeX", data.dashboardUrl))), { ...data, name: data.name.toUpperCase() });
 }
 ```
 
@@ -428,8 +428,8 @@ const BODY =
   `</table>`;
 
 export function passwordResetEmail(data: PasswordResetData): string {
-  const filled = fillTokens(BODY.replace("{{cta}}", ctaButton("Reset Password", data.resetUrl)), { ...data });
-  return emailShell("Reset your password", filled);
+  // Fill AFTER shelling so the footer's {{email}} token is also replaced.
+  return fillTokens(emailShell("Reset your password", BODY.replace("{{cta}}", ctaButton("Reset Password", data.resetUrl))), { ...data });
 }
 ```
 
@@ -529,8 +529,8 @@ const BODY =
   `</table>`;
 
 export function receiptEmail(data: ReceiptData): string {
-  const filled = fillTokens(BODY.replace("{{cta}}", ctaButton("View Receipt", data.receiptUrl)), { ...data });
-  return emailShell("Your DeeX receipt", filled);
+  // Fill AFTER shelling so the footer's {{email}} token is also replaced.
+  return fillTokens(emailShell("Your DeeX receipt", BODY.replace("{{cta}}", ctaButton("View Receipt", data.receiptUrl))), { ...data });
 }
 ```
 
