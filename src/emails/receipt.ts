@@ -34,5 +34,5 @@ const BODY =
 
 export function receiptEmail(data: ReceiptData): string {
   // Fill AFTER shelling so the footer's {{email}} token is also replaced.
-  return fillTokens(emailShell("Your DeeX receipt", BODY.replace("{{cta}}", ctaButton("View Receipt", data.receiptUrl))), { ...data });
+  return fillTokens(emailShell("Your DeeX receipt", BODY.replace("{{cta}}", () => ctaButton("View Receipt", data.receiptUrl))), { ...data });
 }

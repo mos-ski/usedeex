@@ -18,7 +18,6 @@ describe("verify-code", () => {
   });
 
   it("throws when a digit is missing", () => {
-    // @ts-expect-error intentionally incomplete
-    expect(() => verifyCodeEmail({ ...data, d4: undefined })).toThrow("Missing email token");
+    expect(() => verifyCodeEmail({ ...data, d4: undefined } as never)).toThrow("Missing email token");
   });
 });

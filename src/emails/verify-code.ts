@@ -28,7 +28,8 @@ const BODY = (
 );
 
 export function verifyCodeEmail(data: VerifyCodeData): string {
-  const withCta = BODY.replace("{{cta}}", ctaButton("Verify Email", data.verifyUrl));
+  if (data.name == null) throw new Error("Missing email token: name");
+  const withCta = BODY.replace("{{cta}}", () => ctaButton("Verify Email", data.verifyUrl));
   // Fill after shell so footerSection's {{email}} is also replaced.
   // {{cta}} is replaced before fillTokens so button HTML is not escaped.
   const shell = emailShell("Verify your email", withCta);

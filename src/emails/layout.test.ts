@@ -39,4 +39,10 @@ describe("layout", () => {
     expect(btn).toContain("&amp;");
     expect(emailShell('<t>"hi"', "<p>x</p>")).toContain("&lt;t&gt;");
   });
+
+  it("rejects unsafe button urls and escapes ampersands in https urls", () => {
+    expect(() => ctaButton("x", "javascript:alert(1)")).toThrow("Unsafe email URL");
+    const btn = ctaButton("x", "https://deex.com/?a=1&b=2");
+    expect(btn).toContain("&amp;");
+  });
 });

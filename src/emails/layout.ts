@@ -52,6 +52,7 @@ export function heroSection(): string {
 }
 
 export function ctaButton(label: string, url: string): string {
+  if (!/^https?:\/\//.test(url)) throw new Error("Unsafe email URL: " + url);
   const safeLabel = escapeHtml(label);
   const safeUrl = escapeHtml(url);
   return (

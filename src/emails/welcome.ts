@@ -15,7 +15,8 @@ const BODY =
   `</table>`;
 
 export function welcomeEmail(data: WelcomeData): string {
+  if (data.name == null) throw new Error("Missing email token: name");
   // Heading is uppercase per Figma convention; body greetings elsewhere stay verbatim.
   // Fill AFTER shelling so the footer's {{email}} token is also replaced.
-  return fillTokens(emailShell("Welcome to DeeX", BODY.replace("{{cta}}", ctaButton("Open DeeX", data.dashboardUrl))), { ...data, name: data.name.toUpperCase() });
+  return fillTokens(emailShell("Welcome to DeeX", BODY.replace("{{cta}}", () => ctaButton("Open DeeX", data.dashboardUrl))), { ...data, name: data.name.toUpperCase() });
 }

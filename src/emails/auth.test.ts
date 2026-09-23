@@ -10,6 +10,12 @@ describe("welcome", () => {
     expect(html).toContain("https://deex.com/dashboard");
     expect(html).not.toContain("{{");
   });
+
+  it("escapes html in name and uppercases heading", () => {
+    const html = welcomeEmail({ name: "<b>Ada</b>", email: "olivia@deex.com", dashboardUrl: "https://deex.com/dashboard" });
+    expect(html).not.toContain("<b>");
+    expect(html).toContain("&lt;B&gt;ADA&lt;/B&gt;");
+  });
 });
 
 describe("password-reset", () => {
@@ -19,5 +25,9 @@ describe("password-reset", () => {
     expect(html).toContain("next 15 minutes");
     expect(html).toContain("https://deex.com/reset?t=abc");
     expect(html).not.toContain("{{");
+  });
+
+  it("throws Unsafe email URL when resetUrl is missing", () => {
+    expect(() => passwordResetEmail({ name: "Olivia", email: "olivia@deex.com", resetUrl: undefined, minutes: "15" } as never)).toThrow("Unsafe email URL");
   });
 });

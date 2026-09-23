@@ -17,5 +17,5 @@ const BODY =
 
 export function passwordResetEmail(data: PasswordResetData): string {
   // Fill AFTER shelling so the footer's {{email}} token is also replaced.
-  return fillTokens(emailShell("Reset your password", BODY.replace("{{cta}}", ctaButton("Reset Password", data.resetUrl))), { ...data });
+  return fillTokens(emailShell("Reset your password", BODY.replace("{{cta}}", () => ctaButton("Reset Password", data.resetUrl))), { ...data });
 }
