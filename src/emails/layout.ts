@@ -52,9 +52,11 @@ export function heroSection(): string {
 }
 
 export function ctaButton(label: string, url: string): string {
+  const safeLabel = escapeHtml(label);
+  const safeUrl = escapeHtml(url);
   return (
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="${BRAND.primary}" style="border-radius:6px;background-color:${BRAND.primary};">` +
-    `<a href="${url}" style="display:inline-block;padding:12px 48px;font-family:${FONT_BUTTON};font-size:14px;font-weight:700;line-height:1.6;color:${BRAND.buttonText};text-decoration:none;">${label}</a>` +
+    `<a href="${safeUrl}" style="display:inline-block;padding:12px 48px;font-family:${FONT_BUTTON};font-size:14px;font-weight:700;line-height:1.6;color:${BRAND.buttonText};text-decoration:none;">${safeLabel}</a>` +
     `</td></tr></table>`
   );
 }
@@ -80,7 +82,7 @@ export function emailShell(title: string, bodyInner: string): string {
   return (
     `<!DOCTYPE html><html><head><meta charset="utf-8" />` +
     `<meta name="viewport" content="width=device-width, initial-scale=1.0" />` +
-    `<title>${title}</title></head>` +
+    `<title>${escapeHtml(title)}</title></head>` +
     `<body style="margin:0;padding:0;background-color:#F7F8F9;">` +
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">` +
     `<tr><td align="center" style="padding:24px 12px;">` +
