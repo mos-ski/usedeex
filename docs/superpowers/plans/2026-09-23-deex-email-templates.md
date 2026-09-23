@@ -619,6 +619,7 @@ export interface EmailDataMap {
 }
 
 export function renderEmail<N extends EmailName>(name: N, data: EmailDataMap[N]): string {
+  assertTokens(name, data); // REQUIRED: pre-validate (see note below) before dispatch
   switch (name) {
     case "verify-code":
       return verifyCodeEmail(data as VerifyCodeData);
@@ -640,6 +641,8 @@ export const emailSamples: { [K in EmailName]: EmailDataMap[K] } = {
   receipt: { name: "Olivia", email: "olivia@deex.com", amount: "₦50,000.00", type: "Wallet top-up", reference: "DX-2026-000123", date: "23 Sep 2026", receiptUrl: "https://deex.com/receipt/DX-2026-000123" },
 };
 ```
+
+**Token pre-validation (accepted workaround):** builders call `ctaButton` with URL fields *before* `fillTokens` runs, so a missing URL throws `TypeError` inside `escapeHtml` instead of `Missing email token`. `renderEmail` therefore pre-validates with a `REQUIRED_TOKENS: Record<EmailName, string[]>` map plus an `assertTokens` helper that throws `Error("Missing email token: <key>")` for absent/`undefined` keys (empty strings pass). Keep the map in sync with template token lists; if `ctaButton`/templates ever throw `Missing email token` themselves, remove the pre-validation.
 
 - [ ] **Step 4: Run test to verify it passes**
 
