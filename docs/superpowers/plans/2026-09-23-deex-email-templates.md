@@ -230,6 +230,23 @@ git commit -m "feat(emails): add shared layout partials and helpers"
 - Consumes: `emailShell`, `ctaButton`, `fillTokens`, `BRAND`, `FONT_*` from `./layout`.
 - Produces: `export interface VerifyCodeData { name: string; email: string; d1: string; d2: string; d3: string; d4: string; verifyUrl: string; minutes: string; }` and `export function verifyCodeEmail(data: VerifyCodeData): string` (full HTML document).
 
+- [ ] **Step 0: Harden layout helpers (review finding from Task 1)**
+
+`ctaButton` and `emailShell` interpolate `label`/`url`/`title` raw. Escape them: in `src/emails/layout.ts`, change `ctaButton` to compute `const safeLabel = escapeHtml(label); const safeUrl = escapeHtml(url);` and use `${safeUrl}` / `${safeLabel}` in the anchor; change `emailShell` to use `<title>${escapeHtml(title)}</title>`. (URL escaping is correct in HTML attributes: `&` becomes `&amp;`.) Append this test to `src/emails/layout.test.ts`:
+
+```ts
+it("escapes button label, url and shell title", () => {
+  const btn = ctaButton('<b>"x"</b>', 'https://deex.com/?a=1&b=2"x');
+  expect(btn).not.toContain("<b>");
+  expect(btn).toContain("&lt;b&gt;");
+  expect(btn).toContain("&amp;");
+  expect(emailShell('<t>"hi"', "<p>x</p>")).toContain("&lt;t&gt;");
+});
+```
+
+Run: `npx vitest run src/emails/layout.test.ts`
+Expected: PASS (7 tests).
+
 - [ ] **Step 1: Write the failing test**
 
 ```ts
