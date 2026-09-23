@@ -34,6 +34,7 @@ import ReferralDashboard from "./pages/ReferralDashboard";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
+import EmailPreview from "./pages/EmailPreview";
 import GenerateStatement from "./pages/GenerateStatement";
 import AboutDeeX from "./pages/AboutDeeX";
 import LegalDocument from "./pages/LegalDocument";
@@ -128,6 +129,7 @@ const App = () => (
             <Route path="/faq" element={<MarketingTopic slug="faq" />} />
             <Route path="/policies/:slug" element={<MarketingPolicy />} />
 
+            {import.meta.env.DEV && <Route path="/emails/preview" element={<EmailPreview />} />}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
