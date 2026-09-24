@@ -36,59 +36,59 @@ const AdminPayouts = () => {
 
 
   const columns: ResponsiveColumn<PayoutItem>[] = [
-    { key: "sn", label: "S/N", render: (_, i) => <span className="text-xs text-brand-grey500">{i + 1}</span> },
-    { key: "name", label: "Name", mobile: true, render: (p) => <span className="text-sm text-brand-grey900 font-medium truncate">{p.name}</span> },
-    { key: "amount", label: "Amount", mobile: true, render: (p) => <span className="text-sm font-semibold text-brand-grey900">{p.amount}</span> },
-    { key: "bank", label: "Bank Details", render: (p) => <span className="text-xs text-brand-grey500">{p.bank}</span> },
+    { key: "sn", label: "S/N", render: (_, i) => <span className="text-xs text-gray-500">{i + 1}</span> },
+    { key: "name", label: "Name", mobile: true, render: (p) => <span className="text-sm font-medium text-gray-900 truncate">{p.name}</span> },
+    { key: "amount", label: "Amount", mobile: true, render: (p) => <span className="text-sm font-semibold text-gray-900">{p.amount}</span> },
+    { key: "bank", label: "Bank Details", render: (p) => <span className="text-xs text-gray-500">{p.bank}</span> },
     { key: "orderRef", label: "Order Ref", render: (p) => (
       <div className="flex items-center gap-1">
-        <span className="text-xs text-brand-grey500 font-mono">{p.orderRef.slice(0, 10)}...</span>
+        <span className="text-xs text-gray-500 font-mono">{p.orderRef.slice(0, 10)}...</span>
         <CopyButton text={p.orderRef} label="Order Ref" />
       </div>
     )},
-    { key: "date", label: "Date", render: (p) => <span className="text-xs text-brand-grey500 whitespace-nowrap">{p.date}</span> },
+    { key: "date", label: "Date", render: (p) => <span className="text-xs text-gray-500 whitespace-nowrap">{p.date}</span> },
     { key: "status", label: "Status", mobile: true, render: (p) => <StatusBadge status={p.status} /> },
     { key: "action", label: "Action", render: (p) => p.status === "FAILED" ? (
       <button onClick={(e) => { e.stopPropagation(); toast.success(`Retrying payout for ${p.name}...`); }}
-        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-brand-warning400/10 text-brand-warning400 hover:bg-brand-warning400/20 text-[10px] font-semibold transition-colors">
+        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-semibold transition-colors">
         <RotateCcw className="w-3 h-3" /> Retry
       </button>
-    ) : <span className="text-xs text-brand-grey500">—</span> },
+    ) : <span className="text-xs text-gray-500">—</span> },
   ];
 
   return (
     <div>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2">
-          <p className="text-xs font-semibold text-brand-grey500 uppercase tracking-wider">PAYOUTS</p>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">PAYOUTS</p>
           <NewBadge />
         </div>
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-brand-grey500" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
             <input value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setPage(1); }}
               placeholder="Search name, ref, bank…"
-              className="h-8 w-48 bg-brand-surface border border-brand-grey100 rounded-lg pl-8 pr-3 text-xs text-brand-grey900 placeholder:text-brand-grey500 outline-none" />
+              className="h-8 w-48 rounded-lg border border-gray-200 bg-white pl-8 pr-3 text-xs text-gray-900 placeholder:text-gray-400 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400" />
           </div>
-          <button className="flex items-center gap-1.5 text-xs text-brand-grey500 hover:text-brand-grey900">
+          <button className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900">
             <Upload className="w-3.5 h-3.5" /> Export
           </button>
         </div>
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6">
-        <div className="bg-brand-surface border border-brand-grey100 rounded-xl p-4 md:p-5">
-          <p className="text-xs text-brand-grey500 mb-1">Total Payouts</p>
-          <p className="text-2xl font-gasoek font-bold text-brand-grey900">{payoutsList.length}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+          <p className="text-sm font-medium text-gray-500 mb-1">Total Payouts</p>
+          <p className="text-2xl font-display font-bold text-gray-900">{payoutsList.length}</p>
         </div>
-        <div className="bg-brand-surface border border-brand-grey100 rounded-xl p-4 md:p-5">
-          <p className="text-xs text-brand-grey500 mb-1">Completed</p>
-          <p className="text-2xl font-gasoek font-bold text-brand-success">{statusCounts.COMPLETED}</p>
+        <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+          <p className="text-sm font-medium text-gray-500 mb-1">Completed</p>
+          <p className="text-2xl font-display font-bold text-emerald-600">{statusCounts.COMPLETED}</p>
         </div>
-        <div className="bg-brand-surface border border-brand-grey100 rounded-xl p-4 md:p-5">
-          <p className="text-xs text-brand-grey500 mb-1">Failed</p>
-          <p className="text-2xl font-gasoek font-bold text-brand-danger">{statusCounts.FAILED}</p>
+        <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+          <p className="text-sm font-medium text-gray-500 mb-1">Failed</p>
+          <p className="text-2xl font-display font-bold text-red-600">{statusCounts.FAILED}</p>
         </div>
       </div>
 
@@ -96,7 +96,7 @@ const AdminPayouts = () => {
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {(["All", "COMPLETED", "PENDING", "FAILED"] as const).map(s => (
           <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${statusFilter === s ? "bg-brand-blue500 text-white" : "bg-brand-grey100 text-brand-grey500 hover:bg-brand-grey50 hover:text-brand-blue500"}`}>
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border whitespace-nowrap transition-colors ${statusFilter === s ? "border-amber-500 bg-amber-500 text-white" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"}`}>
             {s === "All" ? `All (${statusCounts.All})` : `${s.charAt(0) + s.slice(1).toLowerCase()} (${statusCounts[s]})`}
           </button>
         ))}
