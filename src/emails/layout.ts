@@ -88,7 +88,7 @@ export function emailShell(title: string, bodyInner: string): string {
     `<title>${escapeHtml(title)}</title></head>` +
     `<body style="margin:0;padding:0;background-color:#F7F8F9;">` +
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">` +
-    `<tr><td align="center" style="padding:24px 12px;">` +
+    `<tr><td align="center" style="padding:0;">` +
     `<table role="presentation" width="${EMAIL_WIDTH}" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:${EMAIL_WIDTH}px;background-color:${BRAND.white};">` +
     `<tr><td>${heroSection()}${bodyInner}${footerSection()}</td></tr>` +
     `</table></td></tr></table></body></html>`

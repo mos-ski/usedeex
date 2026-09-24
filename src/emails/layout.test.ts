@@ -16,6 +16,8 @@ describe("layout", () => {
     expect(html).toContain("<!DOCTYPE html>");
     expect(html).toContain('width="720"');
     expect(html).toContain("max-width:720px");
+    expect(html).toContain('<td align="center" style="padding:0;">');
+    expect(html).not.toContain("padding:24px 12px");
     expect(html).toContain("<p>hi</p>");
   });
 
