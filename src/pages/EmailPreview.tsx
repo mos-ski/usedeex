@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { emailCatalog, emailCategories, emailSamples, renderEmail, type EmailName } from "@/emails";
+import { EMAIL_WIDTH } from "@/emails/layout";
 
 type ZoomMode = "fit" | "actual";
 
@@ -50,7 +51,7 @@ const EmailPreview = () => {
     return () => observer.disconnect();
   }, []);
 
-  const scale = zoomMode === "fit" ? Math.min(1, viewport.width / 640, viewport.height / emailHeight) : 1;
+  const scale = zoomMode === "fit" ? Math.min(1, viewport.width / EMAIL_WIDTH, viewport.height / emailHeight) : 1;
   const selected = emailCatalog[active];
 
   return (
@@ -103,7 +104,7 @@ const EmailPreview = () => {
 
           <div ref={canvasRef} className={`min-h-0 flex-1 bg-[#E8EDF2] p-5 ${zoomMode === "actual" ? "overflow-auto" : "overflow-hidden"}`}>
             <div className="flex min-h-full min-w-full justify-center">
-              <div className="relative shrink-0 overflow-hidden rounded-xl bg-white shadow-[0_24px_70px_rgba(0,0,0,0.18)]" style={{ width: 640 * scale, height: emailHeight * scale }}>
+              <div className="relative shrink-0 overflow-hidden bg-white" style={{ width: EMAIL_WIDTH * scale, height: emailHeight * scale }}>
                 <iframe
                   key={active}
                   title={`Email preview: ${active}`}
@@ -114,7 +115,7 @@ const EmailPreview = () => {
                     if (measuredHeight > 0) setEmailHeight(Math.max(700, measuredHeight));
                   }}
                   className="absolute left-0 top-0 border-0 bg-white"
-                  style={{ width: 640, height: emailHeight, transform: `scale(${scale})`, transformOrigin: "top left" }}
+                  style={{ width: EMAIL_WIDTH, height: emailHeight, transform: `scale(${scale})`, transformOrigin: "top left" }}
                 />
               </div>
             </div>

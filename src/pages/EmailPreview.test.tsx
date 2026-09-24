@@ -27,4 +27,13 @@ describe("email preview workspace", () => {
     fireEvent.click(screen.getByRole("button", { name: "Show at 100%" }));
     expect(screen.getByRole("button", { name: "Show at 100%" })).toHaveAttribute("aria-pressed", "true");
   });
+
+  it("uses a flat 720px email canvas", () => {
+    render(<EmailPreview />);
+
+    const frame = screen.getByTitle("Email preview: welcome");
+    expect(frame).toHaveStyle({ width: "720px" });
+    expect(frame.parentElement).not.toHaveClass("rounded-xl");
+    expect(frame.parentElement?.className).not.toContain("shadow-");
+  });
 });

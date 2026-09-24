@@ -1,4 +1,5 @@
 export const DEFAULT_ASSET_BASE_URL = "https://deex.com/emails";
+export const EMAIL_WIDTH = 720;
 
 export const ASSETS = {
   logo: "logo.svg",
@@ -46,8 +47,8 @@ export function heroSection(): string {
   return (
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">` +
     `<tr><td align="center" height="215" bgcolor="${BRAND.hero}" style="height:215px;background-color:${BRAND.hero};overflow:hidden;position:relative;">` +
-    `<img src="${asset(ASSETS.wave)}" alt="" width="699" height="412" style="display:block;border:0;position:absolute;width:699px;height:412px;left:187px;top:83px;transform:rotate(-164.13deg);" />` +
-    `<img src="${asset(ASSETS.logo)}" alt="DeeX" width="238" height="64" style="display:block;border:0;position:absolute;width:238px;height:64px;left:201px;top:74px;" />` +
+    `<img src="${asset(ASSETS.wave)}" alt="" width="699" height="412" style="display:block;border:0;position:absolute;width:699px;height:412px;left:227px;top:83px;transform:rotate(-164.13deg);" />` +
+    `<img src="${asset(ASSETS.logo)}" alt="DeeX" width="238" height="64" style="display:block;border:0;position:absolute;width:238px;height:64px;left:241px;top:74px;" />` +
     `</td></tr></table>`
   );
 }
@@ -88,7 +89,7 @@ export function emailShell(title: string, bodyInner: string): string {
     `<body style="margin:0;padding:0;background-color:#F7F8F9;">` +
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">` +
     `<tr><td align="center" style="padding:24px 12px;">` +
-    `<table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:640px;background-color:${BRAND.white};">` +
+    `<table role="presentation" width="${EMAIL_WIDTH}" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:${EMAIL_WIDTH}px;background-color:${BRAND.white};">` +
     `<tr><td>${heroSection()}${bodyInner}${footerSection()}</td></tr>` +
     `</table></td></tr></table></body></html>`
   );

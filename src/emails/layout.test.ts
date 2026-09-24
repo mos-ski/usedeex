@@ -11,10 +11,11 @@ describe("layout", () => {
     expect(() => fillTokens("Hi {{name}}", {})).toThrow("Missing email token: name");
   });
 
-  it("shell wraps body in a 640px table", () => {
+  it("shell wraps body in a responsive 720px table", () => {
     const html = emailShell("Verify", "<p>hi</p>");
     expect(html).toContain("<!DOCTYPE html>");
-    expect(html).toContain("max-width:640px");
+    expect(html).toContain('width="720"');
+    expect(html).toContain("max-width:720px");
     expect(html).toContain("<p>hi</p>");
   });
 
