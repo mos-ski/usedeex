@@ -33,7 +33,7 @@ export const detailTable = (rows: ReceiptRow[]) =>
   `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:${FONT_BODY};font-size:16px;line-height:24px;">${rows
     .map(
       ({ label, value }, index) =>
-        `<tr><td style="padding:10px 0;${index ? "border-top:1px solid #E5E7EB;" : ""}color:${BRAND.bodyGrey};">${escapeHtml(label)}</td><td align="right" style="padding:10px 0;${index ? "border-top:1px solid #E5E7EB;" : ""}color:${BRAND.black};font-weight:600;">${escapeHtml(value)}</td></tr>`,
+        `<tr><td align="left" style="text-align:left;padding:10px 0;${index ? "border-top:1px solid #E5E7EB;" : ""}color:${BRAND.bodyGrey};">${escapeHtml(label)}</td><td align="right" style="text-align:right;padding:10px 0;${index ? "border-top:1px solid #E5E7EB;" : ""}color:${BRAND.black};font-weight:600;">${escapeHtml(value)}</td></tr>`,
     )
     .join("")}</table>`;
 
