@@ -537,14 +537,14 @@ export const userActivities = [
 ];
 
 export const activityCategoryColors: Record<string, string> = {
-  auth: "bg-brand-blue500/10 text-brand-blue500",
-  wallet: "bg-brand-success/10 text-brand-success",
-  trade: "bg-brand-amber/10 text-brand-amber",
-  kyc: "bg-brand-warning400/10 text-brand-warning400",
-  security: "bg-brand-danger/10 text-brand-danger",
-  settings: "bg-brand-grey100 text-brand-grey500",
-  referral: "bg-brand-purple/10 text-brand-purple",
-  reward: "bg-brand-blue500/10 text-brand-blue500",
+  auth: "bg-blue-50 text-blue-700 border border-blue-200",
+  wallet: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  trade: "bg-amber-50 text-amber-700 border border-amber-200",
+  kyc: "bg-orange-50 text-orange-700 border border-orange-200",
+  security: "bg-red-50 text-red-700 border border-red-200",
+  settings: "bg-gray-50 text-gray-600 border border-gray-200",
+  referral: "bg-purple-50 text-purple-700 border border-purple-200",
+  reward: "bg-blue-50 text-blue-700 border border-blue-200",
 };
 
 export const userRewards = [
