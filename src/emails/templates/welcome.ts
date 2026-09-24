@@ -1,5 +1,5 @@
-import { emailShell, fillTokens } from "../layout";
-import { action, heading, paragraph, personalSignOff, rawRow, renderBody } from "../primitives";
+import { BRAND, emailShell, fillTokens, FONT_BODY } from "../layout";
+import { action, heading, paragraph, rawRow, renderBody } from "../primitives";
 import type { TemplateDefinition } from "../types";
 
 export type WelcomePayload = {
@@ -9,15 +9,20 @@ export type WelcomePayload = {
 };
 
 const LETTER = renderBody(
-  heading("{{nameUpper}}, YOUR MONEY MOVES DIFFERENTLY NOW.") +
-    paragraph("Welcome to DeeX—the account built to move at your speed.") +
+  heading("WELCOME TO DEEX, {{nameUpper}}.") +
+    paragraph("I’m Omojuwa Divine, CEO of UseDeeX. I wanted to personally welcome you to DeeX.") +
     paragraph(
-      "Hold your assets. Swap them. Send money. Pay bills. Cash out when you decide. No branch. No queue. No permission.",
-      { color: "#000000" },
+      "We built DeeX to make managing your money simpler—whether you’re holding or exchanging digital assets, sending money, paying bills, buying gift cards, or earning rewards.",
     ) +
-    paragraph("Your account is ready. Make your first move.") +
+    paragraph(
+      "Your account is ready, and you can start exploring whenever you’re ready. If anything feels unclear or you need help, our team is always here for you.",
+    ) +
+    paragraph("Thank you for choosing DeeX. We’re glad to have you with us.") +
     rawRow("{{cta}}") +
-    rawRow(personalSignOff("Omojuwa Divine", "CEO, UseDeeX")),
+    paragraph("Welcome aboard,") +
+    rawRow(
+      `<div style="font-family:${FONT_BODY};font-size:18px;line-height:28px;color:${BRAND.bodyGrey};"><strong>Omojuwa Divine</strong><br />CEO, UseDeeX</div>`,
+    ),
 );
 
 export const welcomeDefinition: TemplateDefinition<WelcomePayload> = {
@@ -32,7 +37,7 @@ export const welcomeDefinition: TemplateDefinition<WelcomePayload> = {
     dashboardUrl: "https://deex.com/dashboard",
   },
   render: (data) => {
-    const body = LETTER.replace("{{cta}}", () => action("Open DeeX", data.dashboardUrl));
+    const body = LETTER.replace("{{cta}}", () => action("Explore DeeX", data.dashboardUrl));
     return fillTokens(emailShell("Welcome to DeeX", body), {
       ...data,
       nameUpper: data.name.toUpperCase(),
