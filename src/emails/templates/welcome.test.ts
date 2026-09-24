@@ -8,6 +8,7 @@ describe("welcome email", () => {
     expect(html).toContain("OLIVIA, YOUR MONEY MOVES DIFFERENTLY NOW.");
     expect(html).toContain("Omojuwa Divine");
     expect(html).toContain("CEO, UseDeeX");
+    expect(html).not.toContain("text-align:left");
     expect(html).not.toContain("seamless");
   });
 

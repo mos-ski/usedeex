@@ -9,16 +9,15 @@ export type WelcomePayload = {
 };
 
 const LETTER = renderBody(
-  heading("{{nameUpper}}, YOUR MONEY MOVES DIFFERENTLY NOW.", "left") +
-    paragraph("Welcome to DeeX—the account built to move at your speed.", { align: "left" }) +
+  heading("{{nameUpper}}, YOUR MONEY MOVES DIFFERENTLY NOW.") +
+    paragraph("Welcome to DeeX—the account built to move at your speed.") +
     paragraph(
       "Hold your assets. Swap them. Send money. Pay bills. Cash out when you decide. No branch. No queue. No permission.",
-      { align: "left", color: "#000000" },
+      { color: "#000000" },
     ) +
-    paragraph("Your account is ready. Make your first move.", { align: "left" }) +
-    rawRow("{{cta}}", "left") +
-    rawRow(personalSignOff("Omojuwa Divine", "CEO, UseDeeX"), "left"),
-  { align: "left" },
+    paragraph("Your account is ready. Make your first move.") +
+    rawRow("{{cta}}") +
+    rawRow(personalSignOff("Omojuwa Divine", "CEO, UseDeeX")),
 );
 
 export const welcomeDefinition: TemplateDefinition<WelcomePayload> = {
