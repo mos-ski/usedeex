@@ -18,6 +18,18 @@ describe("renderEmail", () => {
     }
   });
 
+  it("lists every template once under its declared category", () => {
+    const listedIds = emailCategories.flatMap((category) =>
+      category.templateIds.map((id) => {
+        expect(emailCatalog[id].category, id).toBe(category.id);
+        return id;
+      }),
+    );
+
+    expect(new Set(listedIds).size).toBe(listedIds.length);
+    expect(new Set(listedIds)).toEqual(new Set(Object.keys(emailCatalog)));
+  });
+
   it("throws on unknown template", () => {
     expect(() => renderEmail("nope" as never, {} as never)).toThrow("Unknown email template");
   });

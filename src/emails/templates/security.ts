@@ -1,10 +1,11 @@
 import { emailShell, fillTokens } from "../layout";
 import { action, detailTable, heading, paragraph, rawRow, renderBody, teamSignOff } from "../primitives";
-import type { EmailPayload, ReceiptRow, TemplateDefinition } from "../types";
+import type { EmailCategory, EmailPayload, ReceiptRow, TemplateDefinition } from "../types";
 import { verifyCodeEmail, type VerifyCodeData } from "../verify-code";
 
 type SecurityMessage<T extends EmailPayload> = {
   label: string;
+  category?: EmailCategory;
   subject: string;
   previewText: string;
   required: readonly (keyof T)[];
@@ -17,7 +18,7 @@ type SecurityMessage<T extends EmailPayload> = {
 
 const securityDefinition = <T extends EmailPayload>(config: SecurityMessage<T>): TemplateDefinition<T> => ({
   label: config.label,
-  category: "security",
+  category: config.category ?? "security",
   subject: config.subject,
   previewText: config.previewText,
   required: config.required,
@@ -55,6 +56,7 @@ const verifyCodeDefinition: TemplateDefinition<VerifyCodeData> = {
 
 const passwordResetDefinition = securityDefinition({
   label: "Password reset",
+  category: "onboarding",
   subject: "Reset your DeeX password",
   previewText: "Choose a new password and keep moving.",
   required: ["name", "email", "resetUrl", "minutes"],
