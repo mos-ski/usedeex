@@ -12,18 +12,18 @@ export interface VerifyCodeData {
 }
 
 const digit = (token: string) =>
-  `<td align="center" width="48" bgcolor="${BRAND.white}" style="width:48px;border:1.5px solid ${BRAND.digitBorder};border-radius:8px;background-color:${BRAND.white};padding:2px 6px;font-family:${FONT_MONO};font-size:51px;line-height:54px;color:${BRAND.primary};">${token}</td>`;
+  `<td align="center" width="48" height="48" bgcolor="${BRAND.white}" style="box-sizing:border-box;width:48px;height:48px;min-height:48px;border:1.5px solid ${BRAND.digitBorder};border-radius:10px;background-color:${BRAND.white};padding:1.5px 6px;font-family:${FONT_MONO};font-size:38.25px;line-height:40.806px;letter-spacing:-0.765px;color:${BRAND.primary};">${token}</td>`;
 
 const BODY = (
   `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">` +
-  `<tr><td align="center" style="padding:32px 62px 0;font-family:${FONT_CONDENSED};font-size:36px;line-height:35px;color:${BRAND.primary};">HI {{name}},</td></tr>` +
-  `<tr><td align="center" style="padding:24px 62px 0;font-family:${FONT_BODY};font-size:20px;line-height:30px;color:${BRAND.bodyGrey};">This is your verification code:</td></tr>` +
+  `<tr><td align="center" height="100" style="height:100px;padding:32px 32px 0;font-family:${FONT_CONDENSED};font-size:36px;line-height:34.5px;color:${BRAND.primary};vertical-align:middle;">HI {{name}},</td></tr>` +
+  `<tr><td align="center" style="padding:32px 62px 0;font-family:${FONT_BODY};font-size:20px;line-height:30px;color:${BRAND.bodyGrey};">This is your verification code:</td></tr>` +
   `<tr><td align="center" style="padding:24px 62px 0;">` +
   `<table role="presentation" cellpadding="0" cellspacing="6" border="0"><tr>${digit("{{d1}}")}${digit("{{d2}}")}${digit("{{d3}}")}${digit("{{d4}}")}</tr></table>` +
   `</td></tr>` +
   `<tr><td align="center" style="padding:24px 62px 0;font-family:${FONT_BODY};font-size:20px;line-height:30px;color:${BRAND.black};">This code will only be valid for the next {{minutes}} minutes. If the code does not work, you can use this login verification link:</td></tr>` +
   `<tr><td align="center" style="padding:24px 62px 0;">{{cta}}</td></tr>` +
-  `<tr><td align="center" style="padding:24px 62px 32px;font-family:${FONT_BODY};font-size:20px;line-height:30px;color:${BRAND.bodyGrey};">Thanks,<br />The DeeX team</td></tr>` +
+  `<tr><td align="center" style="padding:24px 62px 32px;font-family:${FONT_BODY};font-size:20px;line-height:30px;color:${BRAND.bodyGrey};">Thanks,<br />The team</td></tr>` +
   `</table>`
 );
 

@@ -5,7 +5,7 @@ export const ASSETS = {
   x: "social-x.svg",
   facebook: "social-facebook.svg",
   instagram: "social-instagram.svg",
-  wave: "wave.png",
+  wave: "wave.svg",
 };
 
 const asset = (file: string) => `${DEFAULT_ASSET_BASE_URL}/${file}`;
@@ -45,8 +45,9 @@ export function fillTokens(html: string, data: Record<string, string>): string {
 export function heroSection(): string {
   return (
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">` +
-    `<tr><td align="center" bgcolor="${BRAND.hero}" style="background-color:${BRAND.hero};padding:32px 24px;">` +
-    `<img src="${asset(ASSETS.logo)}" alt="DeeX" width="180" style="display:block;border:0;width:180px;max-width:60%;height:auto;" />` +
+    `<tr><td align="center" height="215" bgcolor="${BRAND.hero}" style="height:215px;background-color:${BRAND.hero};overflow:hidden;position:relative;">` +
+    `<img src="${asset(ASSETS.wave)}" alt="" width="699" height="412" style="display:block;border:0;position:absolute;width:699px;height:412px;left:187px;top:83px;transform:rotate(-164.13deg);" />` +
+    `<img src="${asset(ASSETS.logo)}" alt="DeeX" width="238" height="64" style="display:block;border:0;position:absolute;width:238px;height:64px;left:201px;top:74px;" />` +
     `</td></tr></table>`
   );
 }
@@ -56,8 +57,8 @@ export function ctaButton(label: string, url: string): string {
   const safeLabel = escapeHtml(label);
   const safeUrl = escapeHtml(url);
   return (
-    `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="${BRAND.primary}" style="border-radius:6px;background-color:${BRAND.primary};">` +
-    `<a href="${safeUrl}" style="display:inline-block;padding:12px 48px;font-family:${FONT_BUTTON};font-size:14px;font-weight:700;line-height:1.6;color:${BRAND.buttonText};text-decoration:none;">${safeLabel}</a>` +
+    `<table role="presentation" width="280" cellpadding="0" cellspacing="0" border="0" style="width:280px;"><tr><td align="center" bgcolor="${BRAND.primary}" style="border-radius:6px;background-color:${BRAND.primary};">` +
+    `<a href="${safeUrl}" style="display:block;width:280px;box-sizing:border-box;padding:11px 12px;font-family:${FONT_BUTTON};font-size:13.5px;font-weight:700;line-height:1.6;color:${BRAND.buttonText};text-decoration:none;">${safeLabel}</a>` +
     `</td></tr></table>`
   );
 }
@@ -67,10 +68,10 @@ export function footerSection(): string {
     `<img src="${asset(file)}" alt="${alt}" width="20" height="20" style="display:block;border:0;width:20px;height:20px;" />`;
   return (
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">` +
-    `<tr><td align="center" style="padding:32px 24px;font-family:${FONT_BODY};font-size:16px;line-height:24px;color:${BRAND.footerText};">` +
+    `<tr><td align="center" style="padding:32px 24px 0;font-family:${FONT_BODY};font-size:16px;line-height:24px;color:${BRAND.footerText};">` +
     `This email was sent to {{email}}. If you&#39;d rather not receive this kind of email, you can unsubscribe or manage your email preferences.<br />&copy; 2026 DeeX, Lagos, Nigeria` +
     `</td></tr>` +
-    `<tr><td align="center" style="padding:0 24px 32px;">` +
+    `<tr><td align="center" style="padding:48px 24px 32px;">` +
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>` +
     `<td style="padding:0 8px;">${icon(ASSETS.x, "X")}</td>` +
     `<td style="padding:0 8px;">${icon(ASSETS.facebook, "Facebook")}</td>` +

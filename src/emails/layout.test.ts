@@ -18,9 +18,14 @@ describe("layout", () => {
     expect(html).toContain("<p>hi</p>");
   });
 
-  it("hero uses brand blue banner and logo", () => {
-    expect(heroSection()).toContain("#D0EBFF");
-    expect(heroSection()).toContain("logo");
+  it("renders the full-height Figma hero with its wave and DeeX artwork", () => {
+    const html = heroSection();
+
+    expect(html).toContain("#D0EBFF");
+    expect(html).toContain("height:215px");
+    expect(html).toContain("wave.svg");
+    expect(html).toContain('width="238"');
+    expect(html).toContain('height="64"');
   });
 
   it("footer has unsubscribe text and social icons", () => {

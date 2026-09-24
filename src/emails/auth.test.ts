@@ -1,6 +1,28 @@
 import { describe, it, expect } from "vitest";
 import { welcomeEmail } from "./welcome";
 import { passwordResetEmail } from "./password-reset";
+import { verifyCodeEmail } from "./verify-code";
+
+describe("verify-code", () => {
+  it("renders the Figma verification layout and DeeX sign-off", () => {
+    const html = verifyCodeEmail({
+      name: "Olivia",
+      email: "olivia@deex.com",
+      d1: "3",
+      d2: "0",
+      d3: "6",
+      d4: "6",
+      verifyUrl: "https://deex.com/verify?c=3066",
+      minutes: "5",
+    });
+
+    expect(html).toContain("HI OLIVIA,");
+    expect(html).toContain("min-height:48px");
+    expect(html).toContain("border-radius:10px");
+    expect(html).toContain("width:280px");
+    expect(html).toContain("Thanks,<br />The team");
+  });
+});
 
 describe("welcome", () => {
   it("renders greeting and dashboard cta", () => {
