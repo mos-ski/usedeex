@@ -57,7 +57,7 @@ export function ctaButton(label: string, url: string): string {
   const safeLabel = escapeHtml(label);
   const safeUrl = escapeHtml(url);
   return (
-    `<table role="presentation" width="280" cellpadding="0" cellspacing="0" border="0" style="width:280px;"><tr><td align="center" bgcolor="${BRAND.primary}" style="border-radius:6px;background-color:${BRAND.primary};">` +
+    `<table role="presentation" align="center" width="280" cellpadding="0" cellspacing="0" border="0" style="width:280px;"><tr><td align="center" bgcolor="${BRAND.primary}" style="border-radius:6px;background-color:${BRAND.primary};">` +
     `<a href="${safeUrl}" style="display:block;width:280px;box-sizing:border-box;padding:11px 12px;font-family:${FONT_BUTTON};font-size:13.5px;font-weight:700;line-height:1.6;color:${BRAND.buttonText};text-decoration:none;">${safeLabel}</a>` +
     `</td></tr></table>`
   );

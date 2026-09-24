@@ -34,7 +34,9 @@ describe("layout", () => {
   });
 
   it("cta button renders label and url", () => {
-    expect(ctaButton("Verify Email", "https://deex.com/v")).toContain("Verify Email");
+    const html = ctaButton("Verify Email", "https://deex.com/v");
+    expect(html).toContain("Verify Email");
+    expect(html).toContain('<table role="presentation" align="center"');
   });
 
   it("escapes button label, url and shell title", () => {
