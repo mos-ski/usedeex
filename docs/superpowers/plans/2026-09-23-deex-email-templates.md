@@ -230,6 +230,23 @@ git commit -m "feat(emails): add shared layout partials and helpers"
 - Consumes: `emailShell`, `ctaButton`, `fillTokens`, `BRAND`, `FONT_*` from `./layout`.
 - Produces: `export interface VerifyCodeData { name: string; email: string; d1: string; d2: string; d3: string; d4: string; verifyUrl: string; minutes: string; }` and `export function verifyCodeEmail(data: VerifyCodeData): string` (full HTML document).
 
+- [ ] **Step 0: Harden layout helpers (review finding from Task 1)**
+
+`ctaButton` and `emailShell` interpolate `label`/`url`/`title` raw. Escape them: in `src/emails/layout.ts`, change `ctaButton` to compute `const safeLabel = escapeHtml(label); const safeUrl = escapeHtml(url);` and use `${safeUrl}` / `${safeLabel}` in the anchor; change `emailShell` to use `<title>${escapeHtml(title)}</title>`. (URL escaping is correct in HTML attributes: `&` becomes `&amp;`.) Append this test to `src/emails/layout.test.ts`:
+
+```ts
+it("escapes button label, url and shell title", () => {
+  const btn = ctaButton('<b>"x"</b>', 'https://deex.com/?a=1&b=2"x');
+  expect(btn).not.toContain("<b>");
+  expect(btn).toContain("&lt;b&gt;");
+  expect(btn).toContain("&amp;");
+  expect(emailShell('<t>"hi"', "<p>x</p>")).toContain("&lt;t&gt;");
+});
+```
+
+Run: `npx vitest run src/emails/layout.test.ts`
+Expected: PASS (7 tests).
+
 - [ ] **Step 1: Write the failing test**
 
 ```ts
@@ -298,9 +315,9 @@ const BODY = (
 
 export function verifyCodeEmail(data: VerifyCodeData): string {
   const withCta = BODY.replace("{{cta}}", ctaButton("Verify Email", data.verifyUrl));
+  // Fill AFTER shelling so the footer's {{email}} token is also replaced.
   // Figma renders the heading uppercase (textCase UPPER), so uppercase the name.
-  const filled = fillTokens(withCta, { ...data, name: data.name.toUpperCase() });
-  return emailShell("Verify your email", filled);
+  return fillTokens(emailShell("Verify your email", withCta), { ...data, name: data.name.toUpperCase() });
 }
 ```
 
@@ -386,8 +403,8 @@ const BODY =
 
 export function welcomeEmail(data: WelcomeData): string {
   // Heading is uppercase per Figma convention; body greetings elsewhere stay verbatim.
-  const filled = fillTokens(BODY.replace("{{cta}}", ctaButton("Open DeeX", data.dashboardUrl)), { ...data, name: data.name.toUpperCase() });
-  return emailShell("Welcome to DeeX", filled);
+  // Fill AFTER shelling so the footer's {{email}} token is also replaced.
+  return fillTokens(emailShell("Welcome to DeeX", BODY.replace("{{cta}}", ctaButton("Open DeeX", data.dashboardUrl))), { ...data, name: data.name.toUpperCase() });
 }
 ```
 
@@ -411,8 +428,8 @@ const BODY =
   `</table>`;
 
 export function passwordResetEmail(data: PasswordResetData): string {
-  const filled = fillTokens(BODY.replace("{{cta}}", ctaButton("Reset Password", data.resetUrl)), { ...data });
-  return emailShell("Reset your password", filled);
+  // Fill AFTER shelling so the footer's {{email}} token is also replaced.
+  return fillTokens(emailShell("Reset your password", BODY.replace("{{cta}}", ctaButton("Reset Password", data.resetUrl))), { ...data });
 }
 ```
 
@@ -512,8 +529,8 @@ const BODY =
   `</table>`;
 
 export function receiptEmail(data: ReceiptData): string {
-  const filled = fillTokens(BODY.replace("{{cta}}", ctaButton("View Receipt", data.receiptUrl)), { ...data });
-  return emailShell("Your DeeX receipt", filled);
+  // Fill AFTER shelling so the footer's {{email}} token is also replaced.
+  return fillTokens(emailShell("Your DeeX receipt", BODY.replace("{{cta}}", ctaButton("View Receipt", data.receiptUrl))), { ...data });
 }
 ```
 
@@ -602,6 +619,7 @@ export interface EmailDataMap {
 }
 
 export function renderEmail<N extends EmailName>(name: N, data: EmailDataMap[N]): string {
+  assertTokens(name, data); // REQUIRED: pre-validate (see note below) before dispatch
   switch (name) {
     case "verify-code":
       return verifyCodeEmail(data as VerifyCodeData);
@@ -623,6 +641,8 @@ export const emailSamples: { [K in EmailName]: EmailDataMap[K] } = {
   receipt: { name: "Olivia", email: "olivia@deex.com", amount: "₦50,000.00", type: "Wallet top-up", reference: "DX-2026-000123", date: "23 Sep 2026", receiptUrl: "https://deex.com/receipt/DX-2026-000123" },
 };
 ```
+
+**Token pre-validation (accepted workaround):** builders call `ctaButton` with URL fields *before* `fillTokens` runs, so a missing URL throws `TypeError` inside `escapeHtml` instead of `Missing email token`. `renderEmail` therefore pre-validates with a `REQUIRED_TOKENS: Record<EmailName, string[]>` map plus an `assertTokens` helper that throws `Error("Missing email token: <key>")` for absent/`undefined` keys (empty strings pass). Keep the map in sync with template token lists; if `ctaButton`/templates ever throw `Missing email token` themselves, remove the pre-validation.
 
 - [ ] **Step 4: Run test to verify it passes**
 
