@@ -83,11 +83,11 @@ const AdminLayout = ({ activeTab, onTabChange, children, headerTitle }: AdminLay
 
   const SidebarNav = () => (
     <>
-      <div className="p-5 border-b border-border flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center">
-          <span className="text-xs font-bold text-background">D</span>
+      <div className="p-5 border-b border-brand-grey100 flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-full bg-brand-blue500 flex items-center justify-center">
+          <span className="text-sm font-bold text-white">D</span>
         </div>
-        <span className="text-base font-bold text-foreground">DEE_X</span>
+        <span className="text-base font-bold text-brand-navy">DeeX Admin</span>
       </div>
 
       <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
@@ -110,7 +110,7 @@ const AdminLayout = ({ activeTab, onTabChange, children, headerTitle }: AdminLay
                   }
                 }}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                  isActive ? "bg-secondary text-foreground font-medium" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                  isActive ? "bg-brand-blue500 text-white font-medium" : "text-brand-grey500 hover:text-brand-blue500 hover:bg-brand-tint"
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -129,7 +129,7 @@ const AdminLayout = ({ activeTab, onTabChange, children, headerTitle }: AdminLay
                       key={child.tab}
                       onClick={() => handleTabChange(child.tab)}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                        activeTab === child.tab ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                        activeTab === child.tab ? "bg-brand-blue500/10 text-brand-blue500 font-medium" : "text-brand-grey500 hover:text-brand-blue500"
                       }`}
                     >
                       {child.label}
@@ -143,10 +143,10 @@ const AdminLayout = ({ activeTab, onTabChange, children, headerTitle }: AdminLay
         })}
       </nav>
 
-      <div className="p-2 border-t border-border">
+      <div className="p-2 border-t border-brand-grey100">
         <button
           onClick={() => navigate("/dashboard")}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-brand-grey500 hover:text-brand-blue500 hover:bg-brand-tint transition-colors"
         >
           <LogOut className="w-[18px] h-[18px]" /> Logout
         </button>
@@ -155,39 +155,39 @@ const AdminLayout = ({ activeTab, onTabChange, children, headerTitle }: AdminLay
   );
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-brand-canvas flex">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-[220px] bg-card border-r border-border flex-col shrink-0 sticky top-0 h-screen">
+      <aside className="hidden lg:flex w-[220px] bg-brand-surface border-r border-brand-grey100 flex-col shrink-0 sticky top-0 h-screen">
         <SidebarNav />
       </aside>
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className="h-14 bg-card border-b border-border flex items-center justify-between px-4 md:px-6 shrink-0 sticky top-0 z-10">
-          <div className="flex items-center gap-2 text-foreground">
+        <header className="h-14 bg-brand-surface border-b border-brand-grey100 flex items-center justify-between px-4 md:px-6 shrink-0 sticky top-0 z-10">
+          <div className="flex items-center gap-2 text-brand-grey900">
             {/* Mobile hamburger */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <button className="lg:hidden p-1.5 -ml-1 rounded-lg hover:bg-secondary">
+                <button className="lg:hidden p-1.5 -ml-1 rounded-lg hover:bg-brand-tint">
                   <Menu className="w-5 h-5" />
                 </button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[260px] p-0 bg-card flex flex-col">
+              <SheetContent side="left" className="w-[260px] p-0 bg-brand-surface flex flex-col">
                 <SidebarNav />
               </SheetContent>
             </Sheet>
-            <span className="text-muted-foreground hidden md:inline">—</span>
+            <span className="text-brand-grey500 hidden md:inline">—</span>
             <h1 className="text-sm md:text-base font-semibold truncate">{getHeaderTitle()}</h1>
           </div>
           <div className="flex items-center gap-3">
             <GlobalSearch />
-            <Bell className="w-5 h-5 text-muted-foreground cursor-pointer hidden sm:block" />
-            <div className="w-8 h-8 rounded-full bg-primary/30 flex items-center justify-center text-xs font-bold text-primary shrink-0">AD</div>
+            <Bell className="w-5 h-5 text-brand-grey500 cursor-pointer hidden sm:block" />
+            <div className="w-8 h-8 rounded-full bg-brand-blue500/10 flex items-center justify-center text-xs font-bold text-brand-blue500 shrink-0">AD</div>
           </div>
         </header>
 
-        <main className="flex-1 p-3 md:p-6 overflow-auto">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
           {children}
         </main>
       </div>

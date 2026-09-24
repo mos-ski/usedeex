@@ -18,12 +18,12 @@ const CATEGORIES = ["Shopping", "Entertainment", "Gaming", "Prepaid"] as const;
 
 const statusBadge = (status: string) => {
   const styles: Record<string, string> = {
-    pending: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
-    approved: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
-    rejected: "bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))]",
+    pending: "bg-brand-warning400/10 text-brand-warning400",
+    approved: "bg-brand-success/10 text-brand-success",
+    rejected: "bg-brand-danger/10 text-brand-danger",
   };
   return (
-    <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${styles[status] || "bg-muted text-muted-foreground"}`}>
+    <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${styles[status] || "bg-brand-grey100 text-brand-grey500"}`}>
       {status}
     </span>
   );
@@ -68,9 +68,9 @@ const AdminGiftCards = () => {
   }).filter(b => b.orders > 0).sort((a, b) => b.volume - a.volume);
 
   const statusDistribution = [
-    { name: "Pending", value: orders.filter(o => o.status === "pending").length, color: "hsl(var(--warning))" },
-    { name: "Approved", value: orders.filter(o => o.status === "approved").length, color: "hsl(var(--success))" },
-    { name: "Rejected", value: orders.filter(o => o.status === "rejected").length, color: "hsl(var(--destructive))" },
+    { name: "Pending", value: orders.filter(o => o.status === "pending").length, color: "#E9AC4B" },
+    { name: "Approved", value: orders.filter(o => o.status === "approved").length, color: "#0D851D" },
+    { name: "Rejected", value: orders.filter(o => o.status === "rejected").length, color: "#FF2C2C" },
   ];
 
   const totalVolume = orders.reduce((sum, o) => sum + o.ngnPayout, 0);
@@ -151,7 +151,7 @@ const AdminGiftCards = () => {
   return (
     <div className="space-y-6">
       {/* Sub-tabs */}
-      <div className="flex items-center gap-1 bg-secondary rounded-lg p-1 w-fit">
+      <div className="flex items-center gap-1 bg-brand-grey50 rounded-lg p-1 w-fit">
       {([
           { key: "orders" as const, label: "Orders", icon: CreditCard, badge: pendingCount },
           { key: "brands" as const, label: "Brands & Rates", icon: Settings, badge: 0 },
@@ -161,13 +161,13 @@ const AdminGiftCards = () => {
             key={tab.key}
             onClick={() => setSubTab(tab.key)}
             className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              subTab === tab.key ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              subTab === tab.key ? "bg-brand-surface text-brand-grey900 shadow-sm" : "text-brand-grey500 hover:text-brand-grey900"
             }`}
           >
             <tab.icon className="w-4 h-4" />
             {tab.label}
             {tab.badge > 0 && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[hsl(var(--warning))] text-[10px] font-bold text-background">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-warning400 text-[10px] font-bold text-white">
                 {tab.badge}
               </span>
             )}
@@ -181,13 +181,13 @@ const AdminGiftCards = () => {
           {/* Metrics row */}
           <div className="grid grid-cols-4 gap-4">
             {[
-              { label: "Pending", value: pendingCount.toString(), color: "text-[hsl(var(--warning))]" },
-              { label: "Total Orders", value: orders.length.toString(), color: "text-foreground" },
-              { label: "Total Volume", value: formatNgn(totalVolume), color: "text-[hsl(var(--success))]" },
-              { label: "Avg. Order", value: `$${(avgOrderValue > 0 ? (orders.reduce((s, o) => s + o.amount, 0) / orders.length) : 0).toFixed(0)}`, color: "text-foreground" },
+              { label: "Pending", value: pendingCount.toString(), color: "text-brand-warning400" },
+              { label: "Total Orders", value: orders.length.toString(), color: "text-brand-grey900" },
+              { label: "Total Volume", value: formatNgn(totalVolume), color: "text-brand-success" },
+              { label: "Avg. Order", value: `$${(avgOrderValue > 0 ? (orders.reduce((s, o) => s + o.amount, 0) / orders.length) : 0).toFixed(0)}`, color: "text-brand-grey900" },
             ].map(m => (
-              <div key={m.label} className="bg-card border border-border rounded-xl p-4">
-                <p className="text-xs text-muted-foreground mb-1">{m.label}</p>
+              <div key={m.label} className="bg-brand-surface border border-brand-grey100 rounded-xl p-4">
+                <p className="text-xs text-brand-grey500 mb-1">{m.label}</p>
                 <p className={`text-xl font-bold ${m.color}`}>{m.value}</p>
               </div>
             ))}
@@ -203,7 +203,7 @@ const AdminGiftCards = () => {
                     key={tab}
                     onClick={() => setOrderFilter(tab)}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm transition-colors ${
-                      orderFilter === tab ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"
+                      orderFilter === tab ? "bg-brand-blue500 text-white" : "bg-brand-tint text-brand-grey500 hover:text-brand-grey900"
                     }`}
                   >
                     {tab}
@@ -213,71 +213,71 @@ const AdminGiftCards = () => {
               })}
             </div>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-grey500" />
               <input
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search by user or brand..."
-                className="h-9 w-56 bg-secondary rounded-lg pl-9 pr-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary"
+                className="h-9 w-56 bg-brand-surface border border-brand-grey100 rounded-lg pl-9 pr-4 text-sm text-brand-grey900 placeholder:text-brand-grey500 outline-none focus:ring-1 focus:ring-brand-blue500"
               />
             </div>
           </div>
 
           {/* Orders table */}
-          <div className="bg-card border border-border rounded-xl overflow-hidden">
+          <div className="bg-brand-surface border border-brand-grey100 rounded-xl overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-border">
+                <tr className="border-b border-brand-grey100">
                   {["User", "Brand", "Country/Type", "Amount", "Rate", "Payout", "Status", "Date", "Actions"].map(h => (
-                    <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                    <th key={h} className="text-left text-xs text-brand-grey500 font-medium px-4 py-3 uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filteredOrders.length === 0 ? (
-                  <tr><td colSpan={9} className="text-center py-8 text-muted-foreground text-sm">No orders found</td></tr>
+                  <tr><td colSpan={9} className="text-center py-8 text-brand-grey500 text-sm">No orders found</td></tr>
                 ) : (
                   filteredOrders.map(order => (
-                    <tr key={order.id} className="border-b border-border last:border-0 hover:bg-secondary/30 transition-colors">
+                    <tr key={order.id} className="border-b border-brand-grey100 last:border-0 hover:bg-brand-tint/50 transition-colors">
                       <td className="px-4 py-3">
-                        <p className="text-sm font-medium text-foreground">{order.userName}</p>
+                        <p className="text-sm font-medium text-brand-grey900">{order.userName}</p>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <ProviderIcon name={order.brandName} size="sm" />
-                          <span className="text-sm text-foreground">{order.brandName}</span>
+                          <span className="text-sm text-brand-grey900">{order.brandName}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <p className="text-xs text-foreground">{order.country}</p>
-                        <p className="text-[10px] text-muted-foreground">{order.cardType}</p>
+                        <p className="text-xs text-brand-grey900">{order.country}</p>
+                        <p className="text-[10px] text-brand-grey500">{order.cardType}</p>
                       </td>
-                      <td className="px-4 py-3 text-sm font-medium text-foreground">${order.amount}</td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground">₦{order.rate}/$</td>
-                      <td className="px-4 py-3 text-sm font-bold text-[hsl(var(--success))]">{formatNgn(order.ngnPayout)}</td>
+                      <td className="px-4 py-3 text-sm font-medium text-brand-grey900">${order.amount}</td>
+                      <td className="px-4 py-3 text-sm text-brand-grey500">₦{order.rate}/$</td>
+                      <td className="px-4 py-3 text-sm font-bold text-brand-success">{formatNgn(order.ngnPayout)}</td>
                       <td className="px-4 py-3">{statusBadge(order.status)}</td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground">
+                      <td className="px-4 py-3 text-xs text-brand-grey500">
                         {new Date(order.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => { setSelectedOrder(order); setReviewNote(""); }}
-                            className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-secondary transition-colors"
+                            className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-brand-grey50 transition-colors"
                           >
-                            <Eye className="h-4 w-4 text-muted-foreground" />
+                            <Eye className="h-4 w-4 text-brand-grey500" />
                           </button>
                           {order.status === "pending" && (
                             <>
                               <button
                                 onClick={() => handleApprove(order)}
-                                className="h-8 w-8 flex items-center justify-center rounded-lg text-[hsl(var(--success))] hover:bg-[hsl(var(--success))]/10 transition-colors"
+                                className="h-8 w-8 flex items-center justify-center rounded-lg text-brand-success hover:bg-brand-success/10 transition-colors"
                               >
                                 <Check className="h-4 w-4" />
                               </button>
                               <button
                                 onClick={() => handleReject(order)}
-                                className="h-8 w-8 flex items-center justify-center rounded-lg text-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive))]/10 transition-colors"
+                                className="h-8 w-8 flex items-center justify-center rounded-lg text-brand-danger hover:bg-brand-danger/10 transition-colors"
                               >
                                 <X className="h-4 w-4" />
                               </button>
@@ -298,10 +298,10 @@ const AdminGiftCards = () => {
       {subTab === "brands" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">{brands.length} brands configured</p>
+            <p className="text-sm text-brand-grey500">{brands.length} brands configured</p>
             <button
               onClick={() => setShowAddBrand(true)}
-              className="h-9 px-4 bg-primary text-primary-foreground rounded-lg text-sm font-medium flex items-center gap-1.5"
+              className="h-9 px-4 bg-brand-blue500 hover:bg-brand-blue400 text-white rounded-lg text-sm font-medium flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" /> Add Brand
             </button>
@@ -309,49 +309,49 @@ const AdminGiftCards = () => {
 
           {/* Add brand form */}
           {showAddBrand && (
-            <div className="bg-card border border-border rounded-xl p-5 space-y-4">
-              <h3 className="text-sm font-semibold text-foreground">Add New Brand</h3>
+            <div className="bg-brand-surface border border-brand-grey100 rounded-xl p-5 space-y-4">
+              <h3 className="text-sm font-semibold text-brand-grey900">Add New Brand</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Brand Name</label>
+                  <label className="text-xs text-brand-grey500 mb-1 block">Brand Name</label>
                   <input
                     value={newBrand.name}
                     onChange={e => setNewBrand(p => ({ ...p, name: e.target.value }))}
                     placeholder="e.g. Xbox"
-                    className="w-full h-9 bg-secondary rounded-lg px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full h-9 bg-brand-surface border border-brand-grey100 rounded-lg px-3 text-sm text-brand-grey900 placeholder:text-brand-grey500 outline-none focus:ring-1 focus:ring-brand-blue500"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Category</label>
+                  <label className="text-xs text-brand-grey500 mb-1 block">Category</label>
                   <select
                     value={newBrand.category}
                     onChange={e => setNewBrand(p => ({ ...p, category: e.target.value as GiftCardBrand["category"] }))}
-                    className="w-full h-9 bg-secondary rounded-lg px-3 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full h-9 bg-brand-surface border border-brand-grey100 rounded-lg px-3 text-sm text-brand-grey900 outline-none focus:ring-1 focus:ring-brand-blue500"
                   >
                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Denominations (comma-separated)</label>
+                  <label className="text-xs text-brand-grey500 mb-1 block">Denominations (comma-separated)</label>
                   <input
                     value={newBrand.denominations}
                     onChange={e => setNewBrand(p => ({ ...p, denominations: e.target.value }))}
                     placeholder="25, 50, 100"
-                    className="w-full h-9 bg-secondary rounded-lg px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full h-9 bg-brand-surface border border-brand-grey100 rounded-lg px-3 text-sm text-brand-grey900 placeholder:text-brand-grey500 outline-none focus:ring-1 focus:ring-brand-blue500"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Default Rate (₦/$)</label>
+                  <label className="text-xs text-brand-grey500 mb-1 block">Default Rate (₦/$)</label>
                   <input
                     value={newBrand.defaultRate}
                     onChange={e => setNewBrand(p => ({ ...p, defaultRate: e.target.value }))}
                     placeholder="1300"
-                    className="w-full h-9 bg-secondary rounded-lg px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full h-9 bg-brand-surface border border-brand-grey100 rounded-lg px-3 text-sm text-brand-grey900 placeholder:text-brand-grey500 outline-none focus:ring-1 focus:ring-brand-blue500"
                   />
                 </div>
               </div>
               <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Countries</label>
+                <label className="text-xs text-brand-grey500 mb-1.5 block">Countries</label>
                 <div className="flex gap-2">
                   {["USA", "UK", "Canada", "EU"].map(c => (
                     <button
@@ -361,7 +361,7 @@ const AdminGiftCards = () => {
                         countries: p.countries.includes(c) ? p.countries.filter(x => x !== c) : [...p.countries, c],
                       }))}
                       className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                        newBrand.countries.includes(c) ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                        newBrand.countries.includes(c) ? "bg-brand-blue500 text-white" : "bg-brand-tint text-brand-grey500 hover:text-brand-grey900"
                       }`}
                     >
                       {c}
@@ -370,10 +370,10 @@ const AdminGiftCards = () => {
                 </div>
               </div>
               <div className="flex gap-2 pt-2">
-                <button onClick={handleAddBrand} disabled={!newBrand.name} className="h-9 px-4 bg-primary text-primary-foreground rounded-lg text-sm font-medium disabled:opacity-50">
+                <button onClick={handleAddBrand} disabled={!newBrand.name} className="h-9 px-4 bg-brand-blue500 hover:bg-brand-blue400 text-white rounded-lg text-sm font-medium disabled:opacity-50">
                   Add Brand
                 </button>
-                <button onClick={() => setShowAddBrand(false)} className="h-9 px-4 bg-secondary text-foreground rounded-lg text-sm font-medium">
+                <button onClick={() => setShowAddBrand(false)} className="h-9 px-4 bg-brand-tint text-brand-blue500 hover:bg-brand-blue500/10 rounded-lg text-sm font-medium">
                   Cancel
                 </button>
               </div>
@@ -408,38 +408,38 @@ const AdminGiftCards = () => {
               { label: "Approved Volume", value: formatNgn(totalApprovedVolume) },
               { label: "Approval Rate", value: orders.length > 0 ? `${((orders.filter(o => o.status === "approved").length / orders.length) * 100).toFixed(0)}%` : "0%" },
             ].map(m => (
-              <div key={m.label} className="bg-card border border-border rounded-xl p-4">
-                <p className="text-xs text-muted-foreground mb-1">{m.label}</p>
-                <p className="text-xl font-bold text-foreground">{m.value}</p>
+              <div key={m.label} className="bg-brand-surface border border-brand-grey100 rounded-xl p-4">
+                <p className="text-xs text-brand-grey500 mb-1">{m.label}</p>
+                <p className="text-xl font-bold text-brand-grey900">{m.value}</p>
               </div>
             ))}
           </div>
 
           <div className="grid grid-cols-2 gap-6">
             {/* Volume by brand */}
-            <div className="bg-card border border-border rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-foreground mb-4">Volume by Brand</h3>
+            <div className="bg-brand-surface border border-brand-grey100 rounded-xl p-5">
+              <h3 className="text-sm font-semibold text-brand-grey900 mb-4">Volume by Brand</h3>
               {brandVolume.length > 0 ? (
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={brandVolume}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 15% 18%)" />
-                    <XAxis dataKey="name" tick={{ fill: "hsl(215 15% 55%)", fontSize: 11 }} axisLine={false} />
-                    <YAxis tick={{ fill: "hsl(215 15% 55%)", fontSize: 11 }} axisLine={false} tickFormatter={v => `₦${(v / 1000).toFixed(0)}k`} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E7EBEE" />
+                    <XAxis dataKey="name" tick={{ fill: "#617889", fontSize: 11 }} axisLine={false} />
+                    <YAxis tick={{ fill: "#617889", fontSize: 11 }} axisLine={false} tickFormatter={v => `₦${(v / 1000).toFixed(0)}k`} />
                     <Tooltip
-                      contentStyle={{ background: "hsl(220 22% 10%)", border: "1px solid hsl(220 15% 18%)", borderRadius: 8, color: "#fff" }}
+                      contentStyle={{ background: "#FFFFFF", border: "1px solid #E7EBEE", borderRadius: 8, color: "#13181B" }}
                       formatter={(value: number) => [formatNgn(value), "Volume"]}
                     />
-                    <Bar dataKey="volume" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="volume" fill="#0B75C2" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-12">No data yet</p>
+                <p className="text-sm text-brand-grey500 text-center py-12">No data yet</p>
               )}
             </div>
 
             {/* Status distribution */}
-            <div className="bg-card border border-border rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-foreground mb-4">Order Status</h3>
+            <div className="bg-brand-surface border border-brand-grey100 rounded-xl p-5">
+              <h3 className="text-sm font-semibold text-brand-grey900 mb-4">Order Status</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
                   <Pie data={statusDistribution} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={4} dataKey="value">
@@ -448,13 +448,13 @@ const AdminGiftCards = () => {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ background: "hsl(220 22% 10%)", border: "1px solid hsl(220 15% 18%)", borderRadius: 8, color: "#fff" }}
+                    contentStyle={{ background: "#FFFFFF", border: "1px solid #E7EBEE", borderRadius: 8, color: "#13181B" }}
                   />
                 </PieChart>
               </ResponsiveContainer>
               <div className="flex gap-4 justify-center mt-2">
                 {statusDistribution.map(s => (
-                  <span key={s.name} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <span key={s.name} className="flex items-center gap-1.5 text-xs text-brand-grey500">
                     <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} />
                     {s.name} ({s.value})
                   </span>
@@ -464,29 +464,29 @@ const AdminGiftCards = () => {
           </div>
 
           {/* Top trades table */}
-          <div className="bg-card border border-border rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Recent Approved Trades</h3>
+          <div className="bg-brand-surface border border-brand-grey100 rounded-xl p-5">
+            <h3 className="text-sm font-semibold text-brand-grey900 mb-4">Recent Approved Trades</h3>
             <table className="w-full">
               <thead>
-                <tr className="border-b border-border">
+                <tr className="border-b border-brand-grey100">
                   {["User", "Brand", "Amount", "Payout", "Date"].map(h => (
-                    <th key={h} className="text-left text-xs text-muted-foreground font-medium px-4 py-3">{h}</th>
+                    <th key={h} className="text-left text-xs text-brand-grey500 font-medium px-4 py-3 uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {orders.filter(o => o.status === "approved").slice(0, 5).map(order => (
-                  <tr key={order.id} className="border-b border-border last:border-0">
-                    <td className="px-4 py-3 text-sm text-foreground">{order.userName}</td>
+                  <tr key={order.id} className="border-b border-brand-grey100 last:border-0 hover:bg-brand-tint/50">
+                    <td className="px-4 py-3 text-sm text-brand-grey900">{order.userName}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <ProviderIcon name={order.brandName} size="sm" />
-                        <span className="text-sm text-foreground">{order.brandName}</span>
+                        <span className="text-sm text-brand-grey900">{order.brandName}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm font-medium text-foreground">${order.amount}</td>
-                    <td className="px-4 py-3 text-sm font-bold text-[hsl(var(--success))]">{formatNgn(order.ngnPayout)}</td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground">
+                    <td className="px-4 py-3 text-sm font-medium text-brand-grey900">${order.amount}</td>
+                    <td className="px-4 py-3 text-sm font-bold text-brand-success">{formatNgn(order.ngnPayout)}</td>
+                    <td className="px-4 py-3 text-xs text-brand-grey500">
                       {new Date(order.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short" })}
                     </td>
                   </tr>
@@ -501,9 +501,9 @@ const AdminGiftCards = () => {
       {selectedOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/60" onClick={() => setSelectedOrder(null)} />
-          <div className="relative bg-card border border-border rounded-xl p-6 w-full max-w-lg shadow-2xl z-10 max-h-[90vh] overflow-y-auto">
+          <div className="relative bg-brand-surface border border-brand-grey100 rounded-xl p-6 w-full max-w-lg shadow-2xl z-10 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-foreground">Order #{selectedOrder.id}</h3>
+              <h3 className="text-lg font-semibold text-brand-grey900">Order #{selectedOrder.id}</h3>
               {statusBadge(selectedOrder.status)}
             </div>
 
@@ -523,7 +523,7 @@ const AdminGiftCards = () => {
                 </a>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-muted-foreground bg-secondary rounded-lg mb-4">
+              <div className="flex flex-col items-center justify-center py-8 text-brand-grey500 bg-brand-grey50 rounded-lg mb-4">
                 <Image className="h-10 w-10 mb-2" />
                 <p className="text-sm">No image uploaded</p>
               </div>
@@ -548,13 +548,13 @@ const AdminGiftCards = () => {
                 ...(selectedOrder.notes ? [{ label: "Notes", value: selectedOrder.notes }] : []),
               ].map(d => (
                 <div key={d.label} className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">{d.label}</span>
+                  <span className="text-sm text-brand-grey500">{d.label}</span>
                   <div className="flex items-center gap-2">
                     {"icon" in d && d.icon && <ProviderIcon name={selectedOrder.brandName} size="sm" />}
                     <span className={`text-sm ${
-                      "bold" in d && d.bold ? "font-bold text-[hsl(var(--success))]" :
-                      "mono" in d && d.mono ? "font-mono text-foreground" :
-                      "text-foreground"
+                      "bold" in d && d.bold ? "font-bold text-brand-success" :
+                      "mono" in d && d.mono ? "font-mono text-brand-grey900" :
+                      "text-brand-grey900"
                     }`}>{d.value}</span>
                   </div>
                 </div>
@@ -563,23 +563,23 @@ const AdminGiftCards = () => {
 
             {/* Review actions */}
             {selectedOrder.status === "pending" && (
-              <div className="border-t border-border pt-4 space-y-3">
+              <div className="border-t border-brand-grey100 pt-4 space-y-3">
                 <textarea
                   value={reviewNote}
                   onChange={e => setReviewNote(e.target.value)}
                   placeholder="Add review notes (optional)..."
-                  className="w-full h-20 bg-secondary rounded-lg p-3 text-sm text-foreground placeholder:text-muted-foreground outline-none resize-none"
+                  className="w-full h-20 bg-brand-surface border border-brand-grey100 rounded-lg p-3 text-sm text-brand-grey900 placeholder:text-brand-grey500 outline-none resize-none"
                 />
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleApprove(selectedOrder)}
-                    className="flex-1 h-10 bg-[hsl(var(--success))] text-background rounded-lg text-sm font-medium flex items-center justify-center gap-1.5"
+                    className="flex-1 h-10 bg-brand-success text-white rounded-lg text-sm font-medium flex items-center justify-center gap-1.5"
                   >
                     <Check className="h-4 w-4" /> Approve & Credit
                   </button>
                   <button
                     onClick={() => handleReject(selectedOrder)}
-                    className="flex-1 h-10 bg-[hsl(var(--destructive))] text-destructive-foreground rounded-lg text-sm font-medium flex items-center justify-center gap-1.5"
+                    className="flex-1 h-10 bg-brand-danger text-white rounded-lg text-sm font-medium flex items-center justify-center gap-1.5"
                   >
                     <X className="h-4 w-4" /> Reject
                   </button>
@@ -589,7 +589,7 @@ const AdminGiftCards = () => {
 
             <button
               onClick={() => setSelectedOrder(null)}
-              className="mt-3 w-full h-9 bg-secondary text-foreground rounded-lg text-sm font-medium"
+              className="mt-3 w-full h-9 bg-brand-tint text-brand-blue500 hover:bg-brand-blue500/10 rounded-lg text-sm font-medium"
             >
               Close
             </button>
@@ -620,29 +620,29 @@ const BrandCard = ({
   };
 
   return (
-    <div className={`bg-card border rounded-xl overflow-hidden transition-colors ${brand.enabled ? "border-border" : "border-border opacity-60"}`}>
+    <div className={`bg-brand-surface border rounded-xl overflow-hidden transition-colors ${brand.enabled ? "border-brand-grey100" : "border-brand-grey100 opacity-60"}`}>
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
           <ProviderIcon name={brand.name} size="md" />
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-foreground">{brand.name}</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">{brand.category}</span>
-              {!brand.enabled && <span className="text-[10px] px-2 py-0.5 rounded-full bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))]">Disabled</span>}
+              <span className="text-sm font-semibold text-brand-grey900">{brand.name}</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand-grey100 text-brand-grey500">{brand.category}</span>
+              {!brand.enabled && <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand-danger/10 text-brand-danger">Disabled</span>}
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-brand-grey500 mt-0.5">
               {brand.countries.join(", ")} · {brand.cardTypes.join(", ")} · ${brand.denominations.join(", $")}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={onToggle} className={`h-8 px-3 rounded-lg text-xs font-medium transition-colors ${brand.enabled ? "bg-secondary text-muted-foreground hover:text-foreground" : "bg-[hsl(var(--success))]/10 text-[hsl(var(--success))]"}`}>
+          <button onClick={onToggle} className={`h-8 px-3 rounded-lg text-xs font-medium transition-colors ${brand.enabled ? "bg-brand-tint text-brand-grey500 hover:text-brand-grey900" : "bg-brand-success/10 text-brand-success"}`}>
             {brand.enabled ? "Disable" : "Enable"}
           </button>
-          <button onClick={onEdit} className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-secondary text-muted-foreground transition-colors">
+          <button onClick={onEdit} className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-brand-grey50 text-brand-grey500 transition-colors">
             {isEditing ? <ChevronUp className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
           </button>
-          <button onClick={onDelete} className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))] transition-colors">
+          <button onClick={onDelete} className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-brand-danger/10 text-brand-danger transition-colors">
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
@@ -650,17 +650,17 @@ const BrandCard = ({
 
       {/* Expanded rate editor */}
       {isEditing && (
-        <div className="border-t border-border p-4 space-y-4">
-          <h4 className="text-xs font-semibold text-muted-foreground tracking-wider">RATE TIERS BY COUNTRY</h4>
+        <div className="border-t border-brand-grey100 p-4 space-y-4">
+          <h4 className="text-xs font-semibold text-brand-grey500 tracking-wider uppercase">RATE TIERS BY COUNTRY</h4>
           {brand.countries.map(country => {
             const tiers = editRates[country] || brand.rates[country] || [];
             return (
               <div key={country} className="space-y-2">
-                <p className="text-sm font-medium text-foreground">{country}</p>
+                <p className="text-sm font-medium text-brand-grey900">{country}</p>
                 <div className="space-y-1.5">
                   {tiers.map((tier, i) => (
                     <div key={i} className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground w-8">Min</span>
+                      <span className="text-xs text-brand-grey500 w-8">Min</span>
                       <input
                         type="number"
                         value={tier.min}
@@ -672,9 +672,9 @@ const BrandCard = ({
                             return { ...prev, [country]: updated };
                           });
                         }}
-                        className="w-20 h-8 bg-secondary rounded-lg px-2 text-sm text-foreground outline-none text-center"
+                        className="w-20 h-8 bg-brand-surface border border-brand-grey100 rounded-lg px-2 text-sm text-brand-grey900 outline-none text-center"
                       />
-                      <span className="text-xs text-muted-foreground w-8">Max</span>
+                      <span className="text-xs text-brand-grey500 w-8">Max</span>
                       <input
                         type="number"
                         value={tier.max}
@@ -686,9 +686,9 @@ const BrandCard = ({
                             return { ...prev, [country]: updated };
                           });
                         }}
-                        className="w-20 h-8 bg-secondary rounded-lg px-2 text-sm text-foreground outline-none text-center"
+                        className="w-20 h-8 bg-brand-surface border border-brand-grey100 rounded-lg px-2 text-sm text-brand-grey900 outline-none text-center"
                       />
-                      <span className="text-xs text-muted-foreground w-12">Rate ₦/$</span>
+                      <span className="text-xs text-brand-grey500 w-12">Rate ₦/$</span>
                       <input
                         type="number"
                         value={tier.rate}
@@ -700,7 +700,7 @@ const BrandCard = ({
                             return { ...prev, [country]: updated };
                           });
                         }}
-                        className="w-24 h-8 bg-secondary rounded-lg px-2 text-sm text-foreground outline-none text-center font-bold"
+                        className="w-24 h-8 bg-brand-surface border border-brand-grey100 rounded-lg px-2 text-sm text-brand-grey900 outline-none text-center font-bold"
                       />
                       <button
                         onClick={() => {
@@ -711,7 +711,7 @@ const BrandCard = ({
                             return { ...prev, [country]: updated };
                           });
                         }}
-                        className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))]"
+                        className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-brand-danger/10 text-brand-danger"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -728,7 +728,7 @@ const BrandCard = ({
                         return { ...prev, [country]: [...current, { min: lastMax + 1, max: lastMax + 100, rate: 1300 }] };
                       });
                     }}
-                    className="text-xs text-primary hover:underline flex items-center gap-1"
+                    className="text-xs text-brand-blue500 hover:underline flex items-center gap-1"
                   >
                     <Plus className="w-3 h-3" /> Add tier
                   </button>
@@ -742,7 +742,7 @@ const BrandCard = ({
                           return next;
                         });
                       }}
-                      className="text-xs text-[hsl(var(--success))] hover:underline flex items-center gap-1"
+                      className="text-xs text-brand-success hover:underline flex items-center gap-1"
                     >
                       <Check className="w-3 h-3" /> Save rates
                     </button>

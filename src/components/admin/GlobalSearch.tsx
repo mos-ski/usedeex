@@ -87,42 +87,42 @@ const GlobalSearch = () => {
   }, [q, navigate]);
 
   const typeColor = (t: Result["type"]) => ({
-    User: "bg-primary/20 text-primary",
-    Order: "bg-[hsl(var(--deex-orange))]/20 text-[hsl(var(--deex-orange))]",
-    Payout: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
-    Bill: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
+    User: "bg-brand-blue500/10 text-brand-blue500",
+    Order: "bg-brand-amber/10 text-brand-amber",
+    Payout: "bg-brand-success/10 text-brand-success",
+    Bill: "bg-brand-warning400/10 text-brand-warning400",
   })[t];
 
   return (
     <div ref={ref} className="relative">
-      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-brand-grey500 pointer-events-none" />
       <input
         value={q}
         onChange={(e) => { setQ(e.target.value); setOpen(true); }}
         onFocus={() => setOpen(true)}
         placeholder="Search users, orders, payouts…"
-        className="h-9 w-44 md:w-72 bg-secondary rounded-lg pl-8 pr-8 text-xs md:text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary"
+        className="h-9 w-44 md:w-72 bg-white border border-brand-grey100 rounded-lg pl-8 pr-8 text-xs md:text-sm text-brand-grey900 placeholder:text-brand-grey400 outline-none focus:ring-1 focus:ring-brand-blue500"
       />
       {q && (
         <button onClick={() => { setQ(""); setOpen(false); }}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-brand-grey500 hover:text-brand-grey900">
           <X className="w-3.5 h-3.5" />
         </button>
       )}
       {open && q && (
-        <div className="absolute right-0 mt-2 w-[min(90vw,420px)] max-h-[60vh] overflow-y-auto bg-card border border-border rounded-xl shadow-xl z-50">
+        <div className="absolute right-0 mt-2 w-[min(90vw,420px)] max-h-[60vh] overflow-y-auto bg-brand-surface border border-brand-grey100 rounded-xl shadow-xl z-50">
           {results.length === 0 ? (
-            <div className="p-4 text-xs text-muted-foreground text-center">No results for "{q}"</div>
+            <div className="p-4 text-xs text-brand-grey500 text-center">No results for "{q}"</div>
           ) : (
             <div className="py-1">
               {results.map((r, i) => (
                 <button key={i}
                   onClick={() => { r.onClick(); setOpen(false); setQ(""); }}
-                  className="w-full text-left px-3 py-2.5 hover:bg-secondary flex items-center gap-3 transition-colors">
+                  className="w-full text-left px-3 py-2.5 hover:bg-brand-tint flex items-center gap-3 transition-colors">
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold shrink-0 ${typeColor(r.type)}`}>{r.type}</span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm text-foreground truncate">{r.title}</p>
-                    <p className="text-xs text-muted-foreground truncate">{r.subtitle}</p>
+                    <p className="text-sm text-brand-grey900 truncate">{r.title}</p>
+                    <p className="text-xs text-brand-grey500 truncate">{r.subtitle}</p>
                   </div>
                 </button>
               ))}

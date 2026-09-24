@@ -8,47 +8,47 @@ import {
 
 // ===== NEW BADGE =====
 export const NewBadge = () => (
-  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider bg-[hsl(var(--warning))] text-background uppercase animate-pulse ml-1">NEW</span>
+  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider bg-brand-warning400 text-white uppercase animate-pulse ml-1">NEW</span>
 );
 
 // ===== STATUS BADGE =====
 export const StatusBadge = ({ status }: { status: string }) => {
   const s = status.toUpperCase();
   const styles: Record<string, string> = {
-    COMPLETED: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
-    APPROVED: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
-    CONFIRMED: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
-    ACTIVE: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
-    REJECTED: "bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))]",
-    FAILED: "bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))]",
-    PENDING: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
-    FROZEN: "bg-[hsl(var(--deex-blue))]/20 text-[hsl(var(--deex-blue))]",
-    INACTIVE: "bg-muted text-muted-foreground",
-    FLAGGED: "bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))]",
+    COMPLETED: "bg-brand-success/10 text-brand-success",
+    APPROVED: "bg-brand-success/10 text-brand-success",
+    CONFIRMED: "bg-brand-success/10 text-brand-success",
+    ACTIVE: "bg-brand-success/10 text-brand-success",
+    REJECTED: "bg-brand-danger/10 text-brand-danger",
+    FAILED: "bg-brand-danger/10 text-brand-danger",
+    PENDING: "bg-brand-warning400/10 text-brand-warning400",
+    FROZEN: "bg-brand-blue500/10 text-brand-blue500",
+    INACTIVE: "bg-brand-grey100 text-brand-grey500",
+    FLAGGED: "bg-brand-danger/10 text-brand-danger",
   };
-  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider ${styles[s] || "bg-muted text-muted-foreground"}`}>{s}</span>;
+  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider ${styles[s] || "bg-brand-grey100 text-brand-grey500"}`}>{s}</span>;
 };
 
 // ===== SEVERITY BADGE =====
 export const SeverityBadge = ({ severity }: { severity: string }) => {
   const styles: Record<string, string> = {
-    critical: "bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))]",
-    high: "bg-[hsl(var(--deex-orange))]/20 text-[hsl(var(--deex-orange))]",
-    medium: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
-    low: "bg-muted text-muted-foreground",
+    critical: "bg-brand-danger/10 text-brand-danger",
+    high: "bg-brand-amber/10 text-brand-amber",
+    medium: "bg-brand-warning400/10 text-brand-warning400",
+    low: "bg-brand-grey100 text-brand-grey500",
   };
-  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${styles[severity] || "bg-muted text-muted-foreground"}`}>{severity}</span>;
+  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${styles[severity] || "bg-brand-grey100 text-brand-grey500"}`}>{severity}</span>;
 };
 
 // ===== ALERT STATUS BADGE =====
 export const AlertStatusBadge = ({ status }: { status: string }) => {
   const styles: Record<string, string> = {
-    pending: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
-    reviewing: "bg-[hsl(var(--deex-blue))]/20 text-[hsl(var(--deex-blue))]",
-    resolved: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
-    dismissed: "bg-muted text-muted-foreground",
+    pending: "bg-brand-warning400/10 text-brand-warning400",
+    reviewing: "bg-brand-blue500/10 text-brand-blue500",
+    resolved: "bg-brand-success/10 text-brand-success",
+    dismissed: "bg-brand-grey100 text-brand-grey500",
   };
-  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${styles[status] || "bg-muted text-muted-foreground"}`}>{status}</span>;
+  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${styles[status] || "bg-brand-grey100 text-brand-grey500"}`}>{status}</span>;
 };
 
 // ===== TRIGGER ICON =====
@@ -75,8 +75,8 @@ export const CopyButton = ({ text, label }: { text: string; label?: string }) =>
     setTimeout(() => setCopied(false), 2000);
   };
   return (
-    <button onClick={handleCopy} className="shrink-0 p-1 rounded hover:bg-secondary transition-colors" title="Copy">
-      {copied ? <Check className="w-3.5 h-3.5 text-[hsl(var(--success))]" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground" />}
+    <button onClick={handleCopy} className="shrink-0 p-1 rounded hover:bg-brand-grey50 transition-colors" title="Copy">
+      {copied ? <Check className="w-3.5 h-3.5 text-brand-success" /> : <Copy className="w-3.5 h-3.5 text-brand-grey500 hover:text-brand-grey900" />}
     </button>
   );
 };
@@ -89,16 +89,16 @@ export const ConfirmDialog = ({
   title: string; description: string; destructive?: boolean;
 }) => (
   <AlertDialog open={open} onOpenChange={(o) => !o && onClose()}>
-    <AlertDialogContent className="bg-card border-border">
+    <AlertDialogContent className="bg-brand-surface border-brand-grey100">
       <AlertDialogHeader>
-        <AlertDialogTitle className="text-foreground">{title}</AlertDialogTitle>
-        <AlertDialogDescription className="text-muted-foreground">{description}</AlertDialogDescription>
+        <AlertDialogTitle className="text-brand-grey900">{title}</AlertDialogTitle>
+        <AlertDialogDescription className="text-brand-grey500">{description}</AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogCancel className="bg-secondary text-foreground border-border hover:bg-secondary/80">Cancel</AlertDialogCancel>
+        <AlertDialogCancel className="bg-brand-tint text-brand-blue500 border-brand-grey100 hover:bg-brand-blue500/10">Cancel</AlertDialogCancel>
         <AlertDialogAction
           onClick={onConfirm}
-          className={destructive ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}
+          className={destructive ? "bg-brand-danger text-white hover:bg-red-600" : "bg-brand-blue500 text-white hover:bg-brand-blue400"}
         >
           Confirm
         </AlertDialogAction>
@@ -117,12 +117,12 @@ export const AdminPagination = ({
   const end = Math.min(page * perPage, totalItems);
   return (
     <div className="flex items-center justify-between mt-4 px-1">
-      <p className="text-xs text-muted-foreground">Showing {start}–{end} of {totalItems}</p>
+      <p className="text-xs text-brand-grey500">Showing {start}–{end} of {totalItems}</p>
       <div className="flex items-center gap-1">
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
-          className="h-8 px-3 text-xs rounded-lg bg-secondary text-foreground disabled:opacity-40 hover:bg-secondary/80"
+          className="h-8 px-3 text-xs rounded-lg bg-brand-tint text-brand-blue500 disabled:opacity-40 hover:bg-brand-blue500/10"
         >
           Previous
         </button>
@@ -133,7 +133,7 @@ export const AdminPagination = ({
           <button
             key={p}
             onClick={() => onPageChange(p)}
-            className={`w-8 h-8 text-xs rounded-lg font-medium ${p === page ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}
+            className={`w-8 h-8 text-xs rounded-lg font-medium ${p === page ? "bg-brand-blue500 text-white" : "bg-brand-tint text-brand-grey500 hover:text-brand-grey900"}`}
           >
             {p}
           </button>
@@ -141,7 +141,7 @@ export const AdminPagination = ({
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
-          className="h-8 px-3 text-xs rounded-lg bg-secondary text-foreground disabled:opacity-40 hover:bg-secondary/80"
+          className="h-8 px-3 text-xs rounded-lg bg-brand-tint text-brand-blue500 disabled:opacity-40 hover:bg-brand-blue500/10"
         >
           Next
         </button>
