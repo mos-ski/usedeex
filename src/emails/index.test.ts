@@ -1,14 +1,20 @@
 import { describe, it, expect } from "vitest";
-import { renderEmail, emailSamples, type EmailName } from "./index";
+import { emailCatalog, emailCategories, renderEmail, type EmailName } from "./index";
 
 describe("renderEmail", () => {
-  const names: EmailName[] = ["verify-code", "welcome", "password-reset", "receipt"];
+  it("renders every registered sample safely", () => {
+    expect(Object.keys(emailCatalog)).toHaveLength(29);
+    for (const [id, definition] of Object.entries(emailCatalog)) {
+      const html = renderEmail(id as EmailName, definition.sample as never);
+      expect(html, id).toContain("<!DOCTYPE html>");
+      expect(html, id).not.toContain("{{");
+    }
+  });
 
-  it("renders every template from samples with no leftover tokens", () => {
-    for (const name of names) {
-      const html = renderEmail(name, emailSamples[name] as never);
-      expect(html).toContain("<!DOCTYPE html>");
-      expect(html).not.toContain("{{");
+  it("has unique labels inside every category", () => {
+    for (const category of emailCategories) {
+      const labels = category.templateIds.map((id) => emailCatalog[id].label);
+      expect(new Set(labels).size).toBe(labels.length);
     }
   });
 

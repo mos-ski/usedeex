@@ -30,4 +30,9 @@ describe("security and account emails", () => {
     expect(statement).toContain("September 2026");
     expect(statement).toContain("Download Statement");
   });
+
+  it("rejects an unsafe password reset URL", () => {
+    const definition = securityDefinitions["password-reset"];
+    expect(() => definition.render({ ...definition.sample, resetUrl: "javascript:alert(1)" })).toThrow("Unsafe email URL");
+  });
 });

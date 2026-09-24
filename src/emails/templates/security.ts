@@ -1,5 +1,4 @@
 import { emailShell, fillTokens } from "../layout";
-import { passwordResetEmail, type PasswordResetData } from "../password-reset";
 import { action, detailTable, heading, paragraph, rawRow, renderBody, teamSignOff } from "../primitives";
 import type { EmailPayload, ReceiptRow, TemplateDefinition } from "../types";
 import { verifyCodeEmail, type VerifyCodeData } from "../verify-code";
@@ -54,20 +53,16 @@ const verifyCodeDefinition: TemplateDefinition<VerifyCodeData> = {
   render: verifyCodeEmail,
 };
 
-const passwordResetDefinition: TemplateDefinition<PasswordResetData> = {
+const passwordResetDefinition = securityDefinition({
   label: "Password reset",
-  category: "onboarding",
   subject: "Reset your DeeX password",
   previewText: "Choose a new password and keep moving.",
   required: ["name", "email", "resetUrl", "minutes"],
-  sample: {
-    name: "Olivia",
-    email: "olivia@deex.com",
-    resetUrl: "https://deex.com/reset?t=sample",
-    minutes: "15",
-  },
-  render: passwordResetEmail,
-};
+  sample: { name: "Olivia", email: "olivia@deex.com", resetUrl: "https://deex.com/reset?t=sample", minutes: "15" },
+  title: () => "RESET YOUR PASSWORD.",
+  intro: ({ name, minutes }) => `${name}, choose a new password. This link stays active for ${minutes} minutes.`,
+  cta: ({ resetUrl }) => ({ label: "Reset Password", url: resetUrl }),
+});
 
 const loginSuccess = securityDefinition({
   label: "Successful login",

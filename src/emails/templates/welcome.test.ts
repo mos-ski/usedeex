@@ -10,4 +10,10 @@ describe("welcome email", () => {
     expect(html).toContain("CEO, UseDeeX");
     expect(html).not.toContain("seamless");
   });
+
+  it("escapes the recipient name", () => {
+    const html = welcomeDefinition.render({ ...welcomeDefinition.sample, name: "<b>Ada</b>" });
+    expect(html).not.toContain("<b>Ada</b>");
+    expect(html).toContain("&lt;B&gt;ADA&lt;/B&gt;");
+  });
 });
