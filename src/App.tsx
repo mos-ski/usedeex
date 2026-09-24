@@ -130,7 +130,7 @@ const App = () => (
             <Route path="/faq" element={<MarketingTopic slug="faq" />} />
             <Route path="/policies/:slug" element={<MarketingPolicy />} />
 
-            {import.meta.env.DEV && <Route path="/emails/preview" element={<Suspense fallback={null}><EmailPreview /></Suspense>} />}
+            <Route path="/emails/preview" element={<Suspense fallback={null}><EmailPreview /></Suspense>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

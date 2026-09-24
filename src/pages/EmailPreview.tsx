@@ -7,7 +7,7 @@ type ZoomMode = "fit" | "actual";
 const LOCAL_ASSET_BASE = "/emails/";
 const PRODUCTION_ASSET_BASE = "https://deex.com/emails/";
 
-/** Development-only catalogue for reviewing every operational email. */
+/** Catalogue for reviewing every operational email. */
 const EmailPreview = () => {
   const [active, setActive] = useState<EmailName>("welcome");
   const [query, setQuery] = useState("");
