@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, Check, AlertTriangle, Zap, Monitor, ArrowUpRight, ShieldAlert, AlertCircle } from "lucide-react";
+import { Copy, Check, AlertTriangle, Zap, Monitor, ArrowUpRight, ShieldAlert, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -8,47 +8,47 @@ import {
 
 // ===== NEW BADGE =====
 export const NewBadge = () => (
-  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider bg-brand-warning400 text-white uppercase animate-pulse ml-1">NEW</span>
+  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white">NEW</span>
 );
 
 // ===== STATUS BADGE =====
 export const StatusBadge = ({ status }: { status: string }) => {
   const s = status.toUpperCase();
   const styles: Record<string, string> = {
-    COMPLETED: "bg-brand-success/10 text-brand-success",
-    APPROVED: "bg-brand-success/10 text-brand-success",
-    CONFIRMED: "bg-brand-success/10 text-brand-success",
-    ACTIVE: "bg-brand-success/10 text-brand-success",
-    REJECTED: "bg-brand-danger/10 text-brand-danger",
-    FAILED: "bg-brand-danger/10 text-brand-danger",
-    PENDING: "bg-brand-warning400/10 text-brand-warning400",
-    FROZEN: "bg-brand-blue500/10 text-brand-blue500",
-    INACTIVE: "bg-brand-grey100 text-brand-grey500",
-    FLAGGED: "bg-brand-danger/10 text-brand-danger",
+    COMPLETED: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    APPROVED: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    CONFIRMED: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    ACTIVE: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    REJECTED: "bg-red-50 text-red-700 border-red-200",
+    FAILED: "bg-red-50 text-red-700 border-red-200",
+    PENDING: "bg-amber-50 text-amber-700 border-amber-200",
+    FROZEN: "bg-blue-50 text-blue-700 border-blue-200",
+    INACTIVE: "bg-gray-50 text-gray-600 border-gray-200",
+    FLAGGED: "bg-red-50 text-red-700 border-red-200",
   };
-  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider ${styles[s] || "bg-brand-grey100 text-brand-grey500"}`}>{s}</span>;
+  return <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium ${styles[s] || "bg-gray-50 text-gray-600 border-gray-200"}`}>{s}</span>;
 };
 
 // ===== SEVERITY BADGE =====
 export const SeverityBadge = ({ severity }: { severity: string }) => {
   const styles: Record<string, string> = {
-    critical: "bg-brand-danger/10 text-brand-danger",
-    high: "bg-brand-amber/10 text-brand-amber",
-    medium: "bg-brand-warning400/10 text-brand-warning400",
-    low: "bg-brand-grey100 text-brand-grey500",
+    critical: "bg-red-50 text-red-700 border-red-200",
+    high: "bg-orange-50 text-orange-700 border-orange-200",
+    medium: "bg-amber-50 text-amber-700 border-amber-200",
+    low: "bg-blue-50 text-blue-700 border-blue-200",
   };
-  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${styles[severity] || "bg-brand-grey100 text-brand-grey500"}`}>{severity}</span>;
+  return <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium uppercase ${styles[severity] || "bg-gray-50 text-gray-600 border-gray-200"}`}>{severity}</span>;
 };
 
 // ===== ALERT STATUS BADGE =====
 export const AlertStatusBadge = ({ status }: { status: string }) => {
   const styles: Record<string, string> = {
-    pending: "bg-brand-warning400/10 text-brand-warning400",
-    reviewing: "bg-brand-blue500/10 text-brand-blue500",
-    resolved: "bg-brand-success/10 text-brand-success",
-    dismissed: "bg-brand-grey100 text-brand-grey500",
+    pending: "bg-amber-50 text-amber-700 border-amber-200",
+    reviewing: "bg-blue-50 text-blue-700 border-blue-200",
+    resolved: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    dismissed: "bg-gray-50 text-gray-600 border-gray-200",
   };
-  return <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold tracking-wider uppercase ${styles[status] || "bg-brand-grey100 text-brand-grey500"}`}>{status}</span>;
+  return <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium uppercase ${styles[status] || "bg-gray-50 text-gray-600 border-gray-200"}`}>{status}</span>;
 };
 
 // ===== TRIGGER ICON =====
@@ -75,8 +75,8 @@ export const CopyButton = ({ text, label }: { text: string; label?: string }) =>
     setTimeout(() => setCopied(false), 2000);
   };
   return (
-    <button onClick={handleCopy} className="shrink-0 p-1 rounded hover:bg-brand-grey50 transition-colors" title="Copy">
-      {copied ? <Check className="w-3.5 h-3.5 text-brand-success" /> : <Copy className="w-3.5 h-3.5 text-brand-grey500 hover:text-brand-grey900" />}
+    <button onClick={handleCopy} className="shrink-0 rounded p-1 transition-colors hover:bg-gray-100" title="Copy">
+      {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-gray-500 hover:text-gray-900" />}
     </button>
   );
 };
@@ -89,16 +89,16 @@ export const ConfirmDialog = ({
   title: string; description: string; destructive?: boolean;
 }) => (
   <AlertDialog open={open} onOpenChange={(o) => !o && onClose()}>
-    <AlertDialogContent className="bg-brand-surface border-brand-grey100">
+    <AlertDialogContent className="border-gray-200 bg-white text-gray-900">
       <AlertDialogHeader>
-        <AlertDialogTitle className="text-brand-grey900">{title}</AlertDialogTitle>
-        <AlertDialogDescription className="text-brand-grey500">{description}</AlertDialogDescription>
+        <AlertDialogTitle className="font-semibold text-gray-900">{title}</AlertDialogTitle>
+        <AlertDialogDescription className="text-sm text-gray-500">{description}</AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogCancel className="bg-brand-tint text-brand-blue500 border-brand-grey100 hover:bg-brand-blue500/10">Cancel</AlertDialogCancel>
+        <AlertDialogCancel className="rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">Cancel</AlertDialogCancel>
         <AlertDialogAction
           onClick={onConfirm}
-          className={destructive ? "bg-brand-danger text-white hover:bg-red-600" : "bg-brand-blue500 text-white hover:bg-brand-blue400"}
+          className={destructive ? "rounded-lg bg-red-600 text-white hover:bg-red-700" : "rounded-lg bg-amber-500 text-white hover:bg-amber-600"}
         >
           Confirm
         </AlertDialogAction>
@@ -116,15 +116,15 @@ export const AdminPagination = ({
   const start = (page - 1) * perPage + 1;
   const end = Math.min(page * perPage, totalItems);
   return (
-    <div className="flex items-center justify-between mt-4 px-1">
-      <p className="text-xs text-brand-grey500">Showing {start}–{end} of {totalItems}</p>
+    <div className="mt-4 flex items-center justify-between px-1">
+      <p className="text-xs text-gray-500">Showing {start}–{end} of {totalItems}</p>
       <div className="flex items-center gap-1">
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
-          className="h-8 px-3 text-xs rounded-lg bg-brand-tint text-brand-blue500 disabled:opacity-40 hover:bg-brand-blue500/10"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Previous
+          <ChevronLeft className="h-4 w-4" />
         </button>
         {Array.from({ length: totalPages }, (_, i) => i + 1).slice(
           Math.max(0, page - 3),
@@ -133,7 +133,7 @@ export const AdminPagination = ({
           <button
             key={p}
             onClick={() => onPageChange(p)}
-            className={`w-8 h-8 text-xs rounded-lg font-medium ${p === page ? "bg-brand-blue500 text-white" : "bg-brand-tint text-brand-grey500 hover:text-brand-grey900"}`}
+            className={`h-8 w-8 rounded-lg text-sm font-medium transition-colors ${p === page ? "bg-amber-500 text-white" : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"}`}
           >
             {p}
           </button>
@@ -141,9 +141,9 @@ export const AdminPagination = ({
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
-          className="h-8 px-3 text-xs rounded-lg bg-brand-tint text-brand-blue500 disabled:opacity-40 hover:bg-brand-blue500/10"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Next
+          <ChevronRight className="h-4 w-4" />
         </button>
       </div>
     </div>
