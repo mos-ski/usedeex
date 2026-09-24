@@ -537,14 +537,14 @@ export const userActivities = [
 ];
 
 export const activityCategoryColors: Record<string, string> = {
-  auth: "bg-[hsl(var(--deex-blue))]/20 text-[hsl(var(--deex-blue))]",
-  wallet: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
-  trade: "bg-[hsl(var(--deex-orange))]/20 text-[hsl(var(--deex-orange))]",
-  kyc: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
-  security: "bg-[hsl(var(--destructive))]/20 text-[hsl(var(--destructive))]",
-  settings: "bg-muted text-muted-foreground",
-  referral: "bg-[hsl(var(--deex-teal))]/20 text-[hsl(var(--deex-teal))]",
-  reward: "bg-[hsl(var(--primary))]/20 text-[hsl(var(--primary))]",
+  auth: "bg-blue-50 text-blue-700 border border-blue-200",
+  wallet: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  trade: "bg-amber-50 text-amber-700 border border-amber-200",
+  kyc: "bg-orange-50 text-orange-700 border border-orange-200",
+  security: "bg-red-50 text-red-700 border border-red-200",
+  settings: "bg-gray-50 text-gray-600 border border-gray-200",
+  referral: "bg-purple-50 text-purple-700 border border-purple-200",
+  reward: "bg-blue-50 text-blue-700 border border-blue-200",
 };
 
 export const userRewards = [

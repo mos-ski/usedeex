@@ -59,7 +59,7 @@ const AdminBillPayments = () => {
       key: "user",
       label: "User",
       mobile: true,
-      render: (row) => <span className="text-sm text-foreground font-medium truncate">{row.user}</span>,
+      render: (row) => <span className="text-sm text-gray-900 font-medium truncate">{row.user}</span>,
     },
     {
       key: "type",
@@ -67,32 +67,32 @@ const AdminBillPayments = () => {
       mobile: true,
       render: (row) => {
         const colors: Record<string, string> = {
-          Airtime: "bg-primary/20 text-primary",
-          Data: "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))]",
-          Electricity: "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))]",
-          "Cable TV": "bg-[hsl(var(--deex-blue))]/20 text-[hsl(var(--deex-blue))]",
-          Betting: "bg-[hsl(var(--deex-orange))]/20 text-[hsl(var(--deex-orange))]",
+          Airtime: "border-blue-200 bg-blue-50 text-blue-700",
+          Data: "border-emerald-200 bg-emerald-50 text-emerald-700",
+          Electricity: "border-amber-200 bg-amber-50 text-amber-700",
+          "Cable TV": "border-purple-200 bg-purple-50 text-purple-700",
+          Betting: "border-orange-200 bg-orange-50 text-orange-700",
         };
-        return <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${colors[row.type] || "bg-muted text-muted-foreground"}`}>{row.type}</span>;
+        return <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${colors[row.type] || "border-gray-200 bg-gray-50 text-gray-600"}`}>{row.type}</span>;
       },
     },
     {
       key: "provider",
       label: "Provider",
-      render: (row) => <span className="text-sm text-foreground">{row.provider}</span>,
+      render: (row) => <span className="text-sm text-gray-900">{row.provider}</span>,
     },
     {
       key: "amount",
       label: "Amount",
       mobile: true,
-      render: (row) => <span className="text-sm font-semibold text-foreground">{row.amount}</span>,
+      render: (row) => <span className="text-sm font-semibold text-gray-900">{row.amount}</span>,
     },
     {
       key: "phone",
       label: "Phone",
       render: (row) => (
         <div className="flex items-center gap-1">
-          <span className="text-xs text-muted-foreground">{row.phone}</span>
+          <span className="text-xs text-gray-500">{row.phone}</span>
           <CopyButton text={row.phone} label="Phone" />
         </div>
       ),
@@ -102,7 +102,7 @@ const AdminBillPayments = () => {
       label: "Ref",
       render: (row) => (
         <div className="flex items-center gap-1">
-          <span className="text-xs text-muted-foreground font-mono">{row.txRef.slice(0, 12)}...</span>
+          <span className="text-xs text-gray-500 font-mono">{row.txRef.slice(0, 12)}...</span>
           <CopyButton text={row.txRef} label="Ref" />
         </div>
       ),
@@ -110,7 +110,7 @@ const AdminBillPayments = () => {
     {
       key: "date",
       label: "Date",
-      render: (row) => <span className="text-xs text-muted-foreground whitespace-nowrap">{row.date}</span>,
+      render: (row) => <span className="text-xs text-gray-500 whitespace-nowrap">{row.date}</span>,
     },
     {
       key: "status",
@@ -124,11 +124,11 @@ const AdminBillPayments = () => {
       render: (row) => row.status === "FAILED" ? (
         <button
           onClick={(e) => { e.stopPropagation(); handleRetry(row.id, row.user); }}
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))] hover:bg-[hsl(var(--warning))]/30 text-[10px] font-semibold transition-colors"
+          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-semibold transition-colors"
         >
           <RotateCcw className="w-3 h-3" /> Retry
         </button>
-      ) : <span className="text-xs text-muted-foreground">—</span>,
+      ) : <span className="text-xs text-gray-500">—</span>,
     },
   ];
 
@@ -136,39 +136,39 @@ const AdminBillPayments = () => {
     <div>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2">
-          <p className="text-xs font-semibold text-muted-foreground tracking-wider">BILL PAYMENTS</p>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">BILL PAYMENTS</p>
           <NewBadge />
         </div>
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
             <input value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setPage(1); }}
               placeholder="Search user, phone, ref…"
-              className="h-8 w-52 bg-secondary rounded-lg pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground outline-none" />
+              className="h-8 w-52 rounded-lg border border-gray-200 bg-white pl-8 pr-3 text-xs text-gray-900 placeholder:text-gray-400 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400" />
           </div>
-          <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+          <button className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900">
             <Upload className="w-3.5 h-3.5" /> Export
           </button>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
-        <div className="bg-card border border-border rounded-xl p-4 md:p-5">
-          <p className="text-xs text-muted-foreground mb-1">Total Transactions</p>
-          <p className="text-xl md:text-2xl font-bold text-foreground">{billPaymentStats.totalTransactions.toLocaleString()}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+          <p className="text-sm font-medium text-gray-500 mb-1">Total Transactions</p>
+          <p className="text-2xl font-display font-bold text-gray-900">{billPaymentStats.totalTransactions.toLocaleString()}</p>
         </div>
-        <div className="bg-card border border-border rounded-xl p-4 md:p-5">
-          <p className="text-xs text-muted-foreground mb-1">Total Volume</p>
-          <p className="text-xl md:text-2xl font-bold text-foreground">{billPaymentStats.totalVolume}</p>
+        <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+          <p className="text-sm font-medium text-gray-500 mb-1">Total Volume</p>
+          <p className="text-2xl font-display font-bold text-gray-900">{billPaymentStats.totalVolume}</p>
         </div>
-        <div className="bg-card border border-border rounded-xl p-4 md:p-5">
-          <p className="text-xs text-muted-foreground mb-1">Success Rate</p>
-          <p className="text-xl md:text-2xl font-bold text-[hsl(var(--success))]">{billPaymentStats.successRate}</p>
+        <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+          <p className="text-sm font-medium text-gray-500 mb-1">Success Rate</p>
+          <p className="text-2xl font-display font-bold text-emerald-600">{billPaymentStats.successRate}</p>
         </div>
-        <div className="bg-card border border-border rounded-xl p-4 md:p-5">
-          <p className="text-xs text-muted-foreground mb-1">Failed</p>
-          <p className="text-xl md:text-2xl font-bold text-destructive">{billPaymentStats.failedCount}</p>
+        <div className="rounded-xl border border-gray-200 bg-white p-4 md:p-5">
+          <p className="text-sm font-medium text-gray-500 mb-1">Failed</p>
+          <p className="text-2xl font-display font-bold text-red-600">{billPaymentStats.failedCount}</p>
         </div>
       </div>
 
@@ -176,7 +176,7 @@ const AdminBillPayments = () => {
       <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
         {(["All", "Airtime", "Data", "Electricity", "Cable TV", "Betting"] as BillType[]).map(t => (
           <button key={t} onClick={() => { setTypeFilter(t); setPage(1); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${typeFilter === t ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border whitespace-nowrap transition-colors ${typeFilter === t ? "border-amber-500 bg-amber-500 text-white" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"}`}>
             {t} ({typeCounts[t]})
           </button>
         ))}
@@ -186,7 +186,7 @@ const AdminBillPayments = () => {
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {(["All", "COMPLETED", "PENDING", "FAILED"] as const).map(s => (
           <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${statusFilter === s ? "bg-accent text-accent-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border whitespace-nowrap transition-colors ${statusFilter === s ? "border-amber-500 bg-amber-500 text-white" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"}`}>
             {s === "All" ? `All (${statusCounts.All})` : `${s.charAt(0) + s.slice(1).toLowerCase()} (${statusCounts[s]})`}
           </button>
         ))}

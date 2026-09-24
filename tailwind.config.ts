@@ -18,6 +18,8 @@ export default {
         manrope: ["Manrope", "sans-serif"],
         gasoek: ["'Gasoek One'", "sans-serif"],
         roboto: ["Roboto", "sans-serif"],
+        display: ["Fraunces", "Georgia", "serif"],
+        jakarta: ["'Plus Jakarta Sans'", "system-ui", "sans-serif"],
         mono: ["'Roboto Mono'", "ui-monospace", "monospace"],
       },
       colors: {

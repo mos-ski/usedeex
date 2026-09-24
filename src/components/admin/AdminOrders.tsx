@@ -46,88 +46,88 @@ const AdminOrders = () => {
   };
 
   const columns: ResponsiveColumn<OrderItem>[] = [
-    { key: "name", label: "Name", mobile: true, render: (o) => <span className="text-sm text-foreground font-medium truncate">{o.name}</span> },
-    { key: "asset", label: "Asset", mobile: true, render: (o) => <span className="text-sm text-foreground">{o.asset}</span> },
-    { key: "type", label: "Type", render: (o) => <span className="text-xs text-muted-foreground">{o.type}</span> },
-    { key: "amount", label: "Amount", mobile: true, render: (o) => <span className="text-sm text-foreground">{o.amount}</span> },
+    { key: "name", label: "Name", mobile: true, render: (o) => <span className="text-sm font-medium text-gray-900 truncate">{o.name}</span> },
+    { key: "asset", label: "Asset", mobile: true, render: (o) => <span className="text-sm text-gray-700">{o.asset}</span> },
+    { key: "type", label: "Type", render: (o) => <span className="text-xs text-gray-500">{o.type}</span> },
+    { key: "amount", label: "Amount", mobile: true, render: (o) => <span className="text-sm font-medium text-gray-900">{o.amount}</span> },
     { key: "wallet", label: "Wallet Address", render: (o) => o.walletAddress !== "—" ? (
-      <div className="flex items-center gap-1"><span className="text-xs text-muted-foreground font-mono">{o.walletAddress}</span><CopyButton text={o.walletAddress} label="Wallet" /></div>
-    ) : <span className="text-xs text-muted-foreground">—</span> },
-    { key: "confirms", label: "Confirms", render: (o) => <span className="text-xs text-muted-foreground">{o.confirmations > 0 ? `${o.confirmations} ✓` : "—"}</span> },
+      <div className="flex items-center gap-1"><span className="text-xs text-gray-500 font-mono">{o.walletAddress}</span><CopyButton text={o.walletAddress} label="Wallet" /></div>
+    ) : <span className="text-xs text-gray-500">—</span> },
+    { key: "confirms", label: "Confirms", render: (o) => <span className="text-xs text-gray-500">{o.confirmations > 0 ? `${o.confirmations} ✓` : "—"}</span> },
     { key: "txId", label: "Trans ID", render: (o) => (
-      <div className="flex items-center gap-1"><span className="text-xs text-muted-foreground font-mono">{o.txId.slice(0, 10)}...</span><CopyButton text={o.txId} label="Trans ID" /></div>
+      <div className="flex items-center gap-1"><span className="text-xs text-gray-500 font-mono">{o.txId.slice(0, 10)}...</span><CopyButton text={o.txId} label="Trans ID" /></div>
     )},
-    { key: "payoutRef", label: "Payout Ref", render: (o) => <span className="text-xs text-muted-foreground">{o.payoutRef}</span> },
-    { key: "date", label: "Date", render: (o) => <span className="text-xs text-muted-foreground whitespace-nowrap">{o.date}</span> },
+    { key: "payoutRef", label: "Payout Ref", render: (o) => <span className="text-xs text-gray-500">{o.payoutRef}</span> },
+    { key: "date", label: "Date", render: (o) => <span className="text-xs text-gray-500 whitespace-nowrap">{o.date}</span> },
     { key: "status", label: "Status", mobile: true, render: (o) => <StatusBadge status={o.status} /> },
     { key: "action", label: "Action", render: (o) => o.status === "FAILED" ? (
       <button onClick={(e) => { e.stopPropagation(); handleRetry(o.txId, o.name); }}
-        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))] hover:bg-[hsl(var(--warning))]/30 text-[10px] font-semibold transition-colors">
+        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-semibold transition-colors">
         <RotateCcw className="w-3 h-3" /> Retry
       </button>
-    ) : <span className="text-xs text-muted-foreground">—</span> },
+    ) : <span className="text-xs text-gray-500">—</span> },
   ];
 
   return (
     <div>
       {/* Summary cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-6">
-        <div className="bg-card border border-border rounded-xl p-5">
-          <p className="text-sm text-muted-foreground mb-1">Total Order</p>
-          <p className="text-2xl font-bold text-foreground">{ordersData.totalOrder}</p>
-          <p className="text-xs text-muted-foreground mb-3">{ordersData.totalOrderBtc}</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="rounded-xl border border-gray-200 bg-white p-5">
+          <p className="text-sm font-medium text-gray-500 mb-1">Total Order</p>
+          <p className="text-2xl font-display font-bold text-gray-900">{ordersData.totalOrder}</p>
+          <p className="text-xs text-gray-500 mb-3">{ordersData.totalOrderBtc}</p>
           <div className="flex gap-1 mb-2">
             {ordersData.orderDistribution.map(d => (
-              <div key={d.label} className={`h-6 ${d.color} rounded text-[10px] font-medium flex items-center justify-center text-foreground`} style={{ width: `${Math.max(d.pct, 8)}%` }}>
+              <div key={d.label} className={`h-6 ${d.color} rounded text-[10px] font-medium flex items-center justify-center text-white`} style={{ width: `${Math.max(d.pct, 8)}%` }}>
                 {d.pct > 0 ? `${d.pct}%` : "0.0%"}
               </div>
             ))}
           </div>
-          <div className="flex gap-3 text-[10px] text-muted-foreground">
+          <div className="flex gap-3 text-[10px] text-gray-500">
             {ordersData.orderDistribution.map(d => <span key={d.label}>{d.label}</span>)}
           </div>
         </div>
 
-        <div className="bg-card border border-border rounded-xl p-5">
-          <p className="text-sm text-muted-foreground mb-1">Total payout</p>
-          <p className="text-2xl font-bold text-foreground">{ordersData.totalPayout}</p>
-          <p className="text-xs text-muted-foreground">{ordersData.totalPayoutNgn}</p>
+        <div className="rounded-xl border border-gray-200 bg-white p-5">
+          <p className="text-sm font-medium text-gray-500 mb-1">Total payout</p>
+          <p className="text-2xl font-display font-bold text-gray-900">{ordersData.totalPayout}</p>
+          <p className="text-xs text-gray-500">{ordersData.totalPayoutNgn}</p>
           <div className="flex gap-1 mt-3 mb-2">
             {ordersData.payoutDistribution.map(d => (
-              <div key={d.label} className={`h-6 ${d.color} rounded text-[10px] font-medium flex items-center justify-center text-foreground`} style={{ width: `${Math.max(d.pct, 8)}%` }}>
+              <div key={d.label} className={`h-6 ${d.color} rounded text-[10px] font-medium flex items-center justify-center text-white`} style={{ width: `${Math.max(d.pct, 8)}%` }}>
                 {d.pct}%
               </div>
             ))}
           </div>
-          <div className="mt-3 bg-destructive/10 rounded-lg p-3 flex items-center justify-between">
+          <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-destructive" />
+              <AlertCircle className="w-4 h-4 text-red-600" />
               <div>
-                <p className="text-xs font-medium text-foreground">Some payouts failed</p>
-                <p className="text-[10px] text-muted-foreground">You have {statusCounts.FAILED} orders with failed payouts.</p>
+                <p className="text-xs font-medium text-red-800">Some payouts failed</p>
+                <p className="text-[10px] text-red-600">You have {statusCounts.FAILED} orders with failed payouts.</p>
               </div>
             </div>
-            <button onClick={() => { setStatusFilter("FAILED"); setPage(1); }} className="h-7 px-3 bg-destructive text-destructive-foreground rounded text-xs font-medium">Review</button>
+            <button onClick={() => { setStatusFilter("FAILED"); setPage(1); }} className="h-7 px-3 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-medium">Review</button>
           </div>
         </div>
       </div>
 
       {/* Activity header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
-        <p className="text-sm font-semibold text-foreground">Activity</p>
-        <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+        <p className="text-sm font-semibold text-gray-900">Activity</p>
+        <div className="flex items-center gap-3 text-xs text-gray-500 flex-wrap">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
             <input value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setPage(1); }}
               placeholder="Search name, asset, tx id…"
-              className="h-8 w-52 bg-secondary rounded-lg pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground outline-none" />
+              className="h-8 w-52 rounded-lg border border-gray-200 bg-white pl-8 pr-3 text-xs text-gray-900 placeholder:text-gray-400 outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400" />
           </div>
           <label className="flex items-center gap-2">
             <Switch checked={autoPay} onCheckedChange={v => { setAutoPay(v); toast.success(`Auto Pay ${v ? "enabled" : "disabled"}`); }} />
             AUTO PAY: {autoPay ? "ON" : "OFF"}
           </label>
           <span>|</span>
-          <button className="flex items-center gap-1 hover:text-foreground"><Upload className="w-3.5 h-3.5" /> EXPORT</button>
+          <button className="flex items-center gap-1 hover:text-gray-900"><Upload className="w-3.5 h-3.5" /> EXPORT</button>
         </div>
       </div>
 
@@ -136,7 +136,7 @@ const AdminOrders = () => {
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {(["All", "COMPLETED", "PENDING", "FAILED"] as const).map(s => (
           <button key={s} onClick={() => { setStatusFilter(s); setPage(1); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${statusFilter === s ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border whitespace-nowrap transition-colors ${statusFilter === s ? "border-amber-500 bg-amber-500 text-white" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"}`}>
             {s === "All" ? `All (${statusCounts.All})` : `${s.charAt(0) + s.slice(1).toLowerCase()} (${statusCounts[s]})`}
           </button>
         ))}
